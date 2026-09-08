@@ -1,0 +1,22 @@
+[
+  {
+    "Hash": "8F5CC86A868623505B5DE86C8DF0420C658B0EC600F51153BEB90B276D6BDA5B",
+    "Arquivo": "0009-fronteira-da-abstracao-de-persistencia.md"
+  },
+  {
+    "Hash": "CCB44B10E417B6EEE8FEF65A014C12FC1512BFE2DBBFFCB69969DFCEBBC3236F",
+    "Arquivo": "0010-protocolo-e-metricas-de-avaliacao.md"
+  },
+  {
+    "Hash": "7892DB06D9240CFAB513B4C9932009AFCBE1340FE6D6025E7E8C39C8E4AF368A",
+    "Arquivo": "0011-orquestracao-propria-vs-framework-existente.md"
+  },
+  {
+    "Hash": "48FA71945A5FD6DA3FB2C65436EFA546833FBCAAD76F5563C6E24773F549AB9A",
+    "Arquivo": "adr-README.md"
+  },
+  {
+    "Hash": "6F57133BE09DAD491EB03F6DE1C89FE3D1A79A683A4D43F7DDAD9268E02EA9EC",
+    "Arquivo": "CAIN_DOCUMENTO_MESTRE.md"
+  }
+]
