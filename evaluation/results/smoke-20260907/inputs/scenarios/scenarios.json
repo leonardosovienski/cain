@@ -1,0 +1,62 @@
+{
+  "version": "draft-2026-09-07-1",
+  "status": "technical_fixture_not_preregistered",
+  "sessions": 3,
+  "target_vector_dimensions": ["passos", "paragrafo"],
+  "scenarios": [
+    {
+      "id": "busca_passos", "expected_agent": "busca", "intent": "busca",
+      "persona": {"format": "passos", "expertise": "iniciante", "target_vector": [1.0, 0.0]},
+      "sessions": [
+        "Sou iniciante e prefiro respostas em passos. Busque no corpus local informações sobre persistência.",
+        "Continuo preferindo passos. Busque no corpus local informações sobre identidade.",
+        "Mantenha minha preferência. Busque no corpus local informações sobre decisões."
+      ]
+    },
+    {
+      "id": "busca_paragrafo", "expected_agent": "busca", "intent": null,
+      "persona": {"format": "paragrafo", "expertise": "avancado", "target_vector": [0.0, 1.0]},
+      "sessions": [
+        "Tenho experiência avançada e prefiro um parágrafo. Busque no corpus local informações sobre memória.",
+        "Prefiro um parágrafo. Busque no corpus local informações sobre agentes.",
+        "Busque no corpus local informações sobre recuperação; considere a preferência já declarada."
+      ]
+    },
+    {
+      "id": "codigo_passos", "expected_agent": "codigo", "intent": "codigo",
+      "persona": {"format": "passos", "expertise": "iniciante", "target_vector": [1.0, 0.0]},
+      "sessions": [
+        "Sou iniciante e prefiro passos. Escreva código Python para somar dois números.",
+        "Prefiro passos. Escreva código Python para contar itens de uma lista.",
+        "Escreva código Python para verificar se um número é par, considerando minha preferência."
+      ]
+    },
+    {
+      "id": "codigo_paragrafo", "expected_agent": "codigo", "intent": null,
+      "persona": {"format": "paragrafo", "expertise": "avancado", "target_vector": [0.0, 1.0]},
+      "sessions": [
+        "Tenho experiência avançada e prefiro um parágrafo. Escreva código Python que inverta uma lista.",
+        "Prefiro um parágrafo. Escreva código Python que filtre números positivos.",
+        "Escreva código Python que conte palavras, mantendo minha preferência."
+      ]
+    },
+    {
+      "id": "resumo_passos", "expected_agent": "resumo", "intent": "resumo",
+      "persona": {"format": "passos", "expertise": "iniciante", "target_vector": [1.0, 0.0]},
+      "sessions": [
+        "Sou iniciante e prefiro passos. Resuma: uma lista armazena vários elementos em sequência.",
+        "Prefiro passos. Resuma: uma função agrupa instruções que podem ser chamadas novamente.",
+        "Resuma: um teste compara o comportamento observado ao esperado; considere minha preferência."
+      ]
+    },
+    {
+      "id": "resumo_paragrafo", "expected_agent": "resumo", "intent": null,
+      "persona": {"format": "paragrafo", "expertise": "avancado", "target_vector": [0.0, 1.0]},
+      "sessions": [
+        "Tenho experiência avançada e prefiro um parágrafo. Resuma: contratos definem entradas e saídas de módulos.",
+        "Prefiro um parágrafo. Resuma: logs de decisão permitem reconstruir uma escolha de roteamento.",
+        "Resuma: um índice derivado pode ser reconstruído a partir de dados canônicos; mantenha minha preferência."
+      ]
+    }
+  ]
+}

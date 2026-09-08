@@ -1,0 +1,31 @@
+{
+  "mode": "smoke",
+  "provider": "fake",
+  "model": "qwen2.5:3b",
+  "base_url": "http://127.0.0.1:11434",
+  "temperature": 0.0,
+  "seed": 42,
+  "max_context_chars": 2048,
+  "run_id": "smoke-20260907",
+  "started_at_utc": "2026-09-08T00:35:49.940117+00:00",
+  "design_sha256": {
+    "scenarios/scenarios.json": "82435585455664502a8cd38c8a05fb2d2e4633c8e1fd8296ce67ad068140a71e",
+    "probes/probes.json": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0",
+    "rubrics/README.md": "2f19af68fbfc1b25e79b66f2a0d0d32d8947a9c19a33c06cbedf7f6cff7cce7c"
+  },
+  "formal_collection_allowed": false,
+  "formal_blockers": [
+    "ADR-0010 permanece Proposto; aprovação do protocolo não foi registrada.",
+    "Modelo de identidade/adaptação dos ADRs 0006/0007 permanece provisório/stub.",
+    "Tokenizador real do modelo e equivalência de contexto B/C não foram validados.",
+    "Sondas ainda não demonstraram validade de construto em piloto com LLM real e avaliação humana.",
+    "Separação de IDs não valida independência entre estilo e recuperação de preferências de formato.",
+    "C pode recuperar a sessão atual, B recebe só sessões anteriores; exposição precisa ser igualada.",
+    "Rubrica e ground truth são rascunhos; falta pré-registro em commit datado após revisão.",
+    "Pendências institucionais/éticas da seção 12.2 precisam de decisão documentada."
+  ],
+  "scientific_claims_allowed": false,
+  "context_counter": "unicode_characters_not_tokens",
+  "execution_order": "C then A then B within each smoke pair; presentation order randomized",
+  "blind_export": "Only share blind/ with raters; raw logs and key disclose conditions"
+}

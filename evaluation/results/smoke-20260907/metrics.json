@@ -1,0 +1,143 @@
+{
+  "run_id": "smoke-20260907",
+  "mode": "smoke",
+  "scientific_result": false,
+  "n_scenarios": 6,
+  "n_sessions": 3,
+  "n_rows": 324,
+  "delegation": {
+    "A": {
+      "value": null,
+      "reason": "Static baseline does not route"
+    },
+    "B": {
+      "value": null,
+      "reason": "Transcript baseline does not route"
+    },
+    "C": {
+      "labels": [
+        "busca",
+        "codigo",
+        "resumo"
+      ],
+      "rows": "expected",
+      "columns": "observed",
+      "matrix": [
+        [
+          6,
+          0,
+          0
+        ],
+        [
+          0,
+          6,
+          0
+        ],
+        [
+          0,
+          0,
+          6
+        ]
+      ],
+      "n": 18,
+      "accuracy": 1.0,
+      "unknown_predictions": []
+    },
+    "C_by_mode": {
+      "explicit_intent": {
+        "labels": [
+          "busca",
+          "codigo",
+          "resumo"
+        ],
+        "rows": "expected",
+        "columns": "observed",
+        "matrix": [
+          [
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            3,
+            0
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "n": 9,
+        "accuracy": 1.0,
+        "unknown_predictions": []
+      },
+      "inferred": {
+        "labels": [
+          "busca",
+          "codigo",
+          "resumo"
+        ],
+        "rows": "expected",
+        "columns": "observed",
+        "matrix": [
+          [
+            3,
+            0,
+            0
+          ],
+          [
+            0,
+            3,
+            0
+          ],
+          [
+            0,
+            0,
+            3
+          ]
+        ],
+        "n": 9,
+        "accuracy": 1.0,
+        "unknown_predictions": []
+      }
+    },
+    "interpretation": "Technical check of provisional rule router, not research evidence"
+  },
+  "coherence_embedding_distribution": {
+    "value": null,
+    "reason": "No real embedding provider configured"
+  },
+  "coherence_human_rubric": {
+    "value": null,
+    "reason": "No independent human ratings collected"
+  },
+  "profile_convergence": {
+    "value": null,
+    "reason": "UserModel adaptation and validated vector extractor are stubs"
+  },
+  "satisfaction": {
+    "value": null,
+    "reason": "No participants or authorized human study"
+  },
+  "rater_agreement": {
+    "value": null,
+    "reason": "No independent human ratings collected"
+  },
+  "construct_validity": {
+    "value": null,
+    "reason": "Fake/stub smoke execution cannot establish construct validity"
+  },
+  "formal_collection_allowed": false,
+  "formal_blockers": [
+    "ADR-0010 permanece Proposto; aprovação do protocolo não foi registrada.",
+    "Modelo de identidade/adaptação dos ADRs 0006/0007 permanece provisório/stub.",
+    "Tokenizador real do modelo e equivalência de contexto B/C não foram validados.",
+    "Sondas ainda não demonstraram validade de construto em piloto com LLM real e avaliação humana.",
+    "Separação de IDs não valida independência entre estilo e recuperação de preferências de formato.",
+    "C pode recuperar a sessão atual, B recebe só sessões anteriores; exposição precisa ser igualada.",
+    "Rubrica e ground truth são rascunhos; falta pré-registro em commit datado após revisão.",
+    "Pendências institucionais/éticas da seção 12.2 precisam de decisão documentada."
+  ]
+}

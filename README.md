@@ -18,6 +18,12 @@ python -m venv .venv
 Por padrão, usa um dublê determinístico, sem download de modelos ou chamadas externas.
 Consulte `RELATORIO_EXECUCAO.md` para resultados verificados, limitações e próximos passos.
 
+Para repetir a execução técnica de avaliação:
+
+```powershell
+.\.venv\Scripts\python -m cain.evaluation --mode smoke --output evaluation/results
+```
+
 ## Ollama local
 
 Com Ollama instalado e um modelo já obtido, use o mesmo nome que aparece em `ollama list`:
