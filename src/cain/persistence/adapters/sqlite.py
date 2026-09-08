@@ -10,6 +10,7 @@ from cain.common import (
     DecisionRecord, IdentitySnapshot, IdentityState, MemoryDocument,
     PersonalityState, Signal, UserModel, utc_now,
 )
+from cain.persistence import ConcurrentIdentityUpdate
 
 
 def _connect(path: str | Path) -> sqlite3.Connection:
@@ -79,15 +80,46 @@ class SQLiteIdentityStore:
             )
 
     def append_signal(self, user_id: str, signal: Signal) -> None:
+        self.apply_signal(user_id, signal)
+
+    def apply_signal(
+        self, user_id: str, signal: Signal, state: IdentityState | None = None,
+        expected_revision: int | None = None,
+    ) -> None:
+        """Commit profile, snapshot and input together; index updates happen later.
+
+        BEGIN IMMEDIATE serializes writers, and the revision check prevents a
+        previously read profile from silently replacing a newer preference.
+        """
         if "user_id" in signal.metadata and signal.metadata["user_id"] != user_id:
             raise ValueError("Signal metadata cannot impersonate a different user")
+        if state is not None and state.user_id != user_id:
+            raise ValueError("IdentityState.user_id must match its storage key")
         metadata = {**signal.metadata, "user_id": user_id, "kind": signal.kind}
+        signal_metadata = _serialize(metadata)
+        state_payload = _serialize(asdict(state)) if state is not None else None
         with self._connection:
+            self._connection.execute("BEGIN IMMEDIATE")
+            if state is not None:
+                current = self.get(user_id)
+                if current is None:
+                    raise ValueError("Identity must exist before applying a signal")
+                if expected_revision is not None and current.revision != expected_revision:
+                    raise ConcurrentIdentityUpdate(
+                        f"Expected revision {expected_revision}; current revision is {current.revision}"
+                    )
+                self._connection.execute(
+                    "UPDATE identities SET state_json = ? WHERE user_id = ?", (state_payload, user_id)
+                )
+                self._connection.execute(
+                    "INSERT INTO identity_snapshots(user_id, state_json, recorded_at) VALUES (?, ?, ?)",
+                    (user_id, state_payload, signal.created_at),
+                )
             self._connection.execute(
                 "INSERT INTO identity_signals(signal_id, user_id, kind, text, metadata_json, "
                 "created_at) VALUES (?, ?, ?, ?, ?, ?)",
                 (signal.signal_id, user_id, signal.kind, signal.text,
-                 _serialize(metadata), signal.created_at),
+                 signal_metadata, signal.created_at),
             )
 
     def history(self, user_id: str, limit: int = 20) -> list[IdentitySnapshot]:

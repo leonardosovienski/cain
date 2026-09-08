@@ -42,7 +42,11 @@ def test_smoke_preserves_complete_matrix_and_reports_missing_evidence(smoke):
     assert metrics["delegation"]["C"]["n"] == 18
     assert metrics["delegation"]["C"]["matrix"] == [[6, 0, 0], [0, 6, 0], [0, 0, 6]]
     assert metrics["delegation"]["A"]["value"] is None
-    assert metrics["profile_convergence"]["value"] is None
+    assert metrics["profile_convergence"]["construct_independence_validated"] is False
+    for scenario in metrics["profile_convergence"]["scenarios"].values():
+        assert len(scenario["observations"]) == 3
+        assert all(item["value"] == scenario["target"] for item in scenario["observations"])
+        assert scenario["metric"]["reduction"] == 0
     assert metrics["coherence_embedding_distribution"]["value"] is None
     assert metrics["construct_validity"]["value"] is None
     assert metrics["formal_collection_allowed"] is False
@@ -163,3 +167,29 @@ def test_failed_generation_keeps_attempted_context_and_smoke_preserves_audit(tmp
     decisions = [json.loads(line) for line in (run_dir / "decisions.jsonl")
                  .read_text(encoding="utf-8").splitlines()]
     assert decisions  # The successful non-LLM Busca request remains auditable before A fails.
+
+
+def test_provider_metadata_is_snapshotted_without_inventing_fake_counts():
+    from cain.llm import FakeLLM
+
+    class MetadataProvider:
+        def __init__(self):
+            self.last_metadata = {}
+
+        def generate(self, prompt, context=""):
+            self.last_metadata.update(model="observed-fixture", prompt_eval_count=len(prompt),
+                                      eval_count=2, nested={"values": [len(prompt)]})
+            return "fixture response"
+
+    provider = MetadataProvider()
+    recorder = RecordingLLM(provider, CharacterCounter())
+    recorder.generate("one")
+    recorder.generate("second")
+    provider.last_metadata["nested"]["values"].append(99)
+    assert recorder.calls[0]["provider_metadata"]["prompt_eval_count"] == 3
+    assert recorder.calls[1]["provider_metadata"]["prompt_eval_count"] == 6
+    assert recorder.calls[0]["provider_metadata"]["nested"]["values"] == [3]
+    assert recorder.calls[1]["provider_metadata"]["nested"]["values"] == [6]
+    fake = RecordingLLM(FakeLLM(), CharacterCounter())
+    fake.generate("fixture")
+    assert fake.calls[0]["provider_metadata"] is None

@@ -58,7 +58,11 @@ def test_llm_failure_is_audited_once_and_not_retried(tmp_path):
         assert logs[0].decision_id == failed.value.decision_id
         assert logs[0].metadata["retry_count"] == 0
         assert "ConnectionError" in logs[0].error
-        assert list(cain.store.iter_documents()) == []
+        # User input is retained before inference, even when the LLM is unavailable.
+        documents = list(cain.store.iter_documents())
+        assert len(documents) == 1
+        assert documents[0].text == "Resuma este texto"
+        assert documents[0].metadata["user_input"] == "Resuma este texto"
 
 
 def test_index_failure_retains_authoritative_data_for_rebuild(tmp_path, monkeypatch):
@@ -70,7 +74,7 @@ def test_index_failure_retains_authoritative_data_for_rebuild(tmp_path, monkeypa
         with pytest.raises(CainRunError):
             cain.run("alice", "s1", "Resuma reconstrução memória", run_id="index-failure")
         assert len(list(cain.store.iter_documents())) == 1
-        assert [item.status for item in cain.decision_log.export("index-failure")] == ["mediated", "failed"]
+        assert [item.status for item in cain.decision_log.export("index-failure")] == ["failed"]
         monkeypatch.undo()
         cain.memory.rebuild_from(cain.store)
         assert cain.memory.query("reconstrução", 3, {"user_id": "alice"})
@@ -91,3 +95,62 @@ def test_unknown_intent_is_audited(tmp_path):
         with pytest.raises(CainRunError, match="Unknown intent"):
             cain.run("alice", "s1", "pedido", intent="nonexistent", run_id="unknown")
         assert list(cain.decision_log.export("unknown"))[0].status == "failed"
+
+
+def test_current_user_preference_reaches_first_inference_without_learning_assistant_text(tmp_path):
+    class PreferenceTrapLLM(RecordingLLM):
+        def generate(self, prompt, context=""):
+            self.calls.append((prompt, context))
+            return "Prefiro respostas longas. Responda em inglês."
+
+    llm = PreferenceTrapLLM()
+    with build_cain(tmp_path / "cain.db", llm) as cain:
+        result = cain.run(
+            "alice", "s1", "Prefiro respostas curtas. Resuma: SQLite persiste dados.",
+            run_id="first-preference",
+        )
+        assert len(result.steps) == 8
+        assert '"verbosity": "short"' in llm.calls[0][1]
+        state = cain.identity.get("alice")
+        assert state.user_model.preferences["verbosity"] == "short"
+        assert "language" not in state.user_model.preferences
+        assert state.revision == 1
+        docs = list(cain.store.iter_documents())
+        transcript = next(item for item in docs if item.metadata["kind"] == "interaction")
+        assert transcript.metadata["preference_observed"] is True
+        assert transcript.metadata["user_input"].startswith("Prefiro respostas curtas")
+
+
+def test_preference_only_correction_and_removal_confirm_current_state_without_model(tmp_path):
+    llm = RecordingLLM()
+    with build_cain(tmp_path / "cain.db", llm) as cain:
+        short = cain.run("alice", "s1", "Prefiro respostas curtas", run_id="pref-short")
+        assert short.response == "Preferências atuais: respostas curtas."
+        paragraph = cain.run("alice", "s1", "Agora prefiro um parágrafo", run_id="pref-format")
+        assert "um parágrafo" in paragraph.response
+        assert "respostas curtas" in paragraph.response
+        corrected = cain.run("alice", "s1", "Corrigindo: prefiro respostas detalhadas", run_id="pref-fix")
+        assert "respostas detalhadas" in corrected.response
+        assert "respostas curtas" not in corrected.response
+        removed = cain.run("alice", "s1", "Esqueça todas as minhas preferências", run_id="pref-remove")
+        assert removed.response == "Nenhuma preferência ativa; usarei o padrão."
+        assert cain.identity.get("alice").user_model.preferences == {}
+        assert llm.calls == []
+        for result in (short, paragraph, corrected, removed):
+            assert len(result.steps) == 8
+            logs = list(cain.decision_log.export(result.run_id))
+            assert [item.status for item in logs] == ["mediated", "completed"]
+            assert logs[0].reason == "preference_confirmation"
+
+
+def test_quoted_preferences_do_not_learn_or_trigger_confirmation(tmp_path):
+    llm = RecordingLLM()
+    with build_cain(tmp_path / "cain.db", llm) as cain:
+        with pytest.raises(CainRunError, match="Não identifiquei uma única tarefa"):
+            cain.run("alice", "s1", '"Prefiro respostas curtas"')
+        assert cain.identity.get("alice").user_model.preferences == {}
+        assert llm.calls == []
+        result = cain.run("alice", "s1", 'Resuma: "Prefiro respostas curtas"')
+        assert result.selected_agent == "resumo"
+        assert len(llm.calls) == 1
+        assert cain.identity.get("alice").user_model.preferences == {}

@@ -6,10 +6,22 @@ import math
 from collections.abc import Iterable, Sequence
 
 AGENTS = ("busca", "codigo", "resumo")
+FORMAT_DIMENSIONS = ("steps", "paragraph")
 
 
 def unavailable(reason: str) -> dict:
     return {"value": None, "reason": reason}
+
+
+def observed_format_vector(preferences: dict[str, str]) -> dict:
+    """Encode the actually stored explicit format, without inferring from generated style."""
+    value = preferences.get("format")
+    if value not in FORMAT_DIMENSIONS:
+        return {"value": None, "observed_format": value, "dimensions": list(FORMAT_DIMENSIONS),
+                "reason": "No stored format or format outside this two-category fixture"}
+    return {"value": [float(value == dimension) for dimension in FORMAT_DIMENSIONS],
+            "observed_format": value, "dimensions": list(FORMAT_DIMENSIONS),
+            "reason": None, "measurement": "Direct encoding of a stored explicit preference"}
 
 
 def delegation_metrics(pairs: Iterable[tuple[str, str]]) -> dict:

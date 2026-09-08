@@ -1,50 +1,16 @@
 """Auditable sequential eight-step orchestration, without retry/fallback (ADR-0011)."""
 
-from dataclasses import dataclass
 from hashlib import sha256
 from uuid import uuid4
 
 from cain.agents import AgentRegistry
 from cain.common import CainRunError, DecisionRecord, Message, RunResult, Signal
-from cain.common.text import tokens
 from cain.identity import IdentityService
 from cain.persistence import DecisionLog
-
-
-@dataclass(frozen=True)
-class Route:
-    selected_agent: str
-    intent: str
-    reason: str
-
-
-class RuleRouter:
-    """STUB — ADR-0008: deterministic rules, no learned or LLM routing yet."""
-
-    RULES = (
-        ("resumo", {"resumo", "resuma", "resumir", "sintetize", "sumarize", "summary"}),
-        ("codigo", {"codigo", "python", "programa", "funcao", "bug", "debug", "code"}),
-        ("busca", {"buscar", "busca", "busque", "pesquisa", "pesquisar", "pesquise", "encontrar", "search"}),
-    )
-
-    def route(self, payload: str, intent: str | None, registry: AgentRegistry) -> Route:
-        if intent is not None:
-            for capabilities in registry.describe():
-                if intent in capabilities.intents:
-                    return Route(capabilities.name, intent, f"explicit_intent:{intent}; STUB ADR-0008")
-            raise ValueError(f"Unknown intent: {intent}")
-        terms = tokens(payload)
-        for inferred_intent, keywords in self.RULES:
-            matches = sorted(terms.intersection(keywords))
-            if matches:
-                for capabilities in registry.describe():
-                    if inferred_intent in capabilities.intents:
-                        return Route(capabilities.name, inferred_intent,
-                                     f"keyword_rule:{inferred_intent}:{','.join(matches)}; STUB ADR-0008")
-        for capabilities in registry.describe():
-            if "resumo" in capabilities.intents:
-                return Route(capabilities.name, "resumo", "default_rule:resumo; STUB ADR-0008")
-        raise ValueError("No matching routing rule and no resumo agent")
+from cain.orchestrator.routing import (
+    ClarificationRequired as ClarificationRequired, Route as Route, Router,
+    RoutingError as RoutingError, RuleRouter as RuleRouter,
+)
 
 
 class SessionManager:
@@ -69,13 +35,16 @@ class Mediator:
 
 
 class Cain:
-    def __init__(self, identity: IdentityService, registry: AgentRegistry, decision_log: DecisionLog):
+    def __init__(
+        self, identity: IdentityService, registry: AgentRegistry, decision_log: DecisionLog,
+        router: Router | None = None,
+    ):
         self.identity = identity
         self.store = identity.store
         self.memory = identity.memory
         self.registry = registry
         self.decision_log = decision_log
-        self.router = RuleRouter()
+        self.router = router if router is not None else RuleRouter()
         self.sessions = SessionManager()
         self.mediator = Mediator()
 
@@ -93,13 +62,18 @@ class Cain:
         try:
             self.sessions.start_turn(user_id, session_id)
             steps.append("1:session_registered")
-            context = self.identity.context_for(user_id, payload)
-            steps.append("2:identity_loaded")
+            observed = self.identity.observe(user_id, payload, {
+                "session_id": session_id, "run_id": run_id, "decision_id": decision_id,
+            })
+            context = self.identity.context_for(user_id, payload, exclude_decision_id=decision_id)
+            steps.append("2:user_observed_identity_loaded")
             route = self.router.route(payload, intent, self.registry)
             steps.append("3:agent_selected")
             message = Message(route.intent, context, payload, {
                 "user_id": user_id, "session_id": session_id, "run_id": run_id,
                 "decision_id": decision_id,
+                "route_reason": route.reason,
+                "preferences": dict(observed.user_model.preferences),
             })
             agent = self.registry.get(route.selected_agent)
             steps.append("4:delegated")
@@ -111,13 +85,21 @@ class Cain:
             self.decision_log.append(DecisionRecord(
                 decision_id, run_id, user_id, session_id, route.selected_agent,
                 route.intent, route.reason, "mediated", tuple(steps), response_hash=response_hash,
-                metadata={"adaptation": "no-op; STUB ADR-0007", "index": "lexical, non-semantic"},
+                metadata={
+                    "adaptation": "explicit_preferences; provisional_ADR-0007",
+                    "identity_revision": observed.revision,
+                    "retrieval_sources": message.metadata.get("retrieval_sources", []),
+                    "retrieval_budget": message.metadata.get("retrieval_budget", {}),
+                },
             ))
             self.identity.update(user_id, Signal(
                 text=f"Usuário: {payload}\nCain: {response}",
-                metadata={"session_id": session_id, "run_id": run_id, "decision_id": decision_id},
+                metadata={
+                    "session_id": session_id, "run_id": run_id, "decision_id": decision_id,
+                    "user_input": payload, "preference_observed": True,
+                },
             ))
-            steps.append("7:signal_persisted_adaptation_noop")
+            steps.append("7:interaction_persisted")
             steps.append("8:response_ready")
             # Completion is a separate immutable event; step 6's decision is never edited.
             self.decision_log.append(DecisionRecord(

@@ -48,7 +48,15 @@ def test_ollama_http_contract(ollama_stub):
     path, body = calls[0]
     assert path == "/api/generate"
     assert body == {"model": "fixture-model", "prompt": "pedido", "system": "perfil",
-                    "stream": False, "options": {"temperature": 0.25, "seed": 73}}
+                    "stream": False, "options": {"temperature": 0.25, "seed": 73,
+                                                  "num_ctx": 8192, "num_predict": 768}}
+
+
+def test_oversized_context_fails_before_transport_and_is_not_silently_truncated(ollama_stub):
+    url, calls, _ = ollama_stub
+    with pytest.raises(LLMError, match="limite configurado"):
+        OllamaLLM(base_url=url, max_input_bytes=100).generate("texto", "memória " * 100)
+    assert calls == []
 
 
 @pytest.mark.parametrize("status,body", [(503, {"error": "offline"}), (200, {}),

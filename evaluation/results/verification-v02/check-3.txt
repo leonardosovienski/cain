@@ -1,0 +1,14 @@
+{
+  "provider": "ollama",
+  "model": "qwen2.5:3b",
+  "model_available": true,
+  "available_models": [
+    "qwen2.5:3b"
+  ],
+  "database": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\data\\cain.db",
+  "sources": [
+    "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\README.md",
+    "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture",
+    "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\research"
+  ]
+}

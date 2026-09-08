@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .budget import CharacterCounter, RecordingLLM
-from .metrics import AGENTS, delegation_metrics, unavailable
+from .metrics import AGENTS, convergence, delegation_metrics, observed_format_vector, unavailable
 
 STATIC_SYSTEM = (
     "Você é um assistente. Responda em português com clareza, respeitando os fatos fornecidos. "
@@ -23,7 +23,7 @@ STATIC_SYSTEM = (
 
 FORMAL_BLOCKERS = (
     "ADR-0010 permanece Proposto; aprovação do protocolo não foi registrada.",
-    "Modelo de identidade/adaptação dos ADRs 0006/0007 permanece provisório/stub.",
+    "Modelo de identidade dos ADRs 0006/0007 segue provisório; regras de preferências não o validam.",
     "Tokenizador real do modelo e equivalência de contexto B/C não foram validados.",
     "Sondas ainda não demonstraram validade de construto em piloto com LLM real e avaliação humana.",
     "Separação de IDs não valida independência entre estilo e recuperação de preferências de formato.",
@@ -43,6 +43,7 @@ class EvaluationConfig:
     seed: int = 42
     max_context_chars: int = 2048
     run_id: str | None = None
+    request_timeout: float = 120.0
 
 
 def formal_blockers() -> list[str]:
@@ -165,7 +166,8 @@ def _model(config: EvaluationConfig):
         return FakeLLM()
     if config.provider == "ollama":
         return OllamaLLM(model=config.model, base_url=config.base_url,
-                         temperature=config.temperature, seed=config.seed)
+                         temperature=config.temperature, seed=config.seed,
+                         timeout=config.request_timeout)
     raise ValueError(f"Unknown provider: {config.provider}")
 
 
@@ -186,6 +188,7 @@ def run_smoke(output: Path, config: EvaluationConfig | None = None,
     runtime = build_cain(db_path=run_dir / "cain.sqlite3", llm=recorder)
     records = []
     routing = []
+    profile_observations = defaultdict(list)
     by_routing_mode = {"explicit_intent": [], "inferred": []}
     try:
         for scenario in design["scenarios"]:
@@ -209,6 +212,7 @@ def run_smoke(output: Path, config: EvaluationConfig | None = None,
                                          payload=prompt["prompt"], intent=prompt["intent"],
                                          run_id=run_id)
                     c_calls = recorder.calls[call_start:]
+                    profile = observed_format_vector(runtime.identity.get(user_id).user_model.preferences)
                     observed_budget = c_calls[0]["context_size"] if len(c_calls) == 1 else None
                     comparability = (
                         "Approximate character cap only; token equivalence is NOT demonstrated"
@@ -220,11 +224,15 @@ def run_smoke(output: Path, config: EvaluationConfig | None = None,
                         "selected_agent": result.selected_agent, "decision_id": result.decision_id,
                         "steps": list(result.steps), "llm_calls": c_calls,
                         "context_budget": observed_budget, "context_comparability": comparability,
-                        "profile_vector": None, "profile_vector_reason": "Identity adaptation is a stub",
+                        "profile_vector": profile["value"], "profile_vector_reason": profile["reason"],
+                        "profile_format": profile["observed_format"],
                     }
                     records.append(row)
                     _append(run_dir / "raw.jsonl", row)
                     if prompt["id"] == "task":
+                        profile_observations[scenario["id"]].append({
+                            "session": session_index, **profile,
+                        })
                         pair = (scenario["expected_agent"], result.selected_agent)
                         routing.append(pair)
                         mode = "explicit_intent" if scenario["intent"] else "inferred"
@@ -270,7 +278,21 @@ def run_smoke(output: Path, config: EvaluationConfig | None = None,
             },
             "coherence_embedding_distribution": unavailable("No real embedding provider configured"),
             "coherence_human_rubric": unavailable("No independent human ratings collected"),
-            "profile_convergence": unavailable("UserModel adaptation and validated vector extractor are stubs"),
+            "profile_convergence": {
+                "measurement": "Stored explicit format only; not implicit learning or validated construct",
+                "dimensions": ["steps", "paragraph"],
+                "scenarios": {
+                    scenario["id"]: {
+                        "observations": profile_observations[scenario["id"]],
+                        "target": scenario["persona"]["target_vector"],
+                        "metric": convergence(scenario["persona"]["target_vector"],
+                                              [item["value"] for item in profile_observations[scenario["id"]]])
+                        if all(item["value"] is not None for item in profile_observations[scenario["id"]])
+                        else unavailable("One or more sessions have no observed format vector"),
+                    } for scenario in design["scenarios"]
+                },
+                "construct_independence_validated": False,
+            },
             "satisfaction": unavailable("No participants or authorized human study"),
             "rater_agreement": unavailable("No independent human ratings collected"),
             "construct_validity": unavailable("Fake/stub smoke execution cannot establish construct validity"),
@@ -289,8 +311,10 @@ def run_smoke(output: Path, config: EvaluationConfig | None = None,
             "C também pode recuperar interações da sessão atual, enquanto B só acessa sessões "
             "anteriores. A exposição à informação difere e impede inferência B/C. Logs registram "
             "o orçamento efetivo e preservam contextos injetados.\n\n"
-            "Coerência por embeddings, rubrica humana, convergência, satisfação e concordância "
-            "não foram medidas; constam como nulas com motivos. Acurácia de roteamento se refere "
+            "Coerência por embeddings, rubrica humana, satisfação e concordância "
+            "não foram medidas; constam como nulas com motivos. A preferência explícita de formato "
+            "é codificada diretamente do estado observado, quando disponível; a distância ao alvo "
+            "não valida um construto de adaptação ou aprendizagem implícita. Acurácia de roteamento se refere "
             "somente ao roteador provisório e aos exemplos executados.\n\n"
             "**Validade de construto das sondas NÃO demonstrada.** O piloto com LLM real e "
             "avaliadores humanos permanece pendente. ADR-0010 continua Proposto.\n\n"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cain-research"
-version = "0.1.0"
+version = "0.2.0"
 description = "Esqueleto de pesquisa de identidade persistente e orquestração multiagente"
 readme = "README.md"
 requires-python = ">=3.11"

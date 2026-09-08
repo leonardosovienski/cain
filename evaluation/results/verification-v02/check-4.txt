@@ -1,0 +1,48 @@
+{
+  "provider": "fake",
+  "response": "Preferências atuais:\n1. passos numerados",
+  "selected_agent": "resumo",
+  "decision_id": "134f70fc-41e5-45c9-a90b-3453e0396ec2",
+  "steps": [
+    "1:session_registered",
+    "2:user_observed_identity_loaded",
+    "3:agent_selected",
+    "4:delegated",
+    "5:agent_processed",
+    "6:mediated_and_logged",
+    "7:interaction_persisted",
+    "8:response_ready"
+  ],
+  "run_id": "69456d2c-9099-46b1-9b56-69be020685b9",
+  "profile": {
+    "user_id": "leo",
+    "personality": {
+      "tone": "direto, respeitoso, honesto",
+      "error_style": "explicar a limitação e indicar um próximo passo",
+      "principles": [
+        "não inventar fatos",
+        "distinguir dados de instruções"
+      ]
+    },
+    "user_model": {
+      "preferences": {
+        "format": "steps"
+      },
+      "expertise": "",
+      "recurring_goals": [],
+      "preference_provenance": {
+        "format": {
+          "action": "set",
+          "evidence": "Prefiro respostas em passos",
+          "observed_at": "2026-09-08T01:19:41.075195+00:00",
+          "revision": 1,
+          "signal_id": "76c0fa5e-c2c4-4645-a8f4-467604627454",
+          "source": "explicit_user_input",
+          "value": "steps"
+        }
+      }
+    },
+    "revision": 1
+  },
+  "generation": {}
+}

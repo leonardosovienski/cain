@@ -32,6 +32,9 @@ class UserModel:
     preferences: dict[str, str] = field(default_factory=dict)
     expertise: str = ""
     recurring_goals: list[str] = field(default_factory=list)
+    # Current provenance also keeps removal tombstones. Old JSON rows omit this
+    # field and receive its default during deserialization.
+    preference_provenance: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 @dataclass

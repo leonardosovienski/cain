@@ -1,5 +1,9 @@
 # Estado de execução — atualização de 2026-09-07
 
+**Versão funcional 0.2:** preferências explícitas e memória implementadas; CLI
+interativa, agentes com fontes e Ollama local configurados. Estado e evidência em
+[RELATORIO_V02.md](RELATORIO_V02.md). A aprovação metodológica permanece pendente.
+
 O usuário confirmou que ainda não havia repositório e autorizou sua criação.
 Informou a UFPR como instituição desejada; matrícula e orientador continuam não confirmados.
 

@@ -21,6 +21,8 @@ DEMO_CORPUS = {
 def build_cain(
     db_path: str | Path, llm: LLM | None = None,
     corpus: dict[str, str] | None = None,
+    *, source_paths: list[str | Path] | None = None, allow_public_urls: bool = False,
+    router=None,
 ) -> Cain:
     store = SQLiteIdentityStore(db_path)
     try:
@@ -29,10 +31,18 @@ def build_cain(
         memory.rebuild_from(store)
         provider = llm if llm is not None else FakeLLM()
         registry = AgentRegistry()
-        registry.register(SearchAgent(memory, DEMO_CORPUS if corpus is None else corpus))
+        if source_paths is not None or allow_public_urls:
+            from cain.search import AutoRetriever, LocalDocumentRetriever, PublicURLRetriever
+            retriever = AutoRetriever(
+                LocalDocumentRetriever(corpus=corpus, paths=source_paths or ()),
+                PublicURLRetriever() if allow_public_urls else None,
+            )
+            registry.register(SearchAgent(memory, retriever=retriever, llm=provider))
+        else:
+            registry.register(SearchAgent(memory, DEMO_CORPUS if corpus is None else corpus))
         registry.register(CodeAgent(provider))
         registry.register(SummaryAgent(provider))
-        return Cain(IdentityService(store, memory), registry, decision_log)
+        return Cain(IdentityService(store, memory), registry, decision_log, router=router)
     except Exception:
         store.close()
         if "decision_log" in locals():

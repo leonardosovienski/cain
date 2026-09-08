@@ -1,6 +1,14 @@
 """Replaceable counting boundary. Character counts are a smoke-only substitute."""
 
+from copy import deepcopy
 from typing import Protocol
+
+
+def adapter_options(provider) -> dict:
+    """Read actual adapter settings; absent fields are unavailable, never guessed defaults."""
+    return {key: getattr(provider, key, None) for key in (
+        "model", "temperature", "seed", "timeout", "num_ctx", "num_predict", "max_input_bytes",
+    )}
 
 
 class ContextCounter(Protocol):
@@ -46,12 +54,15 @@ class RecordingLLM:
             "counter_unit": self.counter.unit,
             "truncation_strategy": "keep_prefix" if self.maximum is not None else "none",
             "status": "started",
+            "provider_metadata": None,
         }
         self.calls.append(call)
         try:
             response = self.delegate.generate(prompt, context=context)
         except Exception as error:
-            call.update(status="failed", error_type=type(error).__name__, error=str(error))
+            call.update(status="failed", error_type=type(error).__name__, error=str(error),
+                        provider_metadata=deepcopy(getattr(self.delegate, "last_metadata", None)))
             raise
-        call.update(status="completed", response=response)
+        call.update(status="completed", response=response,
+                    provider_metadata=deepcopy(getattr(self.delegate, "last_metadata", None)))
         return response

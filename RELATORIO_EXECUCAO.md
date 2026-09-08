@@ -1,5 +1,7 @@
 # Cain — relatório da execução
 
+> Histórico da versão 0.1. A evolução funcional está em [RELATORIO_V02.md](RELATORIO_V02.md).
+
 **Data:** 07/09/2026. **Resultado:** repositório inicial implementado, executado e testado.
 Esta entrega concretiza as três frentes preparatórias do mestre; não conclui o TCC,
 não comprova a hipótese de pesquisa e não representa coleta científica.

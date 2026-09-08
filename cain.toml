@@ -1,0 +1,20 @@
+[llm]
+provider = "ollama"
+model = "qwen2.5:3b"
+base_url = "http://127.0.0.1:11434"
+temperature = 0.0
+seed = 42
+timeout = 120.0
+num_ctx = 8192
+num_predict = 768
+max_input_bytes = 6500
+
+[orchestration]
+llm_routing = true
+
+[storage]
+path = "data/cain.db"
+
+[search]
+paths = ["README.md", "docs/architecture", "docs/research"]
+allow_public_urls = true

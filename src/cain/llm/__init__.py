@@ -1,6 +1,6 @@
 """LLM boundary. FakeLLM is a deterministic test double, not a language model."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from hashlib import sha256
 import json
 from typing import Protocol, runtime_checkable
@@ -39,15 +39,30 @@ class OllamaLLM:
     base_url: str = "http://127.0.0.1:11434"
     temperature: float = 0.0
     seed: int = 42
-    timeout: float = 60.0
+    timeout: float = 120.0
+    num_ctx: int = 8192
+    num_predict: int = 768
+    max_input_bytes: int = 6500
+    last_metadata: dict = field(default_factory=dict, init=False)
 
     def generate(self, prompt: str, context: str = "") -> str:
+        self.last_metadata = {}
+        input_bytes = len((context + prompt).encode("utf-8"))
+        # Conservative transport bound, explicitly not the model's tokenizer.
+        # Keep all user instructions/profile intact; oversized input fails visibly.
+        effective_budget = min(self.max_input_bytes, self.num_ctx - self.num_predict - 256)
+        if input_bytes > effective_budget:
+            raise LLMError(
+                f"Pedido e contexto somam {input_bytes} bytes; limite configurado "
+                f"{effective_budget}. Reduza o texto ou ajuste o orçamento de contexto."
+            )
         body = {
             "model": self.model,
             "prompt": prompt,
             "system": context,
             "stream": False,
-            "options": {"temperature": self.temperature, "seed": self.seed},
+            "options": {"temperature": self.temperature, "seed": self.seed,
+                        "num_ctx": self.num_ctx, "num_predict": self.num_predict},
         }
         request = Request(
             self.base_url.rstrip("/") + "/api/generate",
@@ -64,4 +79,13 @@ class OllamaLLM:
             raise LLMError("Ollama não retornou o campo textual response.")
         if result.get("error") or result.get("done") is False:
             raise LLMError("Ollama retornou erro ou geração incompleta.")
+        if not result["response"].strip():
+            raise LLMError("Ollama retornou resposta vazia.")
+        self.last_metadata = {key: result.get(key) for key in (
+            "model", "done_reason", "prompt_eval_count", "eval_count",
+            "total_duration", "load_duration", "eval_duration",
+        )}
+        self.last_metadata.update(input_bytes=input_bytes, num_ctx=self.num_ctx,
+                                  max_input_bytes=self.max_input_bytes,
+                                  effective_input_byte_budget=effective_budget)
         return result["response"]

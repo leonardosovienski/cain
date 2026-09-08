@@ -1,0 +1,101 @@
+{
+  "mode": "functional",
+  "provider": "ollama",
+  "model": "qwen2.5:3b",
+  "base_url": "http://127.0.0.1:11434",
+  "temperature": 0.0,
+  "seed": 42,
+  "max_context_chars": 2048,
+  "run_id": "functional-v02-qwen-01",
+  "request_timeout": 120.0,
+  "started_at_utc": "2026-09-08T01:03:40.513059+00:00",
+  "design_sha256": {
+    "scenarios/scenarios.json": "27137605f238a9aba0d43e66a7831323fb752d59811318c4a9a06eb2188ee7e0",
+    "probes/probes.json": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0",
+    "rubrics/README.md": "d01204827c7b7e6c33da48d9fb02742030b2663f8cf3bc0a5818c9df677d9d55"
+  },
+  "formal_collection_allowed": false,
+  "formal_blockers": [
+    "ADR-0010 permanece Proposto; aprovação do protocolo não foi registrada.",
+    "Modelo de identidade dos ADRs 0006/0007 segue provisório; regras de preferências não o validam.",
+    "Tokenizador real do modelo e equivalência de contexto B/C não foram validados.",
+    "Sondas ainda não demonstraram validade de construto em piloto com LLM real e avaliação humana.",
+    "Separação de IDs não valida independência entre estilo e recuperação de preferências de formato.",
+    "C pode recuperar a sessão atual, B recebe só sessões anteriores; exposição precisa ser igualada.",
+    "Rubrica e ground truth são rascunhos; falta pré-registro em commit datado após revisão.",
+    "Pendências institucionais/éticas da seção 12.2 precisam de decisão documentada."
+  ],
+  "scientific_claims_allowed": false,
+  "context_counter": null,
+  "execution_order": "Six predetermined stages; each real stage uses a fresh process",
+  "blind_export": null,
+  "git_commit": "77439197c9252df16c923c8a270a6262318bbef5",
+  "git_dirty": true,
+  "git_status": "M .gitignore\n M evaluation/rubrics/README.md\n M evaluation/scenarios/scenarios.json\n M pyproject.toml\n M src/cain/__init__.py\n M src/cain/agents/__init__.py\n M src/cain/api.py\n M src/cain/cli.py\n M src/cain/common/__init__.py\n M src/cain/evaluation/__init__.py\n M src/cain/evaluation/__main__.py\n M src/cain/evaluation/harness.py\n M src/cain/evaluation/metrics.py\n M src/cain/identity/__init__.py\n M src/cain/llm/__init__.py\n M src/cain/orchestrator/__init__.py\n M src/cain/persistence/__init__.py\n M src/cain/persistence/adapters/sqlite.py\n M src/cain/runtime.py\n M tests/api/test_api.py\n M tests/evaluation/test_harness.py\n M tests/integration/test_runtime.py\n M tests/unit/test_llm.py\n M tests/unit/test_routing_identity.py\n?? INICIAR_CAIN.cmd\n?? cain.toml\n?? docs/architecture/adaptacao-v02.md\n?? docs/research/avaliacao-v02.md\n?? evaluation/results/functional-v02-qwen-01/\n?? scripts/\n?? src/cain/evaluation/functional.py\n?? src/cain/evaluation/functional_worker.py\n?? src/cain/identity/explicit.py\n?? src/cain/orchestrator/routing.py\n?? src/cain/search/\n?? src/cain/settings.py\n?? tests/cli/test_settings.py\n?? tests/evaluation/test_functional.py\n?? tests/integration/test_preference_persistence.py\n?? tests/unit/test_agent_evidence_routing.py\n?? tests/unit/test_explicit_preferences.py\n?? tests/unit/test_search_providers.py",
+  "source_sha256": {
+    "src/cain/__init__.py": "0c572eb6c2c78a348352d93067b5b36b95dd55587d52f59d6514e315e40e5553",
+    "src/cain/__main__.py": "79e82eeb063d6eaf04c9f38a3c885b88d3decdc3db5a8229b5c261d0813cc8de",
+    "src/cain/agents/__init__.py": "a9c99ef963e6b75cc6f3d4ec344b026a7cb65095dacda4acb32c597ca74ecfb5",
+    "src/cain/api.py": "be095a20747510b778e84d32f9859700c3c0d13bea43de3060c8419a64d1a7fa",
+    "src/cain/cli.py": "f8364a710e6e448a0933ceff8ee05f9a2b11b68083fe52e1400840c967e2809d",
+    "src/cain/common/__init__.py": "8c09df2099e7fbca49cbc39017e690d13dc342d5ba4d27bb02cccf376309e486",
+    "src/cain/common/text.py": "2f90b40232797f5091308b0cf1afdb83c089467b6b9ec798e690129f5bc32eb9",
+    "src/cain/evaluation/__init__.py": "baf6aa1336006a260deba0b472e848abbad46e747e6b85c4d9d6c0736701628b",
+    "src/cain/evaluation/__main__.py": "8074ee598655960a50bdc58d7d9bd923d5583bde6bbdc47ece4860b47ac29d09",
+    "src/cain/evaluation/budget.py": "298358403e28d1c1ffd2bf562fbd23f31438f11e5d61486a1b1ef04b147eb138",
+    "src/cain/evaluation/functional.py": "5db98f63ba74909a74bdee00b99563c953f3fdd01be901d8fa41c82392f4ca73",
+    "src/cain/evaluation/functional_worker.py": "fc61bff5d1aeda136aea77ddb907f79228d727e2161af6bb725e2d0c040c1bfc",
+    "src/cain/evaluation/harness.py": "31e5bfcccccd70cdaba0bcea7936e6f78cd6cd1dd3dd5346ee1da844975f1da4",
+    "src/cain/evaluation/metrics.py": "7e8377d633a0b586fdd3f068285873283748940a4d908a8c83fef1e6ad8feb9c",
+    "src/cain/identity/__init__.py": "c0e3377e318e328c72230c07b137a191895df4236d24b2645baa569ed3d654cd",
+    "src/cain/identity/explicit.py": "6d97e984c38df803d8f8d323e9a94ed4e54efb1e2973e6450246894a358426b8",
+    "src/cain/llm/__init__.py": "ef726465e5af5516df09caa9f521c98f946fbf0c5cd7cfd0aac4ff657f5dddcd",
+    "src/cain/orchestrator/__init__.py": "03696630c5eeeba31134a829517067fc6a4b4ccc2e636ae0457ce313ce6f18fc",
+    "src/cain/orchestrator/routing.py": "7181df216590b43041f3d1101242f9c5c761bbec1c034a94f98237ccd4c42352",
+    "src/cain/persistence/__init__.py": "e64aae10a17808c2bf744caf97894d6b0f0a1767a8f748bfef7a8d3ee4dbfccf",
+    "src/cain/persistence/adapters/__init__.py": "6de3186b0faba6302c46dbb33ed0f9616ea0c8692e166ab976a934a517bc5468",
+    "src/cain/persistence/adapters/lexical.py": "ff8e0cce8c68bf1967d6b6779638fb5d0b4ff7affdca57f30c646848a3331c9e",
+    "src/cain/persistence/adapters/sqlite.py": "3e32d52dd46cb27025a6a368adce50ce40a6917d8d556c081581dbd9f5ddad79",
+    "src/cain/runtime.py": "70a8230c798781a269ac1453a466b63891891ab26e826ac6a72a4701cc62f199",
+    "src/cain/search/__init__.py": "3c5eb66c2cc00daf62e7e9237c214eeeabaa2176fa097d0e28f2810febe31e04",
+    "src/cain/settings.py": "e1bbf6bece555603ea9e4a5726c00e3a3be0289c8ffa05213e4894fea909da20"
+  },
+  "source_tree_sha256": "dff13ba7df66c67530c22bc8d143aae833e63e0408124950aa506111f9abe2ba",
+  "execution_kind": "subprocess_per_stage",
+  "context_budget_applied": false,
+  "functional_review": "Identified responses for inspection; no blind human ratings collected",
+  "generation_controls": {
+    "temperature_requested": 0.0,
+    "seed_requested": 42,
+    "determinism_guaranteed": false
+  },
+  "functional_plan_sha256": "8a6b92188ba4629928b0afa99eb5c3bfd74a824df787e57aa7e0503d0cdd7a23",
+  "model_observation": {
+    "model_requested": "qwen2.5:3b",
+    "model_digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+    "backend_version": "0.33.3",
+    "observed_model": {
+      "name": "qwen2.5:3b",
+      "model": "qwen2.5:3b",
+      "modified_at": "2026-09-07T22:02:56.336006-03:00",
+      "size": 1929912432,
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen2",
+        "families": [
+          "qwen2"
+        ],
+        "parameter_size": "3.1B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 32768,
+        "embedding_length": 2048
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  }
+}

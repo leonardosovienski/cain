@@ -14,7 +14,7 @@ def test_rule_priority_and_explicit_intent_are_auditable(tmp_path):
         assert "explicit_intent:codigo" in list(cain.decision_log.export("explicit"))[0].reason
 
 
-def test_adaptation_is_explicit_noop_and_signal_is_retained(tmp_path):
+def test_unattributed_transcript_does_not_train_profile_and_signal_is_retained(tmp_path):
     with build_cain(tmp_path / "cain.db") as cain:
         before = asdict(cain.identity.get("alice"))
         cain.identity.update("alice", Signal("Prefiro respostas extensas", kind="feedback"))

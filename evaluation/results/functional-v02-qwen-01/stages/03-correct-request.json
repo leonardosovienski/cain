@@ -1,0 +1,27 @@
+{
+  "config": {
+    "mode": "functional",
+    "provider": "ollama",
+    "model": "qwen2.5:3b",
+    "base_url": "http://127.0.0.1:11434",
+    "temperature": 0.0,
+    "seed": 42,
+    "max_context_chars": 2048,
+    "run_id": "functional-v02-qwen-01",
+    "request_timeout": 120.0
+  },
+  "run_id": "functional-v02-qwen-01",
+  "stage": {
+    "id": "03-correct",
+    "user_id": "functional-v02-qwen-01-alice",
+    "session_id": "session-3",
+    "intent": "resumo",
+    "expected_agent": "resumo",
+    "expected_format": "paragraph",
+    "prompt": "Agora prefiro respostas em parágrafo. Confirme brevemente a mudança."
+  },
+  "db_path": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\functional-v02-qwen-01\\cain.sqlite3",
+  "corpus": {
+    "guia-funcional-cain.txt": "Guia funcional sintético do Cain. O código do procedimento Boreal é BOREAL-731. Para esse procedimento, o prazo estabelecido no corpus é exatamente 7 dias. Estes são dados artificiais para verificar recuperação e atribuição de fonte."
+  }
+}

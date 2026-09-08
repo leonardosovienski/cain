@@ -1,0 +1,376 @@
+{
+  "run_id": "functional-v02-qwen-01",
+  "mode": "functional",
+  "provider": "ollama",
+  "real_llm": true,
+  "scientific_result": false,
+  "planned_stages": 6,
+  "recorded_stages": 6,
+  "functional_success": true,
+  "checks": [
+    {
+      "id": "01-declare:completed",
+      "passed": true,
+      "reason": "Runtime completed the planned request",
+      "stage_ids": [
+        "01-declare"
+      ]
+    },
+    {
+      "id": "01-declare:route",
+      "passed": true,
+      "reason": "Compare observed agent with ground truth written in the plan",
+      "stage_ids": [
+        "01-declare"
+      ]
+    },
+    {
+      "id": "01-declare:format",
+      "passed": true,
+      "reason": "Compare persisted format with the explicit preference expected at this stage",
+      "stage_ids": [
+        "01-declare"
+      ]
+    },
+    {
+      "id": "01-declare:llm_generation",
+      "passed": true,
+      "reason": "At least one observed generation call completed; quality needs human review",
+      "stage_ids": [
+        "01-declare"
+      ]
+    },
+    {
+      "id": "01-declare:context_preference",
+      "passed": true,
+      "reason": "Current persisted preference is present in the actual LLM context",
+      "stage_ids": [
+        "01-declare"
+      ]
+    },
+    {
+      "id": "02-reopen-code:completed",
+      "passed": true,
+      "reason": "Runtime completed the planned request",
+      "stage_ids": [
+        "02-reopen-code"
+      ]
+    },
+    {
+      "id": "02-reopen-code:route",
+      "passed": true,
+      "reason": "Compare observed agent with ground truth written in the plan",
+      "stage_ids": [
+        "02-reopen-code"
+      ]
+    },
+    {
+      "id": "02-reopen-code:format",
+      "passed": true,
+      "reason": "Compare persisted format with the explicit preference expected at this stage",
+      "stage_ids": [
+        "02-reopen-code"
+      ]
+    },
+    {
+      "id": "02-reopen-code:llm_generation",
+      "passed": true,
+      "reason": "At least one observed generation call completed; quality needs human review",
+      "stage_ids": [
+        "02-reopen-code"
+      ]
+    },
+    {
+      "id": "02-reopen-code:context_preference",
+      "passed": true,
+      "reason": "Current persisted preference is present in the actual LLM context",
+      "stage_ids": [
+        "02-reopen-code"
+      ]
+    },
+    {
+      "id": "03-correct:completed",
+      "passed": true,
+      "reason": "Runtime completed the planned request",
+      "stage_ids": [
+        "03-correct"
+      ]
+    },
+    {
+      "id": "03-correct:route",
+      "passed": true,
+      "reason": "Compare observed agent with ground truth written in the plan",
+      "stage_ids": [
+        "03-correct"
+      ]
+    },
+    {
+      "id": "03-correct:format",
+      "passed": true,
+      "reason": "Compare persisted format with the explicit preference expected at this stage",
+      "stage_ids": [
+        "03-correct"
+      ]
+    },
+    {
+      "id": "03-correct:llm_generation",
+      "passed": true,
+      "reason": "At least one observed generation call completed; quality needs human review",
+      "stage_ids": [
+        "03-correct"
+      ]
+    },
+    {
+      "id": "03-correct:context_preference",
+      "passed": true,
+      "reason": "Current persisted preference is present in the actual LLM context",
+      "stage_ids": [
+        "03-correct"
+      ]
+    },
+    {
+      "id": "04-reopen-summary:completed",
+      "passed": true,
+      "reason": "Runtime completed the planned request",
+      "stage_ids": [
+        "04-reopen-summary"
+      ]
+    },
+    {
+      "id": "04-reopen-summary:route",
+      "passed": true,
+      "reason": "Compare observed agent with ground truth written in the plan",
+      "stage_ids": [
+        "04-reopen-summary"
+      ]
+    },
+    {
+      "id": "04-reopen-summary:format",
+      "passed": true,
+      "reason": "Compare persisted format with the explicit preference expected at this stage",
+      "stage_ids": [
+        "04-reopen-summary"
+      ]
+    },
+    {
+      "id": "04-reopen-summary:llm_generation",
+      "passed": true,
+      "reason": "At least one observed generation call completed; quality needs human review",
+      "stage_ids": [
+        "04-reopen-summary"
+      ]
+    },
+    {
+      "id": "04-reopen-summary:context_preference",
+      "passed": true,
+      "reason": "Current persisted preference is present in the actual LLM context",
+      "stage_ids": [
+        "04-reopen-summary"
+      ]
+    },
+    {
+      "id": "05-other-user:completed",
+      "passed": true,
+      "reason": "Runtime completed the planned request",
+      "stage_ids": [
+        "05-other-user"
+      ]
+    },
+    {
+      "id": "05-other-user:route",
+      "passed": true,
+      "reason": "Compare observed agent with ground truth written in the plan",
+      "stage_ids": [
+        "05-other-user"
+      ]
+    },
+    {
+      "id": "05-other-user:format",
+      "passed": true,
+      "reason": "Compare persisted format with the explicit preference expected at this stage",
+      "stage_ids": [
+        "05-other-user"
+      ]
+    },
+    {
+      "id": "05-other-user:llm_generation",
+      "passed": true,
+      "reason": "At least one observed generation call completed; quality needs human review",
+      "stage_ids": [
+        "05-other-user"
+      ]
+    },
+    {
+      "id": "06-search-source:completed",
+      "passed": true,
+      "reason": "Runtime completed the planned request",
+      "stage_ids": [
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "06-search-source:route",
+      "passed": true,
+      "reason": "Compare observed agent with ground truth written in the plan",
+      "stage_ids": [
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "06-search-source:format",
+      "passed": true,
+      "reason": "Compare persisted format with the explicit preference expected at this stage",
+      "stage_ids": [
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "06-search-source:llm_generation",
+      "passed": true,
+      "reason": "At least one observed generation call completed; quality needs human review",
+      "stage_ids": [
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "06-search-source:context_preference",
+      "passed": true,
+      "reason": "Current persisted preference is present in the actual LLM context",
+      "stage_ids": [
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "02-reopen-code:persisted_before_input",
+      "passed": true,
+      "reason": "Preference was loaded from the database before the new request was observed",
+      "stage_ids": [
+        "02-reopen-code"
+      ]
+    },
+    {
+      "id": "04-reopen-summary:persisted_before_input",
+      "passed": true,
+      "reason": "Preference was loaded from the database before the new request was observed",
+      "stage_ids": [
+        "04-reopen-summary"
+      ]
+    },
+    {
+      "id": "personality_stable",
+      "passed": true,
+      "reason": "Compare immutable personality values across all observed user states",
+      "stage_ids": [
+        "01-declare",
+        "02-reopen-code",
+        "03-correct",
+        "04-reopen-summary",
+        "05-other-user",
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "other_user_isolated",
+      "passed": true,
+      "reason": "Other user has no preferences and actual injected context has no primary-user ID",
+      "stage_ids": [
+        "05-other-user"
+      ]
+    },
+    {
+      "id": "search_source_recorded",
+      "passed": true,
+      "reason": "Response identifies the supplied corpus source and LLM received its actual evidence; this check does not establish faithful summarization",
+      "stage_ids": [
+        "06-search-source"
+      ]
+    },
+    {
+      "id": "process_restart",
+      "passed": true,
+      "reason": "Each real stage executed in a distinct subprocess",
+      "stage_ids": [
+        "01-declare",
+        "02-reopen-code",
+        "03-correct",
+        "04-reopen-summary",
+        "05-other-user",
+        "06-search-source"
+      ]
+    }
+  ],
+  "delegation": {
+    "labels": [
+      "busca",
+      "codigo",
+      "resumo"
+    ],
+    "rows": "expected",
+    "columns": "observed",
+    "matrix": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        4
+      ]
+    ],
+    "n": 6,
+    "accuracy": 1.0,
+    "unknown_predictions": []
+  },
+  "preference_observations": [
+    {
+      "stage_id": "01-declare",
+      "format_before": null,
+      "format_after": "steps"
+    },
+    {
+      "stage_id": "02-reopen-code",
+      "format_before": "steps",
+      "format_after": "steps"
+    },
+    {
+      "stage_id": "03-correct",
+      "format_before": "steps",
+      "format_after": "paragraph"
+    },
+    {
+      "stage_id": "04-reopen-summary",
+      "format_before": "paragraph",
+      "format_after": "paragraph"
+    },
+    {
+      "stage_id": "05-other-user",
+      "format_before": null,
+      "format_after": null
+    },
+    {
+      "stage_id": "06-search-source",
+      "format_before": "paragraph",
+      "format_after": "paragraph"
+    }
+  ],
+  "profile_convergence": {
+    "value": null,
+    "reason": "The declared target intentionally changes from steps to paragraph; no single-target convergence is computed across the correction. Per-stage stored values are compared mechanically."
+  },
+  "human_response_quality": {
+    "value": null,
+    "reason": "No independent human ratings; inspect the real responses"
+  },
+  "construct_validity": {
+    "value": null,
+    "reason": "Functional persistence checks do not validate personality/adaptation constructs"
+  },
+  "formal_collection_allowed": false
+}
