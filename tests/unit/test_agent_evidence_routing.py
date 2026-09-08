@@ -67,6 +67,44 @@ def test_explicit_intent_does_not_call_optional_classifier():
     assert llm.calls == []
 
 
+@pytest.mark.parametrize("payload,expected", [
+    ("Como o Cain guarda minhas preferências?", "busca"),
+    ("Quais preferências o Cain permite alterar?", "busca"),
+    ("Onde o projeto Atlas persiste sessões?", "busca"),
+    ("Qual política de retenção o manual descreve?", "busca"),
+    ("Onde o Python armazena pacotes?", "busca"),
+    ("Como criar uma função Python para ordenar números?", "codigo"),
+    ("Como posso corrigir este código Python?", "codigo"),
+])
+def test_explicit_subject_questions_route_by_rule_without_classifier(payload, expected):
+    llm = RecordingLLM()
+    route = RuleRouter(llm).route(payload, None, registry())
+    assert route.selected_agent == expected
+    assert route.reason.startswith("question_rule:")
+    assert llm.calls == []
+
+
+@pytest.mark.parametrize("payload", [
+    "Como isso funciona?", "Onde fica?", "Qual é a diferença?", "O que devo fazer?",
+    'Como "busque Python e gere código"?',
+    "Como o projeto persiste sessões? Gere um script Python.",
+    "Quais dados o manual descreve e depois gere código Python",
+])
+def test_vague_or_conflicting_questions_require_clarification_without_classifier(payload):
+    llm = RecordingLLM()
+    with pytest.raises(ClarificationRequired):
+        RuleRouter(llm).route(payload, None, registry())
+    assert llm.calls == []
+
+
+def test_quoted_informational_question_remains_document_content():
+    with pytest.raises(ClarificationRequired):
+        RuleRouter().route('O documento diz: "Como o projeto persiste sessões?"', None, registry())
+    assert RuleRouter().route(
+        'Resuma: "Como criar uma função Python?"', None, registry(),
+    ).selected_agent == "resumo"
+
+
 @pytest.mark.parametrize("payload", [
     "Prefiro respostas curtas",
     "Agora prefiro um parágrafo",

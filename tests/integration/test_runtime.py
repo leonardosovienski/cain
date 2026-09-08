@@ -3,6 +3,7 @@ from dataclasses import asdict
 import pytest
 
 from cain.common import CainRunError
+from cain.orchestrator import RuleRouter
 from cain.runtime import build_cain
 
 
@@ -154,3 +155,28 @@ def test_quoted_preferences_do_not_learn_or_trigger_confirmation(tmp_path):
         assert result.selected_agent == "resumo"
         assert len(llm.calls) == 1
         assert cain.identity.get("alice").user_model.preferences == {}
+
+
+def test_informational_question_routes_then_retrieves_without_imperative(tmp_path):
+    import json
+
+    class EvidenceSearchLLM(RecordingLLM):
+        def generate(self, prompt, context=""):
+            self.calls.append((prompt, context))
+            assert prompt == "Como o Cain guarda minhas preferências?"
+            evidence = json.loads(context.split("EVIDÊNCIAS (JSON):\n", 1)[1])
+            assert "SQLite" in evidence[0]["text"]
+            return "O Cain guarda as preferências em SQLite."
+
+    source = tmp_path / "adaptacao.md"
+    source.write_text("O Cain guarda preferências explícitas no estado persistido em SQLite.", encoding="utf-8")
+    llm = EvidenceSearchLLM()
+    with build_cain(tmp_path / "cain.db", llm, source_paths=[source], router=RuleRouter(llm)) as cain:
+        result = cain.run("alice", "s1", "Como o Cain guarda minhas preferências?")
+        assert result.selected_agent == "busca"
+        assert "SQLite" in result.response and str(source.resolve()) in result.response
+        assert len(result.steps) == 8
+        assert len(llm.calls) == 1
+        assert cain.identity.get("alice").user_model.preferences == {}
+        logs = list(cain.decision_log.export(result.run_id))
+        assert logs[0].reason.startswith("question_rule:busca:")

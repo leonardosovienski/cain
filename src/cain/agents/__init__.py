@@ -70,7 +70,9 @@ class SearchAgent:
     def describe(self) -> Capabilities:
         return Capabilities(
             "busca", ("busca", "search"),
-            "Recupera fontes locais ou URLs explícitas configuradas; responde com fontes",
+            "Responde perguntas informacionais consultando fontes locais ou URLs explícitas "
+            "configuradas. Inclui perguntas sobre fatos, funcionamento e documentação, "
+            "mesmo sem verbos como buscar ou pesquisar; responde com fontes",
         )
 
     def handle(self, message: Message) -> str:

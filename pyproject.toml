@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cain-research"
 version = "0.2.0"
-description = "Esqueleto de pesquisa de identidade persistente e orquestração multiagente"
+description = "Assistente experimental com identidade persistente e agentes locais"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
