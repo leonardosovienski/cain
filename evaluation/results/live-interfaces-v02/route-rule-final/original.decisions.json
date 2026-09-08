@@ -1,0 +1,76 @@
+[
+  {
+    "decision_id": "dc3ca92f-a9d4-4395-8c07-176272c405a8",
+    "run_id": "informational-router-rule-original",
+    "user_id": "informational-router-rule-original",
+    "session_id": "session-234bdb06af56",
+    "selected_agent": "busca",
+    "intent": "busca",
+    "reason": "question_rule:busca:explicit_subject; prototype_ADR-0008",
+    "status": "mediated",
+    "steps": [
+      "1:session_registered",
+      "2:user_observed_identity_loaded",
+      "3:agent_selected",
+      "4:delegated",
+      "5:agent_processed",
+      "6:mediated_and_logged"
+    ],
+    "created_at": "2026-09-08T01:33:11.280960+00:00",
+    "response_hash": "f261990cc4c9a348bf9704725a6d4a76b7bd98d64eff60cfa9aa320f1a03a87b",
+    "error": null,
+    "metadata": {
+      "adaptation": "explicit_preferences; provisional_ADR-0007",
+      "identity_revision": 0,
+      "retrieval_budget": {
+        "candidate_count": 3,
+        "evidence_truncated": true,
+        "included_count": 3,
+        "included_text_chars": 2390,
+        "omitted_count": 0,
+        "serialized_evidence_bytes": 3186,
+        "text_budget_chars": 2400
+      },
+      "retrieval_sources": [
+        {
+          "citation": "S1",
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture\\adaptacao-v02.md"
+        },
+        {
+          "citation": "S2",
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture\\adaptacao-v02.md"
+        },
+        {
+          "citation": "S3",
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture\\adaptacao-v02.md"
+        }
+      ]
+    }
+  },
+  {
+    "decision_id": "e125bc2d-a8a3-4893-8c62-f64443929260",
+    "run_id": "informational-router-rule-original",
+    "user_id": "informational-router-rule-original",
+    "session_id": "session-234bdb06af56",
+    "selected_agent": "busca",
+    "intent": "busca",
+    "reason": "question_rule:busca:explicit_subject; prototype_ADR-0008",
+    "status": "completed",
+    "steps": [
+      "1:session_registered",
+      "2:user_observed_identity_loaded",
+      "3:agent_selected",
+      "4:delegated",
+      "5:agent_processed",
+      "6:mediated_and_logged",
+      "7:interaction_persisted",
+      "8:response_ready"
+    ],
+    "created_at": "2026-09-08T01:33:11.285028+00:00",
+    "response_hash": "f261990cc4c9a348bf9704725a6d4a76b7bd98d64eff60cfa9aa320f1a03a87b",
+    "error": null,
+    "metadata": {
+      "parent_decision_id": "dc3ca92f-a9d4-4395-8c07-176272c405a8"
+    }
+  }
+]

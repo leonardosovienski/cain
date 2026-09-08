@@ -7,9 +7,10 @@ interativa, agentes com fontes e Ollama local configurados. Estado e evidência 
 O usuário confirmou que ainda não havia repositório e autorizou sua criação.
 Informou a UFPR como instituição desejada; matrícula e orientador continuam não confirmados.
 
-Esta entrega implementa o esqueleto local e o instrumento técnico de avaliação,
-com notas de literatura e auditoria. Consulte [RELATORIO_EXECUCAO.md](RELATORIO_EXECUCAO.md)
-para evidência de testes e limites. O índice válido dos arquivos disponíveis é
+Esta entrega implementa o assistente local e o instrumento técnico de avaliação,
+com notas de literatura e auditoria. Consulte [RELATORIO_V02.md](RELATORIO_V02.md)
+para os testes e limites atuais; [RELATORIO_EXECUCAO.md](RELATORIO_EXECUCAO.md) preserva
+o registro da versão inicial. O índice válido dos arquivos disponíveis é
 [docs/adr/README.md](docs/adr/README.md); ADRs 0001–0008 não vieram no ZIP.
 
 As afirmações bibliográficas abaixo pertencem ao documento recebido e devem ser

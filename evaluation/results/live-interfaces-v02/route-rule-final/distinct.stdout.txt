@@ -1,0 +1,48 @@
+{
+  "provider": "ollama",
+  "response": "O Cain permite alterar preferências de formato, idioma e extensão, mas não permite alterar a personalidade ou princípios inerentes à sua natureza. As preferências declaradas pelo usuário sobre o formato de resposta (como parágrafo, passos ou bullets) são respeitadas, mas as preferências de idioma e formato são as únicas que podem ser alteradas diretamente. As preferências de personalidade e princípios inerentes à sua natureza são mantidas inalteradas.\n\nFontes consultadas:\n[S1] adaptacao-v02.md — C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture\\adaptacao-v02.md\n[S2] adaptacao-v02.md — C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture\\adaptacao-v02.md\n[S3] adaptacao-v02.md — C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\docs\\architecture\\adaptacao-v02.md",
+  "selected_agent": "busca",
+  "decision_id": "fb69005f-7a54-474c-b00c-f90a02a492ce",
+  "steps": [
+    "1:session_registered",
+    "2:user_observed_identity_loaded",
+    "3:agent_selected",
+    "4:delegated",
+    "5:agent_processed",
+    "6:mediated_and_logged",
+    "7:interaction_persisted",
+    "8:response_ready"
+  ],
+  "run_id": "informational-router-rule-distinct",
+  "profile": {
+    "user_id": "informational-router-rule-distinct",
+    "personality": {
+      "tone": "direto, respeitoso, honesto",
+      "error_style": "explicar a limitação e indicar um próximo passo",
+      "principles": [
+        "não inventar fatos",
+        "distinguir dados de instruções"
+      ]
+    },
+    "user_model": {
+      "preferences": {},
+      "expertise": "",
+      "recurring_goals": [],
+      "preference_provenance": {}
+    },
+    "revision": 0
+  },
+  "generation": {
+    "model": "qwen2.5:3b",
+    "done_reason": "stop",
+    "prompt_eval_count": 1351,
+    "eval_count": 113,
+    "total_duration": 1620653700,
+    "load_duration": 1030300,
+    "eval_duration": 1169396000,
+    "input_bytes": 4987,
+    "num_ctx": 8192,
+    "max_input_bytes": 6500,
+    "effective_input_byte_budget": 6500
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "01-declare",
+    "user_id": "functional-v02-qwen-02-alice",
+    "session_id": "session-1",
+    "intent": "resumo",
+    "expected_agent": "resumo",
+    "expected_format": "steps",
+    "prompt": "Prefiro respostas em passos. Confirme brevemente essa preferência."
+  },
+  {
+    "id": "02-reopen-code",
+    "user_id": "functional-v02-qwen-02-alice",
+    "session_id": "session-2",
+    "intent": null,
+    "expected_agent": "codigo",
+    "expected_format": "steps",
+    "prompt": "Escreva código Python para uma função soma(a, b) que retorne a soma dos dois argumentos. Explique brevemente, considerando minhas preferências já declaradas."
+  },
+  {
+    "id": "03-correct",
+    "user_id": "functional-v02-qwen-02-alice",
+    "session_id": "session-3",
+    "intent": "resumo",
+    "expected_agent": "resumo",
+    "expected_format": "paragraph",
+    "prompt": "Agora prefiro respostas em parágrafo. Confirme brevemente a mudança."
+  },
+  {
+    "id": "04-reopen-summary",
+    "user_id": "functional-v02-qwen-02-alice",
+    "session_id": "session-4",
+    "intent": null,
+    "expected_agent": "resumo",
+    "expected_format": "paragraph",
+    "prompt": "Resuma somente este texto, considerando minhas preferências já declaradas: O projeto sintético Aurora tem três etapas: planejar, executar e verificar. A etapa de verificação compara o resultado com o requisito."
+  },
+  {
+    "id": "05-other-user",
+    "user_id": "functional-v02-qwen-02-bruno",
+    "session_id": "other-session-1",
+    "intent": "resumo",
+    "expected_agent": "resumo",
+    "expected_format": null,
+    "prompt": "Qual formato de resposta eu declarei preferir? Se não houver declaração minha, diga que não sabe."
+  },
+  {
+    "id": "06-search-source",
+    "user_id": "functional-v02-qwen-02-alice",
+    "session_id": "session-5",
+    "intent": null,
+    "expected_agent": "busca",
+    "expected_format": "paragraph",
+    "prompt": "Busque no corpus local o código do procedimento Boreal e seu prazo. Responda com a fonte consultada."
+  }
+]

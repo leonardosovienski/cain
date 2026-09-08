@@ -1,0 +1,1 @@
+Cain: Pedido falhou sem retry: Não identifiquei uma única tarefa. Diga se deseja buscar informações, gerar/analisar código ou resumir um texto; ou informe a intenção explicitamente.

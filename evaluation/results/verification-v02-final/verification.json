@@ -1,0 +1,88 @@
+{
+  "checked_at_utc": "2026-09-08T01:34:35.715281+00:00",
+  "git_commit": "8cf1947bb114ff242d9051e39ac9fc4461479a0a",
+  "python": "3.12.10",
+  "platform": "win32",
+  "checks": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "output": "check-1.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "check-2.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "cain",
+        "doctor"
+      ],
+      "exit_code": 0,
+      "output": "check-3.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "cain",
+        "run",
+        "Prefiro respostas em passos",
+        "--provider",
+        "fake",
+        "--db",
+        "${WORKSPACE}\\work\\pure-preference-e7e35a7b7d75479e902702bd5b668ddd.db",
+        "--no-web"
+      ],
+      "exit_code": 0,
+      "output": "check-4.txt"
+    }
+  ],
+  "ollama_version": {
+    "version": "0.33.3"
+  },
+  "models_observed": {
+    "models": [
+      {
+        "name": "qwen2.5:3b",
+        "model": "qwen2.5:3b",
+        "modified_at": "2026-09-07T22:02:56.336006-03:00",
+        "size": 1929912432,
+        "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "3.1B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 2048
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      }
+    ]
+  },
+  "binary_release": "https://github.com/ollama/ollama/releases/tag/v0.33.3",
+  "download_sha256_verified": "52cb36a62e7e501f61514f60212dec7117b6c098811357585e02fffe32d2fcd7",
+  "note": "Checks use fixtures and a live availability read. Real generated responses are in functional-v02 runs."
+}

@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-09-08T01:32:16.226045+00:00",
+  "command": [
+    "powershell.exe",
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "Bypass",
+    "-File",
+    "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\scripts\\start-cain.ps1",
+    "-Mode",
+    "chat",
+    "-UserId",
+    "verification-launcher"
+  ],
+  "stdin": "Prefiro respostas curtas.\n/perfil\n/esquecer verbosity\n/perfil\n/sair\n",
+  "returncode": 0,
+  "checks": {
+    "exit_zero": true,
+    "learned_short": true,
+    "removed_current": true,
+    "audit_retention_disclosed": true
+  },
+  "note": "Real launcher and SQLite; pure preferences are confirmed deterministically without model inference."
+}

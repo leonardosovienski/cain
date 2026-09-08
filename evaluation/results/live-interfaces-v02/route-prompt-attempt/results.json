@@ -1,0 +1,148 @@
+{
+  "recorded_at": "2026-09-08T01:28:45.393178+00:00",
+  "real_llm": true,
+  "scientific_result": false,
+  "cases": [
+    {
+      "case": "original",
+      "question": "Como o Cain guarda minhas preferências?",
+      "argv": [
+        "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\venv\\Scripts\\python.exe",
+        "-X",
+        "utf8",
+        "-m",
+        "cain",
+        "run",
+        "Como o Cain guarda minhas preferências?",
+        "--user",
+        "informational-router-original",
+        "--db",
+        "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\informational-router-verification-v02\\original.db",
+        "--run-id",
+        "informational-router-original",
+        "--source",
+        "docs/architecture/adaptacao-v02.md"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Cain: Pedido falhou sem retry: Especifique uma tarefa: busca, geração/análise de código ou resumo de texto.\n",
+      "decisions": [
+        {
+          "decision_id": "1d9d9790-5cec-4608-9d7b-f3f0ac9936ed",
+          "run_id": "informational-router-original",
+          "user_id": "informational-router-original",
+          "session_id": "session-5ee9187c95df",
+          "selected_agent": "",
+          "intent": "",
+          "reason": "routing_not_reached",
+          "status": "failed",
+          "steps": [
+            "1:session_registered",
+            "2:user_observed_identity_loaded"
+          ],
+          "created_at": "2026-09-08T01:28:44.076900+00:00",
+          "response_hash": "",
+          "error": "ClarificationRequired: Especifique uma tarefa: busca, geração/análise de código ou resumo de texto.",
+          "metadata": {
+            "parent_decision_id": "0db3e83f-f33b-4796-bded-df7b53424441",
+            "retry_count": 0
+          }
+        }
+      ]
+    },
+    {
+      "case": "distinct",
+      "question": "Quais preferências o Cain permite alterar?",
+      "argv": [
+        "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\venv\\Scripts\\python.exe",
+        "-X",
+        "utf8",
+        "-m",
+        "cain",
+        "run",
+        "Quais preferências o Cain permite alterar?",
+        "--user",
+        "informational-router-distinct",
+        "--db",
+        "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\informational-router-verification-v02\\distinct.db",
+        "--run-id",
+        "informational-router-distinct",
+        "--source",
+        "docs/architecture/adaptacao-v02.md"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Cain: Pedido falhou sem retry: Especifique uma tarefa: busca, geração/análise de código ou resumo de texto.\n",
+      "decisions": [
+        {
+          "decision_id": "3ced8cdb-772d-4542-b8de-97e45c17a7c0",
+          "run_id": "informational-router-distinct",
+          "user_id": "informational-router-distinct",
+          "session_id": "session-f00c8607fcee",
+          "selected_agent": "",
+          "intent": "",
+          "reason": "routing_not_reached",
+          "status": "failed",
+          "steps": [
+            "1:session_registered",
+            "2:user_observed_identity_loaded"
+          ],
+          "created_at": "2026-09-08T01:28:44.791091+00:00",
+          "response_hash": "",
+          "error": "ClarificationRequired: Especifique uma tarefa: busca, geração/análise de código ou resumo de texto.",
+          "metadata": {
+            "parent_decision_id": "d8119fe3-3980-4857-bbbd-031de88f31cf",
+            "retry_count": 0
+          }
+        }
+      ]
+    },
+    {
+      "case": "vague",
+      "question": "Como isso funciona?",
+      "argv": [
+        "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\venv\\Scripts\\python.exe",
+        "-X",
+        "utf8",
+        "-m",
+        "cain",
+        "run",
+        "Como isso funciona?",
+        "--user",
+        "informational-router-vague",
+        "--db",
+        "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\informational-router-verification-v02\\vague.db",
+        "--run-id",
+        "informational-router-vague",
+        "--source",
+        "docs/architecture/adaptacao-v02.md"
+      ],
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "Cain: Pedido falhou sem retry: Especifique uma tarefa: busca, geração/análise de código ou resumo de texto.\n",
+      "decisions": [
+        {
+          "decision_id": "c58afd23-1b7a-411a-a8b2-03a2b1805d55",
+          "run_id": "informational-router-vague",
+          "user_id": "informational-router-vague",
+          "session_id": "session-be33f1add0fd",
+          "selected_agent": "",
+          "intent": "",
+          "reason": "routing_not_reached",
+          "status": "failed",
+          "steps": [
+            "1:session_registered",
+            "2:user_observed_identity_loaded"
+          ],
+          "created_at": "2026-09-08T01:28:45.374696+00:00",
+          "response_hash": "",
+          "error": "ClarificationRequired: Especifique uma tarefa: busca, geração/análise de código ou resumo de texto.",
+          "metadata": {
+            "parent_decision_id": "5490f332-0f6c-40f4-97e5-89f008277200",
+            "retry_count": 0
+          }
+        }
+      ]
+    }
+  ]
+}

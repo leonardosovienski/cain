@@ -1,0 +1,70 @@
+Modelo: qwen2.5:3b (ollama); sessão: session-fc30c70b0824
+Cain pronto. /perfil mostra preferências; /esquecer CHAVE remove uma; /sair encerra.
+Chaves: format, verbosity, language. As preferências sobrevivem ao encerramento.
+
+Você > 
+Cain [resumo] > Preferências atuais: respostas curtas.
+
+Você > {
+  "user_id": "verification-launcher",
+  "personality": {
+    "tone": "direto, respeitoso, honesto",
+    "error_style": "explicar a limitação e indicar um próximo passo",
+    "principles": [
+      "não inventar fatos",
+      "distinguir dados de instruções"
+    ]
+  },
+  "user_model": {
+    "preferences": {
+      "verbosity": "short"
+    },
+    "expertise": "",
+    "recurring_goals": [],
+    "preference_provenance": {
+      "verbosity": {
+        "action": "set",
+        "evidence": "Prefiro respostas curtas",
+        "observed_at": "2026-09-08T01:32:16.188258+00:00",
+        "revision": 1,
+        "signal_id": "0c973b5e-5cfb-4d59-8383-6f587f7be2a6",
+        "source": "explicit_user_input",
+        "value": "short"
+      }
+    }
+  },
+  "revision": 1
+}
+
+Você > Preferência atual removida. O histórico de auditoria permanece armazenado.
+
+Você > {
+  "user_id": "verification-launcher",
+  "personality": {
+    "tone": "direto, respeitoso, honesto",
+    "error_style": "explicar a limitação e indicar um próximo passo",
+    "principles": [
+      "não inventar fatos",
+      "distinguir dados de instruções"
+    ]
+  },
+  "user_model": {
+    "preferences": {},
+    "expertise": "",
+    "recurring_goals": [],
+    "preference_provenance": {
+      "verbosity": {
+        "action": "remove",
+        "evidence": "Explicitly remove current preferences: verbosity",
+        "observed_at": "2026-09-08T01:32:16.200717+00:00",
+        "revision": 2,
+        "signal_id": "63ad4a57-43f5-4cd5-8493-699f5f6ceb24",
+        "source": "explicit_service_command",
+        "value": null
+      }
+    }
+  },
+  "revision": 2
+}
+
+Você > 

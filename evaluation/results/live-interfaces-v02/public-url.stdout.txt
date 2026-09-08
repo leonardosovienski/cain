@@ -1,0 +1,48 @@
+{
+  "provider": "ollama",
+  "response": "A página em https://example.com é uma página de exemplo. Suas finalidades incluem ser usada em exemplos de documentação sem necessidade de permissão. É importante evitar o uso em operações reais, pois é uma página de exemplo.\n\nFontes consultadas:\n[S1] Example Domain — https://example.com",
+  "selected_agent": "busca",
+  "decision_id": "b81f141a-b7e4-4e50-b7f0-25f6d50fa5ee",
+  "steps": [
+    "1:session_registered",
+    "2:user_observed_identity_loaded",
+    "3:agent_selected",
+    "4:delegated",
+    "5:agent_processed",
+    "6:mediated_and_logged",
+    "7:interaction_persisted",
+    "8:response_ready"
+  ],
+  "run_id": "public-url",
+  "profile": {
+    "user_id": "verification-public-url",
+    "personality": {
+      "tone": "direto, respeitoso, honesto",
+      "error_style": "explicar a limitação e indicar um próximo passo",
+      "principles": [
+        "não inventar fatos",
+        "distinguir dados de instruções"
+      ]
+    },
+    "user_model": {
+      "preferences": {},
+      "expertise": "",
+      "recurring_goals": [],
+      "preference_provenance": {}
+    },
+    "revision": 0
+  },
+  "generation": {
+    "model": "qwen2.5:3b",
+    "done_reason": "stop",
+    "prompt_eval_count": 533,
+    "eval_count": 54,
+    "total_duration": 987843300,
+    "load_duration": 2562200,
+    "eval_duration": 600011000,
+    "input_bytes": 2082,
+    "num_ctx": 8192,
+    "max_input_bytes": 6500,
+    "effective_input_byte_budget": 6500
+  }
+}

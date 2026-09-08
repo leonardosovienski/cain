@@ -1,0 +1,112 @@
+{
+  "mode": "functional",
+  "provider": "ollama",
+  "model": "qwen2.5:3b",
+  "base_url": "http://127.0.0.1:11434",
+  "temperature": 0.0,
+  "seed": 42,
+  "max_context_chars": 2048,
+  "run_id": "functional-v02-qwen-02",
+  "request_timeout": 120.0,
+  "started_at_utc": "2026-09-08T01:20:15.626389+00:00",
+  "design_sha256": {
+    "scenarios/scenarios.json": "27137605f238a9aba0d43e66a7831323fb752d59811318c4a9a06eb2188ee7e0",
+    "probes/probes.json": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0",
+    "rubrics/README.md": "d01204827c7b7e6c33da48d9fb02742030b2663f8cf3bc0a5818c9df677d9d55"
+  },
+  "formal_collection_allowed": false,
+  "formal_blockers": [
+    "ADR-0010 permanece Proposto; aprovação do protocolo não foi registrada.",
+    "Modelo de identidade dos ADRs 0006/0007 segue provisório; regras de preferências não o validam.",
+    "Tokenizador real do modelo e equivalência de contexto B/C não foram validados.",
+    "Sondas ainda não demonstraram validade de construto em piloto com LLM real e avaliação humana.",
+    "Separação de IDs não valida independência entre estilo e recuperação de preferências de formato.",
+    "C pode recuperar a sessão atual, B recebe só sessões anteriores; exposição precisa ser igualada.",
+    "Rubrica e ground truth são rascunhos; falta pré-registro em commit datado após revisão.",
+    "Pendências institucionais/éticas da seção 12.2 precisam de decisão documentada."
+  ],
+  "scientific_claims_allowed": false,
+  "context_counter": null,
+  "execution_order": "Six predetermined stages; each real stage uses a fresh process",
+  "blind_export": null,
+  "git_commit": "4b2ebd3a10683bfb639b87c03c41065244d058e6",
+  "git_dirty": true,
+  "git_status": "?? evaluation/results/functional-v02-qwen-02/",
+  "source_sha256": {
+    "src/cain/__init__.py": "0c572eb6c2c78a348352d93067b5b36b95dd55587d52f59d6514e315e40e5553",
+    "src/cain/__main__.py": "79e82eeb063d6eaf04c9f38a3c885b88d3decdc3db5a8229b5c261d0813cc8de",
+    "src/cain/agents/__init__.py": "f8a759e0971b24b0f6619da4409630ab3096328a3e93e25e2bbc2b0768a4f16d",
+    "src/cain/api.py": "757967eedbf21f14c533b97a7c85dfd55884819a5eb97f80060d009c918c71a8",
+    "src/cain/cli.py": "ef756f4054a77c69dfd1c28f23f562436da746704a360086c643cbe93046c949",
+    "src/cain/common/__init__.py": "8c09df2099e7fbca49cbc39017e690d13dc342d5ba4d27bb02cccf376309e486",
+    "src/cain/common/text.py": "2f90b40232797f5091308b0cf1afdb83c089467b6b9ec798e690129f5bc32eb9",
+    "src/cain/evaluation/__init__.py": "baf6aa1336006a260deba0b472e848abbad46e747e6b85c4d9d6c0736701628b",
+    "src/cain/evaluation/__main__.py": "8074ee598655960a50bdc58d7d9bd923d5583bde6bbdc47ece4860b47ac29d09",
+    "src/cain/evaluation/budget.py": "27e9f2cd6545f42cfe06eab094f46e12a45a6f439a833019b0a04202e2316ee4",
+    "src/cain/evaluation/functional.py": "b0afa472acbfb8ff3effba17375a14d5fee7d282780d9400b99d1fc82bf7d386",
+    "src/cain/evaluation/functional_worker.py": "fc61bff5d1aeda136aea77ddb907f79228d727e2161af6bb725e2d0c040c1bfc",
+    "src/cain/evaluation/harness.py": "31e5bfcccccd70cdaba0bcea7936e6f78cd6cd1dd3dd5346ee1da844975f1da4",
+    "src/cain/evaluation/metrics.py": "7e8377d633a0b586fdd3f068285873283748940a4d908a8c83fef1e6ad8feb9c",
+    "src/cain/identity/__init__.py": "518de464257c23717b67d2ad61f7a628aeeaa18a71468007265cd6fe06214e00",
+    "src/cain/identity/explicit.py": "11092ae3a81ca9f024582eaf9afad9be2dbcc0e0b8a18bbba5cb8cd09e37a644",
+    "src/cain/llm/__init__.py": "b9307c58d6e63f7d82f19a16ac48ed27be4819d2ef57eb7c2e7cc3c864d37bc3",
+    "src/cain/orchestrator/__init__.py": "069ee42f0d3231884c6064acf571de0ec76857f50aceb9f93cc498ec60d14000",
+    "src/cain/orchestrator/routing.py": "bd16784fa3783c57ef9cbaa6c9c627afd3334d2b0d2abdd3efdb8a8db32feab6",
+    "src/cain/persistence/__init__.py": "e64aae10a17808c2bf744caf97894d6b0f0a1767a8f748bfef7a8d3ee4dbfccf",
+    "src/cain/persistence/adapters/__init__.py": "6de3186b0faba6302c46dbb33ed0f9616ea0c8692e166ab976a934a517bc5468",
+    "src/cain/persistence/adapters/lexical.py": "ff8e0cce8c68bf1967d6b6779638fb5d0b4ff7affdca57f30c646848a3331c9e",
+    "src/cain/persistence/adapters/sqlite.py": "3e32d52dd46cb27025a6a368adce50ce40a6917d8d556c081581dbd9f5ddad79",
+    "src/cain/runtime.py": "26b97f488a202aed9e807b8719590418bec2c5f04ffa077057c050c05cb69369",
+    "src/cain/search/__init__.py": "3c5eb66c2cc00daf62e7e9237c214eeeabaa2176fa097d0e28f2810febe31e04",
+    "src/cain/settings.py": "0b64e0e9d58ef60015f0317a26321af2b8bc1628cf96741efc4c2df4c78b3122"
+  },
+  "source_tree_sha256": "a9d96f878dbd3894b3aa1c21392254c26db282700337329b0774807d4ba36b72",
+  "execution_kind": "subprocess_per_stage",
+  "context_budget_applied": false,
+  "functional_review": "Identified responses for inspection; no blind human ratings collected",
+  "generation_controls": {
+    "temperature_requested": 0.0,
+    "seed_requested": 42,
+    "determinism_guaranteed": false,
+    "adapter_options": {
+      "model": "qwen2.5:3b",
+      "temperature": 0.0,
+      "seed": 42,
+      "timeout": 120.0,
+      "num_ctx": 8192,
+      "num_predict": 768,
+      "max_input_bytes": 6500
+    },
+    "adapter_options_scope": "Actual local adapter settings requested from the backend; reported generation counts are recorded separately per call",
+    "max_input_bytes_is_tokenizer": false
+  },
+  "functional_plan_sha256": "79197f4b3f9537f9f4ceff03aea1f9602b39cd0c630f8d2c6507a29c85a664a3",
+  "model_observation": {
+    "model_requested": "qwen2.5:3b",
+    "model_digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+    "backend_version": "0.33.3",
+    "observed_model": {
+      "name": "qwen2.5:3b",
+      "model": "qwen2.5:3b",
+      "modified_at": "2026-09-07T22:02:56.336006-03:00",
+      "size": 1929912432,
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "qwen2",
+        "families": [
+          "qwen2"
+        ],
+        "parameter_size": "3.1B",
+        "quantization_level": "Q4_K_M",
+        "context_length": 32768,
+        "embedding_length": 2048
+      },
+      "capabilities": [
+        "completion",
+        "tools"
+      ]
+    }
+  }
+}

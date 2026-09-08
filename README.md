@@ -65,8 +65,9 @@ configuradas. URLs explícitas são lidas com limites de conteúdo/tempo; o agen
 inclui as fontes consultadas. Isso não é um mecanismo de busca geral na internet.
 
 O agente Código gera/analisa texto e não executa o código. Resumo condensa o texto
-fornecido. O roteador reconhece ordens e separa o pedido do texto citado; pedidos
-ambíguos pedem esclarecimento. Perguntas fora das regras podem ser classificadas pelo LLM;
+fornecido. O roteador reconhece ordens e perguntas informacionais com assunto explícito,
+separando o pedido do texto citado; pedidos ambíguos pedem esclarecimento.
+Pedidos fora das regras podem ser classificados pelo LLM;
 essa opção é controlada por `orchestration.llm_routing`. `--intent` seleciona uma capacidade explicitamente.
 
 ## Preferências suportadas
