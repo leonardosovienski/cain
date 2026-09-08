@@ -1,4 +1,24 @@
-# Cain — Documento Mestre
+# Estado de execução — atualização de 2026-09-07
+
+O usuário confirmou que ainda não havia repositório e autorizou sua criação.
+Informou a UFPR como instituição desejada; matrícula e orientador continuam não confirmados.
+
+Esta entrega implementa o esqueleto local e o instrumento técnico de avaliação,
+com notas de literatura e auditoria. Consulte [RELATORIO_EXECUCAO.md](RELATORIO_EXECUCAO.md)
+para evidência de testes e limites. O índice válido dos arquivos disponíveis é
+[docs/adr/README.md](docs/adr/README.md); ADRs 0001–0008 não vieram no ZIP.
+
+As afirmações bibliográficas abaixo pertencem ao documento recebido e devem ser
+lidas junto da [auditoria de fontes](docs/research/auditoria-fontes.md), especialmente
+quanto a Hevner, escopo de identity drift e capacidades dos frameworks.
+Nenhum ADR de pesquisa foi aceito nesta execução e não houve coleta formal.
+
+A versão recebida foi preservada integralmente em
+`docs/historico/importacao/CAIN_DOCUMENTO_MESTRE.md`.
+
+---
+
+# Cain — Documento Mestre (texto recebido)
 
 > **Fonte da verdade única.** Este documento consolida e **substitui** os três anteriores:
 > `tcc-cain-base.md` (v0, sessão inicial), `cain_esbozo_v1.md` (v1, esboço conceitual) e

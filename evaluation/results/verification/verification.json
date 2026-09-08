@@ -1,0 +1,44 @@
+{
+  "checked_at_utc": "2026-09-08T00:35:37.491583+00:00",
+  "python": "3.12.10",
+  "platform": "win32",
+  "checks": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "output": "check-1.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "output": "check-2.txt"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "cain",
+        "run",
+        "Resuma: Cain mantém estado entre sessões.",
+        "--intent",
+        "resumo",
+        "--db",
+        "${WORKSPACE}\\work\\release-demo.db"
+      ],
+      "exit_code": 0,
+      "output": "check-3.txt"
+    }
+  ],
+  "llm_model_executed": false
+}

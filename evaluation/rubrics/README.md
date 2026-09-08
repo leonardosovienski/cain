@@ -30,6 +30,12 @@ Pontue atendimento da preferência de formato e adequação ao nível declarado 
 5 = alinhado em todas as respostas observadas. Ausência de evidência = não mensurável,
 com motivo. Mudança por si só não recebe pontos. Não preencha notas de estilo aqui.
 
+**Limitação aberta:** preferência de formato pode se sobrepor ao construto de estilo.
+Os IDs disjuntos não provam independência. No piloto, separar recuperação factual do conteúdo
+declarado (por exemplo, recordar que a preferência era “passos”) de obedecer àquele formato na
+própria resposta. A rubrica de adaptação acima precisa de revisão e um extrator validado antes
+de coleta; não usar o mesmo comportamento observável para pontuar coerência e adaptação.
+
 O alvo de formato é um vetor one-hot previamente definido: `[passos, paragrafo]`.
 Distância euclidiana e redução da distância só se aplicam se existir vetor de perfil inferido
 real, com extrator validado e registrado. O stub de adaptação não fornece esse vetor.

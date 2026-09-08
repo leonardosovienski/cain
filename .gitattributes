@@ -1,0 +1,5 @@
+* text=auto eol=lf
+docs/historico/importacao/* -text
+docs/adr/0009-fronteira-da-abstracao-de-persistencia.md -text
+docs/adr/0010-protocolo-e-metricas-de-avaliacao.md -text
+docs/adr/0011-orquestracao-propria-vs-framework-existente.md -text

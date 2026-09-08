@@ -1,0 +1,17 @@
+{
+  "provider": "fake",
+  "response": "[SIMULAÇÃO FakeLLM — sem inferência real; 8c4c2e325b1d] Resuma: Cain mantém estado entre sessões.",
+  "selected_agent": "resumo",
+  "decision_id": "a0252eb3-c9bc-4716-86b5-b88ba3dca13e",
+  "steps": [
+    "1:session_registered",
+    "2:identity_loaded",
+    "3:agent_selected",
+    "4:delegated",
+    "5:agent_processed",
+    "6:mediated_and_logged",
+    "7:signal_persisted_adaptation_noop",
+    "8:response_ready"
+  ],
+  "run_id": "929cd303-bb92-4e88-8dd6-8deca7c0e272"
+}
