@@ -1,0 +1,67 @@
+{
+  "suite_id": "cain-retrieval-synthetic-v03-01",
+  "synthetic": true,
+  "holdout": false,
+  "documents": {
+    "d01": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+    "d02": "FONTE SINTÉTICA D02. Cada projeto tem um compartimento separado. Conversas e documentos de um compartimento não são consultados pelos demais.\n",
+    "d03": "FONTE SINTÉTICA D03. O catálogo pesquisável é uma cópia derivada. Se for apagado, pode ser reconstruído a partir dos registros originais preservados.\n",
+    "d04": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+    "d05": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+    "d06": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n"
+  },
+  "cases": [
+    {
+      "id": "p01",
+      "kind": "paraphrase",
+      "query": "Como lembrar minhas preferências quando eu voltar amanhã?",
+      "relevant_documents": [
+        "d01"
+      ],
+      "label_reason": "Retenção de escolhas depois de encerrar e reabrir."
+    },
+    {
+      "id": "p02",
+      "kind": "paraphrase",
+      "query": "Como impedir que assuntos de uma tarefa apareçam em outra?",
+      "relevant_documents": [
+        "d02"
+      ],
+      "label_reason": "Separação de conversas e documentos entre projetos."
+    },
+    {
+      "id": "p03",
+      "kind": "paraphrase",
+      "query": "Perdi a busca. Preciso começar todos os meus dados do zero?",
+      "relevant_documents": [
+        "d03"
+      ],
+      "label_reason": "Reconstrução da cópia de pesquisa sem perder registros originais."
+    },
+    {
+      "id": "i01",
+      "kind": "literal_identifier",
+      "query": "ERR-401",
+      "relevant_documents": [
+        "d04"
+      ],
+      "label_reason": "Identificador literal; ERR-4012 é um distrator distinto."
+    },
+    {
+      "id": "i02",
+      "kind": "literal_identifier",
+      "query": "ERR-4012",
+      "relevant_documents": [
+        "d05"
+      ],
+      "label_reason": "Identificador literal de anexo incompatível."
+    },
+    {
+      "id": "a01",
+      "kind": "absence",
+      "query": "Qual é a massa do satélite fictício SELENE-X9?",
+      "relevant_documents": [],
+      "label_reason": "Nenhuma fonte contém informações sobre esse satélite."
+    }
+  ]
+}

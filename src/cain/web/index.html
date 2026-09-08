@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Converse com Cain e organize preferências e documentos por projeto.">
+  <title>Cain · Conversa e memória</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <script type="module" src="/assets/app.js"></script>
+</head>
+<body>
+<a class="skip" href="#message">Ir para a conversa</a>
+<div class="shell">
+  <aside class="navigation">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><span>Cain<small>LOCAL · 0.3</small></span></div>
+    <label for="user">Usuário</label><div class="inline"><input id="user" value="leo" maxlength="200" autocomplete="off"><button id="change-user" class="quiet">Usar</button></div>
+    <div class="section-heading"><label for="project">Projeto</label><button id="new-project" class="quiet" aria-label="Criar projeto">+</button></div>
+    <select id="project"><option value="">Geral</option></select>
+    <button id="new-session" class="new-conversation">+ Nova conversa</button>
+    <label for="session">Conversas</label><select id="session"><option>Carregando…</option></select>
+    <section class="documents"><div class="section-heading"><h2>Documentos</h2><button id="add-document" class="quiet" aria-label="Adicionar documento">+</button></div><p id="document-hint" class="muted">Escolha um projeto para adicionar arquivos.</p><ul id="document-list"></ul></section>
+    <div class="service"><span class="status-dot" aria-hidden="true"></span><div><span id="model">Conectando…</span><small id="search-mode"></small></div></div>
+  </aside>
+  <main class="conversation">
+    <header class="conversation-header"><div><span class="eyebrow">CONVERSA</span><h1 id="project-title">Geral</h1></div><button id="toggle-memory" class="secondary" aria-expanded="true" aria-controls="memory-panel">Memória</button></header>
+    <div id="notice" class="notice" role="alert" hidden></div>
+    <section id="messages" class="messages" aria-label="Mensagens" aria-live="polite">
+      <div class="empty" id="empty"><span class="empty-symbol" aria-hidden="true">C</span><h2>O que vamos trabalhar?</h2><p>Converse, consulte seus documentos ou ajuste como prefere receber respostas.</p><div class="suggestions"><button data-example="Quais preferências posso mudar?">Explorar minhas preferências</button><button data-example="Só nesta resposta, prefiro passos. Escreva código Python para somar dois números.">Experimentar uma preferência temporária</button></div></div>
+    </section>
+    <form id="composer" class="composer">
+      <label class="sr-only" for="message">Sua mensagem</label><textarea id="message" rows="3" maxlength="100000" placeholder="Escreva uma mensagem para Cain…" required></textarea>
+      <div class="composer-controls"><div><label for="preference-scope">Preferências mencionadas</label><select id="preference-scope"><option value="">Detectar pela frase</option><option value="turn">Só nesta resposta</option><option value="session">Nesta conversa</option><option value="project">Neste projeto</option><option value="user">Como padrão geral</option></select></div><button id="send" class="primary" type="submit">Enviar <span aria-hidden="true">↑</span></button></div>
+      <div class="composer-foot"><span id="activity" role="status">Enter envia · Shift + Enter quebra a linha</span><span>Confira informações importantes nas fontes.</span></div>
+    </form>
+  </main>
+  <aside class="memory-panel" id="memory-panel">
+    <div class="section-heading"><div><span class="eyebrow">NESTE CONTEXTO</span><h2>Minha memória</h2></div><div class="inline"><button id="refresh-profile" class="icon-button" aria-label="Atualizar preferências">↻</button><button id="close-memory" class="icon-button" aria-label="Fechar painel de memória">×</button></div></div>
+    <p class="muted" id="memory-context">O que vale para a próxima resposta e de onde veio.</p><div id="effective-profile" class="effective-profile"></div>
+    <details class="edit-memory"><summary>Ajustar uma preferência</summary><form id="preference-form"><label for="preference-key">Preferência</label><select id="preference-key"><option value="format">Formato</option><option value="verbosity">Extensão</option><option value="language">Idioma</option></select><label for="preference-value">Valor</label><select id="preference-value"></select><label for="edit-scope">Onde vale</label><select id="edit-scope"><option value="user">Padrão geral</option><option value="project">Neste projeto</option><option value="session">Nesta conversa</option></select><label for="expires">Até quando <span class="muted">(opcional)</span></label><input id="expires" type="datetime-local"><button class="primary" type="submit">Salvar preferência</button></form></details>
+    <div class="section-heading history-heading"><h3>Registro atual por escopo</h3></div><div id="memory-history"></div><p class="footnote">Remover uma preferência retira seu valor deste escopo. A auditoria das alterações anteriores permanece no banco local.</p>
+  </aside>
+</div>
+<dialog id="project-dialog"><form id="project-form"><div class="section-heading"><h2>Novo projeto</h2><button type="button" data-close="project-dialog" class="icon-button" aria-label="Fechar">×</button></div><p class="muted">Documentos e conversas ficam separados por projeto.</p><label for="project-name">Nome</label><input id="project-name" maxlength="100" required placeholder="Ex.: Pesquisa do TCC"><button class="primary" type="submit">Criar projeto</button></form></dialog>
+<dialog id="document-dialog"><form id="document-form"><div class="section-heading"><h2>Adicionar documento</h2><button type="button" data-close="document-dialog" class="icon-button" aria-label="Fechar">×</button></div><label for="document-file">Arquivo .txt, .md ou .rst · até 256 KiB</label><input id="document-file" type="file" accept=".txt,.md,.rst"><label for="document-name">Nome do documento</label><input id="document-name" required maxlength="200" placeholder="anotacoes.md"><label for="document-text">Conteúdo</label><textarea id="document-text" required rows="10" maxlength="262144"></textarea><p class="muted">Disponível nas conversas deste projeto. Cada versão enviada é preservada.</p><button class="primary" type="submit">Adicionar ao projeto</button></form></dialog>
+</body>
+</html>

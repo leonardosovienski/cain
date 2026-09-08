@@ -51,6 +51,7 @@ class Cain:
     def run(
         self, user_id: str, session_id: str, payload: str,
         intent: str | None = None, run_id: str | None = None,
+        *, project_id: str | None = None, preference_scope: str | None = None,
     ) -> RunResult:
         if any(not isinstance(value, str) or not value.strip() for value in (user_id, session_id, payload)):
             raise ValueError("user_id, session_id and payload must be non-empty strings")
@@ -64,20 +65,27 @@ class Cain:
             steps.append("1:session_registered")
             observed = self.identity.observe(user_id, payload, {
                 "session_id": session_id, "run_id": run_id, "decision_id": decision_id,
+                "project_id": project_id, "preference_scope": preference_scope,
             })
-            context = self.identity.context_for(user_id, payload, exclude_decision_id=decision_id)
+            context = self.identity.context_for(user_id, payload, exclude_decision_id=decision_id,
+                                                project_id=project_id, session_id=session_id,
+                                                turn_id=decision_id)
             steps.append("2:user_observed_identity_loaded")
-            route = self.router.route(payload, intent, self.registry)
+            from cain.profile_answers import profile_answer
+            profile_text = profile_answer(payload, observed) if intent is None else None
+            route = Route("resumo", "resumo", "profile_inspection") if profile_text is not None \
+                else self.router.route(payload, intent, self.registry)
             steps.append("3:agent_selected")
             message = Message(route.intent, context, payload, {
                 "user_id": user_id, "session_id": session_id, "run_id": run_id,
                 "decision_id": decision_id,
                 "route_reason": route.reason,
                 "preferences": dict(observed.user_model.preferences),
+                "project_id": project_id,
             })
             agent = self.registry.get(route.selected_agent)
             steps.append("4:delegated")
-            response = agent.handle(message)
+            response = profile_text if profile_text is not None else agent.handle(message)
             steps.append("5:agent_processed")
             response = self.mediator.consolidate(response)
             steps.append("6:mediated_and_logged")
@@ -88,6 +96,8 @@ class Cain:
                 metadata={
                     "adaptation": "explicit_preferences; provisional_ADR-0007",
                     "identity_revision": observed.revision,
+                    "project_id": project_id,
+                    "preferences_used": dict(observed.user_model.preferences),
                     "retrieval_sources": message.metadata.get("retrieval_sources", []),
                     "retrieval_budget": message.metadata.get("retrieval_budget", {}),
                 },
@@ -97,6 +107,7 @@ class Cain:
                 metadata={
                     "session_id": session_id, "run_id": run_id, "decision_id": decision_id,
                     "user_input": payload, "preference_observed": True,
+                    "project_id": project_id,
                 },
             ))
             steps.append("7:interaction_persisted")

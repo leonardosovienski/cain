@@ -1,131 +1,132 @@
-# Cain 0.2 — identidade persistente e agentes locais
+# Cain 0.3 — conversa, memória e projetos locais
 
-Cain usa um LLM local para responder, guarda preferências explícitas em SQLite e
-coordena agentes de Busca, Código e Resumo. O perfil sobrevive ao encerramento do
-programa. A personalidade fica separada das preferências de formato, extensão e idioma.
+Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
+Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
 
-## Usar nesta máquina
+## Abrir nesta máquina
 
-Abra **`INICIAR_CAIN.cmd`** para conversar. O inicializador reutiliza o Python,
-Ollama e Qwen 2.5 3B configurados durante esta execução. Inicia o serviço local em
-segundo plano se necessário. Digite `/sair` para encerrar a conversa.
+Dê dois cliques em **[ABRIR_CAIN.cmd](ABRIR_CAIN.cmd)**. A interface abre em
+[127.0.0.1:8000](http://127.0.0.1:8000/); o inicializador reutiliza o Python e
+os modelos já instalados e inicia os serviços locais quando necessário.
+[INICIAR_CAIN.cmd](INICIAR_CAIN.cmd) continua disponível para conversar pelo terminal.
 
-Exemplo:
+1. Crie um projeto pelo botão **+**. Cada projeto tem documentos e conversas próprios.
+2. Em **Documentos**, adicione um `.txt`, `.md` ou `.rst` de até 256 KiB.
+3. Peça: “Busque nos documentos o que está definido sobre…”. Abra os trechos abaixo da resposta para conferir a fonte e a versão.
+4. Declare “Neste projeto, prefiro respostas em passos” ou ajuste **Minha memória**.
+5. Use “Só nesta resposta…” para uma exceção temporária. Nova conversa conserva a preferência do projeto, mas não a da conversa anterior.
 
-```text
-Prefiro respostas em passos. Resuma: SQLite guarda os dados do Cain.
-/sair
-```
+O contexto **Geral** consulta os caminhos de `cain.toml`. Projetos consultam apenas
+seus próprios arquivos e histórico. O nome de usuário seleciona um perfil local;
+não é uma conta autenticada. O serviço permanece em execução ao fechar a página.
 
-Abra novamente e peça:
+## O que mudou
 
-```text
-Escreva código Python para somar dois números.
-Agora prefiro um parágrafo. Resuma: contratos definem entradas e saídas.
-/perfil
-```
+- Interface com conversas persistentes, projetos, importação de textos e painel de preferências.
+- Preferências de formato, extensão e idioma por resposta, conversa, projeto ou usuário, com origem, remoção e validade opcional.
+- Busca híbrida por palavras e embeddings locais, com cache por versão do modelo e trechos rastreáveis.
+- Feedback “Foi útil” ou motivo de problema. É registrado para revisão; não altera o perfil automaticamente.
+- Roteamento por JSON com schema quando o LLM é necessário; perguntas diretas sobre o perfil usam o estado armazenado.
 
-O Cain deve usar a preferência registrada e aplicar a correção mais recente.
-`/esquecer format` remove a preferência atual de formato. Também existem
-`verbosity` e `language`. O histórico de auditoria permanece armazenado.
+A precedência é **resposta → conversa → projeto → padrão geral**. Remover ou expirar
+uma preferência revela o valor do escopo inferior. A auditoria anterior permanece
+no banco; remoção de preferência não apaga conversas. Sem escopo declarado, uma
+preferência explícita vira padrão geral. O seletor do campo de mensagem permite
+escolher o escopo; conflitos com a frase são recusados, sem salvar globalmente.
 
 ## Instalar em outro computador
 
-Python 3.11+ e Ollama são necessários para inferência local:
+É necessário Python 3.11+ e Ollama. Os pesos e binários não acompanham o ZIP.
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python -m pip install -e ".[dev]"
+.\.venv\Scripts\python -m pip install -e ".[api]"
 ollama pull qwen2.5:3b
-.\.venv\Scripts\python -m cain doctor
-.\.venv\Scripts\python -m cain chat --user leo
+ollama pull qwen3-embedding:0.6b
+.\ABRIR_CAIN.cmd
 ```
 
-[Ollama para Windows](https://docs.ollama.com/windows) ·
-[Modelo Qwen 2.5 3B](https://ollama.com/library/qwen2.5:3b).
-Os binários e pesos não fazem parte deste repositório/ZIP.
+O modelo de resposta padrão continua `qwen2.5:3b`. O `qwen3.5:4b` foi comparado e
+está instalado nesta máquina, mas os ganhos foram inconsistentes para uma troca
+global. Veja a [inspeção com respostas completas](docs/research/inspecao-modelos-v03.md).
+
+`cain.toml` fixa o digest observado do embedding. Se o download da tag retornar
+outros pesos, a busca recusa a divergência: confira `/api/tags` do Ollama e atualize
+o digest conscientemente. Para operar sem embeddings, configure `search.mode =
+"lexical"`. Falhas de inferência não acionam um modelo simulado nem repetição oculta.
 
 ## Configuração e comandos
 
-`cain.toml` escolhe modelo, endpoint, SQLite e fontes locais. Os caminhos relativos
-são resolvidos em relação ao arquivo de configuração. `CAIN_PROVIDER`, `CAIN_MODEL`,
-`CAIN_DB` e `CAIN_OLLAMA_URL` podem substituir essas opções.
+Os exemplos com `python` pressupõem o ambiente virtual ativo (`.\.venv\Scripts\Activate.ps1`).
+Também é possível substituir `python` pelo caminho `.\.venv\Scripts\python.exe`.
+
+`CAIN_PROVIDER`, `CAIN_MODEL`, `CAIN_DB` e `CAIN_OLLAMA_URL` substituem as opções
+correspondentes. Caminhos no TOML são resolvidos a partir de `cain.toml`;
+`--source` e `--db` fornecidos na CLI são relativos ao diretório atual.
 
 ```powershell
-python -m cain run "Resuma este texto: ..." --user leo --intent resumo
+python -m cain doctor
+python -m cain chat --user leo
+python -m cain run "Resuma: contratos definem entradas e saídas." --user leo
 python -m cain profile --user leo
 python -m cain profile --user leo --forget format
-python -m cain run "Busque nos documentos como o perfil é atualizado" --source docs/architecture
-python -m cain run "Consulte https://example.com e explique o que informa" --intent busca
+python -m cain run "Busque nos documentos o protocolo" --source docs/research
 ```
 
-`--source` pode ser repetido para arquivos `.md`, `.txt`, `.rst` ou diretórios.
-`--no-web` desativa consultas a URLs públicas. Sem URL, Busca usa as fontes locais
-configuradas. URLs explícitas são lidas com limites de conteúdo/tempo; o agente
-inclui as fontes consultadas. Isso não é um mecanismo de busca geral na internet.
+Use `--project ID` e `--session ID` nos comandos para selecionar o contexto criado
+na interface/API; `--preference-scope session` escolhe onde a declaração vale.
+No comando `profile`, `--scope` seleciona o escopo de remoção. O comando de chat
+`/esquecer format` atua no padrão geral; a interface oferece controle por escopo.
 
-O agente Código gera/analisa texto e não executa o código. Resumo condensa o texto
-fornecido. O roteador reconhece ordens e perguntas informacionais com assunto explícito,
-separando o pedido do texto citado; pedidos ambíguos pedem esclarecimento.
-Pedidos fora das regras podem ser classificados pelo LLM;
-essa opção é controlada por `orchestration.llm_routing`. `--intent` seleciona uma capacidade explicitamente.
+`--source` aceita arquivos/diretórios de texto e pode ser repetido. `--no-web`
+desativa leitura de URLs públicas explícitas. URLs têm limites de conteúdo e tempo;
+Cain não oferece um buscador geral da internet. O agente Código entrega texto e
+não executa os programas gerados.
 
-## Preferências suportadas
-
-| Campo | Valores | Exemplos de declaração |
-|---|---|---|
-| Formato | passos, parágrafo, tópicos | “Prefiro respostas em passos”; “Agora prefiro um parágrafo” |
-| Extensão | curta, detalhada | “Prefiro respostas curtas”; “Quero respostas detalhadas” |
-| Idioma | português, inglês | “Quero respostas em inglês”; “Responda em português” |
-
-A atualização usa padrões explícitos e conservadores. Citações, conteúdo de fontes
-e texto gerado pelos agentes não são evidência de preferência. A declaração mais
-recente prevalece; o perfil registra origem e revisão. Memórias que contenham
-preferências antigas são excluídas do contexto para reduzir sua reintrodução.
-
-## API local
+## API e verificações
 
 ```powershell
 powershell -File scripts/start-cain.ps1 -Mode api
-```
-
-Abra `http://127.0.0.1:8000/docs`.
-
-- `POST /run`: `user_id`, `session_id`, `payload`, `intent` opcional.
-- `GET /profile/{user_id}`: perfil e procedência.
-- `DELETE /profile/{user_id}/preferences/{key}`: remove uma preferência atual.
-- `DELETE /profile/{user_id}/preferences`: remove todas as preferências atuais.
-
-A API é local, sem autenticação. O inicializador usa `127.0.0.1`.
-
-## Testar e demonstrar
-
-```powershell
+python -m pip install -e ".[dev]"
 python -m ruff check .
 python -m pytest -q
-python -m cain.evaluation --mode functional --provider ollama --model qwen2.5:3b --output evaluation/results
 ```
 
-O modo `functional` abre processos separados, registra respostas reais e verifica
-persistência, correção, isolamento e fontes. A inspeção de qualidade deve considerar
-as respostas brutas, não apenas os checks mecânicos. O modo `smoke` continua usando
-um dublê identificado para testar o instrumento A/B/C sem executar o modelo.
+O esquema completo está em `http://127.0.0.1:8000/openapi.json`. A interface funciona
+sem bibliotecas externas de navegador. A API local usa somente `127.0.0.1`, verifica
+Host/Origin e não tem autenticação; não deve ser publicada como serviço multiusuário.
 
-## Estado da pesquisa
+| Operação | Endpoint |
+|---|---|
+| Responder e guardar conversa | `POST /run` |
+| Consultar/ajustar preferências | `GET /profile/{user}`; `PUT/DELETE /profile/{user}/preferences/{key}` |
+| Projetos | `GET/POST /projects/{user}` |
+| Documentos de projeto | `GET/POST /projects/{user}/{project}/documents` |
+| Conversas e histórico | `GET/POST /sessions/{user}`; `GET /sessions/{user}/{session}` |
+| Avaliar uma resposta | `POST /feedback/{turn_id}` |
 
-O comportamento implementado é experimental. A revisão de literatura é focal;
-novidade, eficácia e independência das métricas de identidade/adaptação ainda
-precisam de validação. A coleta formal permanece condicionada ao protocolo.
+`/run` recebe `user_id`, `session_id`, `payload`, `project_id` opcional e
+`preference_scope` opcional. Retorna fontes, preferências usadas e o perfil atual.
+O `turn_id` de respostas novas é o `decision_id`, inclusive no histórico.
+Uma falha de geração pode ocorrer depois de uma preferência explícita ser salva;
+a interface atualiza o painel também nesse caso.
 
-- [Resultado da versão 0.2](RELATORIO_V02.md)
-- [Política de adaptação e memória](docs/architecture/adaptacao-v02.md)
-- [Avaliação funcional](docs/research/avaliacao-v02.md)
-- [Auditoria bibliográfica](docs/research/auditoria-fontes.md)
-- [13 notas de leitura](docs/research/notas/README.md)
+Os [scripts de verificação](scripts) incluem execução real da API e da recuperação.
+O [relatório v0.3](RELATORIO_V03.md) distingue os testes de engenharia da inspeção
+de qualidade e documenta as limitações. O painel tem integração WebMCP opcional,
+ativada apenas em navegadores que disponibilizem essa API.
+
+## Pesquisa e entregas anteriores
+
+A pesquisa continua provisória: não houve avaliação humana independente,
+validação de novidade, aceitação automática de ADRs ou coleta formal.
+
+- [Memória por escopo](docs/architecture/memoria-por-escopo-v03.md)
+- [Busca híbrida](docs/architecture/busca-hibrida-v03.md)
+- [Comparação dos geradores](docs/research/comparacao-geradores-v03.md)
+- [Resultado v0.2](RELATORIO_V02.md) e [entrega inicial](RELATORIO_EXECUCAO.md)
 - [Caminho para a UFPR](docs/research/caminho-ufpr.md)
-- [ADRs disponíveis](docs/adr/README.md)
-- [Entrega inicial, versão 0.1](RELATORIO_EXECUCAO.md)
+- [Auditoria bibliográfica](docs/research/auditoria-fontes.md)
+- [ADRs](docs/adr/README.md)
 
-Os anexos e resultados anteriores estão preservados. Nenhum ADR de pesquisa foi
-aceito automaticamente. Fine-tuning, inferência de traços pessoais, ChromaDB,
-execução de código e comparação científica conclusiva continuam fora desta versão.
+Os cinco anexos originais e os resultados anteriores estão preservados.

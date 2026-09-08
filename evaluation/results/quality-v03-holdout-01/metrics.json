@@ -1,0 +1,190 @@
+{
+  "run_id": "quality-v03-holdout-01",
+  "provider": "ollama",
+  "real_llm": true,
+  "scientific_result": false,
+  "planned_cases_per_model": 6,
+  "models": {
+    "qwen2.5:3b": {
+      "attempts": 6,
+      "status_counts": {
+        "completed": 6
+      },
+      "truncation_unknown_count": 0,
+      "wall_seconds": [
+        2.53638,
+        0.220603,
+        0.179693,
+        0.176215,
+        0.364503,
+        0.115965
+      ],
+      "by_split": {
+        "dev": {
+          "n": 0,
+          "status_counts": {},
+          "checks": {}
+        },
+        "holdout": {
+          "n": 6,
+          "status_counts": {
+            "completed": 6
+          },
+          "checks": {
+            "deterministic:python_syntax": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:python_function_parameters": {
+              "passed": 1,
+              "measured": 1
+            },
+            "heuristic:required_fact_1": {
+              "passed": 2,
+              "measured": 3
+            },
+            "heuristic:required_fact_2": {
+              "passed": 2,
+              "measured": 2
+            },
+            "heuristic:required_fact_3": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:word_count_within_limit": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:single_paragraph_without_list": {
+              "passed": 1,
+              "measured": 1
+            },
+            "heuristic:forbidden_fact_patterns_absent": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:citation_identifiers_allowed": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:required_citations_present": {
+              "passed": 0,
+              "measured": 1
+            },
+            "deterministic:json_valid": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:json_schema_valid": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:route_label_exact": {
+              "passed": 2,
+              "measured": 2
+            },
+            "heuristic:required_fact_4": {
+              "passed": 1,
+              "measured": 1
+            }
+          }
+        }
+      }
+    },
+    "qwen3.5:4b": {
+      "attempts": 6,
+      "status_counts": {
+        "completed": 6
+      },
+      "truncation_unknown_count": 0,
+      "wall_seconds": [
+        5.170267,
+        0.640673,
+        0.90387,
+        0.343371,
+        0.579624,
+        0.343741
+      ],
+      "by_split": {
+        "dev": {
+          "n": 0,
+          "status_counts": {},
+          "checks": {}
+        },
+        "holdout": {
+          "n": 6,
+          "status_counts": {
+            "completed": 6
+          },
+          "checks": {
+            "deterministic:python_syntax": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:python_function_parameters": {
+              "passed": 1,
+              "measured": 1
+            },
+            "heuristic:required_fact_1": {
+              "passed": 3,
+              "measured": 3
+            },
+            "heuristic:required_fact_2": {
+              "passed": 2,
+              "measured": 2
+            },
+            "heuristic:required_fact_3": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:word_count_within_limit": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:single_paragraph_without_list": {
+              "passed": 1,
+              "measured": 1
+            },
+            "heuristic:forbidden_fact_patterns_absent": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:citation_identifiers_allowed": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:required_citations_present": {
+              "passed": 1,
+              "measured": 1
+            },
+            "deterministic:json_valid": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:json_schema_valid": {
+              "passed": 2,
+              "measured": 2
+            },
+            "deterministic:route_label_exact": {
+              "passed": 1,
+              "measured": 2
+            },
+            "heuristic:required_fact_4": {
+              "passed": 1,
+              "measured": 1
+            }
+          }
+        }
+      }
+    }
+  },
+  "identical_model_input_per_case": true,
+  "quality_winner": null,
+  "quality_winner_reason": "Regex, syntax and exact-label checks do not establish overall response quality",
+  "human_quality": {
+    "value": null,
+    "reason": "No independent human ratings collected"
+  },
+  "comparison_scope": "Generator only: fixed prompt/context/schema; no Cain runtime or adaptive retrieval",
+  "formal_collection_allowed": false
+}

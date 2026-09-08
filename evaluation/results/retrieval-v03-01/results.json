@@ -1,0 +1,722 @@
+{
+  "recorded_at": "2026-09-08T02:31:02.991352+00:00",
+  "config": {
+    "suite_id": "cain-retrieval-synthetic-v03-01",
+    "synthetic_sources": true,
+    "general_quality_claim": false,
+    "model": "qwen3-embedding:0.6b",
+    "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+    "base_url": "http://127.0.0.1:11434",
+    "k": 3,
+    "lexical_weight": 0.45,
+    "semantic_weight": 0.55,
+    "min_semantic_score": 0.35,
+    "query_instruction": "Retrieve relevant passages from the configured documents that answer the question.",
+    "embedding_dimensions_requested": null,
+    "truncate": false,
+    "timeout_seconds": 60,
+    "max_input_chars": 8192,
+    "max_batch_size": 32,
+    "max_chunks": 30,
+    "max_files": 6,
+    "max_file_bytes": 16384,
+    "max_query_chars": 4096,
+    "chunk_chars": 1500,
+    "chunk_stride_chars": 1200,
+    "cache_policy": "Fresh per run; documents reused after first query; no prewarming.",
+    "server_model_residency_at_start": "not controlled or measured",
+    "answer_generation": false,
+    "absence_scoring": "diagnostic only; excluded from hit/MRR",
+    "script_sha256": "cb27e73fc4f364f7c2c106e008199217a3d6819b573c92e15f3b3f54afb13fa2",
+    "backend": {
+      "project_root": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain",
+      "file_sha256": {
+        "src/cain/search/__init__.py": "53f12f525c820a1ac1133a4c778427ab9a714cf5273cc1f6c8e78106f5bf1e5d",
+        "src/cain/search/hybrid.py": "a63a7c375efeb375b70bfd05d73104e3fb563b729ae6c883387945e7009a7b88",
+        "src/cain/search/embeddings.py": "f8c7436bd290a9c39021dba287b8d775976580453f2dcd4373ae0a57b1bbfd32"
+      },
+      "git_commit": "b618b2cda345f036a2a6e9305033b6fe2fe2daf9",
+      "git_status": "M cain.toml\n M pyproject.toml\n M scripts/start-cain.ps1\n M src/cain/agents/__init__.py\n M src/cain/api.py\n M src/cain/cli.py\n M src/cain/common/__init__.py\n M src/cain/identity/__init__.py\n M src/cain/identity/explicit.py\n M src/cain/llm/__init__.py\n M src/cain/orchestrator/__init__.py\n M src/cain/orchestrator/routing.py\n M src/cain/persistence/__init__.py\n M src/cain/persistence/adapters/sqlite.py\n M src/cain/runtime.py\n M src/cain/search/__init__.py\n M src/cain/settings.py\n M tests/unit/test_agent_evidence_routing.py\n?? ABRIR_CAIN.cmd\n?? docs/architecture/busca-hibrida-v03.md\n?? docs/architecture/memoria-por-escopo-v03.md\n?? docs/research/comparacao-geradores-v03.md\n?? evaluation/results/quality-v03-dev-01/\n?? evaluation/results/quality-v03-holdout-01/\n?? evaluation/scenarios/quality-v03.json\n?? src/cain/evaluation/quality.py\n?? src/cain/identity/scopes.py\n?? src/cain/profile_answers.py\n?? src/cain/search/embeddings.py\n?? src/cain/search/hybrid.py\n?? src/cain/web/\n?? src/cain/workspace.py\n?? tests/evaluation/test_quality.py\n?? tests/integration/test_scoped_preferences.py\n?? tests/integration/test_v03_review_fixes.py\n?? tests/integration/test_v03_workspace_api.py\n?? tests/unit/test_embeddings.py\n?? tests/unit/test_hybrid_search.py\n?? tests/unit/test_preference_scopes.py\n?? tests/unit/test_v03_llm_contract.py"
+    },
+    "dataset_sha256": "0a119e4f88d0a48adc93bda9bda05fe82a6366b9cd37b0b0cbd855e3e411faf0",
+    "installed_model": {
+      "name": "qwen3-embedding:0.6b",
+      "model": "qwen3-embedding:0.6b",
+      "modified_at": "2026-09-07T23:10:42.6545215-03:00",
+      "size": 639150858,
+      "digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+      "details": {
+        "parent_model": "/Users/ollama/.ollama/models/blobs/sha256-06507c7b42688469c4e7298b0a1e16deff06caf291cf0a5b278c308249c3e439",
+        "format": "gguf",
+        "family": "qwen3",
+        "families": [
+          "qwen3"
+        ],
+        "parameter_size": "595.78M",
+        "quantization_level": "Q8_0",
+        "context_length": 32768,
+        "embedding_length": 1024
+      },
+      "capabilities": [
+        "embedding"
+      ]
+    },
+    "ollama_version": {
+      "version": "0.33.3"
+    }
+  },
+  "cases": [
+    {
+      "id": "p01",
+      "kind": "paraphrase",
+      "query": "Como lembrar minhas preferências quando eu voltar amanhã?",
+      "relevant_documents": [
+        "d01"
+      ],
+      "label_reason": "Retenção de escolhas depois de encerrar e reabrir.",
+      "retrievers": {
+        "lexical": {
+          "mode": "lexical",
+          "model": null,
+          "model_digest": null,
+          "ranking": [],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 0,
+            "hit_at_k": 0,
+            "first_relevant_rank": null,
+            "reciprocal_rank": 0.0
+          },
+          "latency_ms": 0.14280001050792634
+        },
+        "hybrid": {
+          "mode": "hybrid",
+          "model": "qwen3-embedding:0.6b",
+          "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d01.txt",
+              "title": "d01.txt",
+              "text": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+              "score": 0.29720381865593304,
+              "chunk_id": "ccdde14758fc28b7102ef7ea7df3d7d8bcf03b6a1dfe35ecec88eabd90376a9d",
+              "document_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+              "start_offset": 0,
+              "end_offset": 150,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.0,
+                "semantic_score": 0.5403705793744237,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 1,
+              "document_id": "d01",
+              "excerpt": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+              "excerpt_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 1,
+            "hit_at_k": 1,
+            "first_relevant_rank": 1,
+            "reciprocal_rank": 1.0
+          },
+          "latency_ms": 21313.62650000665
+        }
+      }
+    },
+    {
+      "id": "p02",
+      "kind": "paraphrase",
+      "query": "Como impedir que assuntos de uma tarefa apareçam em outra?",
+      "relevant_documents": [
+        "d02"
+      ],
+      "label_reason": "Separação de conversas e documentos entre projetos.",
+      "retrievers": {
+        "lexical": {
+          "mode": "lexical",
+          "model": null,
+          "model_digest": null,
+          "ranking": [],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 0,
+            "hit_at_k": 0,
+            "first_relevant_rank": null,
+            "reciprocal_rank": 0.0
+          },
+          "latency_ms": 0.12120000610593706
+        },
+        "hybrid": {
+          "mode": "hybrid",
+          "model": "qwen3-embedding:0.6b",
+          "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d02.txt",
+              "title": "d02.txt",
+              "text": "FONTE SINTÉTICA D02. Cada projeto tem um compartimento separado. Conversas e documentos de um compartimento não são consultados pelos demais.\n",
+              "score": 0.29527367572407726,
+              "chunk_id": "7afda2dda84e29709ebb129c6a9d48f5d53f0d7c700fc955cc944957daf84c1a",
+              "document_hash": "e3081c96a5844e34206d37c90fd75314e3521b9e52b9a28f7a1e772ff8835cc3",
+              "start_offset": 0,
+              "end_offset": 142,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.0,
+                "semantic_score": 0.5368612285892314,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 1,
+              "document_id": "d02",
+              "excerpt": "FONTE SINTÉTICA D02. Cada projeto tem um compartimento separado. Conversas e documentos de um compartimento não são consultados pelos demais.\n",
+              "excerpt_hash": "e3081c96a5844e34206d37c90fd75314e3521b9e52b9a28f7a1e772ff8835cc3",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 1,
+            "hit_at_k": 1,
+            "first_relevant_rank": 1,
+            "reciprocal_rank": 1.0
+          },
+          "latency_ms": 38.88179999194108
+        }
+      }
+    },
+    {
+      "id": "p03",
+      "kind": "paraphrase",
+      "query": "Perdi a busca. Preciso começar todos os meus dados do zero?",
+      "relevant_documents": [
+        "d03"
+      ],
+      "label_reason": "Reconstrução da cópia de pesquisa sem perder registros originais.",
+      "retrievers": {
+        "lexical": {
+          "mode": "lexical",
+          "model": null,
+          "model_digest": null,
+          "ranking": [],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 0,
+            "hit_at_k": 0,
+            "first_relevant_rank": null,
+            "reciprocal_rank": 0.0
+          },
+          "latency_ms": 0.11780000932049006
+        },
+        "hybrid": {
+          "mode": "hybrid",
+          "model": "qwen3-embedding:0.6b",
+          "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d01.txt",
+              "title": "d01.txt",
+              "text": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+              "score": 0.2847467128921335,
+              "chunk_id": "ccdde14758fc28b7102ef7ea7df3d7d8bcf03b6a1dfe35ecec88eabd90376a9d",
+              "document_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+              "start_offset": 0,
+              "end_offset": 150,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.0,
+                "semantic_score": 0.5177212961675154,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 1,
+              "document_id": "d01",
+              "excerpt": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+              "excerpt_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            },
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d03.txt",
+              "title": "d03.txt",
+              "text": "FONTE SINTÉTICA D03. O catálogo pesquisável é uma cópia derivada. Se for apagado, pode ser reconstruído a partir dos registros originais preservados.\n",
+              "score": 0.25890574866599764,
+              "chunk_id": "a087744d303b055009f0d76416e529e2c07cdf1e46937b88d73fd8ddb93f4646",
+              "document_hash": "11790beee4cda2cd95af1c9409193950ab09f5d69e7ce4684e30c53b0265292d",
+              "start_offset": 0,
+              "end_offset": 150,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.0,
+                "semantic_score": 0.4707377248472684,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 2,
+              "document_id": "d03",
+              "excerpt": "FONTE SINTÉTICA D03. O catálogo pesquisável é uma cópia derivada. Se for apagado, pode ser reconstruído a partir dos registros originais preservados.\n",
+              "excerpt_hash": "11790beee4cda2cd95af1c9409193950ab09f5d69e7ce4684e30c53b0265292d",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            },
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+              "title": "d04.txt",
+              "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "score": 0.24898303887365147,
+              "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+              "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "start_offset": 0,
+              "end_offset": 128,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.0,
+                "semantic_score": 0.4526964343157299,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 3,
+              "document_id": "d04",
+              "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 0,
+            "hit_at_k": 1,
+            "first_relevant_rank": 2,
+            "reciprocal_rank": 0.5
+          },
+          "latency_ms": 35.67830000247341
+        }
+      }
+    },
+    {
+      "id": "i01",
+      "kind": "literal_identifier",
+      "query": "ERR-401",
+      "relevant_documents": [
+        "d04"
+      ],
+      "label_reason": "Identificador literal; ERR-4012 é um distrator distinto.",
+      "retrievers": {
+        "lexical": {
+          "mode": "lexical",
+          "model": null,
+          "model_digest": null,
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+              "title": "d04.txt",
+              "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "score": 1.0,
+              "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+              "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "start_offset": 0,
+              "end_offset": 128,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "lexical"
+              },
+              "rank": 1,
+              "document_id": "d04",
+              "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            },
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+              "title": "d05.txt",
+              "text": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "score": 0.5,
+              "chunk_id": "abeffa8069e3c2629c7d87d23d27c1759a822cfb969e50c3538811b268581ffb",
+              "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "start_offset": 0,
+              "end_offset": 140,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "lexical"
+              },
+              "rank": 2,
+              "document_id": "d05",
+              "excerpt": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "excerpt_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 1,
+            "hit_at_k": 1,
+            "first_relevant_rank": 1,
+            "reciprocal_rank": 1.0
+          },
+          "latency_ms": 0.16419999883510172
+        },
+        "hybrid": {
+          "mode": "hybrid",
+          "model": "qwen3-embedding:0.6b",
+          "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+              "title": "d04.txt",
+              "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "score": 0.8159618029698674,
+              "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+              "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "start_offset": 0,
+              "end_offset": 128,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 1.0,
+                "semantic_score": 0.6653850963088499,
+                "exact_identifier_matches": 1,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 1,
+              "document_id": "d04",
+              "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            },
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+              "title": "d05.txt",
+              "text": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "score": 0.5533072372720352,
+              "chunk_id": "abeffa8069e3c2629c7d87d23d27c1759a822cfb969e50c3538811b268581ffb",
+              "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "start_offset": 0,
+              "end_offset": 140,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.5,
+                "semantic_score": 0.5969222495855185,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 2,
+              "document_id": "d05",
+              "excerpt": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "excerpt_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 1,
+            "hit_at_k": 1,
+            "first_relevant_rank": 1,
+            "reciprocal_rank": 1.0
+          },
+          "latency_ms": 4641.037699999288
+        }
+      }
+    },
+    {
+      "id": "i02",
+      "kind": "literal_identifier",
+      "query": "ERR-4012",
+      "relevant_documents": [
+        "d05"
+      ],
+      "label_reason": "Identificador literal de anexo incompatível.",
+      "retrievers": {
+        "lexical": {
+          "mode": "lexical",
+          "model": null,
+          "model_digest": null,
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+              "title": "d05.txt",
+              "text": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "score": 1.0,
+              "chunk_id": "abeffa8069e3c2629c7d87d23d27c1759a822cfb969e50c3538811b268581ffb",
+              "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "start_offset": 0,
+              "end_offset": 140,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "lexical"
+              },
+              "rank": 1,
+              "document_id": "d05",
+              "excerpt": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "excerpt_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            },
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+              "title": "d04.txt",
+              "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "score": 0.5,
+              "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+              "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "start_offset": 0,
+              "end_offset": 128,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "lexical"
+              },
+              "rank": 2,
+              "document_id": "d04",
+              "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 1,
+            "hit_at_k": 1,
+            "first_relevant_rank": 1,
+            "reciprocal_rank": 1.0
+          },
+          "latency_ms": 0.29429999995045364
+        },
+        "hybrid": {
+          "mode": "hybrid",
+          "model": "qwen3-embedding:0.6b",
+          "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+              "title": "d05.txt",
+              "text": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "score": 0.7757961556119988,
+              "chunk_id": "abeffa8069e3c2629c7d87d23d27c1759a822cfb969e50c3538811b268581ffb",
+              "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "start_offset": 0,
+              "end_offset": 140,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 1.0,
+                "semantic_score": 0.5923566465672705,
+                "exact_identifier_matches": 1,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 1,
+              "document_id": "d05",
+              "excerpt": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+              "excerpt_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            },
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+              "title": "d04.txt",
+              "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "score": 0.5607385135366162,
+              "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+              "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "start_offset": 0,
+              "end_offset": 128,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.5,
+                "semantic_score": 0.6104336609756656,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 2,
+              "document_id": "d04",
+              "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+              "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": true,
+            "hit_at_1": 1,
+            "hit_at_k": 1,
+            "first_relevant_rank": 1,
+            "reciprocal_rank": 1.0
+          },
+          "latency_ms": 34.547099989140406
+        }
+      }
+    },
+    {
+      "id": "a01",
+      "kind": "absence",
+      "query": "Qual é a massa do satélite fictício SELENE-X9?",
+      "relevant_documents": [],
+      "label_reason": "Nenhuma fonte contém informações sobre esse satélite.",
+      "retrievers": {
+        "lexical": {
+          "mode": "lexical",
+          "model": null,
+          "model_digest": null,
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d06.txt",
+              "title": "d06.txt",
+              "text": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+              "score": 0.2,
+              "chunk_id": "614f5f602d66052ff3cd020c405c44f46209c887d17afed78f89441748c38cab",
+              "document_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+              "start_offset": 0,
+              "end_offset": 127,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "lexical"
+              },
+              "rank": 1,
+              "document_id": "d06",
+              "excerpt": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+              "excerpt_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": false,
+            "reason": "Absence is an observation of retrieval candidates, not an answer or hallucination test.",
+            "candidate_count": 1
+          },
+          "latency_ms": 0.14370000280905515
+        },
+        "hybrid": {
+          "mode": "hybrid",
+          "model": "qwen3-embedding:0.6b",
+          "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+          "ranking": [
+            {
+              "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d06.txt",
+              "title": "d06.txt",
+              "text": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+              "score": 0.2443570046158326,
+              "chunk_id": "614f5f602d66052ff3cd020c405c44f46209c887d17afed78f89441748c38cab",
+              "document_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+              "start_offset": 0,
+              "end_offset": 127,
+              "metadata": {
+                "offset_unit": "unicode_codepoints",
+                "text_encoding": "utf-8-sig",
+                "document_hash_basis": "raw_file_bytes",
+                "retrieval_mode": "hybrid",
+                "lexical_score": 0.2,
+                "semantic_score": 0.28064909930151377,
+                "exact_identifier_matches": 0,
+                "embedding_model": "qwen3-embedding:0.6b",
+                "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+              },
+              "rank": 1,
+              "document_id": "d06",
+              "excerpt": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+              "excerpt_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+              "offsets_match_saved_source": true,
+              "document_hash_matches": true
+            }
+          ],
+          "status": "ok",
+          "metrics": {
+            "scored": false,
+            "reason": "Absence is an observation of retrieval candidates, not an answer or hallucination test.",
+            "candidate_count": 1
+          },
+          "latency_ms": 40.84900001180358
+        }
+      }
+    }
+  ],
+  "summary": {
+    "lexical": {
+      "total_cases": 6,
+      "successful_cases": 6,
+      "execution_errors": 0,
+      "scored_positive_cases": 5,
+      "hit_at_1": 0.4,
+      "hit_at_k": 0.4,
+      "mean_reciprocal_rank": 0.4,
+      "absence_cases_excluded_from_metrics": true
+    },
+    "hybrid": {
+      "total_cases": 6,
+      "successful_cases": 6,
+      "execution_errors": 0,
+      "scored_positive_cases": 5,
+      "hit_at_1": 0.8,
+      "hit_at_k": 1.0,
+      "mean_reciprocal_rank": 0.9,
+      "absence_cases_excluded_from_metrics": true
+    }
+  },
+  "scope": "Small synthetic diagnostic of retrieval only; not a holdout, answer evaluation, or general quality claim."
+}

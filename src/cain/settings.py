@@ -17,10 +17,14 @@ class Settings:
     num_ctx: int = 8192
     num_predict: int = 768
     max_input_bytes: int = 6500
+    think: bool | None = None
     db_path: Path = Path("data/cain.db")
     source_paths: list[Path] = field(default_factory=list)
     allow_public_urls: bool = True
     llm_routing: bool = True
+    search_mode: str = "lexical"
+    embedding_model: str = "qwen3-embedding:0.6b"
+    embedding_digest: str = ""
 
 
 def load_settings(config_path: Path | None = None) -> Settings:
@@ -42,6 +46,11 @@ def load_settings(config_path: Path | None = None) -> Settings:
     settings.source_paths = [p if p.is_absolute() else base / p
                              for p in map(Path, search.get("paths", []))]
     settings.allow_public_urls = bool(search.get("allow_public_urls", True))
+    settings.search_mode = search.get("mode", "lexical")
+    if settings.search_mode not in {"lexical", "hybrid"}:
+        raise ValueError("search.mode deve ser lexical ou hybrid")
+    settings.embedding_model = search.get("embedding_model", "qwen3-embedding:0.6b")
+    settings.embedding_digest = search.get("embedding_digest", "")
     settings.llm_routing = bool(data.get("orchestration", {}).get("llm_routing", True))
     settings.provider = os.getenv("CAIN_PROVIDER", settings.provider)
     settings.model = os.getenv("CAIN_MODEL", settings.model)

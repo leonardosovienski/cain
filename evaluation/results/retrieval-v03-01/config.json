@@ -1,0 +1,65 @@
+{
+  "suite_id": "cain-retrieval-synthetic-v03-01",
+  "synthetic_sources": true,
+  "general_quality_claim": false,
+  "model": "qwen3-embedding:0.6b",
+  "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+  "base_url": "http://127.0.0.1:11434",
+  "k": 3,
+  "lexical_weight": 0.45,
+  "semantic_weight": 0.55,
+  "min_semantic_score": 0.35,
+  "query_instruction": "Retrieve relevant passages from the configured documents that answer the question.",
+  "embedding_dimensions_requested": null,
+  "truncate": false,
+  "timeout_seconds": 60,
+  "max_input_chars": 8192,
+  "max_batch_size": 32,
+  "max_chunks": 30,
+  "max_files": 6,
+  "max_file_bytes": 16384,
+  "max_query_chars": 4096,
+  "chunk_chars": 1500,
+  "chunk_stride_chars": 1200,
+  "cache_policy": "Fresh per run; documents reused after first query; no prewarming.",
+  "server_model_residency_at_start": "not controlled or measured",
+  "answer_generation": false,
+  "absence_scoring": "diagnostic only; excluded from hit/MRR",
+  "script_sha256": "cb27e73fc4f364f7c2c106e008199217a3d6819b573c92e15f3b3f54afb13fa2",
+  "backend": {
+    "project_root": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain",
+    "file_sha256": {
+      "src/cain/search/__init__.py": "53f12f525c820a1ac1133a4c778427ab9a714cf5273cc1f6c8e78106f5bf1e5d",
+      "src/cain/search/hybrid.py": "a63a7c375efeb375b70bfd05d73104e3fb563b729ae6c883387945e7009a7b88",
+      "src/cain/search/embeddings.py": "f8c7436bd290a9c39021dba287b8d775976580453f2dcd4373ae0a57b1bbfd32"
+    },
+    "git_commit": "b618b2cda345f036a2a6e9305033b6fe2fe2daf9",
+    "git_status": "M cain.toml\n M pyproject.toml\n M scripts/start-cain.ps1\n M src/cain/agents/__init__.py\n M src/cain/api.py\n M src/cain/cli.py\n M src/cain/common/__init__.py\n M src/cain/identity/__init__.py\n M src/cain/identity/explicit.py\n M src/cain/llm/__init__.py\n M src/cain/orchestrator/__init__.py\n M src/cain/orchestrator/routing.py\n M src/cain/persistence/__init__.py\n M src/cain/persistence/adapters/sqlite.py\n M src/cain/runtime.py\n M src/cain/search/__init__.py\n M src/cain/settings.py\n M tests/unit/test_agent_evidence_routing.py\n?? ABRIR_CAIN.cmd\n?? docs/architecture/busca-hibrida-v03.md\n?? docs/architecture/memoria-por-escopo-v03.md\n?? docs/research/comparacao-geradores-v03.md\n?? evaluation/results/quality-v03-dev-01/\n?? evaluation/results/quality-v03-holdout-01/\n?? evaluation/scenarios/quality-v03.json\n?? src/cain/evaluation/quality.py\n?? src/cain/identity/scopes.py\n?? src/cain/profile_answers.py\n?? src/cain/search/embeddings.py\n?? src/cain/search/hybrid.py\n?? src/cain/web/\n?? src/cain/workspace.py\n?? tests/evaluation/test_quality.py\n?? tests/integration/test_scoped_preferences.py\n?? tests/integration/test_v03_review_fixes.py\n?? tests/integration/test_v03_workspace_api.py\n?? tests/unit/test_embeddings.py\n?? tests/unit/test_hybrid_search.py\n?? tests/unit/test_preference_scopes.py\n?? tests/unit/test_v03_llm_contract.py"
+  },
+  "dataset_sha256": "0a119e4f88d0a48adc93bda9bda05fe82a6366b9cd37b0b0cbd855e3e411faf0",
+  "installed_model": {
+    "name": "qwen3-embedding:0.6b",
+    "model": "qwen3-embedding:0.6b",
+    "modified_at": "2026-09-07T23:10:42.6545215-03:00",
+    "size": 639150858,
+    "digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+    "details": {
+      "parent_model": "/Users/ollama/.ollama/models/blobs/sha256-06507c7b42688469c4e7298b0a1e16deff06caf291cf0a5b278c308249c3e439",
+      "format": "gguf",
+      "family": "qwen3",
+      "families": [
+        "qwen3"
+      ],
+      "parameter_size": "595.78M",
+      "quantization_level": "Q8_0",
+      "context_length": 32768,
+      "embedding_length": 1024
+    },
+    "capabilities": [
+      "embedding"
+    ]
+  },
+  "ollama_version": {
+    "version": "0.33.3"
+  }
+}

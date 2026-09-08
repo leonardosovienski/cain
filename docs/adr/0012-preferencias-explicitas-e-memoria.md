@@ -47,3 +47,18 @@ Testes cobrem primeira resposta, reabertura, conflitos, negação, citações,
 isolamento, remoção, reconstrução e transação. A demonstração com modelo real
 registra contexto, estado e resposta. Ela não aceita ADR-0010 nem substitui
 validação de construto e comparação controlada.
+
+## Extensão v0.3, ainda provisória
+
+O usuário autorizou a implementação do recorte recomendado após pesquisa de
+alternativas. A identidade agora admite overlays por projeto, sessão e turno,
+com expiração e precedência explícita, preservando os dados globais anteriores.
+A criação de perfil é atômica por `create_if_absent`; consultar uma identidade
+não pode substituir uma atualização concorrente. As decisões científicas deste
+ADR e dos anexos permanecem provisórias.
+
+A busca híbrida e seu cache são derivados. A UI oferece inspeção, controle e
+feedback categorizado sem atualizar preferências a partir da avaliação de uma
+resposta. Documentos recuperados continuam sendo dados, não instruções para alterar
+identidade. Ver [memória por escopo](../architecture/memoria-por-escopo-v03.md),
+[busca híbrida](../architecture/busca-hibrida-v03.md) e [relatório v0.3](../../RELATORIO_V03.md).

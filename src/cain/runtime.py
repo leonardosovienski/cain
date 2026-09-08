@@ -23,6 +23,7 @@ def build_cain(
     corpus: dict[str, str] | None = None,
     *, source_paths: list[str | Path] | None = None, allow_public_urls: bool = False,
     router=None,
+    search_mode: str = "lexical", embedding=None, embedding_cache_path: Path | None = None,
 ) -> Cain:
     store = SQLiteIdentityStore(db_path)
     try:
@@ -33,8 +34,18 @@ def build_cain(
         registry = AgentRegistry()
         if source_paths is not None or allow_public_urls:
             from cain.search import AutoRetriever, LocalDocumentRetriever, PublicURLRetriever
+            if search_mode == "hybrid":
+                from cain.search import HybridDocumentRetriever
+                if embedding is None:
+                    raise ValueError("Busca híbrida exige um provedor de embeddings configurado")
+                local = HybridDocumentRetriever(corpus=corpus, paths=source_paths or (),
+                                                 embedding=embedding, cache_path=embedding_cache_path)
+            elif search_mode == "lexical":
+                local = LocalDocumentRetriever(corpus=corpus, paths=source_paths or ())
+            else:
+                raise ValueError("search_mode deve ser lexical ou hybrid")
             retriever = AutoRetriever(
-                LocalDocumentRetriever(corpus=corpus, paths=source_paths or ()),
+                local,
                 PublicURLRetriever() if allow_public_urls else None,
             )
             registry.register(SearchAgent(memory, retriever=retriever, llm=provider))

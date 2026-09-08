@@ -1,0 +1,161 @@
+{
+  "models": [
+    "qwen2.5:3b",
+    "qwen3.5:4b"
+  ],
+  "provider": "ollama",
+  "base_url": "http://127.0.0.1:11434",
+  "temperature": 0.0,
+  "seed": 42,
+  "timeout": 120.0,
+  "num_ctx": 8192,
+  "num_predict": 768,
+  "max_input_bytes": 6500,
+  "think": false,
+  "split": "dev",
+  "run_id": "quality-v03-dev-01",
+  "started_at_utc": "2026-09-08T02:18:38.163372+00:00",
+  "dataset_sha256": "f113f5b0c06c191e9a17c40c0514c7351f939f80b7ca9f526c70e2b2ef103aeb",
+  "dataset_version": "quality-v03-1",
+  "case_order": [
+    "dev-preference-paragraph",
+    "dev-preference-english",
+    "dev-code-sum",
+    "dev-route-code",
+    "dev-preference-steps",
+    "dev-abstain-price",
+    "dev-summary-meeting",
+    "dev-summary-negation"
+  ],
+  "model_order": [
+    "qwen2.5:3b",
+    "qwen3.5:4b"
+  ],
+  "execution_order": "One model at a time, same seeded case order for all models; no parallel inference",
+  "backend_observation": {
+    "backend_version": "0.33.3",
+    "models": {
+      "qwen2.5:3b": {
+        "name": "qwen2.5:3b",
+        "model": "qwen2.5:3b",
+        "modified_at": "2026-09-07T22:02:56.336006-03:00",
+        "size": 1929912432,
+        "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen2",
+          "families": [
+            "qwen2"
+          ],
+          "parameter_size": "3.1B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 32768,
+          "embedding_length": 2048
+        },
+        "capabilities": [
+          "completion",
+          "tools"
+        ]
+      },
+      "qwen3.5:4b": {
+        "name": "qwen3.5:4b",
+        "model": "qwen3.5:4b",
+        "modified_at": "2026-09-07T23:07:32.3750378-03:00",
+        "size": 3389983735,
+        "digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "qwen35",
+          "families": [
+            "qwen35"
+          ],
+          "parameter_size": "4.7B",
+          "quantization_level": "Q4_K_M",
+          "context_length": 262144,
+          "embedding_length": 2560
+        },
+        "capabilities": [
+          "vision",
+          "completion",
+          "tools",
+          "thinking"
+        ]
+      }
+    }
+  },
+  "git_commit": "b618b2cda345f036a2a6e9305033b6fe2fe2daf9",
+  "git_dirty": true,
+  "source_sha256": {
+    "src/cain/__init__.py": "0c572eb6c2c78a348352d93067b5b36b95dd55587d52f59d6514e315e40e5553",
+    "src/cain/__main__.py": "79e82eeb063d6eaf04c9f38a3c885b88d3decdc3db5a8229b5c261d0813cc8de",
+    "src/cain/agents/__init__.py": "a747d9923013af9b946b2e5f6425f811bb23a8fc40669ce9d157f071354a444e",
+    "src/cain/api.py": "f9b8c3fe789d87692247aad161efce1f69981b0fcd04ad993864c39ac5c997cc",
+    "src/cain/cli.py": "85997e175a383ca2c47b6da8a8069e20ffba6ac3ded8bf9afb6910420d7abbfa",
+    "src/cain/common/__init__.py": "535f1f8601985f0f2732b916b05f2d24f6a60150f7b020c9f8e0e68dc242c806",
+    "src/cain/common/text.py": "2f90b40232797f5091308b0cf1afdb83c089467b6b9ec798e690129f5bc32eb9",
+    "src/cain/evaluation/__init__.py": "baf6aa1336006a260deba0b472e848abbad46e747e6b85c4d9d6c0736701628b",
+    "src/cain/evaluation/__main__.py": "8074ee598655960a50bdc58d7d9bd923d5583bde6bbdc47ece4860b47ac29d09",
+    "src/cain/evaluation/budget.py": "27e9f2cd6545f42cfe06eab094f46e12a45a6f439a833019b0a04202e2316ee4",
+    "src/cain/evaluation/functional.py": "b0afa472acbfb8ff3effba17375a14d5fee7d282780d9400b99d1fc82bf7d386",
+    "src/cain/evaluation/functional_worker.py": "fc61bff5d1aeda136aea77ddb907f79228d727e2161af6bb725e2d0c040c1bfc",
+    "src/cain/evaluation/harness.py": "31e5bfcccccd70cdaba0bcea7936e6f78cd6cd1dd3dd5346ee1da844975f1da4",
+    "src/cain/evaluation/metrics.py": "7e8377d633a0b586fdd3f068285873283748940a4d908a8c83fef1e6ad8feb9c",
+    "src/cain/evaluation/quality.py": "b8293109a81239cbfd2aad658a5e7a4b9eb7b1047173c072a07d8a117fcd09ae",
+    "src/cain/identity/__init__.py": "df8b32e9b7c28384327d77efec3d21cf2907894f4244562f50af388974e5e38d",
+    "src/cain/identity/explicit.py": "1af6771dec64cd6283ddf84e097e5027128521920b239f0d0788edd9b11bdcdd",
+    "src/cain/identity/scopes.py": "3277b878a3ce8d8af94048055a9c49fc212940dd0b57198965ef14c65bfd6d15",
+    "src/cain/llm/__init__.py": "1e518df2fa9eb191cad7fc46e03747ee4ab931153b8c624f14cadfbc732d65c9",
+    "src/cain/orchestrator/__init__.py": "7cf27dfcd08ce4eeadf17654491e5b15843263c6cc85328077025bd9c322cbdf",
+    "src/cain/orchestrator/routing.py": "10b59350570aea6835fee446b2c95e5eb1c9e347b44d635fa5aa8ee614485a9e",
+    "src/cain/persistence/__init__.py": "65936a1e8d90808dce1b0951acd16b3b17058afa78bc6fa955cb23c4f9720493",
+    "src/cain/persistence/adapters/__init__.py": "6de3186b0faba6302c46dbb33ed0f9616ea0c8692e166ab976a934a517bc5468",
+    "src/cain/persistence/adapters/lexical.py": "ff8e0cce8c68bf1967d6b6779638fb5d0b4ff7affdca57f30c646848a3331c9e",
+    "src/cain/persistence/adapters/sqlite.py": "739fa0f19db5448cbaaa6d1b349543f098d3b334cd7eac4405d4b3d0495faf94",
+    "src/cain/profile_answers.py": "e154bf559772b43ad3de06017b5f08ff154e2f8c1d1ad6ee728a8d1042a3fb55",
+    "src/cain/runtime.py": "1279710f67214385d00d4b00d51b0886d05d87c12cc925d9e856d34ebb9575f1",
+    "src/cain/search/__init__.py": "53f12f525c820a1ac1133a4c778427ab9a714cf5273cc1f6c8e78106f5bf1e5d",
+    "src/cain/search/embeddings.py": "f8c7436bd290a9c39021dba287b8d775976580453f2dcd4373ae0a57b1bbfd32",
+    "src/cain/search/hybrid.py": "a63a7c375efeb375b70bfd05d73104e3fb563b729ae6c883387945e7009a7b88",
+    "src/cain/settings.py": "bf52ba05d17998e2eb851908390b7d98bd3d1acd362494e4e88d23ddc11f1e39",
+    "src/cain/workspace.py": "97a6c3f5087a1b3878a165b37d71a55661057139c11db3ac016e92857df141f1"
+  },
+  "source_tree_sha256": "d5480f4bbe22f8174bde6055201a5a088cc10d047929a23441dcb3e2da8ccb45",
+  "max_input_bytes_is_tokenizer": false,
+  "same_strings_is_same_token_count": false,
+  "determinism_guaranteed": false,
+  "human_quality_collected": false,
+  "hidden_from_model": [
+    "case id",
+    "split",
+    "category",
+    "checks and answer keys"
+  ],
+  "holdout_policy": "Use dev for changes; inspect holdout only after freezing choices. Reusing holdout to tune choices makes it exploratory, not an untouched confirmation set.",
+  "scientific_result": false,
+  "automatic_quality_winner_allowed": false,
+  "latency_interpretation": "Wall time includes model loading; backend timings are raw observations, not controlled performance benchmark results",
+  "adapters_observed": {
+    "qwen2.5:3b": {
+      "model": "qwen2.5:3b",
+      "temperature": 0.0,
+      "seed": 42,
+      "timeout": 120.0,
+      "num_ctx": 8192,
+      "num_predict": 768,
+      "max_input_bytes": 6500,
+      "think": false
+    },
+    "qwen3.5:4b": {
+      "model": "qwen3.5:4b",
+      "temperature": 0.0,
+      "seed": 42,
+      "timeout": 120.0,
+      "num_ctx": 8192,
+      "num_predict": 768,
+      "max_input_bytes": 6500,
+      "think": false
+    }
+  }
+}

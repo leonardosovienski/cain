@@ -154,7 +154,8 @@ def test_search_synthesis_receives_actual_evidence_and_appends_traceable_sources
     assert "[S1]" not in context
     assert "[S1]" not in response.split("Fontes consultadas:", 1)[0]
     assert "formato preferido" in context
-    assert message.metadata["retrieval_sources"] == [{"citation": "S1", "source": "guia.md"}]
+    assert [{key: item[key] for key in ("citation", "source")}
+            for item in message.metadata["retrieval_sources"]] == [{"citation": "S1", "source": "guia.md"}]
 
 
 def test_search_no_hits_never_invents_evidence_or_calls_llm():

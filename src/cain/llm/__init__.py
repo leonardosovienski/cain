@@ -17,6 +17,14 @@ class LLMError(RuntimeError):
     pass
 
 
+class LLMTruncated(LLMError):
+    """A partial response is evidence, not a successfully completed answer."""
+
+    def __init__(self, message: str, partial_response: str):
+        super().__init__(message)
+        self.partial_response = partial_response
+
+
 @dataclass
 class FakeLLM:
     """Offline wiring check only; outputs cannot evaluate LLM quality or identity."""
@@ -43,9 +51,23 @@ class OllamaLLM:
     num_ctx: int = 8192
     num_predict: int = 768
     max_input_bytes: int = 6500
+    think: bool | None = None
     last_metadata: dict = field(default_factory=dict, init=False)
 
     def generate(self, prompt: str, context: str = "") -> str:
+        return self._generate(prompt, context)
+
+    def generate_json(self, prompt: str, context: str, schema: dict) -> str:
+        if not isinstance(schema, dict) or schema.get("type") != "object":
+            raise ValueError("JSON schema deve descrever um objeto")
+        response = self._generate(prompt, context, schema)
+        try:
+            json.loads(response)
+        except ValueError as exc:
+            raise LLMError("Ollama retornou JSON inválido mesmo com schema; sem retry") from exc
+        return response
+
+    def _generate(self, prompt: str, context: str, schema: dict | None = None) -> str:
         self.last_metadata = {}
         input_bytes = len((context + prompt).encode("utf-8"))
         # Conservative transport bound, explicitly not the model's tokenizer.
@@ -64,6 +86,10 @@ class OllamaLLM:
             "options": {"temperature": self.temperature, "seed": self.seed,
                         "num_ctx": self.num_ctx, "num_predict": self.num_predict},
         }
+        if schema is not None:
+            body["format"] = schema
+        if self.think is not None:
+            body["think"] = self.think
         request = Request(
             self.base_url.rstrip("/") + "/api/generate",
             data=json.dumps(body).encode("utf-8"),
@@ -79,13 +105,17 @@ class OllamaLLM:
             raise LLMError("Ollama não retornou o campo textual response.")
         if result.get("error") or result.get("done") is False:
             raise LLMError("Ollama retornou erro ou geração incompleta.")
-        if not result["response"].strip():
-            raise LLMError("Ollama retornou resposta vazia.")
         self.last_metadata = {key: result.get(key) for key in (
             "model", "done_reason", "prompt_eval_count", "eval_count",
             "total_duration", "load_duration", "eval_duration",
         )}
         self.last_metadata.update(input_bytes=input_bytes, num_ctx=self.num_ctx,
                                   max_input_bytes=self.max_input_bytes,
-                                  effective_input_byte_budget=effective_budget)
+                                  effective_input_byte_budget=effective_budget,
+                                  think=self.think, structured_output=schema is not None)
+        if result.get("done_reason") in {"length", "max_tokens"}:
+            raise LLMTruncated("Modelo atingiu o limite de geração; resposta incompleta.",
+                               result["response"])
+        if not result["response"].strip():
+            raise LLMError("Ollama retornou resposta vazia.")
         return result["response"]

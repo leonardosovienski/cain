@@ -55,6 +55,22 @@ class Signal:
 
 
 @dataclass(frozen=True)
+class ScopedPreference:
+    """One current value/tombstone at a precise preference location."""
+
+    user_id: str
+    scope: str
+    key: str
+    value: str | None
+    action: str
+    project_id: str | None = None
+    session_id: str | None = None
+    turn_id: str | None = None
+    expires_at: str | None = None
+    provenance: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class IdentitySnapshot:
     state: IdentityState
     recorded_at: str

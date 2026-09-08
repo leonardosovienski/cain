@@ -1,0 +1,69 @@
+{
+  "id": "p02",
+  "kind": "paraphrase",
+  "query": "Como impedir que assuntos de uma tarefa apareçam em outra?",
+  "relevant_documents": [
+    "d02"
+  ],
+  "label_reason": "Separação de conversas e documentos entre projetos.",
+  "retrievers": {
+    "lexical": {
+      "mode": "lexical",
+      "model": null,
+      "model_digest": null,
+      "ranking": [],
+      "status": "ok",
+      "metrics": {
+        "scored": true,
+        "hit_at_1": 0,
+        "hit_at_k": 0,
+        "first_relevant_rank": null,
+        "reciprocal_rank": 0.0
+      },
+      "latency_ms": 0.12120000610593706
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "model": "qwen3-embedding:0.6b",
+      "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+      "ranking": [
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d02.txt",
+          "title": "d02.txt",
+          "text": "FONTE SINTÉTICA D02. Cada projeto tem um compartimento separado. Conversas e documentos de um compartimento não são consultados pelos demais.\n",
+          "score": 0.29527367572407726,
+          "chunk_id": "7afda2dda84e29709ebb129c6a9d48f5d53f0d7c700fc955cc944957daf84c1a",
+          "document_hash": "e3081c96a5844e34206d37c90fd75314e3521b9e52b9a28f7a1e772ff8835cc3",
+          "start_offset": 0,
+          "end_offset": 142,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "hybrid",
+            "lexical_score": 0.0,
+            "semantic_score": 0.5368612285892314,
+            "exact_identifier_matches": 0,
+            "embedding_model": "qwen3-embedding:0.6b",
+            "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+          },
+          "rank": 1,
+          "document_id": "d02",
+          "excerpt": "FONTE SINTÉTICA D02. Cada projeto tem um compartimento separado. Conversas e documentos de um compartimento não são consultados pelos demais.\n",
+          "excerpt_hash": "e3081c96a5844e34206d37c90fd75314e3521b9e52b9a28f7a1e772ff8835cc3",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        }
+      ],
+      "status": "ok",
+      "metrics": {
+        "scored": true,
+        "hit_at_1": 1,
+        "hit_at_k": 1,
+        "first_relevant_rank": 1,
+        "reciprocal_rank": 1.0
+      },
+      "latency_ms": 38.88179999194108
+    }
+  }
+}

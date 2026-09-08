@@ -27,7 +27,23 @@ def configured_llm(settings):
     return make_llm(settings.provider, settings.model, settings.base_url,
                     settings.temperature, settings.seed, timeout=settings.timeout,
                     num_ctx=settings.num_ctx, num_predict=settings.num_predict,
-                    max_input_bytes=settings.max_input_bytes)
+                    max_input_bytes=settings.max_input_bytes, think=settings.think)
+
+
+def configured_embedding(settings):
+    if settings.search_mode != "hybrid" or settings.provider == "fake":
+        return None
+    from cain.search import OllamaEmbedding
+    with urlopen(settings.base_url.rstrip("/") + "/api/tags", timeout=5) as response:
+        tags = json.load(response)
+    found = next((model for model in tags.get("models", [])
+                  if model.get("name") == settings.embedding_model), None)
+    if not found or not found.get("digest"):
+        raise ValueError(f"Modelo de busca indisponível: {settings.embedding_model}")
+    if settings.embedding_digest and settings.embedding_digest != found["digest"]:
+        raise ValueError("Digest do modelo de busca mudou; revise a configuração antes de reutilizar o índice")
+    return OllamaEmbedding(settings.embedding_model, model_digest=found["digest"],
+                           base_url=settings.base_url, timeout=settings.timeout)
 
 
 def _write(value):
@@ -38,6 +54,7 @@ def _common(parser):
     parser.add_argument("--config", type=Path)
     parser.add_argument("--db", type=Path)
     parser.add_argument("--user", default="leo")
+    parser.add_argument("--project", dest="project_id")
 
 
 def _generation(parser):
@@ -50,6 +67,7 @@ def _generation(parser):
     parser.add_argument("--source", type=Path, action="append")
     parser.add_argument("--no-web", action="store_true")
     parser.add_argument("--session", default=None)
+    parser.add_argument("--preference-scope", choices=["user", "project", "session", "turn"])
 
 
 def _settings(args):
@@ -65,9 +83,9 @@ def _settings(args):
     return settings
 
 
-def _chat(runtime, user_id, session_id):
+def _chat(runtime, user_id, session_id, project_id=None, preference_scope=None):
     print("Cain pronto. /perfil mostra preferências; /esquecer CHAVE remove uma; /sair encerra.")
-    print("Chaves: format, verbosity, language. As preferências sobrevivem ao encerramento.")
+    print("Chaves: format, verbosity, language. /esquecer atua no padrão geral; escopos temporários valem só em seu contexto.")
     while True:
         try:
             payload = input("\nVocê > ").strip()
@@ -79,7 +97,7 @@ def _chat(runtime, user_id, session_id):
         if payload == "/sair":
             return 0
         if payload == "/perfil":
-            _write(runtime.identity.inspect(user_id))
+            _write(runtime.identity.inspect(user_id, project_id=project_id, session_id=session_id))
             continue
         if payload.startswith("/esquecer "):
             try:
@@ -89,7 +107,8 @@ def _chat(runtime, user_id, session_id):
                 print(f"Cain > {exc}")
             continue
         try:
-            result = runtime.run(user_id, session_id, payload)
+            result = runtime.run(user_id, session_id, payload, project_id=project_id,
+                                 preference_scope=preference_scope)
             print(f"\nCain [{result.selected_agent}] > {result.response}")
         except (ValueError, RuntimeError, OSError) as exc:
             print(f"Cain > {exc}")
@@ -110,6 +129,8 @@ def main(argv=None) -> int:
     _generation(chat)
     profile = sub.add_parser("profile", help="Inspeciona ou remove preferências explícitas")
     _common(profile)
+    profile.add_argument("--session")
+    profile.add_argument("--scope", choices=["user", "project", "session"], default="user")
     removal = profile.add_mutually_exclusive_group()
     removal.add_argument("--forget", choices=["format", "verbosity", "language"])
     removal.add_argument("--clear", action="store_true")
@@ -131,25 +152,35 @@ def main(argv=None) -> int:
                     "database": str(settings.db_path), "sources": list(map(str, settings.source_paths))})
             return 0 if ready else 1
         llm = FakeLLM() if args.command == "profile" else configured_llm(settings)
+        if args.command != "profile" and args.project_id:
+            from cain.workspace import WorkspaceStore
+            workspace = WorkspaceStore(settings.db_path)
+            settings.source_paths = [Path(item["path"]) for item in workspace.documents(args.user, args.project_id)]
         runtime = build_cain(settings.db_path, llm) if args.command == "profile" else build_cain(
             settings.db_path, llm, source_paths=settings.source_paths,
             allow_public_urls=settings.allow_public_urls,
             router=RuleRouter(llm if settings.llm_routing and settings.provider == "ollama" else None),
+            search_mode=settings.search_mode if settings.provider != "fake" else "lexical",
+            embedding=configured_embedding(settings),
+            embedding_cache_path=settings.db_path.with_suffix(".embeddings.sqlite3"),
         )
         if args.command == "profile":
             if args.forget:
-                runtime.identity.forget_preference(args.user, args.forget)
+                runtime.identity.forget_preference(args.user, args.forget, scope=args.scope,
+                                                   project_id=args.project_id, session_id=args.session)
             elif args.clear:
-                runtime.identity.clear_preferences(args.user)
-            _write(runtime.identity.inspect(args.user))
+                runtime.identity.clear_preferences(args.user, scope=args.scope,
+                                                    project_id=args.project_id, session_id=args.session)
+            _write(runtime.identity.inspect(args.user, project_id=args.project_id, session_id=args.session))
             return 0
         session = args.session or f"session-{uuid4().hex[:12]}"
         if args.command == "chat":
             print(f"Modelo: {settings.model} ({settings.provider}); sessão: {session}")
-            return _chat(runtime, args.user, session)
-        result = runtime.run(args.user, session, args.payload, args.intent, args.run_id)
+            return _chat(runtime, args.user, session, args.project_id, args.preference_scope)
+        result = runtime.run(args.user, session, args.payload, args.intent, args.run_id,
+                             project_id=args.project_id, preference_scope=args.preference_scope)
         _write({"provider": settings.provider, **asdict(result),
-                "profile": runtime.identity.inspect(args.user),
+                "profile": runtime.identity.inspect(args.user, project_id=args.project_id, session_id=session),
                 "generation": getattr(llm, "last_metadata", {})})
         return 0
     except (ValueError, RuntimeError, OSError, sqlite3.Error) as exc:

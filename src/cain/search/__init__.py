@@ -1,6 +1,7 @@
 """Bounded local retrieval and explicit public-URL reads; no crawling or hidden fallback."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, replace
+from hashlib import sha256
 from html.parser import HTMLParser
 import http.client
 import ipaddress
@@ -26,6 +27,11 @@ class SearchResult:
     title: str
     text: str
     score: float = 0.0
+    chunk_id: str = ""
+    document_hash: str = ""
+    start_offset: int | None = None
+    end_offset: int | None = None
+    metadata: dict = field(default_factory=dict)
 
 
 @runtime_checkable
@@ -53,6 +59,7 @@ class LocalDocumentRetriever:
         if max_file_bytes < 1 or max_files < 1:
             raise ValueError("Retrieval limits must be positive")
         self.documents = dict(corpus or {})
+        self.document_hashes: dict[str, str] = {}
         files: set[Path] = set()
         for supplied in paths:
             root = Path(supplied).resolve(strict=True)
@@ -72,18 +79,34 @@ class LocalDocumentRetriever:
             if path.stat().st_size > max_file_bytes:
                 raise SearchError(f"Fonte excede {max_file_bytes} bytes: {path}")
             try:
-                self.documents[str(path)] = path.read_text(encoding="utf-8-sig")
+                with path.open("rb") as handle:
+                    raw = handle.read(max_file_bytes + 1)
+                if len(raw) > max_file_bytes:
+                    raise SearchError(f"Fonte excede {max_file_bytes} bytes: {path}")
+                self.documents[str(path)] = raw.decode("utf-8-sig")
+                self.document_hashes[str(path)] = sha256(raw).hexdigest()
             except (OSError, UnicodeError) as exc:
                 raise SearchError(f"Não foi possível ler a fonte UTF-8: {path}: {exc}") from exc
         self._passages: list[SearchResult] = []
+        file_sources = set(map(str, files))
         for source, text in sorted(self.documents.items()):
             if not isinstance(source, str) or not isinstance(text, str):
                 raise ValueError("Corpus must map source strings to text strings")
             if not text.strip():
                 continue
+            document_hash = self.document_hashes.get(source, sha256(text.encode("utf-8")).hexdigest())
+            self.document_hashes[source] = document_hash
             for start in range(0, len(text), 1200):
                 passage = text[start:start + 1500]
-                self._passages.append(SearchResult(source, Path(source).name, passage))
+                end = start + len(passage)
+                chunk_id = sha256(f"{source}\0{document_hash}\0{start}\0{end}".encode("utf-8")).hexdigest()
+                self._passages.append(SearchResult(
+                    source, Path(source).name, passage, chunk_id=chunk_id,
+                    document_hash=document_hash, start_offset=start, end_offset=end,
+                    metadata={"offset_unit": "unicode_codepoints", "text_encoding": "utf-8-sig",
+                              "document_hash_basis": "raw_file_bytes" if source in file_sources else "utf8_text",
+                              "retrieval_mode": "lexical"},
+                ))
 
     def search(self, query: str, k: int = 3) -> list[SearchResult]:
         if k < 1:
@@ -96,7 +119,7 @@ class LocalDocumentRetriever:
             overlap = len(terms & tokens(passage.text + " " + passage.title))
             if overlap:
                 score = overlap / len(terms)
-                scored.append(SearchResult(passage.source, passage.title, passage.text, score))
+                scored.append(replace(passage, score=score))
         return sorted(scored, key=lambda item: (-item.score, item.source, item.text))[:k]
 
 
@@ -255,7 +278,13 @@ class PublicURLRetriever:
                     json.loads(text)
                 if not text.strip():
                     raise SearchError("Fonte não apresentou texto legível")
-                return SearchResult(clean_url, title[:300], text, 1.0)
+                document_hash = sha256(text.encode("utf-8")).hexdigest()
+                chunk_id = sha256(f"{clean_url}\0{document_hash}\0{0}\0{len(text)}".encode("utf-8")).hexdigest()
+                return SearchResult(
+                    clean_url, title[:300], text, 1.0, chunk_id, document_hash, 0, len(text),
+                    {"document_hash_basis": "extracted_utf8_text", "offset_unit": "unicode_codepoints",
+                     "retrieval_mode": "explicit_url"},
+                )
             except SearchError:
                 raise
             except (OSError, ValueError, LookupError, http.client.HTTPException) as exc:
@@ -286,3 +315,10 @@ class AutoRetriever:
                 raise SearchError("Leitura de URLs está desativada nesta configuração")
             return self.web.search(query, k)
         return self.local.search(query, k)
+
+
+from cain.search.embeddings import (  # noqa: E402
+    EmbeddingProvider as EmbeddingProvider, OllamaEmbedding as OllamaEmbedding,
+    SQLiteEmbeddingCache as SQLiteEmbeddingCache,
+)
+from cain.search.hybrid import HybridDocumentRetriever as HybridDocumentRetriever  # noqa: E402

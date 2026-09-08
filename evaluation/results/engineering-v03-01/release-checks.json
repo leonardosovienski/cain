@@ -1,0 +1,26 @@
+{
+  "python": "3.12.10",
+  "checks": {
+    "wheel:cain/web/index.html": true,
+    "wheel:cain/web/style.css": true,
+    "wheel:cain/web/app.js": true,
+    "wheel:cain/identity/__init__.py": true,
+    "wheel:cain/agents/__init__.py": true,
+    "wheel:cain/api.py": true,
+    "real_api_backend:src/cain/identity/__init__.py": true,
+    "real_api_backend:src/cain/agents/__init__.py": true,
+    "real_api_backend:src/cain/llm/__init__.py": true,
+    "real_api_backend:src/cain/api.py": true,
+    "http:/": true,
+    "no_cache:/": true,
+    "http:/assets/app.js": true,
+    "no_cache:/assets/app.js": true,
+    "http:/assets/style.css": true,
+    "no_cache:/assets/style.css": true,
+    "http:/openapi.json": true,
+    "no_cache:/openapi.json": true
+  },
+  "wheel_sha256": "b65b6d6090d882b072b4c616774a640b9fc01e84d8dd943650e39dba77ddfe51",
+  "browser_visual_or_interaction_test": false,
+  "webmcp_browser_test": false
+}

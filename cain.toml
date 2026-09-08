@@ -8,6 +8,7 @@ timeout = 120.0
 num_ctx = 8192
 num_predict = 768
 max_input_bytes = 6500
+think = false
 
 [orchestration]
 llm_routing = true
@@ -16,5 +17,8 @@ llm_routing = true
 path = "data/cain.db"
 
 [search]
+mode = "hybrid"
+embedding_model = "qwen3-embedding:0.6b"
+embedding_digest = "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
 paths = ["README.md", "docs/architecture", "docs/research"]
 allow_public_urls = true

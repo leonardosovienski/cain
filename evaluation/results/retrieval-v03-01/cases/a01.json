@@ -1,0 +1,86 @@
+{
+  "id": "a01",
+  "kind": "absence",
+  "query": "Qual é a massa do satélite fictício SELENE-X9?",
+  "relevant_documents": [],
+  "label_reason": "Nenhuma fonte contém informações sobre esse satélite.",
+  "retrievers": {
+    "lexical": {
+      "mode": "lexical",
+      "model": null,
+      "model_digest": null,
+      "ranking": [
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d06.txt",
+          "title": "d06.txt",
+          "text": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+          "score": 0.2,
+          "chunk_id": "614f5f602d66052ff3cd020c405c44f46209c887d17afed78f89441748c38cab",
+          "document_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+          "start_offset": 0,
+          "end_offset": 127,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "lexical"
+          },
+          "rank": 1,
+          "document_id": "d06",
+          "excerpt": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+          "excerpt_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        }
+      ],
+      "status": "ok",
+      "metrics": {
+        "scored": false,
+        "reason": "Absence is an observation of retrieval candidates, not an answer or hallucination test.",
+        "candidate_count": 1
+      },
+      "latency_ms": 0.14370000280905515
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "model": "qwen3-embedding:0.6b",
+      "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+      "ranking": [
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d06.txt",
+          "title": "d06.txt",
+          "text": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+          "score": 0.2443570046158326,
+          "chunk_id": "614f5f602d66052ff3cd020c405c44f46209c887d17afed78f89441748c38cab",
+          "document_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+          "start_offset": 0,
+          "end_offset": 127,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "hybrid",
+            "lexical_score": 0.2,
+            "semantic_score": 0.28064909930151377,
+            "exact_identifier_matches": 0,
+            "embedding_model": "qwen3-embedding:0.6b",
+            "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+          },
+          "rank": 1,
+          "document_id": "d06",
+          "excerpt": "FONTE SINTÉTICA D06. Uma receita inventada de bolo usa farinha, ovos, açúcar e limão. A massa é colocada em uma forma redonda.\n",
+          "excerpt_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        }
+      ],
+      "status": "ok",
+      "metrics": {
+        "scored": false,
+        "reason": "Absence is an observation of retrieval candidates, not an answer or hallucination test.",
+        "candidate_count": 1
+      },
+      "latency_ms": 40.84900001180358
+    }
+  }
+}

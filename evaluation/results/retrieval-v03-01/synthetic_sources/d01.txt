@@ -1,0 +1,1 @@
+FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.

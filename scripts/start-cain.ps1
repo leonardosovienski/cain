@@ -1,7 +1,10 @@
 param(
-    [ValidateSet('chat', 'api', 'doctor', 'demo')]
+    [ValidateSet('chat', 'api', 'web', 'doctor', 'demo')]
     [string]$Mode = 'chat',
-    [string]$UserId = 'leo'
+    [string]$UserId = 'leo',
+    [switch]$NoBrowser,
+    [ValidateRange(1024,65535)]
+    [int]$Port = 8000
 )
 $ErrorActionPreference = 'Stop'
 $taskRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
@@ -55,9 +58,42 @@ try {
     switch ($Mode) {
         'chat' { & $taskPython -X utf8 -m cain chat --user $UserId }
         'doctor' { & $taskPython -X utf8 -m cain doctor }
-        'api' { & $taskPython -X utf8 -m uvicorn cain.api:create_app --factory --host 127.0.0.1 --port 8000 }
+        'api' { & $taskPython -X utf8 -m uvicorn cain.api:create_app --factory --host 127.0.0.1 --port $Port }
+        'web' {
+            $taskUrl = 'http://127.0.0.1:' + $Port
+            $taskWebReady = $false
+            try {
+                $taskHealth = Invoke-RestMethod ($taskUrl + '/health') -TimeoutSec 3
+                if ($taskHealth.version -ne '0.3.0' -or $taskHealth.research_status -ne 'provisional') {
+                    throw 'Another service is already using this port. Choose -Port with another number.'
+                }
+                $taskWebReady = $true
+            } catch [System.Net.WebException] {
+                # The service is not listening yet. The child reports a port conflict in its log.
+            }
+            if (-not $taskWebReady) {
+                $taskData = Join-Path $taskRoot 'data'
+                $null = New-Item -ItemType Directory -Force -Path $taskData
+                $taskProcess = Start-Process -FilePath $taskPython -ArgumentList @('-X','utf8','-m','uvicorn','cain.api:create_app','--factory','--host','127.0.0.1','--port',"$Port") -WorkingDirectory $taskRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $taskData "web-$Port.stdout.log") -RedirectStandardError (Join-Path $taskData "web-$Port.stderr.log")
+                $taskProcess.Id | Set-Content -LiteralPath (Join-Path $taskData "web-$Port.pid")
+                for ($taskAttempt = 0; $taskAttempt -lt 30; $taskAttempt++) {
+                    if ($taskProcess.HasExited) { throw "Cain did not start. Read data/web-$Port.stderr.log." }
+                    try {
+                        $taskHealth = Invoke-RestMethod ($taskUrl + '/health') -TimeoutSec 2
+                        if ($taskHealth.version -eq '0.3.0' -and $taskHealth.research_status -eq 'provisional') {
+                            $taskWebReady = $true
+                            break
+                        }
+                    } catch { }
+                    Start-Sleep -Milliseconds 500
+                }
+                if (-not $taskWebReady) { throw "Cain did not become ready. Read data/web-$Port.stderr.log." }
+            }
+            Write-Output "Cain is available at $taskUrl"
+            if (-not $NoBrowser) { Start-Process $taskUrl }
+        }
         'demo' { & $taskPython -X utf8 -m cain.evaluation --mode functional --provider ollama --output evaluation/results }
     }
-    $taskExit = $LASTEXITCODE
+    $taskExit = if ($Mode -eq 'web') { 0 } else { $LASTEXITCODE }
 } finally { Pop-Location }
 exit $taskExit

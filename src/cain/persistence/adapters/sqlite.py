@@ -8,7 +8,7 @@ import sqlite3
 
 from cain.common import (
     DecisionRecord, IdentitySnapshot, IdentityState, MemoryDocument,
-    PersonalityState, Signal, UserModel, utc_now,
+    PersonalityState, ScopedPreference, Signal, UserModel, utc_now,
 )
 from cain.persistence import ConcurrentIdentityUpdate
 
@@ -56,6 +56,16 @@ class SQLiteIdentityStore:
                 kind TEXT NOT NULL, text TEXT NOT NULL,
                 metadata_json TEXT NOT NULL, created_at TEXT NOT NULL
             );
+            CREATE TABLE IF NOT EXISTS scoped_preferences (
+                user_id TEXT NOT NULL REFERENCES identities(user_id),
+                scope TEXT NOT NULL CHECK(scope IN ('user', 'project', 'session', 'turn')),
+                project_id TEXT NOT NULL DEFAULT '',
+                session_id TEXT NOT NULL DEFAULT '',
+                turn_id TEXT NOT NULL DEFAULT '',
+                preference_key TEXT NOT NULL,
+                record_json TEXT NOT NULL,
+                PRIMARY KEY(user_id, scope, project_id, session_id, turn_id, preference_key)
+            );
         """)
 
     def get(self, user_id: str) -> IdentityState | None:
@@ -63,6 +73,32 @@ class SQLiteIdentityStore:
             "SELECT state_json FROM identities WHERE user_id = ?", (user_id,)
         ).fetchone()
         return _identity(row["state_json"]) if row else None
+
+    def create_if_absent(self, user_id: str, state: IdentityState) -> IdentityState:
+        """Atomically create the initial profile, or return the existing state.
+
+        A caller's earlier SELECT may have observed absence before another
+        connection committed preferences. DO NOTHING preserves that state and
+        its revision; only the successful creator records a baseline snapshot.
+        """
+        if not user_id or state.user_id != user_id:
+            raise ValueError("IdentityState.user_id must match its non-empty storage key")
+        payload = _serialize(asdict(state))
+        with self._connection:
+            self._connection.execute("BEGIN IMMEDIATE")
+            inserted = self._connection.execute(
+                "INSERT INTO identities VALUES (?, ?) ON CONFLICT(user_id) DO NOTHING",
+                (user_id, payload),
+            )
+            if inserted.rowcount == 1:
+                self._connection.execute(
+                    "INSERT INTO identity_snapshots(user_id, state_json, recorded_at) VALUES (?, ?, ?)",
+                    (user_id, payload, utc_now()),
+                )
+            current = self.get(user_id)
+            if current is None:
+                raise RuntimeError("Atomic identity creation returned no profile")
+        return current
 
     def upsert(self, user_id: str, state: IdentityState) -> None:
         if not user_id or state.user_id != user_id:
@@ -85,6 +121,7 @@ class SQLiteIdentityStore:
     def apply_signal(
         self, user_id: str, signal: Signal, state: IdentityState | None = None,
         expected_revision: int | None = None,
+        *, scoped_preferences: list[ScopedPreference] | None = None,
     ) -> None:
         """Commit profile, snapshot and input together; index updates happen later.
 
@@ -95,6 +132,30 @@ class SQLiteIdentityStore:
             raise ValueError("Signal metadata cannot impersonate a different user")
         if state is not None and state.user_id != user_id:
             raise ValueError("IdentityState.user_id must match its storage key")
+        if scoped_preferences and state is None:
+            raise ValueError("Scoped changes require an atomic identity revision")
+        scoped_payloads = []
+        for preference in scoped_preferences or []:
+            if preference.user_id != user_id:
+                raise ValueError("Scoped preference cannot impersonate another user")
+            if preference.scope not in {"user", "project", "session", "turn"}:
+                raise ValueError("Unknown preference scope")
+            if preference.scope == "user" and any((preference.project_id, preference.session_id, preference.turn_id)):
+                raise ValueError("User preference locations cannot contain context ids")
+            if preference.scope == "project" and (not preference.project_id or preference.session_id or preference.turn_id):
+                raise ValueError("Project preference requires only project_id")
+            if preference.scope == "session" and (not preference.session_id or preference.turn_id):
+                raise ValueError("Session preference requires session_id and optional project_id")
+            if preference.scope == "turn" and (not preference.session_id or not preference.turn_id):
+                raise ValueError("Turn preference requires session_id and turn_id")
+            if preference.action not in {"set", "remove"} or (preference.action == "set" and preference.value is None):
+                raise ValueError("Invalid scoped preference action/value")
+            if preference.action == "remove" and preference.value is not None:
+                raise ValueError("Removal tombstone must have a null value")
+            scoped_payloads.append((
+                user_id, preference.scope, preference.project_id or "", preference.session_id or "",
+                preference.turn_id or "", preference.key, _serialize(asdict(preference)),
+            ))
         metadata = {**signal.metadata, "user_id": user_id, "kind": signal.kind}
         signal_metadata = _serialize(metadata)
         state_payload = _serialize(asdict(state)) if state is not None else None
@@ -115,12 +176,41 @@ class SQLiteIdentityStore:
                     "INSERT INTO identity_snapshots(user_id, state_json, recorded_at) VALUES (?, ?, ?)",
                     (user_id, state_payload, signal.created_at),
                 )
+            for scoped_payload in scoped_payloads:
+                self._connection.execute(
+                    "INSERT INTO scoped_preferences VALUES (?, ?, ?, ?, ?, ?, ?) "
+                    "ON CONFLICT(user_id, scope, project_id, session_id, turn_id, preference_key) "
+                    "DO UPDATE SET record_json = excluded.record_json", scoped_payload,
+                )
             self._connection.execute(
                 "INSERT INTO identity_signals(signal_id, user_id, kind, text, metadata_json, "
                 "created_at) VALUES (?, ?, ?, ?, ?, ?)",
                 (signal.signal_id, user_id, signal.kind, signal.text,
                  signal_metadata, signal.created_at),
             )
+
+    def list_scoped_preferences(
+        self, user_id: str, *, project_id: str | None = None,
+        session_id: str | None = None, turn_id: str | None = None,
+    ) -> list[ScopedPreference]:
+        # Exact composite locations: a reused session id in another project is
+        # a different scope. Blank context ids normalize to SQL's non-null keys.
+        locations = [("user", "", "", "")]
+        if project_id is not None:
+            locations.append(("project", project_id, "", ""))
+        if session_id is not None:
+            locations.append(("session", project_id or "", session_id, ""))
+        if turn_id is not None and session_id is not None:
+            locations.append(("turn", project_id or "", session_id, turn_id))
+        result = []
+        for scope, project, session, turn in locations:
+            rows = self._connection.execute(
+                "SELECT record_json FROM scoped_preferences WHERE user_id = ? AND scope = ? "
+                "AND project_id = ? AND session_id = ? AND turn_id = ? ORDER BY preference_key",
+                (user_id, scope, project, session, turn),
+            ).fetchall()
+            result.extend(ScopedPreference(**json.loads(row["record_json"])) for row in rows)
+        return result
 
     def history(self, user_id: str, limit: int = 20) -> list[IdentitySnapshot]:
         if limit < 0:

@@ -1,0 +1,924 @@
+{
+  "synthetic_data": true,
+  "real_llm": true,
+  "ui_browser_tested": false,
+  "scientific_result": false,
+  "created_at": "2026-09-08T02:33:23.870322+00:00",
+  "checks": {
+    "turn_overrides_session": true,
+    "turn_does_not_persist": true,
+    "project_used_in_new_session": true,
+    "source_returned": true,
+    "source_hash": true,
+    "source_excerpt_reproducible": true,
+    "real_embedding_metadata": true,
+    "profile_answer_authoritative": true,
+    "remove_session_reveals_project": true,
+    "remove_project_reveals_global": true,
+    "feedback_saved": true,
+    "history_turn_ids_consistent": true,
+    "models_complete": true,
+    "profile_survives_reopen": true
+  },
+  "records": [
+    {
+      "payload": "Só nesta resposta, prefiro um parágrafo. Resuma: A versão Íris passou por testes internos; a produção continua não autorizada.",
+      "result": {
+        "response": "A versão Íris passou por testes internos, mas a produção ainda não foi autorizada.",
+        "selected_agent": "resumo",
+        "decision_id": "553ad501-79d7-47d2-b161-204b1e1ee150",
+        "steps": [
+          "1:session_registered",
+          "2:user_observed_identity_loaded",
+          "3:agent_selected",
+          "4:delegated",
+          "5:agent_processed",
+          "6:mediated_and_logged",
+          "7:interaction_persisted",
+          "8:response_ready"
+        ],
+        "run_id": "32c94355-33ae-4388-b195-dce4ecf0fdc6",
+        "profile": {
+          "user_id": "verification-v03-synthetic",
+          "personality": {
+            "tone": "direto, respeitoso, honesto",
+            "error_style": "explicar a limitação e indicar um próximo passo",
+            "principles": [
+              "não inventar fatos",
+              "distinguir dados de instruções"
+            ]
+          },
+          "user_model": {
+            "preferences": {
+              "format": "paragraph"
+            },
+            "expertise": "",
+            "recurring_goals": [],
+            "preference_provenance": {
+              "format": {
+                "action": "set",
+                "evidence": "Set format=paragraph at user scope",
+                "expires_at": null,
+                "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                "project_id": null,
+                "revision": 1,
+                "scope": "user",
+                "session_id": null,
+                "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                "source": "explicit_service_command",
+                "supersedes_signal_id": null,
+                "turn_id": null,
+                "value": "paragraph"
+              }
+            }
+          },
+          "revision": 4,
+          "effective_preferences": {
+            "format": "bullets"
+          },
+          "effective_provenance": {
+            "format": {
+              "action": "set",
+              "evidence": "Set format=bullets at session scope",
+              "expires_at": null,
+              "observed_at": "2026-09-08T02:33:18.783118+00:00",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "revision": 3,
+              "scope": "session",
+              "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+              "signal_id": "8c5b0572-c64c-4f35-bca2-d1ab3a1e79b7",
+              "source": "explicit_service_command",
+              "supersedes_signal_id": null,
+              "turn_id": null,
+              "value": "bullets"
+            }
+          },
+          "scoped_preferences": {
+            "user": {
+              "format": {
+                "value": "paragraph",
+                "status": "active",
+                "scope": "user",
+                "project_id": null,
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=paragraph at user scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                  "project_id": null,
+                  "revision": 1,
+                  "scope": "user",
+                  "session_id": null,
+                  "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "paragraph"
+                }
+              }
+            },
+            "project": {
+              "format": {
+                "value": "steps",
+                "status": "active",
+                "scope": "project",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=steps at project scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.776141+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 2,
+                  "scope": "project",
+                  "session_id": null,
+                  "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "steps"
+                }
+              }
+            },
+            "session": {
+              "format": {
+                "value": "bullets",
+                "status": "active",
+                "scope": "session",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=bullets at session scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.783118+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 3,
+                  "scope": "session",
+                  "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+                  "signal_id": "8c5b0572-c64c-4f35-bca2-d1ab3a1e79b7",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "bullets"
+                }
+              }
+            },
+            "turn": {}
+          }
+        },
+        "sources": [],
+        "preferences_used": {
+          "format": "paragraph"
+        },
+        "route_reason": "keyword_rule:resumo:leading_command; prototype_ADR-0008",
+        "generation": {
+          "model": "qwen2.5:3b",
+          "done_reason": "stop",
+          "prompt_eval_count": 674,
+          "eval_count": 24,
+          "total_duration": 2177178500,
+          "load_duration": 1565018700,
+          "eval_duration": 235808000,
+          "input_bytes": 1962,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": false
+        },
+        "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+        "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+        "turn_id": "553ad501-79d7-47d2-b161-204b1e1ee150"
+      }
+    },
+    {
+      "payload": "Resuma: A revisão ocorrerá na sexta-feira. O lançamento ainda não tem data.",
+      "result": {
+        "response": "Revisão: Sexta-feira  \nLançamento: Sem data",
+        "selected_agent": "resumo",
+        "decision_id": "cec351b1-23e7-41d2-861c-3e055b810130",
+        "steps": [
+          "1:session_registered",
+          "2:user_observed_identity_loaded",
+          "3:agent_selected",
+          "4:delegated",
+          "5:agent_processed",
+          "6:mediated_and_logged",
+          "7:interaction_persisted",
+          "8:response_ready"
+        ],
+        "run_id": "6bb9c79b-6e7c-4bf5-8361-d267d55a6720",
+        "profile": {
+          "user_id": "verification-v03-synthetic",
+          "personality": {
+            "tone": "direto, respeitoso, honesto",
+            "error_style": "explicar a limitação e indicar um próximo passo",
+            "principles": [
+              "não inventar fatos",
+              "distinguir dados de instruções"
+            ]
+          },
+          "user_model": {
+            "preferences": {
+              "format": "paragraph"
+            },
+            "expertise": "",
+            "recurring_goals": [],
+            "preference_provenance": {
+              "format": {
+                "action": "set",
+                "evidence": "Set format=paragraph at user scope",
+                "expires_at": null,
+                "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                "project_id": null,
+                "revision": 1,
+                "scope": "user",
+                "session_id": null,
+                "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                "source": "explicit_service_command",
+                "supersedes_signal_id": null,
+                "turn_id": null,
+                "value": "paragraph"
+              }
+            }
+          },
+          "revision": 4,
+          "effective_preferences": {
+            "format": "bullets"
+          },
+          "effective_provenance": {
+            "format": {
+              "action": "set",
+              "evidence": "Set format=bullets at session scope",
+              "expires_at": null,
+              "observed_at": "2026-09-08T02:33:18.783118+00:00",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "revision": 3,
+              "scope": "session",
+              "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+              "signal_id": "8c5b0572-c64c-4f35-bca2-d1ab3a1e79b7",
+              "source": "explicit_service_command",
+              "supersedes_signal_id": null,
+              "turn_id": null,
+              "value": "bullets"
+            }
+          },
+          "scoped_preferences": {
+            "user": {
+              "format": {
+                "value": "paragraph",
+                "status": "active",
+                "scope": "user",
+                "project_id": null,
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=paragraph at user scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                  "project_id": null,
+                  "revision": 1,
+                  "scope": "user",
+                  "session_id": null,
+                  "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "paragraph"
+                }
+              }
+            },
+            "project": {
+              "format": {
+                "value": "steps",
+                "status": "active",
+                "scope": "project",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=steps at project scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.776141+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 2,
+                  "scope": "project",
+                  "session_id": null,
+                  "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "steps"
+                }
+              }
+            },
+            "session": {
+              "format": {
+                "value": "bullets",
+                "status": "active",
+                "scope": "session",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=bullets at session scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.783118+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 3,
+                  "scope": "session",
+                  "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+                  "signal_id": "8c5b0572-c64c-4f35-bca2-d1ab3a1e79b7",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "bullets"
+                }
+              }
+            },
+            "turn": {}
+          }
+        },
+        "sources": [],
+        "preferences_used": {
+          "format": "bullets"
+        },
+        "route_reason": "keyword_rule:resumo:leading_command; prototype_ADR-0008",
+        "generation": {
+          "model": "qwen2.5:3b",
+          "done_reason": "stop",
+          "prompt_eval_count": 630,
+          "eval_count": 15,
+          "total_duration": 328076500,
+          "load_duration": 1038300,
+          "eval_duration": 144068000,
+          "input_bytes": 1892,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": false
+        },
+        "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+        "session_id": "226b5894-1f65-4c1b-abfa-f0702c8fe079",
+        "turn_id": "cec351b1-23e7-41d2-861c-3e055b810130"
+      }
+    },
+    {
+      "payload": "Escreva código Python para somar dois números.",
+      "result": {
+        "response": "Claro, aqui está um exemplo simples de código Python para somar dois números:\n\n```python\n# Definindo os números\nnumero1 = 5\nnumero2 = 3\n\n# Soma dos números\nsoma = numero1 + numero2\n\n# Exibindo o resultado\nprint(\"A soma dos números é:\", soma)\n```\n\nEste código define dois números, os soma e então imprime o resultado. Você pode substituir os valores de `numero1` e `numero2` com os números que deseja somar.",
+        "selected_agent": "codigo",
+        "decision_id": "b57d9d83-ac31-4c6d-a3fe-46696ca21fac",
+        "steps": [
+          "1:session_registered",
+          "2:user_observed_identity_loaded",
+          "3:agent_selected",
+          "4:delegated",
+          "5:agent_processed",
+          "6:mediated_and_logged",
+          "7:interaction_persisted",
+          "8:response_ready"
+        ],
+        "run_id": "d0273f73-c4ef-4169-b638-a6493c5e89f0",
+        "profile": {
+          "user_id": "verification-v03-synthetic",
+          "personality": {
+            "tone": "direto, respeitoso, honesto",
+            "error_style": "explicar a limitação e indicar um próximo passo",
+            "principles": [
+              "não inventar fatos",
+              "distinguir dados de instruções"
+            ]
+          },
+          "user_model": {
+            "preferences": {
+              "format": "paragraph"
+            },
+            "expertise": "",
+            "recurring_goals": [],
+            "preference_provenance": {
+              "format": {
+                "action": "set",
+                "evidence": "Set format=paragraph at user scope",
+                "expires_at": null,
+                "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                "project_id": null,
+                "revision": 1,
+                "scope": "user",
+                "session_id": null,
+                "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                "source": "explicit_service_command",
+                "supersedes_signal_id": null,
+                "turn_id": null,
+                "value": "paragraph"
+              }
+            }
+          },
+          "revision": 4,
+          "effective_preferences": {
+            "format": "steps"
+          },
+          "effective_provenance": {
+            "format": {
+              "action": "set",
+              "evidence": "Set format=steps at project scope",
+              "expires_at": null,
+              "observed_at": "2026-09-08T02:33:18.776141+00:00",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "revision": 2,
+              "scope": "project",
+              "session_id": null,
+              "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+              "source": "explicit_service_command",
+              "supersedes_signal_id": null,
+              "turn_id": null,
+              "value": "steps"
+            }
+          },
+          "scoped_preferences": {
+            "user": {
+              "format": {
+                "value": "paragraph",
+                "status": "active",
+                "scope": "user",
+                "project_id": null,
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=paragraph at user scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                  "project_id": null,
+                  "revision": 1,
+                  "scope": "user",
+                  "session_id": null,
+                  "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "paragraph"
+                }
+              }
+            },
+            "project": {
+              "format": {
+                "value": "steps",
+                "status": "active",
+                "scope": "project",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=steps at project scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.776141+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 2,
+                  "scope": "project",
+                  "session_id": null,
+                  "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "steps"
+                }
+              }
+            },
+            "session": {},
+            "turn": {}
+          }
+        },
+        "sources": [],
+        "preferences_used": {
+          "format": "steps"
+        },
+        "route_reason": "keyword_rule:codigo:leading_command; prototype_ADR-0008",
+        "generation": {
+          "model": "qwen2.5:3b",
+          "done_reason": "stop",
+          "prompt_eval_count": 601,
+          "eval_count": 114,
+          "total_duration": 1245404300,
+          "load_duration": 1100700,
+          "eval_duration": 1102379000,
+          "input_bytes": 1876,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": false
+        },
+        "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+        "session_id": "6889334a-398b-4b2a-8871-1f999c86165a",
+        "turn_id": "b57d9d83-ac31-4c6d-a3fe-46696ca21fac"
+      }
+    },
+    {
+      "payload": "Busque nos documentos a chave de teste IRIS731.",
+      "result": {
+        "response": "O documento de referência contém a informação que a chave de teste é IRIS731.\n\nFontes consultadas:\n[S1] 8d490594-7331-48fa-9a47-24f58ecee6b1.md — C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\cain-api-v03-uqu_084b\\knowledge\\7c4acb6b-58a2-4fee-8c58-856205f7ad4a\\8d490594-7331-48fa-9a47-24f58ecee6b1.md\n[S2] Histórico do usuário (não verificado externamente) — memória:1fa04c23-76a8-473e-85eb-cc57aade3c22\n[S3] Histórico do usuário (não verificado externamente) — memória:d2f17bcd-0d84-4d8b-9cff-f98b6e184521\n[S4] Histórico do usuário (não verificado externamente) — memória:8e5dada2-9d50-4cf8-af1c-e31e47893b92",
+        "selected_agent": "busca",
+        "decision_id": "074bd4fd-0f8f-4d22-ad90-206441548d0b",
+        "steps": [
+          "1:session_registered",
+          "2:user_observed_identity_loaded",
+          "3:agent_selected",
+          "4:delegated",
+          "5:agent_processed",
+          "6:mediated_and_logged",
+          "7:interaction_persisted",
+          "8:response_ready"
+        ],
+        "run_id": "562f4381-3f18-4402-87f6-aa6f5912dccc",
+        "profile": {
+          "user_id": "verification-v03-synthetic",
+          "personality": {
+            "tone": "direto, respeitoso, honesto",
+            "error_style": "explicar a limitação e indicar um próximo passo",
+            "principles": [
+              "não inventar fatos",
+              "distinguir dados de instruções"
+            ]
+          },
+          "user_model": {
+            "preferences": {
+              "format": "paragraph"
+            },
+            "expertise": "",
+            "recurring_goals": [],
+            "preference_provenance": {
+              "format": {
+                "action": "set",
+                "evidence": "Set format=paragraph at user scope",
+                "expires_at": null,
+                "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                "project_id": null,
+                "revision": 1,
+                "scope": "user",
+                "session_id": null,
+                "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                "source": "explicit_service_command",
+                "supersedes_signal_id": null,
+                "turn_id": null,
+                "value": "paragraph"
+              }
+            }
+          },
+          "revision": 4,
+          "effective_preferences": {
+            "format": "steps"
+          },
+          "effective_provenance": {
+            "format": {
+              "action": "set",
+              "evidence": "Set format=steps at project scope",
+              "expires_at": null,
+              "observed_at": "2026-09-08T02:33:18.776141+00:00",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "revision": 2,
+              "scope": "project",
+              "session_id": null,
+              "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+              "source": "explicit_service_command",
+              "supersedes_signal_id": null,
+              "turn_id": null,
+              "value": "steps"
+            }
+          },
+          "scoped_preferences": {
+            "user": {
+              "format": {
+                "value": "paragraph",
+                "status": "active",
+                "scope": "user",
+                "project_id": null,
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=paragraph at user scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                  "project_id": null,
+                  "revision": 1,
+                  "scope": "user",
+                  "session_id": null,
+                  "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "paragraph"
+                }
+              }
+            },
+            "project": {
+              "format": {
+                "value": "steps",
+                "status": "active",
+                "scope": "project",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=steps at project scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.776141+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 2,
+                  "scope": "project",
+                  "session_id": null,
+                  "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "steps"
+                }
+              }
+            },
+            "session": {},
+            "turn": {}
+          }
+        },
+        "sources": [
+          {
+            "chunk_end_offset": 103,
+            "chunk_id": "c31308022e943f02d7bb42ac461a8d819db120cb42a5b7640941fbc6008dab7e",
+            "citation": "S1",
+            "document_hash": "722fa7623ca8b3b878f11e5000e9a000b38f83e742450bdfd02d8c08af953219",
+            "end_offset": 103,
+            "excerpt": "Projeto Íris: a chave de teste é IRIS731. A entrega ocorreu na sexta-feira. O preço não está informado.",
+            "excerpt_hash": "722fa7623ca8b3b878f11e5000e9a000b38f83e742450bdfd02d8c08af953219",
+            "excerpt_truncated": false,
+            "metadata": {
+              "document_hash_basis": "raw_file_bytes",
+              "embedding_model": "qwen3-embedding:0.6b",
+              "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+              "exact_identifier_matches": 0,
+              "lexical_score": 1.0,
+              "offset_unit": "unicode_codepoints",
+              "retrieval_mode": "hybrid",
+              "semantic_score": 0.722926900500242,
+              "text_encoding": "utf-8-sig"
+            },
+            "score": 0.8476097952751331,
+            "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\work\\cain-api-v03-uqu_084b\\knowledge\\7c4acb6b-58a2-4fee-8c58-856205f7ad4a\\8d490594-7331-48fa-9a47-24f58ecee6b1.md",
+            "start_offset": 0,
+            "text": "Projeto Íris: a chave de teste é IRIS731. A entrega ocorreu na sexta-feira. O preço não está informado.",
+            "title": "8d490594-7331-48fa-9a47-24f58ecee6b1.md"
+          },
+          {
+            "chunk_end_offset": 75,
+            "chunk_id": "1fa04c23-76a8-473e-85eb-cc57aade3c22",
+            "citation": "S2",
+            "document_hash": "bb32b9bdb4a036b571179728cc5cf7c68f026709841deedb5f3025f800e1c1c9",
+            "end_offset": 75,
+            "excerpt": "Resuma: A revisão ocorrerá na sexta-feira. O lançamento ainda não tem data.",
+            "excerpt_hash": "bb32b9bdb4a036b571179728cc5cf7c68f026709841deedb5f3025f800e1c1c9",
+            "excerpt_truncated": false,
+            "metadata": {
+              "document_hash_basis": "utf8_text",
+              "offset_unit": "unicode_codepoints",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "retrieval_mode": "user_history",
+              "user_id": "verification-v03-synthetic"
+            },
+            "score": 0.05,
+            "source": "memória:1fa04c23-76a8-473e-85eb-cc57aade3c22",
+            "start_offset": 0,
+            "text": "Resuma: A revisão ocorrerá na sexta-feira. O lançamento ainda não tem data.",
+            "title": "Histórico do usuário (não verificado externamente)"
+          },
+          {
+            "chunk_end_offset": 134,
+            "chunk_id": "d2f17bcd-0d84-4d8b-9cff-f98b6e184521",
+            "citation": "S3",
+            "document_hash": "ba51f52740a5bd795bbc01f305f4ec2a887159190b7a41de02f42f8127eaa777",
+            "end_offset": 134,
+            "excerpt": "Usuário: Resuma: A revisão ocorrerá na sexta-feira. O lançamento ainda não tem data.\nCain: Revisão: Sexta-feira  \nLançamento: Sem data",
+            "excerpt_hash": "ba51f52740a5bd795bbc01f305f4ec2a887159190b7a41de02f42f8127eaa777",
+            "excerpt_truncated": false,
+            "metadata": {
+              "document_hash_basis": "utf8_text",
+              "offset_unit": "unicode_codepoints",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "retrieval_mode": "user_history",
+              "user_id": "verification-v03-synthetic"
+            },
+            "score": 0.043478260869565216,
+            "source": "memória:d2f17bcd-0d84-4d8b-9cff-f98b6e184521",
+            "start_offset": 0,
+            "text": "Usuário: Resuma: A revisão ocorrerá na sexta-feira. O lançamento ainda não tem data.\nCain: Revisão: Sexta-feira  \nLançamento: Sem data",
+            "title": "Histórico do usuário (não verificado externamente)"
+          },
+          {
+            "chunk_end_offset": 468,
+            "chunk_id": "8e5dada2-9d50-4cf8-af1c-e31e47893b92",
+            "citation": "S4",
+            "document_hash": "345e6cd45ded2b9336a57a675cb6d285e4f4e75653b3bd05ba8201d641f0642f",
+            "end_offset": 468,
+            "excerpt": "Usuário: Escreva código Python para somar dois números.\nCain: Claro, aqui está um exemplo simples de código Python para somar dois números:\n\n```python\n# Definindo os números\nnumero1 = 5\nnumero2 = 3\n\n# Soma dos números\nsoma = numero1 + numero2\n\n# Exibindo o resultado\nprint(\"A soma dos números é:\", soma)\n```\n\nEste código define dois números, os soma e então imprime o resultado. Você pode substituir os valores de `numero1` e `numero2` com os números que deseja somar.",
+            "excerpt_hash": "345e6cd45ded2b9336a57a675cb6d285e4f4e75653b3bd05ba8201d641f0642f",
+            "excerpt_truncated": false,
+            "metadata": {
+              "document_hash_basis": "utf8_text",
+              "offset_unit": "unicode_codepoints",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "retrieval_mode": "user_history",
+              "user_id": "verification-v03-synthetic"
+            },
+            "score": 0.0425531914893617,
+            "source": "memória:8e5dada2-9d50-4cf8-af1c-e31e47893b92",
+            "start_offset": 0,
+            "text": "Usuário: Escreva código Python para somar dois números.\nCain: Claro, aqui está um exemplo simples de código Python para somar dois números:\n\n```python\n# Definindo os números\nnumero1 = 5\nnumero2 = 3\n\n# Soma dos números\nsoma = numero1 + numero2\n\n# Exibindo o resultado\nprint(\"A soma dos números é:\", soma)\n```\n\nEste código define dois números, os soma e então imprime o resultado. Você pode substituir os valores de `numero1` e `numero2` com os números que deseja somar.",
+            "title": "Histórico do usuário (não verificado externamente)"
+          }
+        ],
+        "preferences_used": {
+          "format": "steps"
+        },
+        "route_reason": "keyword_rule:busca:leading_command; prototype_ADR-0008",
+        "generation": {
+          "model": "qwen2.5:3b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1634,
+          "eval_count": 22,
+          "total_duration": 654500000,
+          "load_duration": 1600800,
+          "eval_duration": 210185000,
+          "input_bytes": 4909,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": false
+        },
+        "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+        "session_id": "6889334a-398b-4b2a-8871-1f999c86165a",
+        "turn_id": "074bd4fd-0f8f-4d22-ad90-206441548d0b"
+      }
+    },
+    {
+      "payload": "Qual é minha preferência atual de formato?",
+      "result": {
+        "response": "Preferências atuais:\n1. passos numerados",
+        "selected_agent": "resumo",
+        "decision_id": "73ed84a6-b1fd-4d7f-8f07-8887ff6a8916",
+        "steps": [
+          "1:session_registered",
+          "2:user_observed_identity_loaded",
+          "3:agent_selected",
+          "4:delegated",
+          "5:agent_processed",
+          "6:mediated_and_logged",
+          "7:interaction_persisted",
+          "8:response_ready"
+        ],
+        "run_id": "5c4a1c20-fb74-45a2-a45e-736a466f68e6",
+        "profile": {
+          "user_id": "verification-v03-synthetic",
+          "personality": {
+            "tone": "direto, respeitoso, honesto",
+            "error_style": "explicar a limitação e indicar um próximo passo",
+            "principles": [
+              "não inventar fatos",
+              "distinguir dados de instruções"
+            ]
+          },
+          "user_model": {
+            "preferences": {
+              "format": "paragraph"
+            },
+            "expertise": "",
+            "recurring_goals": [],
+            "preference_provenance": {
+              "format": {
+                "action": "set",
+                "evidence": "Set format=paragraph at user scope",
+                "expires_at": null,
+                "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                "project_id": null,
+                "revision": 1,
+                "scope": "user",
+                "session_id": null,
+                "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                "source": "explicit_service_command",
+                "supersedes_signal_id": null,
+                "turn_id": null,
+                "value": "paragraph"
+              }
+            }
+          },
+          "revision": 4,
+          "effective_preferences": {
+            "format": "steps"
+          },
+          "effective_provenance": {
+            "format": {
+              "action": "set",
+              "evidence": "Set format=steps at project scope",
+              "expires_at": null,
+              "observed_at": "2026-09-08T02:33:18.776141+00:00",
+              "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+              "revision": 2,
+              "scope": "project",
+              "session_id": null,
+              "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+              "source": "explicit_service_command",
+              "supersedes_signal_id": null,
+              "turn_id": null,
+              "value": "steps"
+            }
+          },
+          "scoped_preferences": {
+            "user": {
+              "format": {
+                "value": "paragraph",
+                "status": "active",
+                "scope": "user",
+                "project_id": null,
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=paragraph at user scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.759212+00:00",
+                  "project_id": null,
+                  "revision": 1,
+                  "scope": "user",
+                  "session_id": null,
+                  "signal_id": "7263087b-f534-4206-a465-aad29cd8f1b3",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "paragraph"
+                }
+              }
+            },
+            "project": {
+              "format": {
+                "value": "steps",
+                "status": "active",
+                "scope": "project",
+                "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                "session_id": null,
+                "turn_id": null,
+                "expires_at": null,
+                "provenance": {
+                  "action": "set",
+                  "evidence": "Set format=steps at project scope",
+                  "expires_at": null,
+                  "observed_at": "2026-09-08T02:33:18.776141+00:00",
+                  "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+                  "revision": 2,
+                  "scope": "project",
+                  "session_id": null,
+                  "signal_id": "426253df-e749-4f14-8873-941b320a7dbb",
+                  "source": "explicit_service_command",
+                  "supersedes_signal_id": null,
+                  "turn_id": null,
+                  "value": "steps"
+                }
+              }
+            },
+            "session": {},
+            "turn": {}
+          }
+        },
+        "sources": [],
+        "preferences_used": {
+          "format": "steps"
+        },
+        "route_reason": "profile_inspection",
+        "generation": {},
+        "project_id": "7c4acb6b-58a2-4fee-8c58-856205f7ad4a",
+        "session_id": "6889334a-398b-4b2a-8871-1f999c86165a",
+        "turn_id": "73ed84a6-b1fd-4d7f-8f07-8887ff6a8916"
+      }
+    }
+  ]
+}

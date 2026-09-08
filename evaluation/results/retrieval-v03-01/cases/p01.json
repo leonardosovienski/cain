@@ -1,0 +1,69 @@
+{
+  "id": "p01",
+  "kind": "paraphrase",
+  "query": "Como lembrar minhas preferências quando eu voltar amanhã?",
+  "relevant_documents": [
+    "d01"
+  ],
+  "label_reason": "Retenção de escolhas depois de encerrar e reabrir.",
+  "retrievers": {
+    "lexical": {
+      "mode": "lexical",
+      "model": null,
+      "model_digest": null,
+      "ranking": [],
+      "status": "ok",
+      "metrics": {
+        "scored": true,
+        "hit_at_1": 0,
+        "hit_at_k": 0,
+        "first_relevant_rank": null,
+        "reciprocal_rank": 0.0
+      },
+      "latency_ms": 0.14280001050792634
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "model": "qwen3-embedding:0.6b",
+      "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+      "ranking": [
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d01.txt",
+          "title": "d01.txt",
+          "text": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+          "score": 0.29720381865593304,
+          "chunk_id": "ccdde14758fc28b7102ef7ea7df3d7d8bcf03b6a1dfe35ecec88eabd90376a9d",
+          "document_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+          "start_offset": 0,
+          "end_offset": 150,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "hybrid",
+            "lexical_score": 0.0,
+            "semantic_score": 0.5403705793744237,
+            "exact_identifier_matches": 0,
+            "embedding_model": "qwen3-embedding:0.6b",
+            "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+          },
+          "rank": 1,
+          "document_id": "d01",
+          "excerpt": "FONTE SINTÉTICA D01. Configurações pessoais ficam gravadas no disco. Depois do encerramento do programa, uma nova sessão recupera as escolhas salvas.\n",
+          "excerpt_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        }
+      ],
+      "status": "ok",
+      "metrics": {
+        "scored": true,
+        "hit_at_1": 1,
+        "hit_at_k": 1,
+        "first_relevant_rank": 1,
+        "reciprocal_rank": 1.0
+      },
+      "latency_ms": 21313.62650000665
+    }
+  }
+}

@@ -1,0 +1,56 @@
+[
+  {
+    "document_id": "d01",
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d01.txt",
+    "synthetic": true,
+    "document_hash": "b4cd579278c9015fe0ec587513d62743a1d70269b34622d430722c488101a207",
+    "bytes": 154,
+    "encoding": "utf-8",
+    "characters": 150
+  },
+  {
+    "document_id": "d02",
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d02.txt",
+    "synthetic": true,
+    "document_hash": "e3081c96a5844e34206d37c90fd75314e3521b9e52b9a28f7a1e772ff8835cc3",
+    "bytes": 145,
+    "encoding": "utf-8",
+    "characters": 142
+  },
+  {
+    "document_id": "d03",
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d03.txt",
+    "synthetic": true,
+    "document_hash": "11790beee4cda2cd95af1c9409193950ab09f5d69e7ce4684e30c53b0265292d",
+    "bytes": 156,
+    "encoding": "utf-8",
+    "characters": 150
+  },
+  {
+    "document_id": "d04",
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+    "synthetic": true,
+    "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+    "bytes": 130,
+    "encoding": "utf-8",
+    "characters": 128
+  },
+  {
+    "document_id": "d05",
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+    "synthetic": true,
+    "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+    "bytes": 144,
+    "encoding": "utf-8",
+    "characters": 140
+  },
+  {
+    "document_id": "d06",
+    "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d06.txt",
+    "synthetic": true,
+    "document_hash": "2b878e682959e67c1a0f84b443f620ea6c09006593577994ca82ca9e8660ccd4",
+    "bytes": 132,
+    "encoding": "utf-8",
+    "characters": 127
+  }
+]

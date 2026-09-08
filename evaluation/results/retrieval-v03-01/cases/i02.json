@@ -1,0 +1,141 @@
+{
+  "id": "i02",
+  "kind": "literal_identifier",
+  "query": "ERR-4012",
+  "relevant_documents": [
+    "d05"
+  ],
+  "label_reason": "Identificador literal de anexo incompatível.",
+  "retrievers": {
+    "lexical": {
+      "mode": "lexical",
+      "model": null,
+      "model_digest": null,
+      "ranking": [
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+          "title": "d05.txt",
+          "text": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+          "score": 1.0,
+          "chunk_id": "abeffa8069e3c2629c7d87d23d27c1759a822cfb969e50c3538811b268581ffb",
+          "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+          "start_offset": 0,
+          "end_offset": 140,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "lexical"
+          },
+          "rank": 1,
+          "document_id": "d05",
+          "excerpt": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+          "excerpt_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        },
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+          "title": "d04.txt",
+          "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+          "score": 0.5,
+          "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+          "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+          "start_offset": 0,
+          "end_offset": 128,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "lexical"
+          },
+          "rank": 2,
+          "document_id": "d04",
+          "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+          "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        }
+      ],
+      "status": "ok",
+      "metrics": {
+        "scored": true,
+        "hit_at_1": 1,
+        "hit_at_k": 1,
+        "first_relevant_rank": 1,
+        "reciprocal_rank": 1.0
+      },
+      "latency_ms": 0.29429999995045364
+    },
+    "hybrid": {
+      "mode": "hybrid",
+      "model": "qwen3-embedding:0.6b",
+      "model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d",
+      "ranking": [
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d05.txt",
+          "title": "d05.txt",
+          "text": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+          "score": 0.7757961556119988,
+          "chunk_id": "abeffa8069e3c2629c7d87d23d27c1759a822cfb969e50c3538811b268581ffb",
+          "document_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+          "start_offset": 0,
+          "end_offset": 140,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "hybrid",
+            "lexical_score": 1.0,
+            "semantic_score": 0.5923566465672705,
+            "exact_identifier_matches": 1,
+            "embedding_model": "qwen3-embedding:0.6b",
+            "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+          },
+          "rank": 1,
+          "document_id": "d05",
+          "excerpt": "FONTE SINTÉTICA D05. ERR-4012 identifica um anexo de formato incompatível. O arquivo precisa ser convertido para texto antes da importação.\n",
+          "excerpt_hash": "7a2a976352a449cf6cebec361ccfffd4950d33d3501d78f0264c99d4aac8cee8",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        },
+        {
+          "source": "C:\\Users\\Superleo13\\Documents\\Codex\\2026-09-07\\lei\\outputs\\cain\\evaluation\\results\\retrieval-v03-01\\synthetic_sources\\d04.txt",
+          "title": "d04.txt",
+          "text": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+          "score": 0.5607385135366162,
+          "chunk_id": "a3f882631bdb1755a839ee4d4718dded8d2482a60cd4c24918b26d3c49c8b606",
+          "document_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+          "start_offset": 0,
+          "end_offset": 128,
+          "metadata": {
+            "offset_unit": "unicode_codepoints",
+            "text_encoding": "utf-8-sig",
+            "document_hash_basis": "raw_file_bytes",
+            "retrieval_mode": "hybrid",
+            "lexical_score": 0.5,
+            "semantic_score": 0.6104336609756656,
+            "exact_identifier_matches": 0,
+            "embedding_model": "qwen3-embedding:0.6b",
+            "embedding_model_digest": "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
+          },
+          "rank": 2,
+          "document_id": "d04",
+          "excerpt": "FONTE SINTÉTICA D04. ERR-401 identifica uma credencial expirada. A sessão deve receber uma credencial renovada para prosseguir.\n",
+          "excerpt_hash": "b4704b50f70df7b576f0b6170b7e1b50ad46eca9216252ae52e2cfe60b197b57",
+          "offsets_match_saved_source": true,
+          "document_hash_matches": true
+        }
+      ],
+      "status": "ok",
+      "metrics": {
+        "scored": true,
+        "hit_at_1": 1,
+        "hit_at_k": 1,
+        "first_relevant_rank": 1,
+        "reciprocal_rank": 1.0
+      },
+      "latency_ms": 34.547099989140406
+    }
+  }
+}
