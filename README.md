@@ -1,7 +1,12 @@
-# Cain 0.3 — conversa, memória e projetos locais
+# Cain 0.4 — conversa, memória e pesquisa local L0
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
+
+O piloto **[L0 Historian](docs/RESEARCH_L0.md)** acrescenta importação de publicações
+admitidas, consulta determinística, cobertura e inspeção de evidências na CLI e na
+interface. Importar e consultar não exige Ollama. A explicação opcional usa o provider
+existente; conversa e feedback não se tornam evidência científica.
 
 ## Abrir nesta máquina
 
@@ -36,11 +41,12 @@ escolher o escopo; conflitos com a frase são recusados, sem salvar globalmente.
 
 ## Instalar em outro computador
 
-É necessário Python 3.11+ e Ollama. Os pesos e binários não acompanham o ZIP.
+É necessário Python 3.11+. Ollama é necessário para inferência e embeddings, mas não
+para ajuda, importação, consulta L0 ou abertura da interface. Pesos não acompanham o pacote.
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python -m pip install -e ".[api]"
+.\.venv\Scripts\python -m pip install --find-links vendor -e ".[api]"
 ollama pull qwen2.5:3b
 ollama pull qwen3-embedding:0.6b
 .\ABRIR_CAIN.cmd
@@ -87,7 +93,7 @@ não executa os programas gerados.
 
 ```powershell
 powershell -File scripts/start-cain.ps1 -Mode api
-python -m pip install -e ".[dev]"
+python -m pip install --find-links vendor -e ".[dev]"
 python -m ruff check .
 python -m pytest -q
 ```

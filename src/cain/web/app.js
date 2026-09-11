@@ -67,6 +67,7 @@ async function loadProjects(preferred = null) {
   await loadProject();
 }
 async function loadProject() {
+  $('research-result').replaceChildren();
   state.session = null;
   $('project-title').textContent = $('project').selectedOptions[0].textContent;
   const sessions = await api(`/sessions/${pathUser()}` + query({ project_id: state.project }));
@@ -376,6 +377,74 @@ if (typeof navigator.modelContext?.registerTool === 'function') {
   });
 }
 
+function researchBody(offset = 0) {
+  return { user_id: state.user, project_id: state.project,
+    collection: $('research-collection').value,
+    source_id: $('research-id').value || null, status: $('research-status').value || null,
+    text: $('research-text').value || null, limit: 10, offset };
+}
+function renderResearch(result) {
+  const container = $('research-result');
+  container.replaceChildren();
+  const facts = result.facts ?? result;
+  container.append(node('p', `${facts.total_record_revisions} revisões de registros no escopo admitido. Não é contagem de experimentos.`));
+  const coverage = node('details');
+  coverage.append(node('summary', 'Cobertura, lacunas e limitações'));
+  coverage.append(node('pre', JSON.stringify({ coverage: facts.coverage, limitations: facts.limitations, conflicts: facts.conflicts, multiple_revisions: facts.multiple_revisions }, null, 2)));
+  container.append(coverage);
+  for (const record of facts.records) {
+    const article = node('article', undefined, 'research-record');
+    article.append(node('h3', `${record.source_id} · ${record.source_status}`));
+    article.append(node('p', `Eixo: ${record.status_axis} · Tipo: ${record.kind} · Mapeamento: ${record.mapping ? JSON.stringify(record.mapping) : 'não atribuído'}`));
+    article.append(node('small', `Revisão: ${record.revision} · Identidade: ${record.identity_basis}`));
+    article.append(node('p', record.reason ?? 'Motivo estruturado não registrado; consulte o relato da fonte.'));
+    for (const evidence of record.evidence) {
+      const detail = node('details');
+      detail.append(node('summary', `${evidence.source} · ${evidence.availability}`));
+      detail.append(node('pre', evidence.text ?? 'Somente referência; conteúdo não recebido.'));
+      detail.append(node('small', `${evidence.locator} · ${evidence.start}–${evidence.end} ${evidence.offset_unit ?? ''}`));
+      detail.append(node('small', `SHA-256 (${evidence.hash_basis ?? 'indisponível'}): ${evidence.sha256 ?? 'indisponível'}`));
+      const inspect = node('button', 'Inspecionar evidência preservada', 'secondary');
+      inspect.type = 'button';
+      inspect.addEventListener('click', handle(async () => {
+        const preserved = await api('/research/evidence/' + encodeURIComponent(evidence.reference_id) + query({ user_id: state.user, project_id: state.project, collection: $('research-collection').value }));
+        const pre = node('pre', JSON.stringify(preserved, null, 2));
+        inspect.replaceWith(pre);
+      }));
+      detail.append(inspect);
+      article.append(detail);
+    }
+    container.append(article);
+  }
+  if (facts.offset > 0) {
+    const previous = node('button', 'Página anterior', 'secondary');
+    previous.addEventListener('click', handle(() => runResearch(Math.max(0, facts.offset - facts.limit))));
+    container.append(previous);
+  }
+  if (facts.has_more) {
+    const next = node('button', 'Próxima página', 'secondary');
+    next.addEventListener('click', handle(() => runResearch(facts.offset + facts.limit)));
+    container.append(next);
+  }
+  if (result.generation) {
+    const explanation = node('details');
+    explanation.open = true;
+    explanation.append(node('summary', `Explicação opcional: ${result.status} · síntese proposta, suporte semântico não certificado`));
+    explanation.append(node('pre', JSON.stringify({ explanation: result.explanation, generation: result.generation, error: result.error }, null, 2)));
+    container.append(explanation);
+  }
+}
+async function runResearch(offset = 0) {
+  renderResearch(await api('/research/query', 'POST', researchBody(offset)));
+}
+$('research-form').addEventListener('submit', (event) => {
+  event.preventDefault();
+  handle(() => runResearch())();
+});
+$('research-explain').addEventListener('click', handle(async () => {
+  renderResearch(await api('/research/explain', 'POST', { ...researchBody(), question: $('research-question').value }));
+}));
+
 preferenceValues();
 if (matchMedia('(max-width:1150px)').matches) {
   document.querySelector('.shell').classList.add('memory-hidden');
@@ -385,7 +454,7 @@ try { state.user = localStorage.getItem('cain.user') || state.user; } catch { /*
 $('user').value = state.user;
 handle(async () => {
   const health = await api('/health');
-  $('model').textContent = health.model;
-  $('search-mode').textContent = health.search_mode === 'hybrid' ? 'Busca híbrida · serviço local' : 'Busca por palavras · serviço local';
+  $('model').textContent = 'Modelo configurado: ' + health.model;
+  $('search-mode').textContent = health.search_mode === 'hybrid' ? 'Busca híbrida configurada · disponibilidade não verificada' : 'Busca por palavras · serviço local';
   await loadProjects();
 })();

@@ -12,8 +12,9 @@
 <a class="skip" href="#message">Ir para a conversa</a>
 <div class="shell">
   <aside class="navigation">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><span>Cain<small>LOCAL · 0.3</small></span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">C</span><span>Cain<small>LOCAL · L0</small></span></div>
     <label for="user">Usuário</label><div class="inline"><input id="user" value="leo" maxlength="200" autocomplete="off"><button id="change-user" class="quiet">Usar</button></div>
+    <small>Perfis locais; não é autenticação remota.</small>
     <div class="section-heading"><label for="project">Projeto</label><button id="new-project" class="quiet" aria-label="Criar projeto">+</button></div>
     <select id="project"><option value="">Geral</option></select>
     <button id="new-session" class="new-conversation">+ Nova conversa</button>
@@ -24,6 +25,22 @@
   <main class="conversation">
     <header class="conversation-header"><div><span class="eyebrow">CONVERSA</span><h1 id="project-title">Geral</h1></div><button id="toggle-memory" class="secondary" aria-expanded="true" aria-controls="memory-panel">Memória</button></header>
     <div id="notice" class="notice" role="alert" hidden></div>
+    <details id="research-panel" class="research-panel">
+      <summary>Pesquisa · L0 Historian</summary>
+      <p class="muted">Consulta de evidências admitidas no usuário e projeto selecionados. Não executa pesquisa científica.</p>
+      <form id="research-form">
+        <div class="research-filters">
+          <label>Acervo<input id="research-collection" value="crypto" maxlength="200" required></label>
+          <label>Identidade da fonte<input id="research-id" placeholder="H6 ou CLAIM-CR-H6" maxlength="200"></label>
+          <label>Estado original<input id="research-status" placeholder="CLOSED_INSUFFICIENT_SAMPLE" maxlength="500"></label>
+          <label>Texto contido<input id="research-text" maxlength="500" placeholder="Termo literal nas evidências"></label>
+        </div>
+        <button class="secondary" type="submit">Consultar acervo</button>
+        <label>Pergunta para explicação opcional<input id="research-question" maxlength="1000" placeholder="O que a fonte permite concluir?"></label>
+        <button id="research-explain" type="button" class="secondary">Explicar com provider local</button>
+      </form>
+      <div id="research-result" aria-live="polite"></div>
+    </details>
     <section id="messages" class="messages" aria-label="Mensagens" aria-live="polite">
       <div class="empty" id="empty"><span class="empty-symbol" aria-hidden="true">C</span><h2>O que vamos trabalhar?</h2><p>Converse, consulte seus documentos ou ajuste como prefere receber respostas.</p><div class="suggestions"><button data-example="Quais preferências posso mudar?">Explorar minhas preferências</button><button data-example="Só nesta resposta, prefiro passos. Escreva código Python para somar dois números.">Experimentar uma preferência temporária</button></div></div>
     </section>

@@ -120,6 +120,8 @@ def main(argv=None) -> int:
             stream.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description="Cain — identidade persistente e agentes locais")
     sub = parser.add_subparsers(dest="command", required=True)
+    from cain.research.cli import register
+    register(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
     run.add_argument("--intent", choices=["busca", "codigo", "resumo"])
@@ -141,6 +143,11 @@ def main(argv=None) -> int:
         parser.error("O pedido não pode ser vazio.")
     runtime = None
     try:
+        if args.command == "research":
+            from cain.research.cli import execute
+            result = execute(args)
+            _write(result)
+            return 1 if isinstance(result, dict) and result.get("status") == "generation_failed" else 0
         settings = _settings(args)
         if args.command == "doctor":
             with urlopen(settings.base_url.rstrip("/") + "/api/tags", timeout=5) as response:

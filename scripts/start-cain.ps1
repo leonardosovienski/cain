@@ -20,9 +20,11 @@ if ($taskLocal -and (Test-Path -LiteralPath $taskLocal.python)) {
 if (-not (Test-Path -LiteralPath $taskPython)) {
     & python -m venv (Join-Path $taskRoot '.venv')
     if ($LASTEXITCODE -ne 0) { throw 'Python 3.11+ is required.' }
-    & $taskPython -m pip install -e ($taskRoot + '[api]')
+    & $taskPython -m pip install --find-links (Join-Path $taskRoot 'vendor') -e ($taskRoot + '[api]')
     if ($LASTEXITCODE -ne 0) { throw 'Could not install Cain dependencies.' }
 }
+$env:PYTHONUTF8 = '1'
+if ($Mode -in @('chat', 'demo')) {
 $taskOllama = $null
 if ($taskLocal -and (Test-Path -LiteralPath $taskLocal.ollama_exe)) {
     $taskOllama = $taskLocal.ollama_exe
@@ -53,6 +55,7 @@ if (-not $taskReady) {
     }
     if (-not $taskReady) { throw 'Ollama did not start. Read data/ollama.stderr.log.' }
 }
+}
 Push-Location $taskRoot
 try {
     switch ($Mode) {
@@ -62,14 +65,18 @@ try {
         'web' {
             $taskUrl = 'http://127.0.0.1:' + $Port
             $taskWebReady = $false
+            $taskHealth = $null
             try {
                 $taskHealth = Invoke-RestMethod ($taskUrl + '/health') -TimeoutSec 3
-                if ($taskHealth.version -ne '0.3.0' -or $taskHealth.research_status -ne 'provisional') {
+            } catch {
+                # Windows PowerShell and PowerShell 7 use different HTTP exception types.
+                # Only the HTTP probe is caught; a foreign-service verdict below is not.
+            }
+            if ($taskHealth) {
+                if ($taskHealth.service -ne 'cain-local-api' -or $taskHealth.api_contract -ne 1) {
                     throw 'Another service is already using this port. Choose -Port with another number.'
                 }
                 $taskWebReady = $true
-            } catch [System.Net.WebException] {
-                # The service is not listening yet. The child reports a port conflict in its log.
             }
             if (-not $taskWebReady) {
                 $taskData = Join-Path $taskRoot 'data'
@@ -80,7 +87,7 @@ try {
                     if ($taskProcess.HasExited) { throw "Cain did not start. Read data/web-$Port.stderr.log." }
                     try {
                         $taskHealth = Invoke-RestMethod ($taskUrl + '/health') -TimeoutSec 2
-                        if ($taskHealth.version -eq '0.3.0' -and $taskHealth.research_status -eq 'provisional') {
+                        if ($taskHealth.service -eq 'cain-local-api' -and $taskHealth.api_contract -eq 1) {
                             $taskWebReady = $true
                             break
                         }

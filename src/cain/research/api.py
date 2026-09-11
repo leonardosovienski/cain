@@ -1,0 +1,92 @@
+"""Routes mounted on the existing loopback Cain application."""
+
+import os
+from pathlib import Path
+
+from fastapi import HTTPException
+from pydantic import BaseModel, ConfigDict, Field
+
+from cain.research import ResearchService
+
+
+class ResearchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    user_id: str = Field(default="leo", min_length=1, max_length=200)
+    project_id: str | None = Field(default=None, max_length=200)
+    collection: str = Field(default="crypto", min_length=1, max_length=200)
+    domain: str | None = Field(default=None, max_length=200)
+    source_id: str | None = Field(default=None, max_length=200)
+    kind: str | None = Field(default=None, max_length=200)
+    status: str | None = Field(default=None, max_length=500)
+    revision: str | None = Field(default=None, max_length=200)
+    reason: str | None = Field(default=None, max_length=500)
+    text: str | None = Field(default=None, max_length=500)
+    completeness: str | None = Field(default=None, max_length=100)
+    limit: int = Field(default=20, ge=1, le=50)
+    offset: int = Field(default=0, ge=0, le=100_000)
+    question: str | None = Field(default=None, max_length=1000)
+
+
+def mount(
+    app,
+    storage_path,
+    validate_context,
+    provider_factory,
+    generation_lock,
+    policy_path=None,
+    research_path=None,
+):
+    policy_path = policy_path or os.getenv("CAIN_RESEARCH_POLICY")
+    research_path = (
+        research_path
+        or os.getenv("CAIN_RESEARCH_DB")
+        or Path(storage_path).with_name("research.db")
+    )
+
+    def service():
+        if not policy_path:
+            raise HTTPException(503, "Pesquisa desativada: configure CAIN_RESEARCH_POLICY")
+        return ResearchService(research_path, policy_path)
+
+    def prepare(request):
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        scope = store.scope(request.user_id, request.project_id, request.collection)
+        filters = request.model_dump(exclude={"user_id", "project_id", "collection", "question"})
+        return store, scope, filters
+
+    @app.post("/research/query")
+    def query(request: ResearchRequest):
+        store, scope, filters = prepare(request)
+        return store.query(scope, **filters)
+
+    @app.post("/research/explain")
+    def explain_request(request: ResearchRequest):
+        from cain.research.historian import explain
+
+        store, scope, filters = prepare(request)
+        with generation_lock:
+            return explain(store, scope, request.question, provider_factory(), **filters)
+
+    @app.get("/research/evidence/{reference}")
+    def evidence(
+        reference: str,
+        user_id: str = "leo",
+        project_id: str | None = None,
+        collection: str = "crypto",
+    ):
+        validate_context(user_id, project_id)
+        store = service()
+        return store.evidence(store.scope(user_id, project_id, collection), reference)
+
+    @app.get("/research/capabilities")
+    def capabilities():
+        return {
+            "enabled": bool(policy_path),
+            "mode": "L0",
+            "deterministic": True,
+            "provider": "not_probed",
+            "inference": "not_exercised",
+            "embedding_required": False,
+            "scope_selection": "local organization, not remote authentication",
+        }

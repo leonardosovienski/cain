@@ -28,6 +28,8 @@ class Settings:
 
 
 def load_settings(config_path: Path | None = None) -> Settings:
+    if config_path is not None and not Path(config_path).is_file():
+        raise ValueError("Arquivo de configuração explícito não encontrado")
     if config_path is None:
         local = Path.cwd() / "cain.toml"
         bundled = Path(__file__).resolve().parents[2] / "cain.toml"
@@ -39,19 +41,26 @@ def load_settings(config_path: Path | None = None) -> Settings:
         base = config_path.resolve().parent
     else:
         data, base = {}, Path.cwd()
-    settings = Settings(**data.get("llm", {}))
+    try:
+        settings = Settings(**data.get("llm", {}))
+    except TypeError as exc:
+        raise ValueError("Campos inválidos na configuração llm") from exc
     db = Path(os.getenv("CAIN_DB", data.get("storage", {}).get("path", "data/cain.db")))
     settings.db_path = db if db.is_absolute() else base / db
     search = data.get("search", {})
     settings.source_paths = [p if p.is_absolute() else base / p
                              for p in map(Path, search.get("paths", []))]
-    settings.allow_public_urls = bool(search.get("allow_public_urls", True))
+    settings.allow_public_urls = search.get("allow_public_urls", True)
+    if type(settings.allow_public_urls) is not bool:
+        raise ValueError("search.allow_public_urls deve ser booleano")
     settings.search_mode = search.get("mode", "lexical")
     if settings.search_mode not in {"lexical", "hybrid"}:
         raise ValueError("search.mode deve ser lexical ou hybrid")
     settings.embedding_model = search.get("embedding_model", "qwen3-embedding:0.6b")
     settings.embedding_digest = search.get("embedding_digest", "")
-    settings.llm_routing = bool(data.get("orchestration", {}).get("llm_routing", True))
+    settings.llm_routing = data.get("orchestration", {}).get("llm_routing", True)
+    if type(settings.llm_routing) is not bool:
+        raise ValueError("orchestration.llm_routing deve ser booleano")
     settings.provider = os.getenv("CAIN_PROVIDER", settings.provider)
     settings.model = os.getenv("CAIN_MODEL", settings.model)
     settings.base_url = os.getenv("CAIN_OLLAMA_URL", settings.base_url)

@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field, field_validator
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from cain.cli import configured_llm, configured_embedding
+from cain import __version__
 from cain.llm import FakeLLM
 from cain.runtime import build_cain
 from cain.orchestrator.routing import RuleRouter
@@ -90,8 +91,9 @@ class FeedbackRequest(BaseModel):
 
 
 def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | None = None,
-               embedding=None) -> FastAPI:
-    app = FastAPI(title="Cain — memória e projetos", version="0.3.0", docs_url=None, redoc_url=None)
+               embedding=None, research_policy: Path | None = None,
+               research_db: Path | None = None) -> FastAPI:
+    app = FastAPI(title="Cain — memória e projetos", version=__version__, docs_url=None, redoc_url=None)
     settings = load_settings(config_path)
     storage_path = Path(db_path if db_path is not None else settings.db_path)
     workspace = WorkspaceStore(storage_path)
@@ -154,11 +156,19 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
     def runtime_for_profile():
         return build_cain(storage_path, FakeLLM())
 
+    from cain.research.api import mount
+    mount(app, storage_path, validate_context,
+          lambda: llm if llm is not None else configured_llm(settings), generation_lock,
+          policy_path=research_policy, research_path=research_db)
+
     @app.get("/health")
     def health():
-        return {"status": "ok", "version": "0.3.0", "model": settings.model,
+        return {"status": "ok", "service": "cain-local-api", "api_contract": 1,
+                "provider_availability": "not_probed", "inference": "not_exercised",
+                "version": __version__, "model": settings.model,
                 "provider": type(llm).__name__ if llm is not None else settings.provider,
-                "search_mode": settings.search_mode, "research_status": "provisional"}
+                "search_mode": settings.search_mode, "research_status": "l0-local",
+                "identity_status": "provisional"}
 
     @app.post("/run")
     def run(request: RunRequest):

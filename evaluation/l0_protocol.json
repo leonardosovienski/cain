@@ -1,0 +1,19 @@
+{
+  "version": "l0-audit/1",
+  "fixed_before_running_answers": true,
+  "purpose": "Current recovery of documented reports, not retrospective decision quality",
+  "episodes": [
+    {"id": "h6", "source_id": "H6", "question": "Qual estado foi registrado para H6?", "expected_status": "CLOSED_INSUFFICIENT_SAMPLE", "abstain": false},
+    {"id": "h4", "source_id": "H4", "question": "Qual estado foi registrado para H4?", "expected_status": "CLOSED_INSUFFICIENT_SAMPLE", "abstain": false},
+    {"id": "h7", "source_id": "H7", "question": "H7 tem ativação registrada neste charter?", "expected_status": "REGISTERED_NOT_ACTIVATED", "abstain": false},
+    {"id": "trend", "source_id": "CLAIM-CR-TREND", "question": "A fonte trata fechamento de escopo como refutação?", "expected_status_prefix": "CLOSED_BY_SCOPE / INCONCLUSIVE", "abstain": false},
+    {"id": "uncovered", "source_id": "H999", "question": "Qual o estado de H999?", "expected_status": null, "abstain": true}
+  ],
+  "arms": ["deterministic", "organized_documents_with_exact_id_filter_and_lexical_retrieval", "structured_plus_historian"],
+  "call_limit_per_model_arm": 5,
+  "evidence_budget_bytes": 6000,
+  "generation_limit_bytes": 6000,
+  "investment_threshold": "At least 10 percentage points factual/support improvement, no added unsupported claim, in a larger independent held-out episode set",
+  "abstention": "Unknown ID, absent structured cause, insufficient coverage: do not invent an answer or conclude never occurred",
+  "limitations": ["Small curated development corpus; not a held-out scientific evaluation", "H6 and H4 share sample-size themes; five questions are not five independent research trials", "No human time or usability score inferred", "Generated semantic support requires human review"]
+}
