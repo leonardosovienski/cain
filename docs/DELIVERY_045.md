@@ -63,6 +63,14 @@ pela revisão visual com quebra de identificadores longos.
 
 Primeira CI publicada aprovada nas três versões Python:
 [execução 34625953228](https://github.com/leonardosovienski/cain/actions/runs/34625953228).
+CI final também aprovada em Python 3.11, 3.12 e 3.13:
+[execução 34626131488](https://github.com/leonardosovienski/cain/actions/runs/34626131488).
+Código instalado: `89da45975892d31b7e28750c1a0b4bc25ec160e3`; os 42 arquivos
+do pacote foram comparados byte a byte com wheel final e checkout isolado.
+Recibo: `C:\CAIN\entregas\0.4.5\installed-code-receipt.json`.
+Após reinício, `/health` informou 0.4.5. A interface foi reaberta e o dossiê
+novamente consultado; largura do resultado e do conteúdo ambas 437 pixels
+no viewport de revisão, sem transbordamento horizontal.
 
 ## Continuidade e limites
 
