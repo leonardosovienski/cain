@@ -45,8 +45,25 @@
           <label>Revisão de destino<input id="research-after" maxlength="500"></label>
         </div>
         <button id="research-compare" type="button" class="secondary">Comparar revisões da fonte</button>
+        <button id="research-search" type="button" class="secondary">Buscar pela pergunta</button>
+        <label><input id="research-semantic" type="checkbox"> Incluir busca semântica local nas evidências permitidas</label>
+        <button id="research-entities" type="button" class="secondary">Extrair relações com fontes</button>
+        <button id="research-workflow" type="button" class="secondary">Criar fluxo de análise e debate</button>
+        <button id="research-jobs" type="button" class="secondary">Fluxos salvos deste acervo</button>
       </form>
       <div id="research-result" aria-live="polite"></div>
+      <div id="research-job" aria-live="polite"></div>
+      <details id="lab-panel">
+        <summary>Laboratório local · texto e imagem em streaming</summary>
+        <p>Resposta experimental do modelo local. Não altera memória nem registros científicos.</p>
+        <label>Modelo local<select id="lab-model"><option value="">Automático: modelo configurado ou modelo de visão</option></select></label>
+        <button id="lab-models" type="button" class="secondary">Listar modelos instalados</button>
+        <label>Pergunta ou instrução<textarea id="lab-prompt" maxlength="6000" rows="3"></textarea></label>
+        <label>Imagem opcional · PNG, JPEG ou WebP até 2 MB<input id="lab-image" type="file" accept="image/png,image/jpeg,image/webp"></label>
+        <button id="lab-send" type="button" class="secondary">Gerar resposta local</button>
+        <button id="lab-stop" type="button" class="secondary" disabled>Interromper resposta</button>
+        <p id="lab-status" role="status"></p><pre id="lab-output"></pre>
+      </details>
     </details>
     <section id="messages" class="messages" aria-label="Mensagens" aria-live="polite">
       <div class="empty" id="empty"><span class="empty-symbol" aria-hidden="true">C</span><h2>O que vamos trabalhar?</h2><p>Converse, consulte seus documentos ou ajuste como prefere receber respostas.</p><div class="suggestions"><button data-example="Quais preferências posso mudar?">Explorar minhas preferências</button><button data-example="Só nesta resposta, prefiro passos. Escreva código Python para somar dois números.">Experimentar uma preferência temporária</button></div></div>

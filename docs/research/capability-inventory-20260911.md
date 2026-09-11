@@ -1,5 +1,28 @@
 # Inventário ampliado de capacidades — 11/09/2026
 
+## Atualização 0.4.6
+
+As tabelas seguintes preservam o diagnóstico da versão 0.4.5. O novo pedido
+reabriu seus adiamentos técnicos; a [entrega 0.4.6](../DELIVERY_046.md) acrescenta:
+
+| Família | Implementação atual |
+|---|---|
+| Streaming e multimodal | NDJSON incremental com terminal obrigatório, interrupção, PNG/JPEG/WebP local limitado; seletor de modelos instalados e CLI |
+| Recuperação | Ranking lexical e híbrido no acervo L0, IDs e permissões preservados; embeddings somente para fontes admitidas à inferência |
+| Entidades e relações | Extração proposta por LLM, referências e trechos exatos, sujeito/objeto presentes na citação; sem promoção a fatos |
+| Debate | Etapas suporte, crítica e síntese com fontes; papéis do mesmo modelo, sem alegar agentes independentes |
+| Workflows | Seis ferramentas registradas, checkpoints SQLite, retomada, cancelamento, recuperação explícita, identidade de modelo/corpus fixada |
+| Observabilidade | Tentativas, falhas, duração, hashes e exportação OTLP JSON local sem conteúdo das fontes; nenhum coletor externo conectado |
+| MCP | Servidor stdio 2025-06-18, quatro ferramentas de leitura, usuário/projeto/acervo fixos; verificação em processo separado |
+| Runtime | Ollama Windows instalado e três modelos locais; texto, imagem e embeddings exercitados com inferência real |
+
+Isso fecha os blocos pertinentes selecionados, sem transformar o Cain em
+corretora, executor científico dos produtores, plataforma distribuída ou cópia
+integral dos produtos. Ontologia automática aceita como verdade, feeds pagos,
+execução de capital e benchmarks prospectivos não foram autorizados por este lote.
+
+## Diagnóstico histórico 0.4.5
+
 Pedido: examinar os recursos dos rivais e ampliar a implementação no Cain.
 Este inventário cobre as famílias anunciadas nas fontes primárias abaixo,
 consultadas novamente nesta rodada. Não é uma auditoria de cada opção de cada

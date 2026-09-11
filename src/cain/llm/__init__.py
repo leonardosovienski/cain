@@ -5,7 +5,8 @@ from hashlib import sha256
 import json
 from typing import Protocol, runtime_checkable
 from urllib.error import HTTPError, URLError
-from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
+from urllib.parse import urlsplit
 
 from cain.settings import validate_llm_options
 
@@ -25,7 +26,11 @@ class _NoRedirect(HTTPRedirectHandler):
 
 
 def urlopen(request, timeout):
-    return build_opener(_NoRedirect()).open(request, timeout=timeout)
+    url = request.full_url if isinstance(request, Request) else request
+    handlers = [_NoRedirect()]
+    if urlsplit(url).hostname in {"127.0.0.1", "localhost", "::1"}:
+        handlers.append(ProxyHandler({}))
+    return build_opener(*handlers).open(request, timeout=timeout)
 
 
 class LLMTruncated(LLMError):

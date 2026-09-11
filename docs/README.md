@@ -2,6 +2,9 @@
 
 ## Estado operacional atual
 
+[Entrega 0.4.6: streaming, visão, busca, extração, debate, workflows e MCP](DELIVERY_046.md).
+As entregas abaixo documentam versões anteriores.
+
 [Entrega 0.4.4: três produtores, backup e avaliação](DELIVERY_044.md).
 
 [Publicação e CI 0.4.4](PUBLICATION_044.md): SHAs, wheel e alterações concorrentes.

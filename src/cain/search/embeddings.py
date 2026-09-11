@@ -13,7 +13,7 @@ import sqlite3
 from typing import Protocol, Sequence
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
-from urllib.request import HTTPRedirectHandler, Request, build_opener
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 from cain.search import SearchError
 
@@ -73,7 +73,9 @@ class OllamaEmbedding:
         self.max_input_chars, self.max_batch_size = max_input_chars, max_batch_size
         self.dimensions = dimensions
         self._observed_dimension = dimensions
-        self._opener = build_opener(_NoRedirect())
+        self._opener = build_opener(_NoRedirect(), ProxyHandler({})
+                                   if parsed.hostname in {"127.0.0.1", "localhost", "::1"}
+                                   else ProxyHandler())
 
     def validate_inputs(self, texts: Sequence[str]) -> list[str]:
         if isinstance(texts, (str, bytes)) or not isinstance(texts, (list, tuple)):

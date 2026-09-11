@@ -1,5 +1,6 @@
 const $ = (id) => document.getElementById(id);
 const state = { user: 'leo', project: null, session: null, busy: false, profile: null, memoryTurn: null };
+let streamController = null;
 const names = { format: 'Formato', verbosity: 'Extensão', language: 'Idioma' };
 const values = { bullets: 'Tópicos', paragraph: 'Parágrafo', steps: 'Passos', short: 'Curta', detailed: 'Detalhada', pt: 'Português', en: 'Inglês' };
 const scopes = { user: 'Padrão geral', project: 'Neste projeto', session: 'Nesta conversa', turn: 'Só nesta resposta' };
@@ -44,6 +45,8 @@ function updateControls() {
     if (!state.project && $(id).value === 'project') $(id).value = id === 'edit-scope' ? 'user' : '';
   }
   $('activity').textContent = state.busy ? 'Processando no computador…' : 'Enter envia · Shift + Enter quebra a linha';
+  $('lab-stop').disabled = !streamController;
+  for (const button of document.querySelectorAll('[data-cancel-job]')) button.disabled = false;
 }
 async function action(work) {
   if (state.busy) throw new Error('Aguarde o pedido atual terminar.');
@@ -68,6 +71,8 @@ async function loadProjects(preferred = null) {
 }
 async function loadProject() {
   $('research-result').replaceChildren();
+  $('research-job').replaceChildren();
+  $('lab-output').textContent = '';
   state.session = null;
   $('project-title').textContent = $('project').selectedOptions[0].textContent;
   const sessions = await api(`/sessions/${pathUser()}` + query({ project_id: state.project }));
@@ -552,6 +557,156 @@ async function inspectResearch(compare = false) {
 }
 $('research-inspect').addEventListener('click', handle(() => inspectResearch()));
 $('research-compare').addEventListener('click', handle(() => inspectResearch(true)));
+const agentScope = () => ({user_id: state.user, project_id: state.project, collection: $('research-collection').value});
+const agentQuestion = () => ({...agentScope(), question: $('research-question').value,
+  source_id: $('research-id').value || null});
+const stepNames = {inspect:'Inspecionar evidências', search:'Buscar suporte', entities:'Propor relações',
+  support:'Analisar suporte', challenge:'Criticar conclusões', synthesis:'Sintetizar o debate'};
+function renderAgentResult(result, route) {
+  const container = $('research-result');
+  container.replaceChildren(node('h3', route === 'search' ? 'Resultados da busca' : 'Relações propostas'));
+  if (route === 'search') {
+    container.append(node('p', `${result.matches} resultados · ${result.mode === 'hybrid_relevance' ? 'busca híbrida local' : 'busca textual'}. Estados preservados das fontes.`));
+    for (const item of result.results) {
+      const section = node('section', undefined, 'research-record');
+      section.append(node('h3', item.record.source_id), node('p', item.record.source_status));
+      for (const ref of item.record.references) {
+        const evidence = result.evidence.find(entry => entry.reference_id === ref);
+        const detail = node('details');
+        detail.append(node('summary', evidence.source), node('pre', evidence.text ?? 'Conteúdo não recebido.'), node('small', ref));
+        section.append(detail);
+      }
+      container.append(section);
+    }
+    if (!result.results.length) container.append(node('p', 'Nenhuma evidência encontrada com esses filtros.'));
+  } else {
+    container.append(node('p', 'Propostas do modelo; confira as citações. Não alteram os estados científicos.'));
+    for (const relation of result.relations) {
+      const section = node('section', undefined, 'research-record');
+      section.append(node('h3', `${relation.subject} → ${relation.predicate} → ${relation.object}`),
+        node('blockquote', relation.quote), node('small', relation.reference));
+      container.append(section);
+    }
+    if (!result.relations.length) container.append(node('p', 'O modelo não propôs relações sustentadas por esta consulta.'));
+  }
+  const diagnostic = node('details');
+  diagnostic.append(node('summary', 'Detalhes e diagnóstico'), node('pre', JSON.stringify(result, null, 2)));
+  container.append(diagnostic);
+}
+function renderJob(job, scope) {
+  const container = $('research-job');
+  container.replaceChildren(node('h3', 'Fluxo salvo · ' + job.status));
+  container.append(node('p', job.request.question), node('small', `${scope.collection} · ${job.id}`));
+  container.append(node('p', `${job.steps.length}/${job.request.steps.length} etapas concluídas. Próxima: ${stepNames[job.next_step] ?? 'nenhuma'}.`));
+  for (const step of job.steps) {
+    const detail = node('details');
+    detail.append(node('summary', `${stepNames[step.name]} · ${step.duration_seconds.toFixed(2)} s`),
+      node('pre', JSON.stringify(step.result, null, 2)));
+    container.append(detail);
+  }
+  const traces = node('details');
+  traces.append(node('summary', 'Tentativas, falhas e tempos'), node('pre', JSON.stringify(job.attempts, null, 2)));
+  container.append(traces);
+  const exportTrace = node('button', 'Ver trace OTLP local (sem conteúdo das fontes)', 'secondary');
+  exportTrace.addEventListener('click', handle(async () => {
+    const trace = await api(`/research/jobs/${encodeURIComponent(job.id)}/trace`, 'POST', scope);
+    container.append(node('pre', JSON.stringify(trace, null, 2)));
+  }));
+  container.append(exportTrace);
+  if (!['completed','cancelled'].includes(job.status)) {
+    const next = node('button', job.status === 'running' ? 'Recuperar etapa interrompida (após 10 min)' : 'Executar próxima etapa', 'secondary');
+    next.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/advance`, 'POST',
+      {...scope, approve_generation:true, recover:['failed','running'].includes(job.status)}), scope)));
+    const all = node('button', 'Executar etapas restantes', 'secondary');
+    all.addEventListener('click', handle(async () => {
+      let current = job;
+      for (let count=0; count<6 && !['completed','cancelled'].includes(current.status); count++) {
+        current = await api(`/research/jobs/${encodeURIComponent(job.id)}/advance`, 'POST',
+          {...scope, approve_generation:true, recover:current.status === 'failed'});
+        renderJob(current, scope);
+      }
+    }));
+    const cancel = node('button', 'Cancelar fluxo', 'secondary');
+    cancel.dataset.cancelJob = job.id;
+    cancel.addEventListener('click', async () => {
+      try { renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/cancel`, 'POST', scope), scope); }
+      catch (error) { notice(error.message); }
+    });
+    container.append(next);
+    if (job.status !== 'running') container.append(all);
+    container.append(cancel);
+  }
+  updateControls();
+}
+$('research-collection').addEventListener('input', () => {
+  $('research-result').replaceChildren(); $('research-job').replaceChildren();
+});
+for (const [button, route] of [['research-search','search'], ['research-entities','entities']]) {
+  $(button).addEventListener('click', handle(async () => {
+    const result = await api('/research/' + route, 'POST', {...agentQuestion(),
+      ...(route === 'search' ? {semantic:$('research-semantic').checked} : {})});
+    renderAgentResult(result, route);
+  }));
+}
+$('research-workflow').addEventListener('click', handle(async () => {
+  const scope = agentScope();
+  renderJob(await api('/research/jobs', 'POST', agentQuestion()), scope);
+}));
+$('research-jobs').addEventListener('click', handle(async () => {
+  const scope = agentScope();
+  const jobs = await api('/research/jobs/list', 'POST', scope);
+  const container = $('research-job'); container.replaceChildren(node('h3','Fluxos disponíveis com as permissões atuais'));
+  for (const job of jobs) {
+    const button = node('button', `${job.created_at} · ${job.status} · ${job.id}`, 'secondary');
+    button.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/read`, 'POST', scope), scope)));
+    container.append(button);
+  }
+}));
+$('lab-stop').addEventListener('click', () => streamController?.abort());
+$('lab-models').addEventListener('click', handle(async () => {
+  const result = await api('/assistant/models');
+  $('lab-model').replaceChildren(new Option('Automático: modelo configurado ou modelo de visão', ''));
+  const generators = result.models.filter(model => !model.capabilities.length || model.capabilities.includes('completion'));
+  for (const model of generators) $('lab-model').append(new Option(model.name, model.name));
+  $('lab-status').textContent = `${generators.length} modelos de geração instalados. Use um modelo com visão para analisar imagens.`;
+}));
+$('lab-send').addEventListener('click', handle(async () => {
+  const file = $('lab-image').files[0];
+  let images = [];
+  if (file) {
+    if (file.size > 2000000) throw new Error('A imagem deve ter até 2 MB.');
+    const encoded = await new Promise((resolve,reject) => {const reader=new FileReader();
+      reader.onload=()=>resolve(reader.result.split(',')[1]); reader.onerror=reject; reader.readAsDataURL(file);});
+    images = [encoded];
+  }
+  streamController = new AbortController(); updateControls();
+  $('lab-output').textContent = ''; $('lab-status').textContent = 'Gerando · texto provisório…';
+  let terminal = false;
+  try {
+    const response = await fetch('/assistant/stream', {method:'POST', signal:streamController.signal,
+      headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:state.user, project_id:state.project,
+        prompt:$('lab-prompt').value, images, model:$('lab-model').value || null})});
+    if (!response.ok) throw new Error((await response.json()).detail || 'Falha na geração');
+    const reader = response.body.getReader(), decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, {stream:true});
+      let end;
+      while ((end=buffer.indexOf('\n')) >= 0) {
+        const event = JSON.parse(buffer.slice(0,end)); buffer=buffer.slice(end+1);
+        if (event.type === 'token') $('lab-output').textContent += event.text;
+        if (event.type === 'done') {terminal=true; $('lab-status').textContent='Geração concluída · resposta do modelo, suporte não certificado.';}
+        if (event.type === 'error') {terminal=true; $('lab-status').textContent='Geração incompleta ou falhou. O texto parcial foi preservado para inspeção.';}
+      }
+    }
+    if (!terminal) throw new Error('Conexão encerrada sem conclusão da resposta.');
+  } catch (error) {
+    $('lab-status').textContent = error.name === 'AbortError' ? 'Resposta interrompida; texto incompleto.' : 'Geração não concluída.';
+    if (error.name !== 'AbortError') throw error;
+  } finally {streamController=null; updateControls();}
+}));
 $('research-form').addEventListener('submit', (event) => {
   event.preventDefault();
   handle(() => runResearch())();

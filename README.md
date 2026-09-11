@@ -1,6 +1,7 @@
-# Cain 0.4.4 — conversa, memória e pesquisa local L0
+# Cain 0.4.6 — conversa, memória e pesquisa local L0
 
-Entrega atual: [três produtores e recuperação 0.4.4](docs/DELIVERY_044.md). Os resultados anteriores abaixo são históricos.
+Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_046.md).
+Os resultados de versões anteriores abaixo são históricos.
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.

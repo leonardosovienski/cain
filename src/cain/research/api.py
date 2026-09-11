@@ -67,6 +67,9 @@ def mount(
         filters = request.model_dump(exclude={"user_id", "project_id", "collection", "question"})
         return store, scope, filters
 
+    from cain.research.agent_api import mount as mount_agent_tools
+    mount_agent_tools(app, service, validate_context, provider_factory, generation_lock)
+
     @app.post("/research/query")
     def query(request: ResearchRequest):
         store, scope, filters = prepare(request)

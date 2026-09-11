@@ -1,0 +1,17 @@
+{
+  "protocol": "local-agent-capabilities/1",
+  "split": "development",
+  "baseline": "existing literal query and historian extractive explanation",
+  "cases": [
+    {"id":"crypto-pt", "group":"crypto-h6", "collection":"crypto", "source_id":"H6", "question":"O que a evidência recebida informa sobre H6?"},
+    {"id":"crypto-en", "group":"crypto-h6", "collection":"crypto", "source_id":"H6", "question":"What does the received evidence report about H6?"},
+    {"id":"stocks-pt", "group":"stocks-state", "collection":"stocks", "source_id":"Retorno líquido pessoal e operação real", "question":"O que a fonte informa sobre retorno líquido pessoal e operação real?"},
+    {"id":"stocks-en", "group":"stocks-state", "collection":"stocks", "source_id":"Retorno líquido pessoal e operação real", "question":"What does the source report about personal net returns and real operation?"},
+    {"id":"br-pt", "group":"br-state", "collection":"brasileirao", "source_id":"CLAIM-BR-MARKET-001", "question":"Qual é a limitação relatada em CLAIM-BR-MARKET-001?"},
+    {"id":"br-en", "group":"br-state", "collection":"brasileirao", "source_id":"CLAIM-BR-MARKET-001", "question":"What limitation is reported in CLAIM-BR-MARKET-001?"}
+  ],
+  "negative_case": "ABSENT-AGENT-EVALUATION-20260911",
+  "vision": {"fixture":"uniform red PNG", "question":"What color fills this image? Answer with one English word.", "expected":"red"},
+  "criteria": ["IDs and original states equal baseline", "quotes resolve exactly", "missing source causes abstention with zero model calls", "stream has terminal done", "vision result recorded against expected color", "workflow resumes without repeating completed steps", "revocation prevents stored-result disclosure"],
+  "limitations": ["PT/EN variants are paired, not independent trials", "synthetic image is not a vision benchmark", "exact quotes do not certify semantic entailment", "no economic or predictive validation", "model comparison does not establish superiority"]
+}

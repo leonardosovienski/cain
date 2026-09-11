@@ -47,6 +47,24 @@ def register(sub):
     inspection = commands.add_parser("inspect", help="Local provenance, timeline and revision dossier")
     for field in ("source-id", "domain", "before", "after"):
         inspection.add_argument("--" + field)
+    for name in ("search", "entities", "workflow"):
+        tool = commands.add_parser(name)
+        tool.add_argument("question")
+        tool.add_argument("--source-id")
+        tool.add_argument("--config", type=Path)
+        if name == "search":
+            tool.add_argument("--semantic", action="store_true")
+        if name == "workflow":
+            tool.add_argument("--steps", nargs="+", default=["inspect", "search", "entities", "support", "challenge", "synthesis"])
+            tool.add_argument("--run-id")
+    for name in ("job", "advance", "cancel", "trace"):
+        job = commands.add_parser(name)
+        job.add_argument("run_id")
+        job.add_argument("--config", type=Path)
+        if name == "advance":
+            job.add_argument("--approve-generation", action="store_true")
+            job.add_argument("--recover", action="store_true")
+    commands.add_parser("jobs")
     backup = commands.add_parser("backup")
     backup.add_argument("destination", type=Path)
     restore = commands.add_parser("restore", help="Restore a backup to a NEW database path")
@@ -62,6 +80,35 @@ def execute(args):
     service = ResearchService(args.db, args.policy)
     scope = service.scope(args.user, args.project, args.collection)
     cmd = args.research_command
+    if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace"}:
+        from cain.research.analysis import search, entities
+        from cain.research.workflows import Workflows
+        from cain.cli import configured_llm
+        from cain.settings import load_settings
+
+        if cmd == "search":
+            from cain.cli import configured_embedding
+            encoder = configured_embedding(load_settings(args.config)) if args.semantic else None
+            if args.semantic and encoder is None:
+                raise ValueError("Configure hybrid search for semantic mode")
+            return search(service, scope, args.question, source_id=args.source_id, embedding=encoder)
+        jobs = Workflows(service)
+        if cmd == "jobs":
+            return jobs.list(scope)
+        if cmd == "job":
+            return jobs.get(scope, args.run_id)
+        if cmd == "trace":
+            return jobs.trace(scope, args.run_id)
+        if cmd == "cancel":
+            return jobs.cancel(scope, args.run_id)
+        provider = configured_llm(load_settings(args.config))
+        if cmd == "entities":
+            return entities(service, scope, args.question, provider, source_id=args.source_id)
+        if cmd == "workflow":
+            return jobs.create(scope, args.question, provider, source_id=args.source_id,
+                               steps=args.steps, run_id=args.run_id)
+        return jobs.advance(scope, args.run_id, provider, approve_generation=args.approve_generation,
+                            recover=args.recover)
     if cmd == "inspect":
         from cain.research.inspection import inspect
 

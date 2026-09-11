@@ -24,7 +24,7 @@ if (-not (Test-Path -LiteralPath $taskPython)) {
     if ($LASTEXITCODE -ne 0) { throw 'Could not install Cain dependencies.' }
 }
 $env:PYTHONUTF8 = '1'
-if ($Mode -in @('chat', 'demo')) {
+if ($Mode -in @('chat', 'demo') -or ($Mode -eq 'web' -and $taskLocal -and $taskLocal.auto_start_ollama -eq $true)) {
 $taskOllama = $null
 if ($taskLocal -and (Test-Path -LiteralPath $taskLocal.ollama_exe)) {
     $taskOllama = $taskLocal.ollama_exe
@@ -34,6 +34,8 @@ if ($taskLocal -and (Test-Path -LiteralPath $taskLocal.ollama_exe)) {
 $env:PYTHONUTF8 = '1'
 $env:OLLAMA_HOST = '127.0.0.1:11434'
 $env:OLLAMA_NUM_PARALLEL = '1'
+$env:OLLAMA_MAX_LOADED_MODELS = '1'
+$env:OLLAMA_NO_CLOUD = '1'
 $env:OLLAMA_CONTEXT_LENGTH = '8192'
 if ($taskLocal -and $taskLocal.models_path) { $env:OLLAMA_MODELS = $taskLocal.models_path }
 $taskReady = $false

@@ -1,5 +1,8 @@
 # Cain 0.4.5 — dossiê de pesquisa
 
+Registro histórico. A instalação do Ollama e as capacidades então pendentes foram
+tratadas na [entrega 0.4.6](DELIVERY_046.md); os limites abaixo descrevem 0.4.5.
+
 ## Uso
 
 Na interface local, abra **Pesquisa · L0 Historian**, escolha `crypto`, `stocks`
