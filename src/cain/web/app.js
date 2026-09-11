@@ -96,6 +96,7 @@ async function loadDocuments() {
   }
 }
 async function loadConversation() {
+  $('research-result').replaceChildren();
   const turns = await api(`/sessions/${pathUser()}/${encodeURIComponent(state.session)}` + query({ project_id: state.project }));
   $('messages').replaceChildren();
   if (!turns.length) $('messages').append(empty.cloneNode(true));
@@ -378,7 +379,7 @@ if (typeof navigator.modelContext?.registerTool === 'function') {
 }
 
 function researchBody(offset = 0) {
-  return { user_id: state.user, project_id: state.project,
+  return { user_id: state.user, project_id: state.project, session_id: state.session,
     collection: $('research-collection').value,
     source_id: $('research-id').value || null, status: $('research-status').value || null,
     text: $('research-text').value || null, limit: 10, offset };
@@ -386,6 +387,18 @@ function researchBody(offset = 0) {
 function renderResearch(result) {
   const container = $('research-result');
   container.replaceChildren();
+  if (result.status === 'history_redacted_by_current_policy') {
+    container.append(node('p', 'Resposta histórica indisponível pelas permissões atuais.'));
+    return;
+  }
+  if (result.history) container.append(node('p', result.history.historical_answer
+    ? 'Resposta histórica preservada; permissões atuais verificadas.'
+    : 'Consulta do histórico reexecutada com as permissões e o acervo atuais.'));
+  if (result.history?.filters) {
+    $('research-id').value = result.history.filters.source_id ?? '';
+    $('research-status').value = result.history.filters.status ?? '';
+    $('research-text').value = result.history.filters.text ?? '';
+  }
   const facts = result.facts ?? result;
   container.append(node('p', `${facts.total_record_revisions} revisões de registros no escopo admitido. Não é contagem de experimentos.`));
   const coverage = node('details');
@@ -416,12 +429,12 @@ function renderResearch(result) {
     }
     container.append(article);
   }
-  if (facts.offset > 0) {
+  if (facts.offset > 0 && !result.history?.historical_answer) {
     const previous = node('button', 'Página anterior', 'secondary');
     previous.addEventListener('click', handle(() => runResearch(Math.max(0, facts.offset - facts.limit))));
     container.append(previous);
   }
-  if (facts.has_more) {
+  if (facts.has_more && !result.history?.historical_answer) {
     const next = node('button', 'Próxima página', 'secondary');
     next.addEventListener('click', handle(() => runResearch(facts.offset + facts.limit)));
     container.append(next);
@@ -443,6 +456,20 @@ $('research-form').addEventListener('submit', (event) => {
 });
 $('research-explain').addEventListener('click', handle(async () => {
   renderResearch(await api('/research/explain', 'POST', { ...researchBody(), question: $('research-question').value }));
+}));
+$('research-history').addEventListener('click', handle(async () => {
+  const scope = { user_id: state.user, project_id: state.project,
+    session_id: state.session, collection: $('research-collection').value };
+  const entries = await api('/research/history' + query(scope));
+  const container = $('research-result');
+  container.replaceChildren(node('p', 'Últimas 20 pesquisas desta conversa e acervo.'));
+  for (const entry of entries) {
+    const button = node('button', `${entry.at} · ${entry.request.question ?? entry.request.source_id ?? 'Consulta'} `, 'secondary');
+    button.addEventListener('click', handle(async () => {
+      renderResearch(await api('/research/history/' + encodeURIComponent(entry.id) + query(scope)));
+    }));
+    container.append(button);
+  }
 }));
 
 preferenceValues();

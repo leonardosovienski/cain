@@ -12,6 +12,7 @@ def register(sub):
     )
     research.add_argument("--user", default="leo")
     research.add_argument("--project")
+    research.add_argument("--session")
     research.add_argument("--collection", default="crypto")
     commands = research.add_subparsers(dest="research_command", required=True)
     ingest = commands.add_parser("import", help="Publication path relative to trusted import_root")
@@ -36,6 +37,11 @@ def register(sub):
             query.add_argument("--config", type=Path)
     evidence = commands.add_parser("evidence")
     evidence.add_argument("reference")
+    history = commands.add_parser("history")
+    history.add_argument("--limit", type=int, default=20)
+    history.add_argument("--offset", type=int, default=0)
+    recall = commands.add_parser("recall")
+    recall.add_argument("entry_id")
     for name in ("coverage", "receipts", "verify", "rebuild"):
         commands.add_parser(name)
     backup = commands.add_parser("backup")
@@ -72,13 +78,18 @@ def execute(args):
             )
         }
         if cmd == "query":
-            return service.query(scope, **filters)
+            return service.query(scope, session_id=args.session, **filters)
         from cain.cli import configured_llm
         from cain.settings import load_settings
         from cain.research.historian import explain
 
         return explain(
-            service, scope, args.question, configured_llm(load_settings(args.config)), **filters
+            service,
+            scope,
+            args.question,
+            configured_llm(load_settings(args.config)),
+            session_id=args.session,
+            **filters,
         )
     if cmd == "coverage":
         result = service.query(scope, limit=1)
@@ -87,6 +98,10 @@ def execute(args):
         return service.evidence(scope, args.reference)
     if cmd == "receipts":
         return service.receipts(scope)
+    if cmd == "history":
+        return service.history(scope, args.session, args.limit, args.offset)
+    if cmd == "recall":
+        return service.recall(scope, args.entry_id, args.session)
     if cmd in {"verify", "rebuild"}:
         return service.verify(scope, rebuild=cmd == "rebuild")
     if cmd == "backup":

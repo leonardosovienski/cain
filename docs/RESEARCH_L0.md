@@ -1,4 +1,4 @@
-# Cain 0.4 local L0 pilot
+# Cain 0.4.1 local L0 pilot
 
 Cain now imports admitted local publications, queries structured records, displays
 coverage and preserved evidence, and optionally explains through its existing local
@@ -6,11 +6,35 @@ provider protocol. Research is separate from conversational memory and scientifi
 producer state. Without `CAIN_RESEARCH_POLICY` the research API is disabled; legacy
 projects, sessions, preferences, history and feedback retain their existing storage.
 
+The research panel now records the selected existing workspace session. Use
+"Histórico de pesquisa desta conversa" to reopen a query after restart. Deterministic
+queries run again under current permissions; saved explanations are marked historical
+and withheld before retrieval when any supporting publication is no longer readable.
+The legacy conversational turn/decision/feedback identifiers are unchanged.
+
+CLI history uses the same service: `cain research --session SESSION history` and
+`cain research --session SESSION recall ENTRY_ID` (with the usual policy/database/scope
+options). Omitting the session selects only unsessioned CLI history. API callers can
+use `POST /research/readiness` for a measured storage/query check of a selected scope;
+capabilities alone does not attest availability or inference.
+
+Every query verifies all admitted projection rows and membership before applying
+filters. Corrupt or missing filter columns/links therefore fail explicitly rather
+than manufacturing an empty result. Rebuild repairs projections from preserved originals.
+
+The evaluation harness accepts `--config EXISTING_LOCAL_CONFIG` to run both documentary
+and structured model arms with the same provider and per-arm call budget. Without that
+option it makes zero model calls. Exact source-ID filters are available to both arms;
+the documentary catalogue comes directly from admitted publications. Semantic scoring
+remains a human task, never inferred from quote validity. Real documentary compatibility
+examples can be prepared with `evaluation/document_examples.py` from its two explicitly
+pinned supported reports; it is local curation, not an official domain exporter.
+
 ## Install and run
 
 Install the small contract wheel first, or provide its directory to pip. From this
 checkout: `python -m pip install --find-links vendor -e ".[dev]"`. For installed
-distribution: `python -m pip install --find-links WHEELS "cain-research[api]==0.4.0"`.
+distribution: `python -m pip install --find-links WHEELS "cain-research[api]==0.4.1"`.
 WHEELS must contain Cain and `predictor_research_snapshot-1.0.0-py3-none-any.whl`.
 The unmodified Python >=3.11 requirement is retained; the local run used 3.12.
 

@@ -195,6 +195,38 @@ class ResearchService:
                 (scope, package["publication_id"], rid),
             )
 
+    def _verify_projection(self, db, scope, archives):
+        """Verify before filtering: a corrupt index must never become false absence."""
+        for pubid, package in archives.items():
+            expected_members = set()
+            for record in package["records"]:
+                rid, signature = self.projection(package, record)
+                expected_members.add(rid)
+                row = db.execute(
+                    "SELECT domain,source_id,kind,status,revision,payload,signature "
+                    "FROM records WHERE scope=? AND id=?",
+                    (scope, rid),
+                ).fetchone()
+                expected = (
+                    package["origin"]["domain"],
+                    record["source_id"],
+                    record["kind"],
+                    record["source_status"],
+                    record["revision"],
+                    canonical(record).decode(),
+                    signature,
+                )
+                if row is None or tuple(row) != expected:
+                    raise ValueError("Projection corrupt; research projection requires rebuild")
+            actual_members = {
+                r[0]
+                for r in db.execute(
+                    "SELECT record FROM membership WHERE scope=? AND publication=?", (scope, pubid)
+                )
+            }
+            if actual_members != expected_members:
+                raise ValueError("Research membership corrupt; verify and rebuild")
+
     def ingest(self, relative, scope):
         receipt, publication = uuid4().hex, None
         try:
@@ -276,6 +308,7 @@ class ResearchService:
         limit=20,
         offset=0,
         generate=False,
+        session_id=None,
     ):
         if (
             type(limit) is not int
@@ -284,6 +317,10 @@ class ResearchService:
             or not 0 <= offset <= 100_000
         ):
             raise ValueError("Invalid pagination")
+        if session_id is not None and (
+            type(session_id) is not str or not session_id or len(session_id) > 200
+        ):
+            raise ValueError("Invalid session identity")
         filters = dict(
             domain=domain,
             source_id=source_id,
@@ -300,7 +337,9 @@ class ResearchService:
             if val is not None and (type(val) is not str or len(val) > 500):
                 raise ValueError("Invalid filter")
         with self.connection() as db:
+            db.execute("BEGIN")
             archives = self._archive(db, scope, generate)
+            self._verify_projection(db, scope, archives)
             if completeness:
                 archives = {
                     k: p
@@ -413,7 +452,7 @@ class ResearchService:
                     qid,
                     scope,
                     now(),
-                    canonical(filters).decode(),
+                    canonical({**filters, "session_id": session_id}).decode(),
                     canonical(
                         {"record_ids": [r["id"] for r in page], "total": len(found)}
                     ).decode(),
@@ -444,7 +483,7 @@ class ResearchService:
                 raise ValueError("Response exceeds 1000000 UTF-8 bytes; reduce page size")
             return response
 
-    def log_explanation(self, scope, question, response):
+    def log_explanation(self, scope, question, response, session_id=None):
         response_id = uuid4().hex
         with self.connection() as db:
             db.execute(
@@ -453,11 +492,86 @@ class ResearchService:
                     response_id,
                     scope,
                     now(),
-                    canonical({"mode": "explanation", "question": question}).decode(),
+                    canonical(
+                        {
+                            "mode": "explanation",
+                            "question": question,
+                            "session_id": session_id,
+                            "publication_ids": [
+                                p["publication_id"] for p in response["facts"]["coverage"]
+                            ],
+                        }
+                    ).decode(),
                     canonical(response).decode(),
                 ),
             )
         return response_id
+
+    def history(self, scope, session_id=None, limit=20, offset=0):
+        if type(limit) is not int or not 1 <= limit <= 50 or type(offset) is not int or offset < 0:
+            raise ValueError("Invalid history pagination")
+        with self.connection() as db:
+            rows = db.execute(
+                "SELECT id,at,request FROM queries WHERE scope=? "
+                "AND json_extract(request,'$.session_id') IS ? ORDER BY at DESC LIMIT ? OFFSET ?",
+                (scope, session_id, limit, offset),
+            ).fetchall()
+            return [
+                {
+                    "id": r["id"],
+                    "at": r["at"],
+                    "request": {
+                        k: v for k, v in json.loads(r["request"]).items() if k != "publication_ids"
+                    },
+                }
+                for r in rows
+            ]
+
+    def recall(self, scope, entry_id, session_id=None):
+        """Recheck current policy before exposing any persisted answer or source."""
+        with self.connection() as db:
+            db.execute("BEGIN")
+            row = db.execute(
+                "SELECT request FROM queries WHERE scope=? AND id=?", (scope, entry_id)
+            ).fetchone()
+            if row is None:
+                raise ValueError("History entry unavailable")
+            request = json.loads(row["request"])
+            if request.get("session_id") != session_id:
+                raise ValueError("History entry unavailable in session")
+            if request.get("mode") == "explanation":
+                archives = self._archive(db, scope)
+                if "publication_ids" not in request or not set(request["publication_ids"]) <= set(
+                    archives
+                ):
+                    return {"status": "history_redacted_by_current_policy", "entry_id": entry_id}
+                self._verify_projection(db, scope, archives)
+                allowed = {
+                    self.projection(p, r)[0] for p in archives.values() for r in p["records"]
+                }
+                result = json.loads(
+                    db.execute(
+                        "SELECT result FROM queries WHERE scope=? AND id=?", (scope, entry_id)
+                    ).fetchone()[0]
+                )
+                if not {r["id"] for r in result["facts"]["records"]} <= allowed or not {
+                    p["publication_id"] for p in result["facts"]["coverage"]
+                } <= set(archives):
+                    return {"status": "history_redacted_by_current_policy", "entry_id": entry_id}
+                result["history"] = {
+                    "entry_id": entry_id,
+                    "historical_answer": True,
+                    "current_permissions_verified": True,
+                }
+                return result
+        result = self.query(scope, **request)
+        result["history"] = {
+            "entry_id": entry_id,
+            "historical_answer": False,
+            "query_reexecuted_under_current_policy": True,
+            "filters": request,
+        }
+        return result
 
     def evidence(self, scope, reference):
         with self.connection() as db:
@@ -494,6 +608,8 @@ class ResearchService:
             ):
                 raise ValueError("SQLite integrity check failed")
             archives = self._archive(db, scope)
+            if not rebuild:
+                self._verify_projection(db, scope, archives)
             all_count = db.execute(
                 "SELECT count(*) FROM publications WHERE scope=?", (scope,)
             ).fetchone()[0]

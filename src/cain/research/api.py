@@ -13,6 +13,7 @@ class ResearchRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     user_id: str = Field(default="leo", min_length=1, max_length=200)
     project_id: str | None = Field(default=None, max_length=200)
+    session_id: str | None = Field(default=None, min_length=1, max_length=200)
     collection: str = Field(default="crypto", min_length=1, max_length=200)
     domain: str | None = Field(default=None, max_length=200)
     source_id: str | None = Field(default=None, max_length=200)
@@ -49,7 +50,7 @@ def mount(
         return ResearchService(research_path, policy_path)
 
     def prepare(request):
-        validate_context(request.user_id, request.project_id)
+        validate_context(request.user_id, request.project_id, request.session_id)
         store = service()
         scope = store.scope(request.user_id, request.project_id, request.collection)
         filters = request.model_dump(exclude={"user_id", "project_id", "collection", "question"})
@@ -84,9 +85,50 @@ def mount(
         return {
             "enabled": bool(policy_path),
             "mode": "L0",
-            "deterministic": True,
+            "deterministic": bool(policy_path),
+            "deterministic_availability": "not_probed",
             "provider": "not_probed",
             "inference": "not_exercised",
             "embedding_required": False,
             "scope_selection": "local organization, not remote authentication",
         }
+
+    @app.post("/research/readiness")
+    def readiness(request: ResearchRequest):
+        store, scope, filters = prepare(request)
+        result = store.query(scope, **{**filters, "limit": 1, "offset": 0})
+        return {
+            "storage_and_query": "verified_for_requested_scope",
+            "total_record_revisions": result["total_record_revisions"],
+            "coverage": result["coverage"],
+            "provider": "not_probed",
+            "inference": "not_exercised",
+            "embedding_required": False,
+        }
+
+    @app.get("/research/history")
+    def history(
+        user_id: str = "leo",
+        project_id: str | None = None,
+        collection: str = "crypto",
+        session_id: str | None = None,
+        limit: int = 20,
+        offset: int = 0,
+    ):
+        validate_context(user_id, project_id, session_id)
+        store = service()
+        return store.history(
+            store.scope(user_id, project_id, collection), session_id, limit, offset
+        )
+
+    @app.get("/research/history/{entry_id}")
+    def recall(
+        entry_id: str,
+        user_id: str = "leo",
+        project_id: str | None = None,
+        collection: str = "crypto",
+        session_id: str | None = None,
+    ):
+        validate_context(user_id, project_id, session_id)
+        store = service()
+        return store.recall(store.scope(user_id, project_id, collection), entry_id, session_id)

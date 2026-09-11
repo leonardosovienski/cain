@@ -1,0 +1,16 @@
+{
+  "version": "l0-compatibility-audit/1",
+  "fixed_before_running_answers": true,
+  "split": "documentary evaluation; source groups separate from Crypto development",
+  "purpose": "Current recovery of two previously unused documentary source groups; no retrospective decisions",
+  "episodes": [
+    {"id":"stocks-readiness", "group":"stocks-current-state", "source_id":"Retorno líquido pessoal e operação real", "question":"Qual a prontidão documentada para retorno líquido pessoal e operação real?", "expected_status_prefix":"Não aptos:", "abstain":false},
+    {"id":"br-blocked", "group":"br-market-exp001", "source_id":"CLAIM-BR-MARKET-001", "question":"O estado da comparação de mercado indica refutação ou bloqueio por features PIT?", "expected_status":"BLOCKED_PENDING_PIT_FEATURES", "abstain":false},
+    {"id":"br-uncovered", "group":"br-market-exp001", "source_id":"CLAIM-BR-MARKET-999", "question":"Qual estado foi documentado para CLAIM-BR-MARKET-999?", "expected_status":null, "abstain":true}
+  ],
+  "call_limit_per_model_arm":3,
+  "evidence_budget_bytes":6000,
+  "generation_limit_bytes":6000,
+  "investment_threshold":"At least 10 percentage points factual/support improvement without additional unsupported claims in a larger independently reviewed episode set",
+  "limitations":["Three questions cover only two source groups", "Sources were inspected for admission and expected references before evaluation", "No human scoring or time inferred", "Missing real provider prevents generation comparison", "This is current documentary recovery, not predictive or economic validation"]
+}
