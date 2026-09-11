@@ -111,3 +111,18 @@ def test_review_payload_retains_exact_key_paths(setup):
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
     assert result['generation']['prompt_version'] == 'addressable-review/3'
+
+
+def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
+    service, scope, ingest, _, _ = setup
+    text = '| CLAIM-BR-001 | Incremental information | BLOCKED | No comparison executed |\n'
+    ingest(cases.publication(('CLAIM-BR-001',), text=text))
+    result = entities(service, scope, 'What does this report say?', FakeLLM(), source_id='CLAIM-BR-001')
+    assert result['model_calls'] == 0 and result['status'] == 'literal'
+    assert [(r['predicate'], r['object']) for r in result['relations']] == [
+        ('reported_table_column_2', 'Incremental information'),
+        ('reported_table_column_3', 'BLOCKED'),
+        ('reported_table_column_4', 'No comparison executed')]
+    excerpts, _ = cards({'ref': {'text': text}}, 'What is reported?', 'CLAIM-BR-001')
+    assert len(excerpts) == 1
+    assert excerpts['S1']['quote'] == text[:-1]

@@ -70,13 +70,19 @@ def structured(evidence, source_id=None):
                 issues.append({"reference": ref, "status": "ambiguous_or_invalid_json"})
                 continue
         else:
-            for match in re.finditer(r'^\s*\|([^|\r\n]+)\|([^|\r\n]+)\|\s*$', text, re.MULTILINE):
-                subject, obj = (match.group(n).strip() for n in (1, 2))
-                if not subject or not obj or set(subject + obj) <= set('-: '):
+            for match in re.finditer(r'^[ \t]*\|([^\r\n]+)\|[ \t]*$', text, re.MULTILINE):
+                cells = [cell.strip() for cell in match.group(1).split('|')]
+                if len(cells) < 2 or '\\|' in match.group() or (len(cells) > 2 and '`' in match.group()):
                     continue
-                if len(subject) <= 150 and len(obj) <= 150 and len(match.group()) <= 1000:
-                    entries.append({"subject": subject, "predicate": "reported_table_value", "object": obj,
-                                    "reference": ref, "quote": match.group(), "start": match.start(), "end": match.end()})
+                subject = cells[0]
+                if not subject or set(''.join(cells)) <= set('-: '):
+                    continue
+                for column, obj in enumerate(cells[1:], start=2):
+                    if obj and len(subject) <= 150 and len(obj) <= 150 and len(match.group()) <= 1000:
+                        entries.append({"subject": subject,
+                                        "predicate": "reported_table_value" if len(cells) == 2
+                                        else f"reported_table_column_{column}", "object": obj,
+                                        "reference": ref, "quote": match.group(), "start": match.start(), "end": match.end()})
             recognized += bool(entries)
         focused = [r for r in entries if r.get('decoded_subject', r['subject']) == source_id]
         relations.extend(focused or entries)
@@ -103,8 +109,12 @@ def cards(evidence, question, source_id=None):
         if focused:
             # Shared JSON commonly contains every hypothesis. Pass only exact-key
             # values for the selected identity, with paths distinguishing state/trial.
+            spans = set()
             for relation in focused:
                 start, end = relation['start'], relation['end']
+                if (start, end) in spans:
+                    continue
+                spans.add((start, end))
                 candidates.append((100, ref, start, end, relation['quote']))
                 if 'json_pointer' in relation:
                     focused_paths[(ref, start, end)] = relation['json_pointer']

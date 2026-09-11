@@ -143,6 +143,7 @@ def run(protocol, config, db, policy, output, workflows=True):
                 scope = service.scope(collection=collection)
                 row = {'collection': collection, 'source_id': case['source_id']}
                 result['workflows'].append(row)
+                job = None
                 try:
                     job = Workflows(service).create(scope, case['question'], provider, source_id=case['source_id'])
                     for _ in range(6):
@@ -154,6 +155,8 @@ def run(protocol, config, db, policy, output, workflows=True):
                         scope, job['id'], provider, approve_generation=True)['steps'] == job['steps']
                 except Exception as exc:
                     row['error'] = {'type': type(exc).__name__, 'message': str(exc)}
+                    if job is not None:
+                        row['job'] = Workflows(service).get(scope, job['id'])
                 save()
                 print(json.dumps({'model': model_name, 'workflow': collection,
                                   'status': row.get('job', {}).get('status'), 'error': row.get('error')}), flush=True)
