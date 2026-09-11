@@ -56,8 +56,13 @@ na interface. O contrato ResearchSnapshotV1, a projeção e as fontes não mudar
 Recibo local em `C:\CAIN\entregas\0.4.5\installed-inspection\report.json`.
 Backup anterior em `C:\CAIN\entregas\0.4.5\before-backup`. Mantém o procedimento
 de restauração 0.4.4; não houve migração de schema nesta rodada.
-Wheel: `cain_research-0.4.5-py3-none-any.whl`, SHA-256
-`a8ad8da2d9e6dc70276dd70e189f2afc5a32f09ae84e3282c6ce56d62d2b4279`.
+Wheel final: `final\cain_research-0.4.5-py3-none-any.whl`, SHA-256
+`71b47f0421037e25b284fa446f26e6b34c043a6d6c69a11733ba0ee69b17c18c`.
+O wheel intermediário na raiz de `entregas\0.4.5` é histórico e foi substituído
+pela revisão visual com quebra de identificadores longos.
+
+Primeira CI publicada aprovada nas três versões Python:
+[execução 34625953228](https://github.com/leonardosovienski/cain/actions/runs/34625953228).
 
 ## Continuidade e limites
 
