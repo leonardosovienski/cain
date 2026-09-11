@@ -42,6 +42,10 @@ class AdvanceRequest(Context):
     recover: bool = False
 
 
+class AbstainRequest(Context):
+    reason: str = Field(min_length=1, max_length=500)
+
+
 class StreamRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
     user_id: str = Field(default="leo", min_length=1, max_length=200)
@@ -117,6 +121,11 @@ def mount(app, service_factory, validate_context, provider_factory, generation_l
     def cancel_job(run_id: str, request: Context):
         service, scope = prepare(request)
         return Workflows(service).cancel(scope, run_id)
+
+    @app.post("/research/jobs/{run_id}/abstain")
+    def abstain_job(run_id: str, request: AbstainRequest):
+        service, scope = prepare(request)
+        return Workflows(service).abstain(scope, run_id, request.reason)
 
     @app.post("/research/jobs/{run_id}/advance")
     def advance_job(run_id: str, request: AdvanceRequest):

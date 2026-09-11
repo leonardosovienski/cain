@@ -102,6 +102,9 @@ class Workflows:
         return {"id": run_id, "status": row["status"], "request": request, "steps": steps, "attempts": attempts,
                 "next_step": request["steps"][len(steps)] if len(steps) < len(request["steps"]) else None,
                 "created_at": row["created_at"], "snapshot": row["fingerprint"],
+                "model_call_count_scope": "completed_step_receipts_only",
+                "failed_generation_attempts": sum(a["status"] == "failed" and a["name"] in GENERATION for a in attempts),
+                "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
                 "proposals_only": True, "model_calls": sum(
                     s["result"].get("model_calls", int(s["result"].get("generation", {}).get("called", False)))
                     for s in steps)}
@@ -118,6 +121,30 @@ class Workflows:
         with self.service.connection() as db:
             db.execute("UPDATE agent_jobs SET status='cancelled',claim=NULL WHERE scope=? AND id=? AND status!='completed'",
                        (scope, run_id))
+        return self.get(scope, run_id)
+
+    def abstain(self, scope, run_id, reason):
+        """Explicit operator checkpoint after a failed generation, never accepted output."""
+        if type(reason) is not str or not reason.strip() or len(reason) > 500:
+            raise ValueError("Record an abstention reason of 1-500 characters")
+        current = self.get(scope, run_id)
+        if current["request"]["protocol"] != PROTOCOL:
+            raise ValueError("Workflow prompt protocol changed; create a new workflow")
+        if current["status"] != "failed" or current["next_step"] not in GENERATION:
+            raise ValueError("Only a failed generation can be explicitly recorded as abstention")
+        guard(self.service, scope, current["snapshot"])
+        with self.service.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT status FROM agent_jobs WHERE scope=? AND id=?", (scope, run_id)).fetchone()
+            count = db.execute("SELECT count(*) FROM agent_steps WHERE scope=? AND job=?", (scope, run_id)).fetchone()[0]
+            if row["status"] != "failed" or count != len(current["steps"]):
+                raise ValueError("Workflow changed concurrently; refresh")
+            result = {"status": "abstained_by_operator", "reason": reason, "model_calls": 0,
+                      "accepted_model_output": False, "previous_failure_retained": True}
+            db.execute("INSERT INTO agent_steps VALUES(?,?,?,?,?,?)",
+                       (scope, run_id, count, current["next_step"], canonical(result).decode(), 0))
+            status = "completed" if count + 1 == len(current["request"]["steps"]) else "ready"
+            db.execute("UPDATE agent_jobs SET status=?,claim=NULL WHERE scope=? AND id=?", (status, scope, run_id))
         return self.get(scope, run_id)
 
     def trace(self, scope, run_id):

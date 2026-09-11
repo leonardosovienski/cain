@@ -57,10 +57,12 @@ def register(sub):
         if name == "workflow":
             tool.add_argument("--steps", nargs="+", default=["inspect", "search", "entities", "support", "challenge", "synthesis"])
             tool.add_argument("--run-id")
-    for name in ("job", "advance", "cancel", "trace"):
+    for name in ("job", "advance", "cancel", "trace", "abstain"):
         job = commands.add_parser(name)
         job.add_argument("run_id")
         job.add_argument("--config", type=Path)
+        if name == "abstain":
+            job.add_argument("--reason", required=True)
         if name == "advance":
             job.add_argument("--approve-generation", action="store_true")
             job.add_argument("--recover", action="store_true")
@@ -80,7 +82,7 @@ def execute(args):
     service = ResearchService(args.db, args.policy)
     scope = service.scope(args.user, args.project, args.collection)
     cmd = args.research_command
-    if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace"}:
+    if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace", "abstain"}:
         from cain.research.analysis import search, entities
         from cain.research.workflows import Workflows
         from cain.cli import configured_llm
@@ -101,6 +103,8 @@ def execute(args):
             return jobs.trace(scope, args.run_id)
         if cmd == "cancel":
             return jobs.cancel(scope, args.run_id)
+        if cmd == "abstain":
+            return jobs.abstain(scope, args.run_id, args.reason)
         provider = configured_llm(load_settings(args.config))
         if cmd == "entities":
             return entities(service, scope, args.question, provider, source_id=args.source_id)

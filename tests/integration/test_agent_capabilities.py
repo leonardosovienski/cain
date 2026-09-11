@@ -84,6 +84,28 @@ def test_workflow_rejects_changed_prompt_protocol(setup, monkeypatch):
     assert jobs.get(scope, job["id"])["steps"] == [] and model.calls == 0
 
 
+def test_explicit_abstention_preserves_failure_and_allows_continuation(setup):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(("A",), text="Alice reviewed Report A."))
+    class InvalidModel(FixtureModel):
+        def generate_json(self, *args):
+            self.calls += 1
+            return '{"claims":[],"synthesis":"Unsupported interpretation"}'
+    model, jobs = InvalidModel(), Workflows(service)
+    job = jobs.create(scope, "What is supported?", model, source_id="A", steps=["challenge", "inspect"])
+    with pytest.raises(ValueError, match="Only a failed"):
+        jobs.abstain(scope, job["id"], "Cannot skip an unexecuted stage")
+    with pytest.raises(ValueError, match="Review failed"):
+        jobs.advance(scope, job["id"], model, approve_generation=True)
+    job = jobs.abstain(scope, job["id"], "Rejected proposal; proceed without accepting it")
+    assert job["steps"][0]["result"]["accepted_model_output"] is False
+    assert job["attempts"][0]["status"] == "failed"
+    assert job["next_step"] == "inspect" and model.calls == 1
+    with pytest.raises(ValueError):
+        jobs.abstain(scope, job["id"], "Duplicate abstention")
+    assert jobs.advance(scope, job["id"], model)["status"] == "completed"
+
+
 def test_revocation_blocks_results_and_entity_output(setup):
     service,scope,ingest,policy,path=setup
     ingest(cases.publication(("A",),text="Alice reviewed Report A."))

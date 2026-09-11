@@ -1,14 +1,17 @@
-# Estado atual do Cain — 0.4.4
+# Estado atual do Cain — 0.4.6
 
-Entrega atual: [três produtores e recuperação 0.4.4](docs/DELIVERY_044.md). Os resultados anteriores abaixo são históricos.
+Entrega atual: [capacidades locais e avaliação 0.4.6](docs/DELIVERY_046.md).
+Streaming, visão, busca L0, relações propostas, debate, workflows duráveis e MCP
+estão implementados. Ollama/modelos instalados e inferência real exercitada;
+qualidade das respostas é limitada e saídas inválidas são recusadas.
+Os resultados anteriores abaixo são históricos.
 
 Atualizado em 2026-09-11. O estado operacional, caminhos, validação e limites atuais
 estão em [CONTINUIDADE.md](CONTINUIDADE.md). A instalação principal é `C:\CAIN`,
 com entrada `C:\CAIN\ABRIR_CAIN.cmd`, porta 8877 e dados preservados localmente.
 
-A implementação passou em 374 testes, com um skip no Windows e CI aprovada em três
-versões de Python. As duas pendências de arquitetura foram corrigidas na 0.4.3.
-Inferência real, utilidade humana e validação acadêmica continuam não comprovadas.
+A validação atual está detalhada no recibo de entrega. Utilidade humana ampla,
+superioridade semântica e validação acadêmica/econômica não foram demonstradas.
 
 ## Registro histórico abaixo
 

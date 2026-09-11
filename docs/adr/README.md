@@ -12,6 +12,8 @@ O índice original afirmava que existiam onze ADRs, mas somente três foram anex
 | [0011](0011-orquestracao-propria-vs-framework-existente.md) | Orquestração própria | Aceito |
 | [0012](0012-preferencias-explicitas-e-memoria.md) | Preferências explícitas e memória v0.2 | Provisório; implementação experimental |
 | [0013](0013-three-producers-and-complete-backup.md) | Raízes por acervo e backup completo | Aceito; verificado em engenharia na 0.4.4 |
+| [0014](0014-research-inspection.md) | Inspeção de proveniência, datas e lacunas | Implementado e verificado na 0.4.5 |
+| [0015](0015-local-agent-capabilities.md) | Streaming, visão, recuperação, relações, workflows e MCP | Implementado; evidência e limites na entrega 0.4.6 |
 
 Os ADRs anexados foram copiados sem mudança. A auditoria de fontes aponta ressalvas
 que deverão ser tratadas por novos ADRs, preservando as decisões aceitas.

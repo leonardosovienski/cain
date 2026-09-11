@@ -42,13 +42,20 @@ C:\CAIN\.venv\Scripts\cain-stream.exe "Descreva a imagem" --config C:\CAIN\work\
 
 `jobs` lista, `cancel ID` cancela. `advance ID --recover --approve-generation`
 recupera falha; execução interrompida sem recibo exige lease expirado de 600 s.
+Após geração recusada, `abstain ID --reason "motivo"` registra explicitamente
+uma abstenção e permite continuar. Na interface, atualize o estado e use
+**Registrar abstenção nesta etapa e permitir continuação**. O texto recusado
+é descartado e a tentativa falha permanece. Fluxo concluído não significa que
+todas as gerações foram aceitas. model_calls soma recibos concluídos; chamadas
+em tentativas falhas são desconhecidas, pois a falha pode ocorrer antes ou depois
+da inferência.
 Não há garantia exactly-once da chamada ao modelo quando o processo morre antes
 do checkpoint. Troca de corpus, política, modelo ou protocolo dos prompts exige
 um novo job. O protocolo atual é research-workflow/2; jobs anteriores podem
 ser lidos/cancelados, mas não avançados com prompts diferentes.
 
 API: POST `/research/search`, `/research/entities`, `/research/jobs`,
-`/research/jobs/list`, `/research/jobs/{id}/read|advance|cancel|trace`;
+`/research/jobs/list`, `/research/jobs/{id}/read|advance|cancel|abstain|trace`;
 GET `/assistant/models`; POST `/assistant/stream` com resposta NDJSON.
 Contexto: user_id, project_id, collection. Geração no advance é explícita por
 `approve_generation: true`. Não existe execução arbitrária de shell ou plugins.
@@ -116,6 +123,15 @@ Stocks EN truncou, Brasileirão PT propôs síntese sem citação e a extração
 inventou palavras na citação. Todas foram recusadas. O protocolo /2 pede
 citações curtas e literais e limita relações a duas por chamada; a rodada
 seguinte usa os mesmos casos e permanece avaliação de desenvolvimento.
+
+Na repetição /2, as seis explicações PT/EN passaram com uma citação exata cada;
+ranking lexical/híbrido manteve IDs/estados nos seis filtros. Fonte ausente
+produziu abstenção com zero chamadas. Não foi avaliado ganho de ranking sem
+filtro de identidade, nem superioridade sobre outro modelo. A extração H6
+continuou recusada por suporte inexato; consta em real-evaluation-bounded/report.json.
+No relatório simples de Stocks, extração e suporte passaram; crítica e síntese
+sem citação foram recusadas e receberam abstenção explícita no teste de recuperação.
+Portanto, ainda não há demonstração de debate autônomo confiável neste modelo.
 
 MCP real: quatro ferramentas listadas e consulta H6 validada pelo cliente
 oficial. Exportação OTLP: IDs hexadecimais conferidos e mensagem validada pelos

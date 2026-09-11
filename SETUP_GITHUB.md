@@ -3,6 +3,10 @@
 O repositório está publicado em [leonardosovienski/cain](https://github.com/leonardosovienski/cain).
 A entrega 0.4.4 está na branch `local/l0-historian`; não presuma que `main` contém
 esta entrega. O checkout desta máquina é `C:\CAIN\projeto`.
+As ampliações 0.4.5/0.4.6 estão em `feature/research-capabilities-20260911`,
+checkout `C:\CAIN\work\research-capabilities-20260911`; este é o código do
+wheel atualmente instalado. O checkout principal contém a arquitetura publicada
+por outro trabalho em `architecture/complete-20260911`, sem integração automática.
 Consulte [CONTINUIDADE.md](CONTINUIDADE.md) para versão instalada e evidências.
 
 O primeiro commit preserva os documentos de entrada. Os seguintes registram

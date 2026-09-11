@@ -598,6 +598,8 @@ function renderJob(job, scope) {
   container.replaceChildren(node('h3', 'Fluxo salvo · ' + job.status));
   container.append(node('p', job.request.question), node('small', `${scope.collection} · ${job.id}`));
   container.append(node('p', `${job.steps.length}/${job.request.steps.length} etapas concluídas. Próxima: ${stepNames[job.next_step] ?? 'nenhuma'}.`));
+  const abstentions = job.steps.filter(step => step.result.status?.startsWith('abstained')).length;
+  if (abstentions) container.append(node('p', `${abstentions} etapa(s) com abstenção. Concluir o fluxo não valida essas saídas.`));
   for (const step of job.steps) {
     const detail = node('details');
     detail.append(node('summary', `${stepNames[step.name]} · ${step.duration_seconds.toFixed(2)} s`),
@@ -613,6 +615,15 @@ function renderJob(job, scope) {
     container.append(node('pre', JSON.stringify(trace, null, 2)));
   }));
   container.append(exportTrace);
+  const refresh = node('button', 'Atualizar estado do fluxo', 'secondary');
+  refresh.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/read`, 'POST', scope), scope)));
+  container.append(refresh);
+  if (job.status === 'failed') {
+    const abstain = node('button', 'Registrar abstenção nesta etapa e permitir continuação', 'secondary');
+    abstain.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/abstain`, 'POST',
+      {...scope, reason:'Saída da etapa recusada. Operador registrou abstenção; resultado inválido não aceito.'}), scope)));
+    container.append(abstain);
+  }
   if (!['completed','cancelled'].includes(job.status)) {
     const next = node('button', job.status === 'running' ? 'Recuperar etapa interrompida (após 10 min)' : 'Executar próxima etapa', 'secondary');
     next.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/advance`, 'POST',
