@@ -1,5 +1,22 @@
 # Continuidade do Cain - 0.4.7
 
+## Revisão independente da entrega do outro chat
+
+Leia [REVISAO_INDEPENDENTE_20260911](docs/research/REVISAO_INDEPENDENTE_20260911.md).
+Código corrigido: `86c38f8a333f278084adac3abc2ebe40c48b616c`, branch local
+`review/individual-models-20260911`, checkout `C:\CAIN\work\independent-review-20260911`.
+Evidências privadas: `C:\CAIN\entregas\independent-review-20260911`.
+O outro chat continua identificado pela branch `validation/individual-models-20260911`
+e pelo commit publicado `e1786fe`; o código comparado foi `dc114fc`.
+O trabalho anterior deste chat continua em `feature/research-capabilities-20260911`,
+commit `231ffa8`. Seus arquivos e a instalação principal foram preservados.
+
+A revisão usa `research-workflow/6`, `addressable-review/4` e preserva blocos
+completos de contexto, incluindo negações. Jobs pendentes /4 e /5 ficam legíveis
+e canceláveis, mas não avançam sob semântica nova. Não migrar jobs nem instalar
+ou integrar automaticamente esta branch. As sínteses ainda têm erros semânticos.
+Os registros abaixo descrevem entregas anteriores, não a promoção desta revisão.
+
 ## Testes individuais posteriores à instalação
 
 Leia [o relatório dos modelos e relatos individuais](docs/research/TESTES_INDIVIDUAIS_20260911.md).

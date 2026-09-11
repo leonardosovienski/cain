@@ -7,6 +7,11 @@ Esta branch contém a [validação individual de modelos e relatos de pesquisa](
 e correções isoladas. Os testes não substituíram a instalação principal nem
 estabeleceram confiabilidade da interpretação livre dos modelos.
 
+A revisão deste chat está em [Revisão independente](docs/research/REVISAO_INDEPENDENTE_20260911.md),
+na branch `review/individual-models-20260911`. Ela separa defeitos herdados,
+regressões da entrega anterior e erros dos modelos. Não houve merge nem instalação
+operacional dessa revisão; os relatórios anteriores permanecem como histórico.
+
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
 
