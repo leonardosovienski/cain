@@ -23,7 +23,11 @@ As misturas de IDs detectadas em H1–H9 caíram de sete para zero. Porém, a re
 
 O código testado está no commit `dc114fc` (SHA completo no JSON de recibos). Os prompts candidatos usam `addressable-review/3` e os fluxos, `research-workflow/5`. Fluxos pendentes antigos exigem uma nova execução explícita com o novo protocolo; não são continuados silenciosamente com outros prompts.
 
-Não houve instalação da candidata, push, merge, release ou nova CI remota. Foram mantidos commits locais revisáveis. A condição anterior para publicar, de estar tudo bom, não foi satisfeita pela qualidade dos modelos. A instalação principal continua na 0.4.7 anterior, com seu código, configuração, política e registros preservados.
+No encerramento dos testes, não houve instalação da candidata, push, merge, release ou nova CI remota. Foram mantidos commits locais revisáveis. A condição anterior para publicar, de estar tudo bom, não foi satisfeita pela qualidade dos modelos. A instalação principal continua na 0.4.7 anterior, com seu código, configuração, política e registros preservados.
+
+### Publicação posterior autorizada — 11/09/2026
+
+Após receber o veredito e as falhas documentadas, o usuário solicitou explicitamente o push da branch `validation/individual-models-20260911`. A publicação destina-se à revisão das correções e dos testes; não representa aprovação da qualidade dos modelos, merge em `main`, release ou instalação da candidata. Os manifestos locais do encerramento dos testes são registros históricos anteriores a essa autorização. A confirmação do commit remoto e da CI deve constar em recibo posterior de publicação.
 
 ## Geradores: diagnóstico antes e depois da correção
 
