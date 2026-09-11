@@ -1,5 +1,9 @@
 # Revisão independente da entrega de testes individuais do CAIN
 
+**Etapa posterior:** o usuário autorizou push e instalação operacional após esta revisão.
+Veja [publicação e instalação](INSTALACAO_REVISAO_20260911.md). O texto abaixo
+registra o estado ao término da revisão, antes dessa autorização.
+
 Revisão concluída em ambiente separado. A entrega tem melhorias úteis, mas não
 deve ser aproveitada sem as correções de extração, contexto e rastreabilidade
 registradas aqui. A síntese livre dos modelos continua sem confiabilidade

@@ -1,5 +1,9 @@
 # Continuidade do Cain - 0.4.7
 
+**Atualização operacional autorizada:** a revisão foi instalada e publicada na branch
+`review/individual-models-20260911`. Leia [o recibo de instalação](docs/research/INSTALACAO_REVISAO_20260911.md).
+As afirmações de não instalação abaixo descrevem a etapa anterior à autorização.
+
 ## Revisão independente da entrega do outro chat
 
 Leia [REVISAO_INDEPENDENTE_20260911](docs/research/REVISAO_INDEPENDENTE_20260911.md).

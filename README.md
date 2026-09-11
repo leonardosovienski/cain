@@ -1,5 +1,9 @@
 # Cain 0.4.7 — conversa, memória e pesquisa local L0
 
+**Atualização operacional autorizada:** a revisão foi instalada e publicada na branch
+`review/individual-models-20260911`. Leia [o recibo de instalação](docs/research/INSTALACAO_REVISAO_20260911.md).
+As afirmações de não instalação abaixo descrevem a etapa anterior à autorização.
+
 Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_047.md).
 Os resultados de versões anteriores abaixo são históricos.
 
