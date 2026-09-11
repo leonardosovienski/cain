@@ -4,6 +4,45 @@ import json
 import re
 
 
+def matches_identity(relation, source_id):
+    if 'json_pointer' in relation:
+        return source_id in [part.replace('~1', '/').replace('~0', '~')
+                             for part in relation['json_pointer'].split('/')[1:]]
+    return relation['subject'] == source_id
+
+
+def prose_spans(text, source_id):
+    """Whole paragraphs/list items; never cut a wrapped negation from its clause."""
+    lines = list(re.finditer(r'[^\r\n]+', text))
+    headings = [(i, re.match(r'^(#{1,6})[ \t]+(.+?)\s*$', line.group()))
+                for i, line in enumerate(lines)]
+    headings = [(i, len(m[1]), m[2]) for i, m in headings if m]
+    ranges = []
+    for i, level, title in headings:
+        if source_id is not None and title == source_id:
+            end = next((j for j, depth, _ in headings if j > i and depth <= level), len(lines))
+            ranges.append((i, end))
+    if not ranges:
+        ranges = [(0, len(lines))]
+    result = []
+    for first, last in ranges:
+        start, end, previous_heading = None, None, False
+        for line in lines[first:last]:
+            gap = text[end:line.start()] if end is not None else ''
+            boundary = (len(re.findall(r'\r+\n|\r|\n', gap)) >= 2 or previous_heading
+                        or re.match(r'^\s*(?:#{1,6}\s|[-*]\s|\d+\.\s)', line.group()))
+            if start is not None and boundary:
+                result.append((start, end))
+                start = None
+            if start is None:
+                start = line.start()
+            end = line.end()
+            previous_heading = bool(re.match(r'^#{1,6}\s', line.group()))
+        if start is not None:
+            result.append((start, end))
+    return result
+
+
 def structured(evidence, source_id=None):
     relations, recognized, issues = [], 0, []
     seen = set()
@@ -11,9 +50,10 @@ def structured(evidence, source_id=None):
         if text in seen:
             continue
         seen.add(text)
-        entries = []
+        entries, source_recognized = [], False
         if text.lstrip().startswith(("{", "[")):
             recognized += 1
+            source_recognized = True
             def unique(pairs):
                 result = {}
                 for key, value in pairs:
@@ -70,9 +110,22 @@ def structured(evidence, source_id=None):
                 issues.append({"reference": ref, "status": "ambiguous_or_invalid_json"})
                 continue
         else:
-            for match in re.finditer(r'^[ \t]*\|([^\r\n]+)\|[ \t]*$', text, re.MULTILINE):
-                cells = [cell.strip() for cell in match.group(1).split('|')]
-                if len(cells) < 2 or '\\|' in match.group() or (len(cells) > 2 and '`' in match.group()):
+            lines = list(re.finditer(r'[^\r\n]+', text))
+            def separator(line):
+                return re.fullmatch(r'[ \t]*\|(?:[ \t]*:?-{3,}:?[ \t]*\|){2,}[ \t]*', line)
+            for index, match in enumerate(lines):
+                row = re.fullmatch(r'[ \t]*\|(.+)\|[ \t]*', match.group())
+                if not row:
+                    continue
+                source_recognized = True
+                cells = [cell.strip() for cell in row.group(1).split('|')]
+                if separator(match.group()) or (index + 1 < len(lines) and separator(lines[index + 1].group())):
+                    continue
+                # Preserve supported cells literally, including inline code. Pipes
+                # requiring Markdown escape/code interpretation are not guessed.
+                if len(cells) < 2 or '\\|' in match.group() or any(cell.count('`') % 2 for cell in cells):
+                    issues.append({'reference': ref, 'status': 'unsupported_table_delimiters',
+                                   'start': match.start(), 'end': match.end()})
                     continue
                 subject = cells[0]
                 if not subject or set(''.join(cells)) <= set('-: '):
@@ -83,9 +136,12 @@ def structured(evidence, source_id=None):
                                         "predicate": "reported_table_value" if len(cells) == 2
                                         else f"reported_table_column_{column}", "object": obj,
                                         "reference": ref, "quote": match.group(), "start": match.start(), "end": match.end()})
-            recognized += bool(entries)
-        focused = [r for r in entries if r.get('decoded_subject', r['subject']) == source_id]
-        relations.extend(focused or entries)
+            recognized += source_recognized
+        if source_id is not None and source_recognized:
+            entries = [r for r in entries if matches_identity(r, source_id)]
+            if not entries:
+                issues.append({'reference': ref, 'status': 'identity_not_found_in_supported_fields'})
+        relations.extend(entries)
     return {"recognized_sources": recognized, "relations": relations[:32], "has_more": len(relations) > 32,
             "issues": issues, "status": "literal" if relations else "ambiguous" if issues else "unsupported"}
 
@@ -105,7 +161,7 @@ def cards(evidence, question, source_id=None):
             # Ambiguous JSON must not be reinterpreted as unstructured prose.
             continue
         focused = [r for r in literal['relations']
-                   if source_id is not None and r.get('decoded_subject', r['subject']) == source_id]
+                   if source_id is not None and matches_identity(r, source_id)]
         if focused:
             # Shared JSON commonly contains every hypothesis. Pass only exact-key
             # values for the selected identity, with paths distinguishing state/trial.
@@ -119,16 +175,15 @@ def cards(evidence, question, source_id=None):
                 if 'json_pointer' in relation:
                     focused_paths[(ref, start, end)] = relation['json_pointer']
             continue
-        for line in re.finditer(r'[^\r\n]+', text):
-            # Long lines become explicitly partial, contiguous excerpts.
-            for start in range(line.start(), line.end(), 400):
-                end = min(start + 400, line.end())
-                quote = text[start:end]
-                if not quote.strip() or not re.search(r'\w', quote):
-                    continue
-                score = len(terms & set(re.findall(r'\w+', quote.casefold())))
-                score += 20 if source_id and source_id.casefold() in quote.casefold() else 0
-                candidates.append((score, ref, start, end, quote))
+        for start, end in prose_spans(text, source_id):
+            quote = text[start:end]
+            if not quote.strip() or not re.search(r'\w', quote):
+                continue
+            score = len(terms & set(re.findall(r'\w+', quote.casefold())))
+            score += 20 if source_id and source_id.casefold() in quote.casefold() else 0
+            if re.match(r'^\s*[-*]\s+\*{0,2}(?:state|status|limitations|estado|limitações)\b', quote, re.I):
+                score += 12
+            candidates.append((score, ref, start, end, quote))
     candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
     selected, used = {}, 0
     for _, ref, start, end, quote in candidates:
@@ -140,6 +195,9 @@ def cards(evidence, question, source_id=None):
         selected['S' + str(len(selected) + 1)] = entry
         used += len(quote.encode())
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_then_lexical_excerpts/2", "whole_source_read_claim": False,
+                      "selection": "identity_then_lexical_excerpts/3", "whole_source_read_claim": False,
                       "structured_issues": issues,
-                      "limitations": ["Exact-key focus omits shared prose and unrelated keys; it cannot explain unreceived causes"]}
+                      "omitted_excerpts": len(candidates) - len(selected),
+                      "limitations": ["Exact identity paths/rows/headings do not infer entity mappings",
+                                      "Whole prose blocks exceeding the budget are omitted, never sliced",
+                                      "Selected excerpts cannot establish unreceived causes"]}

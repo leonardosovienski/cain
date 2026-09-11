@@ -2,7 +2,7 @@
 
 import argparse
 import base64
-from dataclasses import replace
+from dataclasses import fields, replace
 from datetime import datetime, timezone
 from io import BytesIO
 import json
@@ -12,9 +12,10 @@ import re
 import sqlite3
 import subprocess
 from time import perf_counter
-from urllib.request import urlopen
 
 from cain import __version__
+import cain
+from cain.llm import OllamaLLM, urlopen
 from cain.llm.streaming import stream
 from cain.providers import configured_embedding, configured_llm
 from cain.research import ResearchService
@@ -25,19 +26,18 @@ from cain.settings import load_settings
 from research_snapshot import canonical, digest
 
 
-class RecordingProvider:
+class RecordingProvider(OllamaLLM):
     def __init__(self, provider):
-        self.provider, self.calls = provider, []
-
-    def __getattr__(self, name):
-        return getattr(self.provider, name)
+        super().__init__(**{field.name: getattr(provider, field.name)
+                           for field in fields(OllamaLLM) if field.init})
+        self.calls = []
 
     def generate_json(self, prompt, context, schema):
         row = {"prompt": prompt, "context": context, "schema": schema}
         self.calls.append(row)
         try:
-            row['response'] = self.provider.generate_json(prompt, context, schema)
-            row['metadata'] = self.provider.last_metadata
+            row['response'] = super().generate_json(prompt, context, schema)
+            row['metadata'] = self.last_metadata
             return row['response']
         except Exception as exc:
             row['error'] = {"type": type(exc).__name__, "message": str(exc)}
@@ -67,10 +67,16 @@ def run(protocol, config, db, policy, output, workflows=True):
     report = {'version': __version__, 'started_utc': datetime.now(timezone.utc).isoformat(),
               'protocol': plan, 'protocol_sha256': digest(protocol.read_bytes()),
               'economic_validation': False, 'models': [], 'embedding': {}}
+    source_root = Path(cain.__file__).resolve().parents[2]
     report['source_commit'] = subprocess.check_output(
-        ['git', 'rev-parse', 'HEAD'], text=True, cwd=Path(__file__).resolve().parents[1]).strip()
-    report['source_sha256'] = {str(path.relative_to(Path(__file__).resolve().parents[1])): digest(path.read_bytes())
-                               for path in sorted((Path(__file__).resolve().parents[1] / 'src/cain').rglob('*.py'))}
+        ['git', 'rev-parse', 'HEAD'], text=True, cwd=source_root).strip()
+    report['source_module'] = str(Path(cain.__file__).resolve())
+    report['evaluator_path'] = str(Path(__file__).resolve())
+    report['evaluator_sha256'] = digest(Path(__file__).read_bytes())
+    report['source_sha256'] = {str(path.relative_to(source_root)): digest(path.read_bytes())
+                               for path in sorted((source_root / 'src/cain').rglob('*.py'))}
+    report['generation_parameters'] = {key: getattr(settings, key) for key in
+        ('base_url', 'temperature', 'seed', 'timeout', 'num_ctx', 'num_predict', 'max_input_bytes', 'think')}
 
     def save():
         (output / 'report.json').write_bytes(canonical(report))
@@ -186,6 +192,9 @@ def run(protocol, config, db, policy, output, workflows=True):
     except Exception as exc:
         report['embedding']['error'] = {'type': type(exc).__name__, 'message': str(exc)}
     report['states_preserved'] = before == {c: stable(service, service.scope(collection=c)) for c in collections}
+    report['source_unchanged'] = report['source_sha256'] == {
+        str(path.relative_to(source_root)): digest(path.read_bytes())
+        for path in sorted((source_root / 'src/cain').rglob('*.py'))}
     report['finished_utc'] = datetime.now(timezone.utc).isoformat()
     save()
     return {'output': str(output), 'states_preserved': report['states_preserved']}

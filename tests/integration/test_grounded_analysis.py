@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/3'
+    assert result['generation']['prompt_version'] == 'addressable-review/4'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):

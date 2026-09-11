@@ -1,0 +1,13 @@
+{
+  "protocol": "independent-code-review/1",
+  "baseline_commit": "231ffa8791b6cd89de0a025ddb4ec02298e8cd45",
+  "delivered_code_commit": "dc114fcbfeb7e709468da129408851d3e7665ced",
+  "delivered_documentation_commit": "e1786feb70f1a0175be8238b0cf4c1ecaec2637b",
+  "cases": "individual-models-20260911.json unchanged: 19 admitted identities, each generator separately",
+  "parameters": {"num_ctx":8192,"num_predict":768,"max_input_bytes":6500,"think":false,"temperature":0,"seed":42,"timeout":240},
+  "models": ["qwen3.5:0.8b","qwen2.5:3b","qwen3-embedding:0.6b"],
+  "semantic_review": ["unsupported conclusion", "negation reversed", "wrong identity or state", "state omitted", "instruction disobeyed", "no material error identified within inspected source"],
+  "structural_regressions": ["LF CRLF CR offsets with Unicode", "JSON object identity and exact escaped path segments", "missing identity must not return unrelated fields", "table header and inline code", "unsupported pipe delimiters", "old pending and completed workflow compatibility", "recording provider must preserve model digest checks"],
+  "acceptance": ["full automated tests and lint", "offline isolated wheel installation", "original data and checkouts preserved", "no operational installation or merge", "raw responses and failures retained"],
+  "limitations": ["Independent review of another chat, not independent human blinded assessment", "Development cases already observed; no holdout", "Citation validity and literal state presence are diagnostics, not semantic passes", "Same parameters do not ensure deterministic generations or controlled timing", "No financial research reexecution or scientific state changes"]
+}
