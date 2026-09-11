@@ -1,0 +1,148 @@
+{
+  "protocol": "individual-local-models/1",
+  "created_utc": "2026-09-11T20:16:18.531105+00:00",
+  "kind": "engineering-development-retest",
+  "formal_collection": false,
+  "economic_validation": false,
+  "models": [
+    "qwen3.5:0.8b",
+    "qwen2.5:3b"
+  ],
+  "embedding_model": "qwen3-embedding:0.6b",
+  "cases": [
+    {
+      "collection": "crypto",
+      "source_id": "CLAIM-CR-COSTS",
+      "expected_source_status": "SUPPORTED_UNDER_ASSUMED_COST_MODEL\r",
+      "question": "O que a fonte informa sobre CLAIM-CR-COSTS? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "CLAIM-CR-DPL",
+      "expected_source_status": "SUPPORTED\r",
+      "question": "O que a fonte informa sobre CLAIM-CR-DPL? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "CLAIM-CR-H6",
+      "expected_source_status": "INCONCLUSIVE_DUE_TO_POWER (gate operacional de n>=30 atingido em\r",
+      "question": "O que a fonte informa sobre CLAIM-CR-H6? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "CLAIM-CR-HMM",
+      "expected_source_status": "REFUTED\r",
+      "question": "O que a fonte informa sobre CLAIM-CR-HMM? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "CLAIM-CR-LLM",
+      "expected_source_status": "REFUTED (H5), INCONCLUSIVE_DUE_TO_POWER (H4)\r",
+      "question": "O que a fonte informa sobre CLAIM-CR-LLM? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "CLAIM-CR-TREND",
+      "expected_source_status": "CLOSED_BY_SCOPE / INCONCLUSIVE — decisão de escopo não é refutação\r",
+      "question": "O que a fonte informa sobre CLAIM-CR-TREND? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H1",
+      "expected_source_status": "CLOSED_NO_GO",
+      "question": "O que a fonte informa sobre H1? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H2",
+      "expected_source_status": "CLOSED_NO_GO",
+      "question": "O que a fonte informa sobre H2? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H3",
+      "expected_source_status": "CLOSED_NO_GO",
+      "question": "O que a fonte informa sobre H3? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H4",
+      "expected_source_status": "CLOSED_INSUFFICIENT_SAMPLE",
+      "question": "O que a fonte informa sobre H4? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H5",
+      "expected_source_status": "CLOSED_NO_GO",
+      "question": "O que a fonte informa sobre H5? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H6",
+      "expected_source_status": "CLOSED_INSUFFICIENT_SAMPLE",
+      "question": "O que a fonte informa sobre H6? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H7",
+      "expected_source_status": "REGISTERED_NOT_ACTIVATED",
+      "question": "O que a fonte informa sobre H7? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H8",
+      "expected_source_status": "REGISTERED_NOT_ACTIVATED",
+      "question": "O que a fonte informa sobre H8? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "crypto",
+      "source_id": "H9",
+      "expected_source_status": "CLOSED_INSUFFICIENT_SAMPLE",
+      "question": "O que a fonte informa sobre H9? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "stocks",
+      "source_id": "Retorno líquido pessoal e operação real",
+      "expected_source_status": "Não aptos: custos, eventos, cenário pessoal e observações insuficientes",
+      "question": "O que a fonte informa sobre Retorno líquido pessoal e operação real? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "brasileirao",
+      "source_id": "CLAIM-BR-MARKET-001",
+      "expected_source_status": "BLOCKED_PENDING_PIT_FEATURES",
+      "question": "O que a fonte informa sobre CLAIM-BR-MARKET-001? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "brasileirao",
+      "source_id": "CLAIM-BR-MARKET-002",
+      "expected_source_status": "BLOCKED_PENDING_PIT_FEATURES",
+      "question": "O que a fonte informa sobre CLAIM-BR-MARKET-002? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    },
+    {
+      "collection": "brasileirao",
+      "source_id": "CLAIM-BR-MARKET-003",
+      "expected_source_status": "BLOCKED_PENDING_PIT_FEATURES",
+      "question": "O que a fonte informa sobre CLAIM-BR-MARKET-003? Informe o estado literal e a limitação; não atribua estados de outras hipóteses."
+    }
+  ],
+  "checks": [
+    "all 19 admitted identities separately per generator",
+    "original source status and records unchanged",
+    "citations resolve exact source offsets",
+    "state string in response is a diagnostic, not semantic certification",
+    "flag unrelated H1-H9 in isolated H1-H9 answers",
+    "absent identity abstains without generation",
+    "functional six subprocess stages per generator",
+    "six-step workflow per collection per generator",
+    "existing disjoint six-case structural/PT/EN evaluation per generator",
+    "embedding dimension/norm/cache/semantic ranking",
+    "stream terminal done per generator; red-image vision only supported model"
+  ],
+  "limitations": [
+    "Development retests, not held-out independent evaluation",
+    "Identity/persona claims remain preliminary; no human satisfaction study",
+    "Source references do not certify interpretation",
+    "One run per condition cannot establish model superiority",
+    "Existing financial reports only; no financial experiment reexecution"
+  ]
+}
