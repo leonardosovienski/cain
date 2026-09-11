@@ -35,5 +35,3 @@ def configured_embedding(settings):
         raise ValueError("Digest do modelo de busca mudou; revise a configuração antes de reutilizar o índice")
     return OllamaEmbedding(settings.embedding_model, model_digest=found["digest"],
                            base_url=settings.base_url, timeout=settings.timeout)
-
-
