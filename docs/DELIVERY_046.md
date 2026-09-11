@@ -133,6 +133,32 @@ No relatório simples de Stocks, extração e suporte passaram; crítica e sínt
 sem citação foram recusadas e receberam abstenção explícita no teste de recuperação.
 Portanto, ainda não há demonstração de debate autônomo confiável neste modelo.
 
+## Recibo final da instalação
+
+- Código instalado: `039f036cac2e7074fae839185af6d7e6c9f22a1f`.
+- Wheel `final/cain_research-0.4.6-py3-none-any.whl`, SHA-256
+  `3bedf178bd46ff8b0363becfcb626edd9f72b7a97cc5636b6dfb399af7f5cb4f`.
+- 413 testes locais aprovados, um skip específico de Windows; Ruff aprovado.
+  [CI final](https://github.com/leonardosovienski/cain/actions/runs/34633422947)
+  aprovada; matriz Python 3.11/3.12/3.13.
+- Instalação offline em venv vazio, fora do checkout; versão, assets e contrato
+  conferidos; pip check aprovado. Os 48 arquivos instalados correspondem ao wheel
+  e ao checkout. Mudanças documentais posteriores não alteram o código instalado.
+- Texto e imagem com inferência real; a API instalada reconheceu a imagem vermelha
+  e emitiu terminal done. Na interface, streaming respondeu OK, busca mostrou H6,
+  e recarga recuperou os checkpoints antes do cancelamento do fluxo de teste.
+- Workflow real Stocks `572df25042774dbca431aba3650bbbab`: seis etapas registradas,
+  duas abstenções explícitas, duas falhas preservadas. Reabertura do backup manteve
+  todas as etapas; chamar advance no fluxo concluído não repetiu geração.
+- MCP oficial, trace protobuf, consulta offline dos três produtores, backup,
+  restauração e reinício dos serviços foram verificados separadamente.
+
+Recibos locais: installed-code-receipt.json, models.json, restart-receipt.json,
+installed-api-vision.json, mcp-sdk-receipt.json, otlp-protobuf-receipt.json,
+installed-stocks-workflow-completed.json, installed-stocks-trace.otlp.json,
+real-evaluation-bounded/report.json e tests.xml em `C:\CAIN\entregas\0.4.6`.
+Arquivos de avaliação anteriores preservam as falhas de desenvolvimento.
+
 MCP real: quatro ferramentas listadas e consulta H6 validada pelo cliente
 oficial. Exportação OTLP: IDs hexadecimais conferidos e mensagem validada pelos
 tipos protobuf oficiais 1.44.0 após conversão de representação dos IDs.
