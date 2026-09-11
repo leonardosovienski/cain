@@ -86,13 +86,29 @@ def structured(evidence, source_id=None):
 
 def cards(evidence, question, source_id=None):
     """Select bounded exact excerpts, retaining source offsets and disclosed coverage."""
-    candidates, seen = [], set()
+    candidates, seen, focused_paths, issues = [], set(), {}, []
     terms = set(re.findall(r'\w+', question.casefold()))
     for ref, item in evidence.items():
         text = item['text']
         if text in seen:
             continue
         seen.add(text)
+        literal = structured({ref: text}, source_id)
+        issues.extend(literal['issues'])
+        if literal['issues']:
+            # Ambiguous JSON must not be reinterpreted as unstructured prose.
+            continue
+        focused = [r for r in literal['relations']
+                   if source_id is not None and r.get('decoded_subject', r['subject']) == source_id]
+        if focused:
+            # Shared JSON commonly contains every hypothesis. Pass only exact-key
+            # values for the selected identity, with paths distinguishing state/trial.
+            for relation in focused:
+                start, end = relation['start'], relation['end']
+                candidates.append((100, ref, start, end, relation['quote']))
+                if 'json_pointer' in relation:
+                    focused_paths[(ref, start, end)] = relation['json_pointer']
+            continue
         for line in re.finditer(r'[^\r\n]+', text):
             # Long lines become explicitly partial, contiguous excerpts.
             for start in range(line.start(), line.end(), 400):
@@ -108,7 +124,12 @@ def cards(evidence, question, source_id=None):
     for _, ref, start, end, quote in candidates:
         if len(selected) >= 8 or used + len(quote.encode()) > 2200:
             continue
-        selected['S' + str(len(selected) + 1)] = {"reference": ref, "quote": quote, "start": start, "end": end}
+        entry = {"reference": ref, "quote": quote, "start": start, "end": end}
+        if (ref, start, end) in focused_paths:
+            entry['json_pointer'] = focused_paths[(ref, start, end)]
+        selected['S' + str(len(selected) + 1)] = entry
         used += len(quote.encode())
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "lexical_excerpt_selection/1", "whole_source_read_claim": False}
+                      "selection": "identity_then_lexical_excerpts/2", "whole_source_read_claim": False,
+                      "structured_issues": issues,
+                      "limitations": ["Exact-key focus omits shared prose and unrelated keys; it cannot explain unreceived causes"]}

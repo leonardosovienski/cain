@@ -23,6 +23,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run-id")
     parser.add_argument("--timeout", type=float, default=120.0,
                         help="Timeout per generation in seconds")
+    parser.add_argument("--num-ctx", type=int, default=8192)
+    parser.add_argument("--num-predict", type=int, default=768)
+    parser.add_argument("--max-input-bytes", type=int, default=6500)
+    parser.add_argument("--think", choices=("true", "false"), default=None)
     parser.add_argument("--data-root", type=Path)
     args = parser.parse_args(argv)
     if args.mode == "formal":
@@ -31,7 +35,9 @@ def main(argv: list[str] | None = None) -> int:
     config = EvaluationConfig(mode=args.mode, provider=args.provider, model=args.model,
                               base_url=args.base_url, temperature=args.temperature, seed=args.seed,
                               max_context_chars=args.max_context_chars, run_id=args.run_id,
-                              request_timeout=args.timeout)
+                              request_timeout=args.timeout, num_ctx=args.num_ctx,
+                              num_predict=args.num_predict, max_input_bytes=args.max_input_bytes,
+                              think=None if args.think is None else args.think == "true")
     try:
         runner = {"smoke": run_smoke, "pilot": run_construct_pilot,
                   "functional": run_functional}[args.mode]

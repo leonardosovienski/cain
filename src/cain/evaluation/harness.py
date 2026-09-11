@@ -44,6 +44,10 @@ class EvaluationConfig:
     max_context_chars: int = 2048
     run_id: str | None = None
     request_timeout: float = 120.0
+    num_ctx: int = 8192
+    num_predict: int = 768
+    max_input_bytes: int = 6500
+    think: bool | None = None
 
 
 def formal_blockers() -> list[str]:
@@ -167,7 +171,9 @@ def _model(config: EvaluationConfig):
     if config.provider == "ollama":
         return OllamaLLM(model=config.model, base_url=config.base_url,
                          temperature=config.temperature, seed=config.seed,
-                         timeout=config.request_timeout)
+                         timeout=config.request_timeout, num_ctx=config.num_ctx,
+                         num_predict=config.num_predict, max_input_bytes=config.max_input_bytes,
+                         think=config.think)
     raise ValueError(f"Unknown provider: {config.provider}")
 
 
