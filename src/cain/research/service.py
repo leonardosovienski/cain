@@ -69,11 +69,27 @@ class ResearchService:
 
     def policy(self):
         policy = loads(self.policy_path.read_bytes())
-        keys(policy, "version import_root grants")
-        if policy["version"] != 1 or type(policy["grants"]) is not list:
+        if type(policy) is not dict:
             raise ValueError("Invalid receiver policy")
-        if not Path(policy["import_root"]).is_absolute():
-            raise ValueError("Receiver import_root must be absolute")
+        version = policy.get("version")
+        keys(policy, "version import_root grants" if version == 1 else "version imports grants")
+        if type(version) is not int or version not in (1, 2) or type(policy["grants"]) is not list:
+            raise ValueError("Invalid receiver policy")
+        if version == 1:
+            roots = [policy["import_root"]]
+        else:
+            if type(policy["imports"]) is not list:
+                raise ValueError("Invalid import bindings")
+            scopes, roots = set(), []
+            for binding in policy["imports"]:
+                keys(binding, "user project collection root")
+                scope = self.scope(binding["user"], binding["project"], binding["collection"])
+                if scope in scopes:
+                    raise ValueError("Ambiguous import binding")
+                scopes.add(scope)
+                roots.append(binding["root"])
+        if any(type(root) is not str or not Path(root).is_absolute() for root in roots):
+            raise ValueError("Receiver import root must be absolute")
         for grant in policy["grants"]:
             keys(
                 grant,
@@ -96,6 +112,15 @@ class ResearchService:
                 if type(grant[key]) is not list or not all(type(v) is str for v in grant[key]):
                     raise ValueError("Invalid grant list")
         return policy
+
+    def import_root(self, scope):
+        policy = self.policy()
+        if policy["version"] == 1:
+            return policy["import_root"]
+        for binding in policy["imports"]:
+            if self.scope(binding["user"], binding["project"], binding["collection"]) == scope:
+                return binding["root"]
+        raise ValueError("No import root admitted for this scope")
 
     @staticmethod
     def scope(user="leo", project=None, collection="crypto"):
@@ -230,7 +255,7 @@ class ResearchService:
     def ingest(self, relative, scope):
         receipt, publication = uuid4().hex, None
         try:
-            path = confined(self.policy()["import_root"], relative)
+            path = confined(self.import_root(scope), relative)
             with path.open("rb") as handle:
                 raw = handle.read(MAX_BYTES + 1)
             package = loads(raw)

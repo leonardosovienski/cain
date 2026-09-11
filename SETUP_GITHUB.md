@@ -1,7 +1,7 @@
 # Repositório e verificação
 
 O repositório está publicado em [leonardosovienski/cain](https://github.com/leonardosovienski/cain).
-A entrega 0.4.3 está na branch `local/l0-historian`; não presuma que `main` contém
+A entrega 0.4.4 está na branch `local/l0-historian`; não presuma que `main` contém
 esta entrega. O checkout desta máquina é `C:\CAIN\projeto`.
 Consulte [CONTINUIDADE.md](CONTINUIDADE.md) para versão instalada e evidências.
 

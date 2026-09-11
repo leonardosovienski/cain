@@ -1,64 +1,38 @@
-# Continuidade do Cain — 0.4.3
+# Continuidade do Cain — 0.4.4
 
-Atualizado em 2026-09-11. Este arquivo permite retomar o trabalho sem o chat.
+Atualizado em 11/09/2026. Leia [DELIVERY_044](docs/DELIVERY_044.md) para usar,
+reproduzir, conferir limites e recuperar a instalação sem este chat.
 
-## Instalação e entrada
+Instalação principal: C:\CAIN; abrir ABRIR_CAIN.cmd, http://127.0.0.1:8877.
+Pacote 0.4.4 instalado por wheel em .venv; fontes em projeto, branch local/l0-historian.
+O contrato independente continua em contrato, branch local/l0-contract, sem alteração.
+Bancos próprios em dados/workspace.db e dados/research.db; política v2 em
+config/research-policy.json. Nenhum banco científico foi incorporado.
 
-Nesta máquina, a instalação principal é `C:\CAIN`. Abra `C:\CAIN\ABRIR_CAIN.cmd`;
-a interface usa http://127.0.0.1:8877. O guia da instalação é `C:\CAIN\README.md`.
-O checkout está em `C:\CAIN\projeto`, na branch `local/l0-historian` de
-[leonardosovienski/cain](https://github.com/leonardosovienski/cain).
-O código da versão instalada é o commit `67fa5953a573acbfaf00952549bab0ed8cd4d7ba`;
-commits posteriores de documentação não alteram o wheel 0.4.3 instalado.
+Acervos reais: crypto (15 registros/7 evidências), stocks (1/1), brasileirao (3/3).
+São publicações limitadas de relatórios, com fontes, estados, offsets, hashes e lacunas.
+heterogeneous anterior permanece preservado. A consulta funciona sem os produtores,
+Ollama ou embeddings. Novas publicações exigem exportação e importação explícitas.
+Cada produtor guarda publicações em sua própria raiz; veja a política e a entrega.
 
-O contrato independente está em `C:\CAIN\contrato`, branch `local/l0-contract`,
-commit `1ddc9a51ce14339559e9a57fe6a6760a2cac2e62`. Cada pasta tem seu próprio Git.
+Nesta rodada: 381 testes aprovados, um skip Windows, lint e wheel offline aprovados;
+CLI, API e interface real; reimportação, referências, reconstrução e restauração;
+consulta instalada com raízes produtoras indisponíveis. Doze perguntas PT/EN passaram
+nos dois modos de recuperação. Não houve superioridade demonstrada nem inferência real.
+Ollama indisponível na porta local padrão; avaliação humana/held-out segue pendente.
 
-## Dados e execução
+Novos comandos cain archive backup/restore incluem bancos, knowledge e política.
+Snapshots são consistentes por banco, não globalmente atômicos. Backup anterior em
+C:\CAIN\work\before-044-backup, restauração ensaiada em before-044-restored.
+Wheel e recibos em C:\CAIN\entregas\0.4.4. Logs/XML em C:\CAIN\work.
+Não enviar bancos, publicações locais ou configurações privadas ao GitHub.
 
-- `C:\CAIN\dados\workspace.db`: conversas, recibos, preferências e auditoria.
-- `C:\CAIN\dados\research.db`: acervo L0 e evidências recebidas.
-- `C:\CAIN\config\research-policy.json`: admissões e permissões de pesquisa.
-- `C:\CAIN\.venv`: pacote instalado; Python base em `C:\CAIN\runtime\python`.
-- `C:\CAIN\entregas`: wheels, fontes, testes, CI e verificações da migração.
-- `C:\CAIN\historico`: entrega e prompt originais arquivados.
+[Comparação de sistemas](docs/research/market-comparison-20260911.md) registra decisões
+adotar/adaptar/avaliar/adiar/rejeitar. [ADR 0013](docs/adr/0013-three-producers-and-complete-backup.md)
+explica a ampliação dos exemplos para produtores reais e a política compatível.
+As correções de arquitetura 0.4.3 permanecem; relatórios anteriores são históricos.
 
-A instância foi transferida da pasta do chat para esta instalação independente.
-O acervo Crypto tem 15 revisões; `heterogeneous` contém quatro revisões documentais
-Stocks/Brasileirão. Novas importações continuam admitidas em
-`C:\Cripto\cain-l0\publications`. A migração não alterou os projetos vizinhos.
-
-## O que está pronto
-
-Conversa e preferências por escopo; API/CLI/UI; importação, consulta, evidências,
-histórico e explicação opcional L0. A 0.4.2 corrigiu seis grupos de bugs.
-A 0.4.3 corrigiu as duas pendências de arquitetura: conclusão e resultado durável
-na mesma transação, com histórico recuperável/idempotente, e composição de perfil
-sem reconstrução do índice global. Consulte [a descrição técnica](docs/ARCHITECTURE_043.md).
-
-Suíte da implementação: **374 aprovados e 1 skip** no Windows. CI aprovada em
-Python 3.11, 3.12 e 3.13, incluindo instalação do wheel fora do checkout.
-[Execução da versão](https://github.com/leonardosovienski/cain/actions/runs/34611919645).
-A migração conferiu igualdade lógica e integridade dos bancos, hashes, runtime,
-CLI/API e os dois acervos. Não é necessário repetir pesquisas ou testes científicos
-para retomar o desenvolvimento de software.
-
-## Limites que continuam válidos
-
-Ollama/modelos reais continuam sem inferência verificada; nenhum peso foi baixado.
-A consulta L0 funciona sem modelo. Não houve avaliação humana de utilidade nem
-validação científica/econômica. A conclusão técnica não fecha pendências acadêmicas.
-Se um pedido morrer antes do commit de conclusão, o recibo bloqueia repetição
-silenciosa; recuperação não inventa um resultado que nunca foi confirmado.
-
-Os relatórios 0.1–0.4.2, resultados datados, notas bibliográficas e documentos de
-entrada são históricos. Suas contagens, caminhos e decisões descrevem aquela época;
-não devem substituir este estado operacional. As recomendações adicionais da
-[auditoria](docs/AUDIT_042.md) permanecem propostas quando não cobertas pela 0.4.3.
-
-## Retomar
-
-Abra este checkout, leia este arquivo e o [índice documental](docs/README.md).
-Confira `git status` e a branch antes de alterar código. O ambiente instalado é
-não editável: mudar fontes exige testar, gerar e instalar um novo wheel para atualizar
-a aplicação. Preserve bancos e arquivos de documentos nas cópias de segurança.
+Para retomar: conferir Git, HEAD e remoto, ler a entrega; executar testes proporcionais
+em ambiente separado. Não instalar runtimes científicos Stocks/BR no Cain nem ativar
+pesquisa, modelos, capital, apostas ou agendamentos por inferência deste documento.
+Rollback 0.4.3 requer política v1 preservada; não apagar o acervo nem reescrever fontes.

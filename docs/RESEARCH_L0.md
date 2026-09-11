@@ -1,3 +1,7 @@
+# Atualização 0.4.4
+
+Consulte [DELIVERY_044.md](DELIVERY_044.md): política v2, exportadores reais Stocks/Brasileirão e backup completo. O protocolo abaixo descreve a base 0.4.3, ainda compatível; a indicação final de fixtures foi superada pela integração real delimitada.
+
 # Cain 0.4.3 local L0 pilot
 
 Cain now imports admitted local publications, queries structured records, displays

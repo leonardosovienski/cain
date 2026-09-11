@@ -2,6 +2,8 @@
 
 ## Estado operacional atual
 
+[Entrega 0.4.4: três produtores, backup e avaliação](DELIVERY_044.md).
+
 1. [Continuidade](../CONTINUIDADE.md): caminhos, versão, dados, testes e retomada sem chat.
 2. [README](../README.md): uso e instalação genérica.
 3. [Estado do projeto](../ESTADO_DO_PROJETO.md): estado atual seguido do mestre histórico.

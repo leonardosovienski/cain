@@ -122,6 +122,8 @@ def main(argv=None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     from cain.research.cli import register
     register(sub)
+    from cain.archive import register as register_archive
+    register_archive(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
     run.add_argument("--intent", choices=["busca", "codigo", "resumo"])
@@ -143,6 +145,10 @@ def main(argv=None) -> int:
         parser.error("O pedido não pode ser vazio.")
     runtime = None
     try:
+        if args.command == "archive":
+            from cain.archive import execute as execute_archive
+            _write(execute_archive(args))
+            return 0
         if args.command == "research":
             from cain.research.cli import execute
             result = execute(args)

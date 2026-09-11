@@ -1,4 +1,6 @@
-# Estado atual do Cain — 0.4.3
+# Estado atual do Cain — 0.4.4
+
+Entrega atual: [três produtores e recuperação 0.4.4](docs/DELIVERY_044.md). Os resultados anteriores abaixo são históricos.
 
 Atualizado em 2026-09-11. O estado operacional, caminhos, validação e limites atuais
 estão em [CONTINUIDADE.md](CONTINUIDADE.md). A instalação principal é `C:\CAIN`,

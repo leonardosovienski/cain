@@ -1,0 +1,52 @@
+{
+  "version": "three-producers-recovery/1",
+  "split": "development",
+  "fixed_before_running_answers": true,
+  "call_limit_per_model_arm": 4,
+  "evidence_budget_bytes": 6000,
+  "generation_limit_bytes": 6000,
+  "episodes": [
+    {
+      "id": "crypto-pt",
+      "group": "crypto-status",
+      "source_id": "H6",
+      "question": "Qual estado foi registrado para H6?",
+      "expected_status": "CLOSED_INSUFFICIENT_SAMPLE",
+      "abstain": false
+    },
+    {
+      "id": "crypto-en",
+      "group": "crypto-status",
+      "source_id": "H6",
+      "question": "What state was recorded for H6?",
+      "expected_status": "CLOSED_INSUFFICIENT_SAMPLE",
+      "abstain": false
+    },
+    {
+      "id": "crypto-absent-pt",
+      "group": "crypto-absent",
+      "source_id": "UNRECEIVED-999",
+      "question": "Qual o estado deste registro não recebido?",
+      "expected_status": null,
+      "abstain": true
+    },
+    {
+      "id": "crypto-absent-en",
+      "group": "crypto-absent",
+      "source_id": "UNRECEIVED-999",
+      "question": "What state is recorded for this unreceived record?",
+      "expected_status": null,
+      "abstain": true
+    }
+  ],
+  "engineering_acceptance": "All exact states or scoped abstentions correct; no duplicate IDs, false absence or unsupported state; resolve every reference.",
+  "investment_threshold": "At least 10 percentage points factual/support improvement on larger independent held-out episodes, with equal source curation and model budget; no extra unsupported claim.",
+  "limitations": [
+    "Current retrieval, not historical availability or predictions",
+    "12 bilingual cases across three protocols represent six groups; absent cases are engineering controls",
+    "Development corpus with known states; no held-out utility claim",
+    "Both arms receive exact source IDs and the same admitted evidence",
+    "No natural-language intent parsing evaluated",
+    "Model quality, human usefulness and economic validity not certified"
+  ]
+}

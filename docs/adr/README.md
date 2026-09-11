@@ -11,6 +11,7 @@ O índice original afirmava que existiam onze ADRs, mas somente três foram anex
 | [0010](0010-protocolo-e-metricas-de-avaliacao.md) | Avaliação | Proposto |
 | [0011](0011-orquestracao-propria-vs-framework-existente.md) | Orquestração própria | Aceito |
 | [0012](0012-preferencias-explicitas-e-memoria.md) | Preferências explícitas e memória v0.2 | Provisório; implementação experimental |
+| [0013](0013-three-producers-and-complete-backup.md) | Raízes por acervo e backup completo | Aceito; verificado em engenharia na 0.4.4 |
 
 Os ADRs anexados foram copiados sem mudança. A auditoria de fontes aponta ressalvas
 que deverão ser tratadas por novos ADRs, preservando as decisões aceitas.

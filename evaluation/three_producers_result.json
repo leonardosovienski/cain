@@ -1,0 +1,35 @@
+{
+  "crypto": {
+    "protocol_sha256": "03ef8fdb9711bcd9c92120f091525253fe7c1b3501cce8e139528877cf9297ef",
+    "summary": {
+      "deterministic_correct": 4,
+      "documentary_retrieval_correct": 4,
+      "human_time": null,
+      "model_calls": 0,
+      "questions": 4,
+      "utility_status": "INCONCLUSIVE"
+    }
+  },
+  "stocks": {
+    "protocol_sha256": "805dae2a64567291fe1d1d5f735832f86cf0845b65dd1929c9c27e004ebfb2a7",
+    "summary": {
+      "deterministic_correct": 4,
+      "documentary_retrieval_correct": 4,
+      "human_time": null,
+      "model_calls": 0,
+      "questions": 4,
+      "utility_status": "INCONCLUSIVE"
+    }
+  },
+  "brasileirao": {
+    "protocol_sha256": "fcad958f974d56f37642331d54dbf7628594a565aae4e70f90874f7656a0a504",
+    "summary": {
+      "deterministic_correct": 4,
+      "documentary_retrieval_correct": 4,
+      "human_time": null,
+      "model_calls": 0,
+      "questions": 4,
+      "utility_status": "INCONCLUSIVE"
+    }
+  }
+}
