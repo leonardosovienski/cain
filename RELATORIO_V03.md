@@ -1,5 +1,7 @@
 # Cain v0.3 — entrega funcional
 
+> Registro histórico da entrega indicada neste documento. Para estado e caminhos atuais, consulte [Continuidade](CONTINUIDADE.md).
+
 Concluída em 7/9/2026, horário de Brasília. Os artefatos usam timestamps UTC.
 
 Abra [ABRIR_CAIN.cmd](ABRIR_CAIN.cmd) para usar a interface local. O código continua

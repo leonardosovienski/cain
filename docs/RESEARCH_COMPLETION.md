@@ -1,5 +1,7 @@
 # Completion audit: 0.4.1
 
+> Registro histórico da entrega indicada neste documento. Para estado e caminhos atuais, consulte [Continuidade](../CONTINUIDADE.md).
+
 The previous 0.4.0 closure omitted a runnable generated documentary comparison,
 session-scoped research recall and real heterogeneous documentary examples. A further
 defect allowed changed index columns to silently remove results without failing verify.

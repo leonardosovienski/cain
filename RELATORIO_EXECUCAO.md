@@ -1,5 +1,7 @@
 # Cain — relatório da execução
 
+> Registro histórico da entrega indicada neste documento. Para estado e caminhos atuais, consulte [Continuidade](CONTINUIDADE.md).
+
 > Histórico da versão 0.1. A evolução funcional está em [RELATORIO_V02.md](RELATORIO_V02.md).
 
 **Data:** 07/09/2026. **Resultado:** repositório inicial implementado, executado e testado.

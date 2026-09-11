@@ -1,5 +1,7 @@
 # Cain 0.2 — implementação funcional
 
+> Registro histórico da entrega indicada neste documento. Para estado e caminhos atuais, consulte [Continuidade](CONTINUIDADE.md).
+
 Atualização de 7 de setembro de 2026, horário de Brasília.
 
 Os quatro passos técnicos foram implementados: modelo real, atualização de

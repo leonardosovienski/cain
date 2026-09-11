@@ -1,5 +1,7 @@
 # L0 validation · local execution 2026-09-11
 
+> Registro histórico da entrega indicada neste documento. Para estado e caminhos atuais, consulte [Continuidade](../CONTINUIDADE.md).
+
 This report describes executed engineering checks, not scientific replication.
 Baseline Cain: `c075c93466a9d36c59f3469bacde90cc287e0b70`.
 Crypto source/exporter base: `e4f8974beadc02aed63c7f94cf3d80cb27d4dd7f`.

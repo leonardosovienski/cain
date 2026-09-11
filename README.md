@@ -1,4 +1,4 @@
-# Cain 0.4 — conversa, memória e pesquisa local L0
+# Cain 0.4.3 — conversa, memória e pesquisa local L0
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
@@ -8,7 +8,13 @@ admitidas, consulta determinística, cobertura e inspeção de evidências na CL
 interface. Importar e consultar não exige Ollama. A explicação opcional usa o provider
 existente; conversa e feedback não se tornam evidência científica.
 
-## Abrir nesta máquina
+## Instalação principal nesta máquina
+
+Use `C:\CAIN\ABRIR_CAIN.cmd` e http://127.0.0.1:8877. Essa instalação contém
+runtime próprio e bancos em `C:\CAIN\dados`. Para retomar sem o chat, leia
+[CONTINUIDADE.md](CONTINUIDADE.md) e o [índice documental](docs/README.md).
+
+## Instalação genérica do repositório
 
 Dê dois cliques em **[ABRIR_CAIN.cmd](ABRIR_CAIN.cmd)**. A interface abre em
 [127.0.0.1:8000](http://127.0.0.1:8000/); o inicializador reutiliza o Python e

@@ -1,5 +1,7 @@
 # Escolhas de engenharia nesta entrega
 
+> Registro histórico da entrega indicada neste documento. Para estado e caminhos atuais, consulte [Continuidade](../../CONTINUIDADE.md).
+
 Data: 2026-09-07. Escopo: esqueleto e instrumento técnico; decisões de pesquisa abertas.
 
 1. Python 3.11+, núcleo com biblioteca padrão; FastAPI apenas no extra `api`.

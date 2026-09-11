@@ -1,3 +1,22 @@
+# Estado atual do Cain — 0.4.3
+
+Atualizado em 2026-09-11. O estado operacional, caminhos, validação e limites atuais
+estão em [CONTINUIDADE.md](CONTINUIDADE.md). A instalação principal é `C:\CAIN`,
+com entrada `C:\CAIN\ABRIR_CAIN.cmd`, porta 8877 e dados preservados localmente.
+
+A implementação passou em 374 testes, com um skip no Windows e CI aprovada em três
+versões de Python. As duas pendências de arquitetura foram corrigidas na 0.4.3.
+Inferência real, utilidade humana e validação acadêmica continuam não comprovadas.
+
+## Registro histórico abaixo
+
+O restante deste arquivo preserva o estado e o documento mestre recebidos em
+2026-09-07. Expressões como “fonte da verdade única”, “fase atual” e “versão funcional”
+nesse registro pertencem ao texto histórico, não ao estado operacional atual.
+As hipóteses e pendências acadêmicas não foram reclassificadas pela entrega de software.
+
+---
+
 # Estado de execução — atualização de 2026-09-07
 
 **Versão funcional 0.2:** preferências explícitas e memória implementadas; CLI
