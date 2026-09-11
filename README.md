@@ -3,6 +3,10 @@
 Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_047.md).
 Os resultados de versões anteriores abaixo são históricos.
 
+Esta branch contém a [validação individual de modelos e relatos de pesquisa](docs/research/TESTES_INDIVIDUAIS_20260911.md)
+e correções isoladas. Os testes não substituíram a instalação principal nem
+estabeleceram confiabilidade da interpretação livre dos modelos.
+
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
 
@@ -61,9 +65,10 @@ ollama pull qwen3-embedding:0.6b
 .\ABRIR_CAIN.cmd
 ```
 
-O modelo de resposta padrão continua `qwen2.5:3b`. O `qwen3.5:4b` foi comparado e
-está instalado nesta máquina, mas os ganhos foram inconsistentes para uma troca
-global. Veja a [inspeção com respostas completas](docs/research/inspecao-modelos-v03.md).
+O `cain.toml` deste checkout seleciona `qwen3.5:0.8b`. O inventário local observado
+em 11/09/2026 também contém `qwen2.5:3b` e `qwen3-embedding:0.6b`; não contém
+`qwen3.5:4b`. A [comparação v0.3](docs/research/inspecao-modelos-v03.md) é histórica
+e não deve ser usada como inventário atual de modelos.
 
 `cain.toml` fixa o digest observado do embedding. Se o download da tag retornar
 outros pesos, a busca recusa a divergência: confira `/api/tags` do Ollama e atualize

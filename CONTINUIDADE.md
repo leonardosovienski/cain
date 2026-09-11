@@ -1,5 +1,17 @@
 # Continuidade do Cain - 0.4.7
 
+## Testes individuais posteriores à instalação
+
+Leia [o relatório dos modelos e relatos individuais](docs/research/TESTES_INDIVIDUAIS_20260911.md).
+Correções e protocolo estão em `C:\CAIN\work\individual-model-tests-20260911`,
+branch `validation/individual-models-20260911`; evidências em
+`C:\CAIN\entregas\individual-models-20260911`. A instalação principal abaixo
+foi preservada. Não confundir suíte técnica aprovada com interpretação validada:
+há respostas reais dos modelos que não são sustentadas pelas fontes.
+As correções usam `research-workflow/5` e `addressable-review/3`; tarefas antigas
+permanecem consultáveis, mas uma tarefa pendente de protocolo anterior exige
+um novo fluxo para continuar com os novos prompts.
+
 Entrega atual: [integracao, extracao e debate](docs/DELIVERY_047.md).
 Codigo: `C:\CAIN\work\research-capabilities-20260911`, branch
 `feature/research-capabilities-20260911`. Arquitetura 2e9350c integrada.
