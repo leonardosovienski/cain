@@ -43,7 +43,9 @@ C:\CAIN\.venv\Scripts\cain-stream.exe "Descreva a imagem" --config C:\CAIN\work\
 `jobs` lista, `cancel ID` cancela. `advance ID --recover --approve-generation`
 recupera falha; execução interrompida sem recibo exige lease expirado de 600 s.
 Não há garantia exactly-once da chamada ao modelo quando o processo morre antes
-do checkpoint. Troca de corpus, política ou modelo exige um novo job.
+do checkpoint. Troca de corpus, política, modelo ou protocolo dos prompts exige
+um novo job. O protocolo atual é research-workflow/2; jobs anteriores podem
+ser lidos/cancelados, mas não avançados com prompts diferentes.
 
 API: POST `/research/search`, `/research/entities`, `/research/jobs`,
 `/research/jobs/list`, `/research/jobs/{id}/read|advance|cancel|trace`;
@@ -62,14 +64,17 @@ tools/call. Ferramentas research_query, research_search, research_inspect e
 research_evidence. Processo tem escopo fixo, revalida política a cada chamada,
 não fornece rede/shell nem alterações científicas. As publicações deste host
 não autorizam divulgação externa; não registrar esse servidor em cliente que
-envie resultados a LLM remoto. Nenhum cliente externo foi conectado.
+envie resultados a LLM remoto. A interoperabilidade foi verificada com o SDK
+oficial MCP 2.2.0 em processo local separado, sem serviço remoto.
 
 ## Instalação e recuperação
 
 Código isolado: `C:\CAIN\work\research-capabilities-20260911`, branch
 `feature/research-capabilities-20260911`. Pacote não editável em `C:\CAIN\.venv`.
-O checkout `C:\CAIN\projeto` tem alterações concorrentes preservadas e não é
-a origem deste wheel. Python e bancos dos produtores não foram alterados.
+O checkout `C:\CAIN\projeto` não é a origem deste wheel. Seu trabalho concorrente
+foi publicado em `architecture/complete-20260911`, HEAD `2e9350c`, e permanece
+preservado. A integração entre essas branches requer revisão própria; este lote
+não trocou esse checkout. Python e bancos dos produtores não foram alterados.
 
 Ollama 0.34.0 standalone oficial em `C:\CAIN\runtime\ollama`; modelos em
 `C:\CAIN\modelos`, loopback, cloud desligada, um modelo carregado e uma chamada
@@ -78,6 +83,11 @@ Qwen3-embedding:0.6b para recuperação. Timeout local de 240 s e contexto 8192.
 O modelo menor foi escolhido por viabilidade neste host, sem alegar superioridade.
 Não há chaves pagas. CPU Intel integrada e cerca de 8 GB RAM:
 carregar/trocar modelos e processar textos extensos pode ser lento.
+
+Licenças dos modelos foram preservadas nos recibos locais: Qwen3.5:0.8b declara
+Apache 2.0; Qwen2.5:3b declara Qwen Research License, sem presumir permissão
+comercial. A resposta /api/show do embedding não traz licença; não tratá-la
+como concessão. Os modelos não são redistribuídos no repositório.
 
 O extra `vision` adiciona Pillow. Wheels, probes, XML e recibos ficam em
 `C:\CAIN\entregas\0.4.6` e `C:\CAIN\work`. Backup anterior em
@@ -100,6 +110,17 @@ continua obrigatória após a geração. A referência da explicação foi restr
 por enum às referências admitidas, evitando erros ao copiar hashes longos em
 modelos pequenos. A validação independente do resultado continua obrigatória.
 Sem fallback para resposta simulada.
+
+Rodada inicial com gramática corrigida: quatro de seis explicações passaram;
+Stocks EN truncou, Brasileirão PT propôs síntese sem citação e a extração H6
+inventou palavras na citação. Todas foram recusadas. O protocolo /2 pede
+citações curtas e literais e limita relações a duas por chamada; a rodada
+seguinte usa os mesmos casos e permanece avaliação de desenvolvimento.
+
+MCP real: quatro ferramentas listadas e consulta H6 validada pelo cliente
+oficial. Exportação OTLP: IDs hexadecimais conferidos e mensagem validada pelos
+tipos protobuf oficiais 1.44.0 após conversão de representação dos IDs.
+Nenhum coletor de traces externo recebeu dados.
 
 Nenhuma superioridade semântica, rentabilidade, previsão ou autoridade científica
 é demonstrada por estes testes. Fontes admitidas permanecem a autoridade sobre

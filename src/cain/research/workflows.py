@@ -15,6 +15,7 @@ from urllib.request import Request
 
 STEPS = ("inspect", "search", "entities", "support", "challenge", "synthesis")
 GENERATION = set(STEPS[2:])
+PROTOCOL = "research-workflow/2"
 
 
 def model_identity(provider):
@@ -70,7 +71,7 @@ class Workflows:
         if type(run_id) is not str or not run_id or len(run_id) > 100:
             raise ValueError("Invalid workflow identity")
         request = canonical({"question": question, "source_id": source_id, "steps": list(steps),
-                             "model": model_identity(provider), "protocol": "research-workflow/1"}).decode()
+                             "model": model_identity(provider), "protocol": PROTOCOL}).decode()
         snapshot = fingerprint(self.service, scope)
         with self.service.connection() as db:
             db.execute("BEGIN IMMEDIATE")
@@ -142,6 +143,8 @@ class Workflows:
         request = current["request"]
         if current["status"] in {"completed", "cancelled"}:
             return current
+        if request["protocol"] != PROTOCOL:
+            raise ValueError("Workflow prompt protocol changed; create a new workflow")
         if request["model"] != model_identity(provider):
             raise ValueError("Configured model changed; start a new workflow")
         name = current["next_step"]

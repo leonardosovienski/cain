@@ -66,6 +66,8 @@ def verify(db, policy, config, protocol, output):
             print(json.dumps({"step": job["steps"][-1]["name"], "status": job["status"]}), flush=True)
         except Exception as exc:
             report["workflow_error"] = {"type": type(exc).__name__, "message": str(exc)}
+            job = jobs.get(scope, job["id"])
+            report["workflow"] = job
             save()
             break
     if job["status"] == "completed":

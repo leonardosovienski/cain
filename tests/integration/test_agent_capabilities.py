@@ -73,6 +73,17 @@ def test_workflow_resume_no_repeated_steps_and_backup(setup,tmp_path):
         jobs.create(scope,"Different",model,run_id="same")
 
 
+def test_workflow_rejects_changed_prompt_protocol(setup, monkeypatch):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(("A",), text="Alice reviewed Report A."))
+    jobs, model = Workflows(service), FixtureModel()
+    job = jobs.create(scope, "What does A report?", model, source_id="A")
+    monkeypatch.setattr("cain.research.workflows.PROTOCOL", "future-protocol")
+    with pytest.raises(ValueError, match="prompt protocol changed"):
+        jobs.advance(scope, job["id"], model)
+    assert jobs.get(scope, job["id"])["steps"] == [] and model.calls == 0
+
+
 def test_revocation_blocks_results_and_entity_output(setup):
     service,scope,ingest,policy,path=setup
     ingest(cases.publication(("A",),text="Alice reviewed Report A."))
