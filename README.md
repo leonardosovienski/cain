@@ -1,6 +1,10 @@
-# Cain 0.4.4 — conversa, memória e pesquisa local L0
+# Cain 0.4.5 — conversa, memória e pesquisa local L0
 
-Entrega atual: [três produtores e recuperação 0.4.4](docs/DELIVERY_044.md). Os resultados anteriores abaixo são históricos.
+## Entrega arquitetural publicada — 11/09/2026
+
+Versão **0.4.5** publicada: [release e artefatos](https://github.com/leonardosovienski/cain/releases/tag/v0.4.5). [CI de engenharia aprovada](https://github.com/leonardosovienski/cain/actions/runs/34628951943) para a fonte `37cdc604d4c3bbb66684c018c76a4ea38713ee2a`. Consulte [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md) para comportamento, migração e limites. Este registro atualiza a entrega de software; estados científicos e registros datados abaixo conservam sua autoridade e contexto histórico.
+
+Base funcional preservada: [três produtores e recuperação 0.4.4](docs/DELIVERY_044.md). Os resultados anteriores abaixo são históricos.
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
