@@ -1,4 +1,4 @@
-# Cain 0.4.2 local L0 pilot
+# Cain 0.4.3 local L0 pilot
 
 Cain now imports admitted local publications, queries structured records, displays
 coverage and preserved evidence, and optionally explains through its existing local
@@ -34,7 +34,7 @@ pinned supported reports; it is local curation, not an official domain exporter.
 
 Install the small contract wheel first, or provide its directory to pip. From this
 checkout: `python -m pip install --find-links vendor -e ".[dev]"`. For installed
-distribution: `python -m pip install --find-links WHEELS "cain-research[api]==0.4.2"`.
+distribution: `python -m pip install --find-links WHEELS "cain-research[api]==0.4.3"`.
 WHEELS must contain Cain and `predictor_research_snapshot-1.0.0-py3-none-any.whl`.
 The unmodified Python >=3.11 requirement is retained; the local run used 3.12.
 

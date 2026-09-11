@@ -1,5 +1,7 @@
 # Auditoria completa do Cain — 0.4.2
 
+> Atualização: as duas pendências de arquitetura desta auditoria foram corrigidas na [versão 0.4.3](ARCHITECTURE_043.md). O texto abaixo registra a situação examinada na 0.4.2.
+
 ## Resultado e alcance
 
 Base examinada: `c09d818dbbd4a4dfea3843a01ec9b8e90af60289`, branch

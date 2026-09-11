@@ -98,6 +98,9 @@ async function loadDocuments() {
 async function loadConversation() {
   $('research-result').replaceChildren();
   const turns = await api(`/sessions/${pathUser()}/${encodeURIComponent(state.session)}` + query({ project_id: state.project }));
+  let prior = pendingRuns.get(pendingKey());
+  try { prior = JSON.parse(localStorage.getItem(pendingKey())) || prior; } catch { /* Storage is optional. */ }
+  if (prior && turns.some((turn) => turn.result.run_id === prior.run_id)) clearPendingRequest();
   $('messages').replaceChildren();
   if (!turns.length) $('messages').append(empty.cloneNode(true));
   for (const turn of turns) {
@@ -243,6 +246,25 @@ function renderProfile(profile) {
   }
   if (!count) $('memory-history').append(node('p', 'As preferências que você declarar aparecerão aqui.', 'muted'));
 }
+// Keep the same receipt on a manual resend after a lost HTTP response.
+// Recovery reads never invoke the model.
+const pendingRuns = new Map();
+function pendingKey() { return 'cain.pending.' + JSON.stringify([state.user, state.project, state.session]); }
+function pendingRequest(text, preferenceScope) {
+  const key = pendingKey();
+  let previous = pendingRuns.get(key);
+  try { previous = JSON.parse(localStorage.getItem(key)) || previous; } catch { /* In-memory receipt remains. */ }
+  const request = previous && previous.payload === text && previous.preference_scope === preferenceScope
+    ? previous : { run_id: crypto.randomUUID(), payload: text, preference_scope: preferenceScope };
+  pendingRuns.set(key, request);
+  try { localStorage.setItem(key, JSON.stringify(request)); } catch { /* Keep the receipt until this page closes. */ }
+  return request;
+}
+function clearPendingRequest() {
+  const key = pendingKey();
+  pendingRuns.delete(key);
+  try { localStorage.removeItem(key); } catch { /* Storage may be unavailable. */ }
+}
 async function sendRequest(text, preferenceScope = null) {
   if (!state.session) throw new Error('Abra uma conversa primeiro.');
   if (typeof text !== 'string' || !text.trim() || text.length > 100000) throw new Error('Escreva uma mensagem de até 100.000 caracteres.');
@@ -250,18 +272,32 @@ async function sendRequest(text, preferenceScope = null) {
   const pending = addMessage('assistant', 'Preparando a resposta…');
   scrollMessages();
   let result;
+  const request = pendingRequest(text, preferenceScope);
   try {
-    result = await api('/run', 'POST', { user_id: state.user, ...context(), payload: text, preference_scope: preferenceScope });
+    result = await api('/run', 'POST', { user_id: state.user, ...context(), ...request });
   } catch (error) {
     // No automatic resend: generation may have produced an audited failure.
     pending.remove();
-    addMessage('assistant', 'O pedido falhou: ' + error.message, 'error');
+    addMessage('assistant', 'O pedido não foi entregue: ' + error.message + ' Recibo: ' + request.run_id, 'error');
+    const recover = node('button', 'Recuperar resposta salva');
+    recover.addEventListener('click', handle(async () => {
+      const saved = await api(`/runs/${pathUser()}/${encodeURIComponent(request.run_id)}`);
+      addResponse(saved);
+      if (saved.history_status === 'saved') {
+        clearPendingRequest();
+        recover.remove();
+        if ($('message').value === request.payload) $('message').value = '';
+      } else notice('Resposta preservada; o histórico ainda aguarda recuperação.');
+    }));
+    $('messages').append(recover);
     try { await refreshProfile(); } catch { /* The refresh button remains available. */ }
     scrollMessages();
     throw error;
   }
   pending.remove();
   addResponse(result);
+  if (result.history_status === 'pending') notice('Resposta preservada. Reabra a conversa para recuperar o histórico.');
+  else clearPendingRequest();
   if ($('message').value === text) $('message').value = '';
   try {
     await refreshProfile();

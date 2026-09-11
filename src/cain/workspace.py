@@ -39,6 +39,14 @@ class WorkspaceStore:
                     FOREIGN KEY(user_id,session_id) REFERENCES ui_sessions(user_id,id)
                 );
                 CREATE INDEX IF NOT EXISTS turns_session ON ui_turns(user_id,session_id,created_at);
+                CREATE TABLE IF NOT EXISTS run_receipts (
+                    user_id TEXT NOT NULL, run_id TEXT NOT NULL, request_json TEXT NOT NULL,
+                    session_id TEXT NOT NULL, project_id TEXT,
+                    status TEXT NOT NULL CHECK(status IN ('processing','ready','failed')),
+                    result_json TEXT, created_at TEXT NOT NULL,
+                    PRIMARY KEY(user_id,run_id)
+                );
+                CREATE INDEX IF NOT EXISTS receipts_session ON run_receipts(user_id,session_id,status);
                 CREATE TABLE IF NOT EXISTS response_feedback (
                     id TEXT PRIMARY KEY, user_id TEXT NOT NULL, turn_id TEXT NOT NULL REFERENCES ui_turns(id),
                     reason TEXT NOT NULL, note TEXT NOT NULL, created_at TEXT NOT NULL
@@ -174,7 +182,55 @@ class WorkspaceStore:
                 "SELECT id,title,created_at,project_id FROM ui_sessions WHERE user_id=? "
                 "AND project_id IS ? ORDER BY created_at DESC LIMIT 100", (user_id, project_id))]
 
-    def record_turn(self, user_id, session_id, payload, result):
+    def claim_run(self, request):
+        serialized = json.dumps(request, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT * FROM run_receipts WHERE user_id=? AND run_id=?",
+                             (request["user_id"], request["run_id"])).fetchone()
+            if row is not None:
+                if row["request_json"] != serialized:
+                    raise ValueError("run_id já usado para outro pedido ou contexto")
+                return dict(row)
+            db.execute("INSERT INTO run_receipts VALUES(?,?,?,?,?,'processing',NULL,?)",
+                       (request["user_id"], request["run_id"], serialized,
+                        request["session_id"], request["project_id"], utc_now()))
+        return None
+
+    def run_receipt(self, user_id, run_id):
+        with self.connection() as db:
+            row = db.execute("SELECT * FROM run_receipts WHERE user_id=? AND run_id=?",
+                             (user_id, run_id)).fetchone()
+        if row is None:
+            raise ValueError("Pedido não encontrado para este usuário")
+        self.require_session(user_id, row["session_id"], row["project_id"])
+        return dict(row)
+
+    def fail_run(self, user_id, run_id):
+        with self.connection() as db:
+            db.execute("UPDATE run_receipts SET status='failed' "
+                       "WHERE user_id=? AND run_id=? AND status='processing'", (user_id, run_id))
+
+    def restore_run(self, receipt):
+        if receipt["status"] != "ready":
+            raise RuntimeError("Pedido sem resultado recuperável; não será executado novamente")
+        request = json.loads(receipt["request_json"])
+        output = json.loads(receipt["result_json"])
+        self.record_turn(receipt["user_id"], receipt["session_id"], request["payload"], output,
+                         created_at=receipt["created_at"])
+        return output
+
+    def restore_session(self, user_id, session_id, project_id):
+        self.require_session(user_id, session_id, project_id)
+        with self.connection() as db:
+            rows = db.execute("SELECT r.* FROM run_receipts r WHERE user_id=? AND session_id=? "
+                              "AND status='ready' AND NOT EXISTS (SELECT 1 FROM ui_turns t "
+                              "WHERE t.id=json_extract(r.result_json,'$.decision_id')) "
+                              "ORDER BY created_at LIMIT 100", (user_id, session_id)).fetchall()
+        for row in rows:
+            self.restore_run(dict(row))
+
+    def record_turn(self, user_id, session_id, payload, result, *, created_at=None):
         # The orchestrator already used decision_id as the preference address.
         # Use it for UI history and feedback too, including after a page reload.
         turn_id = result.get("decision_id")
@@ -184,9 +240,16 @@ class WorkspaceStore:
             raise ValueError("turn_id precisa corresponder a decision_id")
         result = {**result, "turn_id": turn_id}
         with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            existing = db.execute("SELECT * FROM ui_turns WHERE id=?", (turn_id,)).fetchone()
+            if existing is not None:
+                if (existing["user_id"] != user_id or existing["session_id"] != session_id
+                    or existing["payload"] != payload or json.loads(existing["result_json"]) != result):
+                    raise ValueError("Conflito no histórico do turno")
+                return turn_id
             db.execute("INSERT INTO ui_turns VALUES(?,?,?,?,?,?)",
                        (turn_id, user_id, session_id, payload,
-                        json.dumps(result, ensure_ascii=False), utc_now()))
+                        json.dumps(result, ensure_ascii=False), created_at or utc_now()))
             db.execute("UPDATE ui_sessions SET title=? WHERE user_id=? AND id=? AND title='Nova conversa'",
                        (payload[:70], user_id, session_id))
         return turn_id

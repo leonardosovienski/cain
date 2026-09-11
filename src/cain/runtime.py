@@ -77,3 +77,24 @@ def build_cain(
         if "decision_log" in locals():
             decision_log.close()
         raise
+
+
+class ProfileRuntime:
+    """Identity controls only: no agents, decision log, or historical index scan."""
+
+    def __init__(self, path):
+        self.store = SQLiteIdentityStore(path)
+        self.identity = IdentityService(self.store, LexicalMemoryIndex())
+
+    def close(self):
+        self.store.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+
+def build_profile(path):
+    return ProfileRuntime(path)

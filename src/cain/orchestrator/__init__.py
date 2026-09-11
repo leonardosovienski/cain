@@ -52,6 +52,7 @@ class Cain:
         self, user_id: str, session_id: str, payload: str,
         intent: str | None = None, run_id: str | None = None,
         *, project_id: str | None = None, preference_scope: str | None = None,
+        completion_sink=None,
     ) -> RunResult:
         if any(not isinstance(value, str) or not value.strip() for value in (user_id, session_id, payload)):
             raise ValueError("user_id, session_id and payload must be non-empty strings")
@@ -113,12 +114,17 @@ class Cain:
             steps.append("7:interaction_persisted")
             steps.append("8:response_ready")
             # Completion is a separate immutable event; step 6's decision is never edited.
-            self.decision_log.append(DecisionRecord(
+            completion = DecisionRecord(
                 str(uuid4()), run_id, user_id, session_id, route.selected_agent,
                 route.intent, route.reason, "completed", tuple(steps), response_hash=response_hash,
                 metadata={"parent_decision_id": decision_id},
-            ))
-            return RunResult(response, route.selected_agent, decision_id, list(steps), run_id)
+            )
+            result = RunResult(response, route.selected_agent, decision_id, list(steps), run_id)
+            if completion_sink is None:
+                self.decision_log.append(completion)
+            else:
+                completion_sink(result, completion)
+            return result
         except Exception as exc:
             failed_id = str(uuid4())
             try:

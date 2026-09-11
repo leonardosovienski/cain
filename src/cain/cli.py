@@ -10,7 +10,7 @@ from urllib.request import urlopen
 from uuid import uuid4
 
 from cain.llm import FakeLLM, OllamaLLM
-from cain.runtime import build_cain, build_retriever
+from cain.runtime import build_cain, build_retriever, build_profile
 from cain.orchestrator.routing import RuleRouter
 from cain.settings import load_settings
 
@@ -175,7 +175,7 @@ def main(argv=None) -> int:
                 cache_path=settings.db_path.with_suffix(".embeddings.sqlite3"),
                 allow_public_urls=settings.allow_public_urls)
 
-        runtime = build_cain(settings.db_path, llm) if args.command == "profile" else build_cain(
+        runtime = build_profile(settings.db_path) if args.command == "profile" else build_cain(
             settings.db_path, llm,
             router=RuleRouter(llm if settings.llm_routing and settings.provider == "ollama" else None),
             retrieval_factory=retrieval_factory,

@@ -268,6 +268,24 @@ class SQLiteDecisionLog:
                 (record.decision_id, record.run_id, _serialize(asdict(record))),
             )
 
+    def append_with_outcome(self, record: DecisionRecord, output: dict) -> None:
+        """API completion and recoverable response share one SQLite commit."""
+        if record.status != "completed":
+            raise ValueError("An outcome requires a completed processing event")
+        with self._connection:
+            self._connection.execute("BEGIN IMMEDIATE")
+            updated = self._connection.execute(
+                "UPDATE run_receipts SET status='ready', result_json=? "
+                "WHERE user_id=? AND run_id=? AND status='processing'",
+                (_serialize(output), record.user_id, record.run_id),
+            )
+            if updated.rowcount != 1:
+                raise ValueError("Request receipt is not processing")
+            self._connection.execute(
+                "INSERT INTO decisions(decision_id, run_id, record_json) VALUES (?, ?, ?)",
+                (record.decision_id, record.run_id, _serialize(asdict(record))),
+            )
+
     def export(self, run_id: str) -> Iterable[DecisionRecord]:
         rows = self._connection.execute(
             "SELECT record_json FROM decisions WHERE run_id = ? ORDER BY sequence", (run_id,)

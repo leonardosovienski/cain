@@ -2,6 +2,7 @@
 
 from dataclasses import asdict
 from pathlib import Path
+import json
 import sqlite3
 from threading import Lock
 from typing import Literal
@@ -16,8 +17,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from cain.cli import configured_llm, configured_embedding
 from cain import __version__
-from cain.llm import FakeLLM
-from cain.runtime import build_cain, build_retriever
+from cain.runtime import build_cain, build_retriever, build_profile
 from cain.orchestrator.routing import RuleRouter
 from cain.settings import load_settings
 from cain.workspace import WorkspaceStore
@@ -50,7 +50,7 @@ class RunRequest(BaseModel):
     session_id: str = Field(min_length=1, max_length=200)
     payload: str = Field(min_length=1, max_length=100_000)
     intent: Literal["busca", "search", "codigo", "código", "code", "resumo", "summary"] | None = None
-    run_id: str | None = None
+    run_id: str | None = Field(default=None, min_length=1, max_length=200)
     project_id: str | None = Field(default=None, max_length=200)
     preference_scope: Scope | None = None
 
@@ -159,7 +159,7 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
         return runtime, provider
 
     def runtime_for_profile():
-        return build_cain(storage_path, FakeLLM())
+        return build_profile(storage_path)
 
     from cain.research.api import mount
     mount(app, storage_path, validate_context,
@@ -175,25 +175,51 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
                 "search_mode": settings.search_mode, "research_status": "l0-local",
                 "identity_status": "provisional"}
 
+    def deliver(receipt):
+        if receipt["status"] != "ready":
+            state = "falhou" if receipt["status"] == "failed" else "está em andamento ou foi interrompido"
+            raise HTTPException(status_code=409, detail=
+                f"O pedido {state}, sem resultado recuperável. Nenhuma nova geração foi iniciada.")
+        try:
+            return {**workspace.restore_run(receipt), "history_status": "saved"}
+        except (OSError, sqlite3.Error):
+            # The response is already durable. A later read can repair the UI projection.
+            return {**json.loads(receipt["result_json"]), "history_status": "pending"}
+
+    @app.get("/runs/{user_id}/{run_id}")
+    def recover_run(user_id: str, run_id: str):
+        return deliver(workspace.run_receipt(user_id, run_id))
+
     @app.post("/run")
     def run(request: RunRequest):
         runtime = None
+        claimed = False
+        completed = False
+        request.run_id = request.run_id or str(uuid4())
         try:
             validate_context(request.user_id, request.project_id, request.session_id, create_session=True)
             with generation_lock:
+                previous = workspace.claim_run(request.model_dump())
+                if previous is not None:
+                    return deliver(previous)
+                claimed = True
                 runtime, provider = runtime_for_request(request.project_id, request.user_id)
-                result = runtime.run(**request.model_dump())
-                record = next(r for r in runtime.decision_log.export(result.run_id)
-                              if r.decision_id == result.decision_id)
-                output = {**asdict(result), "profile": runtime.identity.inspect(
-                    request.user_id, project_id=request.project_id, session_id=request.session_id),
-                    "sources": record.metadata.get("retrieval_sources", []),
-                    "preferences_used": record.metadata.get("preferences_used", {}),
-                    "route_reason": record.reason, "generation": getattr(provider, "last_metadata", {}),
-                    "project_id": request.project_id, "session_id": request.session_id}
-                output["turn_id"] = workspace.record_turn(request.user_id, request.session_id,
-                                                          request.payload, output)
-                return output
+
+                def complete(result, event):
+                    record = next(r for r in runtime.decision_log.export(result.run_id)
+                                  if r.decision_id == result.decision_id)
+                    output = {**asdict(result), "profile": runtime.identity.inspect(
+                        request.user_id, project_id=request.project_id, session_id=request.session_id),
+                        "sources": record.metadata.get("retrieval_sources", []),
+                        "preferences_used": record.metadata.get("preferences_used", {}),
+                        "route_reason": record.reason, "generation": getattr(provider, "last_metadata", {}),
+                        "project_id": request.project_id, "session_id": request.session_id,
+                        "turn_id": result.decision_id}
+                    runtime.decision_log.append_with_outcome(event, output)
+
+                runtime.run(**request.model_dump(), completion_sink=complete)
+                completed = True
+                return deliver(workspace.run_receipt(request.user_id, request.run_id))
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         except (RuntimeError, OSError) as exc:
@@ -202,6 +228,13 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
         finally:
             if runtime is not None:
                 runtime.close()
+            if claimed and not completed:
+                # ready is terminal; failures before completion are not automatically retried.
+                # A crash before this cleanup leaves processing, also protected from re-execution.
+                try:
+                    workspace.fail_run(request.user_id, request.run_id)
+                except (OSError, sqlite3.Error):
+                    pass  # Durable processing receipt still prevents accidental re-execution.
 
     @app.get("/profile/{user_id}")
     def profile(user_id: str, project_id: str | None = None, session_id: str | None = None,
@@ -269,6 +302,7 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
 
     @app.get("/sessions/{user_id}/{session_id}")
     def conversation(user_id: str, session_id: str, project_id: str | None = None):
+        workspace.restore_session(user_id, session_id, project_id)
         return workspace.turns(user_id, session_id, project_id)
 
     @app.post("/feedback/{turn_id}")
