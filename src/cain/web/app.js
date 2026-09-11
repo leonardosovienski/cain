@@ -560,11 +560,12 @@ $('research-compare').addEventListener('click', handle(() => inspectResearch(tru
 const agentScope = () => ({user_id: state.user, project_id: state.project, collection: $('research-collection').value});
 const agentQuestion = () => ({...agentScope(), question: $('research-question').value,
   source_id: $('research-id').value || null});
-const stepNames = {inspect:'Inspecionar evidências', search:'Buscar suporte', entities:'Propor relações',
+const stepNames = {inspect:'Inspecionar evidências', search:'Buscar suporte', entities:'Extrair relações',
   support:'Analisar suporte', challenge:'Criticar conclusões', synthesis:'Sintetizar o debate'};
 function renderAgentResult(result, route) {
   const container = $('research-result');
-  container.replaceChildren(node('h3', route === 'search' ? 'Resultados da busca' : 'Relações propostas'));
+  const literal = result.mode === 'literal_structured_extraction';
+  container.replaceChildren(node('h3', route === 'search' ? 'Resultados da busca' : literal ? 'Campos extraídos da fonte' : 'Relações propostas'));
   if (route === 'search') {
     container.append(node('p', `${result.matches} resultados · ${result.mode === 'hybrid_relevance' ? 'busca híbrida local' : 'busca textual'}. Estados preservados das fontes.`));
     for (const item of result.results) {
@@ -580,14 +581,14 @@ function renderAgentResult(result, route) {
     }
     if (!result.results.length) container.append(node('p', 'Nenhuma evidência encontrada com esses filtros.'));
   } else {
-    container.append(node('p', 'Propostas do modelo; confira as citações. Não alteram os estados científicos.'));
+    container.append(node('p', literal ? 'Campos copiados literalmente da fonte, sem inferência do modelo. Não alteram os estados científicos.' : 'Propostas do modelo; confira as citações. Não alteram os estados científicos.'));
     for (const relation of result.relations) {
       const section = node('section', undefined, 'research-record');
-      section.append(node('h3', `${relation.subject} → ${relation.predicate} → ${relation.object}`),
+      section.append(node('h3', `${relation.subject} → ${literal ? 'valor registrado' : relation.predicate} → ${relation.object}`),
         node('blockquote', relation.quote), node('small', relation.reference));
       container.append(section);
     }
-    if (!result.relations.length) container.append(node('p', 'O modelo não propôs relações sustentadas por esta consulta.'));
+    if (!result.relations.length) container.append(node('p', literal ? 'Fonte ambígua ou nenhum campo dentro dos limites. Confira o diagnóstico.' : 'O modelo não propôs relações sustentadas por esta consulta.'));
   }
   const diagnostic = node('details');
   diagnostic.append(node('summary', 'Detalhes e diagnóstico'), node('pre', JSON.stringify(result, null, 2)));
@@ -602,8 +603,15 @@ function renderJob(job, scope) {
   if (abstentions) container.append(node('p', `${abstentions} etapa(s) com abstenção. Concluir o fluxo não valida essas saídas.`));
   for (const step of job.steps) {
     const detail = node('details');
-    detail.append(node('summary', `${stepNames[step.name]} · ${step.duration_seconds.toFixed(2)} s`),
-      node('pre', JSON.stringify(step.result, null, 2)));
+    detail.append(node('summary', `${stepNames[step.name]} · ${step.result.status ?? 'consultado'} · ${step.duration_seconds.toFixed(2)} s`));
+    if (step.result.explanation) {
+      detail.append(node('p', step.result.explanation.proposed_synthesis));
+      for (const quote of step.result.explanation.source_quotes ?? []) detail.append(node('blockquote', quote.quote));
+    }
+    for (const relation of step.result.relations ?? []) detail.append(node('p', `${relation.subject} → ${relation.object}`));
+    const diagnostic = node('details');
+    diagnostic.append(node('summary', 'Recibo completo e referências'), node('pre', JSON.stringify(step.result, null, 2)));
+    detail.append(diagnostic);
     container.append(detail);
   }
   const traces = node('details');

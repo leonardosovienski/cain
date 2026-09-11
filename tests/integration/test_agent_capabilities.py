@@ -36,6 +36,9 @@ class FixtureModel:
             ref, text = next(iter(payload["evidence"].items()))
             return json.dumps({"relations":[{"subject":"Alice", "predicate":"reviewed", "object":"Report A",
                                              "reference":ref,"quote":text}]})
+        if "excerpts" in payload:
+            return json.dumps({"citations":[next(iter(payload["excerpts"]))],
+                               "analysis":"Tentative interpretation; uncertainty remains."})
         evidence=payload["evidence"][0]
         return json.dumps({"claims":[{"evidence_id":evidence["reference_id"],"quote":evidence["text"]}],
                            "synthesis":"Tentative interpretation; uncertainty remains."})
@@ -155,7 +158,7 @@ def test_cancel_running_generation_discards_result_and_records_failure(setup):
     assert stored["attempts"][0]["status"] == "failed"
 
 
-@pytest.mark.parametrize("question", ["Qual é o estado A?", "What is the status of A?"])
+@pytest.mark.parametrize("question", ["Qual ÃƒÂ© o estado A?", "What is the status of A?"])
 def test_relevance_identifier_baseline_pt_en(setup, question):
     service,scope,ingest,_,_=setup
     ingest(cases.publication(("A","B")))

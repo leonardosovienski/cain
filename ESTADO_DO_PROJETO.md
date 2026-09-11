@@ -1,6 +1,6 @@
-# Estado atual do Cain — 0.4.6
+# Estado atual do Cain — 0.4.7
 
-Entrega atual: [capacidades locais e avaliação 0.4.6](docs/DELIVERY_046.md).
+Entrega atual: [capacidades locais e avaliação 0.4.6](docs/DELIVERY_047.md).
 Streaming, visão, busca L0, relações propostas, debate, workflows duráveis e MCP
 estão implementados. Ollama/modelos instalados e inferência real exercitada;
 qualidade das respostas é limitada e saídas inválidas são recusadas.

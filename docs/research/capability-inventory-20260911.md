@@ -1,5 +1,11 @@
 # Inventário ampliado de capacidades — 11/09/2026
 
+## Atualizacao 0.4.7
+
+[Entrega atual](../DELIVERY_047.md): arquitetura integrada, campos JSON/tabelas
+literais, debate com trechos enderecaveis, interface legivel e avaliacao separada.
+A matriz atual de cobertura esta nessa entrega; os diagnosticos abaixo sao historicos.
+
 ## Atualização 0.4.6
 
 As tabelas seguintes preservam o diagnóstico da versão 0.4.5. O novo pedido

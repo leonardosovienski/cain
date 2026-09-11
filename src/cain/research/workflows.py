@@ -15,7 +15,7 @@ from urllib.request import Request
 
 STEPS = ("inspect", "search", "entities", "support", "challenge", "synthesis")
 GENERATION = set(STEPS[2:])
-PROTOCOL = "research-workflow/2"
+PROTOCOL = "research-workflow/4"
 
 
 def model_identity(provider):

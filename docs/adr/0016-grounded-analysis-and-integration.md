@@ -20,6 +20,11 @@ citação do debate deve resolver para texto recebido, com rechecagem de permiss
 workflow novo fixa protocolo /3 e jobs antigos não avançam com prompts novos.
 Backup, distribuição, interface, CI e correspondência local/remota obrigatórios.
 
+Revisão da implementação: /3 foi preservado nos primeiros recibos. O protocolo
+final /4 usa addressable-review/2, sem classificar uma limitação da fonte como
+abstenção do assistente; ausência de evidência ainda exige abstenção. Casos e
+critérios congelados não foram alterados.
+
 Propostas de trading, apostas, alteração científica dos produtores e fontes pagas
 permanecem fora do mandato original. Trocar frameworks sem benefício mensurado
 não é requisito de paridade; as capacidades são verificadas no Cain existente.

@@ -1,15 +1,14 @@
-# Continuidade do Cain — 0.4.6
+# Continuidade do Cain - 0.4.7
 
-Nova entrega: [capacidades locais, uso e validação 0.4.6](docs/DELIVERY_046.md).
-Implementação isolada em `C:\CAIN\work\research-capabilities-20260911`, branch
-`feature/research-capabilities-20260911`. A entrega usa o wheel 0.4.6.
-O checkout `C:\CAIN\projeto` permanece com alterações concorrentes preservadas;
-não é a origem integral deste wheel. Ollama 0.34.0 agora está instalado em
-`C:\CAIN\runtime\ollama`, modelos em `C:\CAIN\modelos`, somente loopback e cloud
-desligada. Jobs duráveis ficam no research.db, incluídos no backup. Recibos em
-`C:\CAIN\entregas\0.4.6`; não publicar bancos ou respostas privadas no GitHub.
-O inicializador principal usa o script deste worktree e configuração local ignorada.
-A seção abaixo descreve entregas anteriores; a ausência de Ollama ali é histórica.
+Entrega atual: [integracao, extracao e debate](docs/DELIVERY_047.md).
+Codigo: `C:\CAIN\work\research-capabilities-20260911`, branch
+`feature/research-capabilities-20260911`. Arquitetura 2e9350c integrada.
+Instalacao nao editavel em `C:\CAIN\.venv`; dados em `C:\CAIN\dados`.
+Abra `C:\CAIN\ABRIR_CAIN.cmd`, porta 8877. Recibos em entregas/0.4.7.
+Nao publicar bancos ou respostas privadas. Jobs novos usam protocolo /4;
+jobs anteriores permanecem consultaveis/cancelaveis.
+
+Os registros seguintes sao historicos.
 
 ## Entrega arquitetural 0.4.5 publicada — 11/09/2026
 

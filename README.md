@@ -1,6 +1,6 @@
-# Cain 0.4.6 — conversa, memória e pesquisa local L0
+# Cain 0.4.7 — conversa, memória e pesquisa local L0
 
-Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_046.md).
+Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_047.md).
 Os resultados de versões anteriores abaixo são históricos.
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.

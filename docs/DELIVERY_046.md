@@ -1,5 +1,7 @@
 # Cain 0.4.6 — capacidades locais de análise
 
+Registro historico. Entrega atual: [0.4.7](DELIVERY_047.md).
+
 11/09/2026. Fecha os blocos técnicos selecionados no pedido reiterado:
 streaming, imagem, busca no L0, relações citadas, debate, workflows retomáveis,
 playground, traces e MCP. [ADR 0015](adr/0015-local-agent-capabilities.md)
