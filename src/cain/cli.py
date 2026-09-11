@@ -10,7 +10,7 @@ from urllib.request import urlopen
 from uuid import uuid4
 
 from cain.llm import FakeLLM, OllamaLLM
-from cain.runtime import build_cain
+from cain.runtime import build_cain, build_retriever
 from cain.orchestrator.routing import RuleRouter
 from cain.settings import load_settings
 
@@ -80,7 +80,7 @@ def _settings(args):
             setattr(settings, field, value)
     if getattr(args, "no_web", False):
         settings.allow_public_urls = False
-    return settings
+    return settings.validate()
 
 
 def _chat(runtime, user_id, session_id, project_id=None, preference_scope=None):
@@ -161,15 +161,24 @@ def main(argv=None) -> int:
         llm = FakeLLM() if args.command == "profile" else configured_llm(settings)
         if args.command != "profile" and args.project_id:
             from cain.workspace import WorkspaceStore
-            workspace = WorkspaceStore(settings.db_path)
-            settings.source_paths = [Path(item["path"]) for item in workspace.documents(args.user, args.project_id)]
+            WorkspaceStore(settings.db_path).require_project(args.user, args.project_id)
+
+        def retrieval_factory():
+            corpus, paths = None, settings.source_paths
+            if args.project_id:
+                from cain.workspace import WorkspaceStore
+                workspace = WorkspaceStore(settings.db_path)
+                corpus, paths = workspace.document_corpus(args.user, args.project_id), []
+            return build_retriever(corpus=corpus, paths=paths,
+                search_mode=settings.search_mode if settings.provider != "fake" else "lexical",
+                embedding=configured_embedding(settings),
+                cache_path=settings.db_path.with_suffix(".embeddings.sqlite3"),
+                allow_public_urls=settings.allow_public_urls)
+
         runtime = build_cain(settings.db_path, llm) if args.command == "profile" else build_cain(
-            settings.db_path, llm, source_paths=settings.source_paths,
-            allow_public_urls=settings.allow_public_urls,
+            settings.db_path, llm,
             router=RuleRouter(llm if settings.llm_routing and settings.provider == "ollama" else None),
-            search_mode=settings.search_mode if settings.provider != "fake" else "lexical",
-            embedding=configured_embedding(settings),
-            embedding_cache_path=settings.db_path.with_suffix(".embeddings.sqlite3"),
+            retrieval_factory=retrieval_factory,
         )
         if args.command == "profile":
             if args.forget:

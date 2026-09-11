@@ -5,7 +5,9 @@ from hashlib import sha256
 import json
 from typing import Protocol, runtime_checkable
 from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+from cain.settings import validate_llm_options
 
 
 @runtime_checkable
@@ -15,6 +17,15 @@ class LLM(Protocol):
 
 class LLMError(RuntimeError):
     pass
+
+
+class _NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise LLMError("Servidor de geração tentou redirecionar o pedido; sem retry")
+
+
+def urlopen(request, timeout):
+    return build_opener(_NoRedirect()).open(request, timeout=timeout)
 
 
 class LLMTruncated(LLMError):
@@ -53,6 +64,9 @@ class OllamaLLM:
     max_input_bytes: int = 6500
     think: bool | None = None
     last_metadata: dict = field(default_factory=dict, init=False)
+
+    def __post_init__(self):
+        validate_llm_options(vars(self))
 
     def generate(self, prompt: str, context: str = "") -> str:
         return self._generate(prompt, context)
@@ -98,7 +112,10 @@ class OllamaLLM:
         )
         try:
             with urlopen(request, timeout=self.timeout) as response:
-                result = json.loads(response.read().decode("utf-8"))
+                raw = response.read(4 * 1024 * 1024 + 1)
+            if len(raw) > 4 * 1024 * 1024:
+                raise LLMError("Resposta HTTP do modelo excedeu 4 MiB; sem truncamento")
+            result = json.loads(raw.decode("utf-8"))
         except (HTTPError, URLError, TimeoutError, OSError, ValueError) as exc:
             raise LLMError(f"Ollama indisponível ou resposta inválida: {exc}") from exc
         if not isinstance(result, dict) or not isinstance(result.get("response"), str):

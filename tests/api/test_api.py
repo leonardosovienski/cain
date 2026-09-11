@@ -77,4 +77,10 @@ def test_profile_controls_survive_missing_search_source(tmp_path):
         result = client.post("/run", json={
             "user_id": "alice", "session_id": "one", "payload": "Resuma: teste",
         })
-        assert result.status_code == 503
+        # Summary does not consume search sources. Missing sources must only block search.
+        assert result.status_code == 200
+        search = client.post("/run", json={
+            "user_id": "alice", "session_id": "one", "payload": "Busque documentação",
+            "intent": "busca",
+        })
+        assert search.status_code == 503

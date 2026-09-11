@@ -147,8 +147,9 @@ def _explain(service, scope, question, provider, **filters):
             },
         }
     except (ValueError, RuntimeError, OSError, TypeError) as exc:
-        if str(exc) == "Generation permission revoked during inference":
-            result = service.query(scope, **filters)
+        # Timeout/invalid JSON can occur before the success-path permission check.
+        # Never return the pre-inference facts from any failure path.
+        result = service.query(scope, **filters)
         codes = {
             "Unknown citation": "UNKNOWN_CITATION",
             "Claim is not an exact received quote": "UNSUPPORTED_QUOTE",

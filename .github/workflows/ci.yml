@@ -17,3 +17,7 @@ jobs:
       - run: ruff check .
       - run: pytest -q
       - run: python -m cain --help
+      - run: python -m pip wheel --no-deps --wheel-dir dist .
+      - name: Verify noneditable distribution outside checkout
+        shell: bash
+        run: python tools/verify_wheel.py --wheel dist/cain_research-*.whl

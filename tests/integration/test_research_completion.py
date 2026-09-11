@@ -17,6 +17,19 @@ from fastapi.testclient import TestClient
 setup = cases.setup
 
 
+def test_provider_failure_after_read_revocation_does_not_return_old_facts(setup):
+    service, scope, ingest, policy, path = setup
+    ingest(cases.publication())
+    class FailingProvider:
+        def generate(self, *args, **kwargs):
+            policy["grants"] = []
+            path.write_bytes(canonical(policy))
+            raise TimeoutError("Provider failed after revocation")
+    result = explain(service, scope, "Reported?", FailingProvider())
+    assert result["status"] == "generation_failed"
+    assert result["facts"]["records"] == []
+
+
 def test_api_history_reopens_in_existing_workspace_session(setup, tmp_path):
     service, _, ingest, _, path = setup
     ingest(cases.publication())

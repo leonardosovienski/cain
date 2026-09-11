@@ -17,7 +17,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from cain.cli import configured_llm, configured_embedding
 from cain import __version__
 from cain.llm import FakeLLM
-from cain.runtime import build_cain
+from cain.runtime import build_cain, build_retriever
 from cain.orchestrator.routing import RuleRouter
 from cain.settings import load_settings
 from cain.workspace import WorkspaceStore
@@ -141,16 +141,21 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
 
     def runtime_for_request(project_id, user_id):
         provider = llm if llm is not None else configured_llm(settings)
-        paths = [Path(item["path"]) for item in workspace.documents(user_id, project_id)] \
-            if project_id else settings.source_paths
         # Explicit injected providers are test configurations unless an embedding is injected too.
         mode = settings.search_mode if llm is None or embedding is not None else "lexical"
-        encoder = embedding if embedding is not None else configured_embedding(settings) if mode == "hybrid" else None
-        runtime = build_cain(storage_path, provider, source_paths=paths,
+
+        def retrieval_factory():
+            encoder = embedding if embedding is not None else configured_embedding(settings) if mode == "hybrid" else None
+            corpus = workspace.document_corpus(user_id, project_id) if project_id else None
+            paths = [] if project_id else settings.source_paths
+            return build_retriever(corpus=corpus, paths=paths, search_mode=mode, embedding=encoder,
+                                   cache_path=storage_path.with_suffix(".embeddings.sqlite3"),
+                                   allow_public_urls=settings.allow_public_urls)
+
+        runtime = build_cain(storage_path, provider,
                              allow_public_urls=settings.allow_public_urls,
                              router=RuleRouter(provider if settings.llm_routing else None),
-                             search_mode=mode, embedding=encoder,
-                             embedding_cache_path=storage_path.with_suffix(".embeddings.sqlite3"))
+                             retrieval_factory=retrieval_factory)
         return runtime, provider
 
     def runtime_for_profile():

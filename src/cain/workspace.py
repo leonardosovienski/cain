@@ -12,7 +12,7 @@ from cain.common import utc_now
 
 class WorkspaceStore:
     def __init__(self, path: str | Path):
-        self.path = Path(path)
+        self.path = Path(path).resolve()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.documents_root = self.path.parent / "knowledge"
         with self.connection() as db:
@@ -81,9 +81,36 @@ class WorkspaceStore:
     def documents(self, user_id, project_id):
         self.require_project(user_id, project_id)
         with self.connection() as db:
-            return [dict(row) for row in db.execute(
+            rows = [dict(row) for row in db.execute(
                 "SELECT id,title,content_hash,path,created_at FROM project_documents "
                 "WHERE project_id=? ORDER BY created_at", (project_id,))]
+        return [self._document_snapshot(row, project_id)[0] for row in rows]
+
+    def _document_snapshot(self, row, project_id):
+        # Reconstruct application-owned paths, including legacy relative-path rows.
+        # Never follow a path supplied by a database row to an unrelated file.
+        from uuid import UUID
+        try:
+            if str(UUID(project_id)) != project_id or str(UUID(row["id"])) != row["id"]:
+                raise ValueError("Invalid document identity")
+            path = self.documents_root / project_id / (row["id"] + ".md")
+            if path.resolve(strict=True) != path:
+                raise ValueError("Document path redirects outside its stored location")
+            with path.open("rb") as handle:
+                raw = handle.read(262145)
+        except (OSError, ValueError) as exc:
+            raise ValueError("Documento indisponível ou com falha de integridade") from exc
+        if len(raw) > 262144 or sha256(raw).hexdigest() != row["content_hash"]:
+            raise ValueError("Documento com falha de integridade; bytes diferem da versão recebida")
+        return {**dict(row), "path": str(path)}, raw.decode("utf-8")
+
+    def document_corpus(self, user_id, project_id):
+        self.require_project(user_id, project_id)
+        with self.connection() as db:
+            rows = db.execute("SELECT * FROM project_documents WHERE project_id=? ORDER BY created_at",
+                              (project_id,)).fetchall()
+        snapshots = [self._document_snapshot(row, project_id) for row in rows]
+        return {record["path"]: text for record, text in snapshots}
 
     def add_document(self, user_id, project_id, title, content):
         self.require_project(user_id, project_id)
@@ -105,7 +132,8 @@ class WorkspaceStore:
             existing = db.execute("SELECT * FROM project_documents WHERE project_id=? AND content_hash=?",
                                   (project_id, digest)).fetchone()
             if existing:
-                return {**dict(existing), "duplicate": True}
+                record, _ = self._document_snapshot(existing, project_id)
+                return {**record, "duplicate": True}
             if db.execute("SELECT count(*) FROM project_documents WHERE project_id=?",
                           (project_id,)).fetchone()[0] >= 200:
                 raise ValueError("Projeto atingiu o limite de 200 documentos")
