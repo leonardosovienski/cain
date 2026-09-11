@@ -78,3 +78,36 @@ substituída por mais testes escritos pelo próprio implementador.
 Abra `C:\CAIN\ABRIR_CAIN.cmd`, porta 8877. Dados permanecem em `C:\CAIN\dados`;
 não publique bancos, políticas ou respostas privadas no GitHub. Modelos e runtime
 permanecem locais, com a configuração e licenças descritas na entrega anterior.
+
+## Recibo final
+
+- Código instalado: `4762da0bdc39d4933cd25ae34916c61724ec6d09`.
+- Wheel SHA-256: `31ed5526ac08a4d2a9e875de953656eeb10eff2b91dbe5a5c49690b5dc8c64e3`.
+  Cinquenta arquivos do pacote conferidos byte a byte entre instalação, wheel e
+  checkout. Instalação offline em venv vazio e pip check aprovados.
+- [CI desta revisão](https://github.com/leonardosovienski/cain/actions/runs/34636221829):
+  Python 3.11, 3.12 e 3.13 aprovados. A documentação posterior não muda o código.
+- Backup completo e restauração aprovados em `before-backup` e `restore-check`.
+  Verificação instalada dos três acervos e restauração sem pastas dos produtores
+  aprovada em `installed-archives`, com 15, 1 e 3 registros, respectivamente.
+- Interface reiniciada: H6 exibiu estado e trial separados sem inferência; fluxo
+  antigo Stocks abriu análises/citações legíveis e preservou as duas abstenções
+  históricas. Não reinterpretamos esses resultados antigos como novos sucessos.
+- Em `installed-workflows`, os três fluxos novos concluíram seis etapas, com
+  nove reviews aceitos por referência e sem abstenção do operador. Os registros,
+  estados e cobertura permaneceram iguais. IDs: Crypto
+  `dab5c4e6cc34422abf4135581f170153`, Stocks `3bee0d5507fa4e7880cfe28c27330bcd`,
+  Brasileirão `d3244cc8f3314195ac8de2aa8adc4a0e`. Estão no banco de avaliação
+  isolado, sem adicionar jobs de teste ao banco operacional.
+- O primeiro verificador de workflows comparava também o ID aleatório da consulta;
+  falhou após seis etapas Crypto. `real-final` preserva esse ensaio. A comparação
+  corrigida usa registros completos, contagem e cobertura, excluindo o recibo
+  variável. Nenhuma fonte foi alterada para fazer o teste passar.
+
+Comparação estrutural no protocolo separado: 0.4.6 acertou 0/4 expectativas;
+0.4.7 acertou 4/4. Ambas resolveram citações nas quatro respostas de prosa.
+Isso demonstra a correção dos campos nesses casos, não ganho semântico geral.
+Nas sínteses reais ainda houve mistura entre H6 e H1 e a expressão inadequada
+de retornos “reais ou fictícios” no caso Stocks. As citações existem, mas não
+certificam essas inferências. Qualidade interpretativa e avaliação humana ampla
+continuam limitações; a entrega não as apresenta como problemas resolvidos.
