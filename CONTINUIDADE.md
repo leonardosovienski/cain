@@ -11,6 +11,10 @@ desligada. Jobs duráveis ficam no research.db, incluídos no backup. Recibos em
 O inicializador principal usa o script deste worktree e configuração local ignorada.
 A seção abaixo descreve entregas anteriores; a ausência de Ollama ali é histórica.
 
+## Entrega arquitetural 0.4.5 publicada — 11/09/2026
+
+A implementação e a validação atuais estão em [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md). [Release 0.4.5](https://github.com/leonardosovienski/cain/releases/tag/v0.4.5), fonte `37cdc604d4c3bbb66684c018c76a4ea38713ee2a`, passou na CI Python 3.11/3.12/3.13 e em instalação offline não editável. Factories saíram da CLI; admissão antecede leitura e revogação restringe histórico derivado. O intercâmbio com contrato produtor 1.0.1 e leitor 1.0.0 passou, incluindo backup/restore sem origem e referências por hash. A configuração, os modelos, os dados reais e os três produtores da entrega 0.4.4 foram preservados. Nenhum serviço ou modelo foi iniciado por esta revisão.
+
 Atualizado em 11/09/2026. Leia [DELIVERY_044](docs/DELIVERY_044.md) para usar,
 reproduzir, conferir limites e recuperar a instalação sem este chat.
 

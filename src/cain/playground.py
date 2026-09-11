@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import sys
 
-from cain.cli import configured_llm
+from cain.providers import configured_llm
 from cain.llm.streaming import stream
 from cain.settings import load_settings
 

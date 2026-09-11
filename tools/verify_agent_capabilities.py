@@ -6,7 +6,7 @@ from pathlib import Path
 from time import perf_counter
 
 from research_snapshot import canonical
-from cain.cli import configured_embedding, configured_llm
+from cain.providers import configured_embedding, configured_llm
 from cain.research import ResearchService
 from cain.research.analysis import search, entities
 from cain.research.historian import _explain

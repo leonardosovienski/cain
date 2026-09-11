@@ -21,3 +21,7 @@ jobs:
       - name: Verify noneditable distribution outside checkout
         shell: bash
         run: python tools/verify_wheel.py --wheel dist/cain_research-*.whl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cain-wheel-${{ matrix.python-version }}
+          path: dist/*.whl

@@ -80,7 +80,7 @@ def mount(app, service_factory, validate_context, provider_factory, generation_l
     def search_request(request: SearchRequest):
         service, scope = prepare(request)
         if request.semantic:
-            from cain.cli import configured_embedding
+            from cain.providers import configured_embedding
             from cain.settings import load_settings
 
             with generation_lock:

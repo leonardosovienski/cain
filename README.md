@@ -150,3 +150,5 @@ Os cinco anexos originais e os resultados anteriores estão preservados.
 Consulte [o dossiê de pesquisa e sua validação](docs/DELIVERY_045.md) e
 [o inventário ampliado dos rivais](docs/research/capability-inventory-20260911.md).
 Nova inspeção local de relações, datas, revisões e lacunas, via interface/API/CLI.
+
+Arquitetura integrada: [factories e revogação](ARCHITECTURE_IMPLEMENTATION.md).

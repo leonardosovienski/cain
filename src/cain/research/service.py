@@ -255,6 +255,10 @@ class ResearchService:
     def ingest(self, relative, scope):
         receipt, publication = uuid4().hex, None
         try:
+            user, project, collection = json.loads(scope)
+            if not any([grant[k] for k in ("user", "project", "collection")]
+                       == [user, project, collection] for grant in self.policy()["grants"]):
+                raise ValueError("UNAUTHORIZED scope before file access")
             path = confined(self.import_root(scope), relative)
             with path.open("rb") as handle:
                 raw = handle.read(MAX_BYTES + 1)
@@ -477,7 +481,8 @@ class ResearchService:
                     qid,
                     scope,
                     now(),
-                    canonical({**filters, "session_id": session_id}).decode(),
+                    canonical({**filters, "session_id": session_id,
+                               "publication_ids": list(archives)}).decode(),
                     canonical(
                         {"record_ids": [r["id"] for r in page], "total": len(found)}
                     ).decode(),
@@ -536,6 +541,7 @@ class ResearchService:
         if type(limit) is not int or not 1 <= limit <= 50 or type(offset) is not int or offset < 0:
             raise ValueError("Invalid history pagination")
         with self.connection() as db:
+            allowed_publications = set(self._archive(db, scope))
             rows = db.execute(
                 "SELECT id,at,request FROM queries WHERE scope=? "
                 "AND json_extract(request,'$.session_id') IS ? ORDER BY at DESC LIMIT ? OFFSET ?",
@@ -545,9 +551,11 @@ class ResearchService:
                 {
                     "id": r["id"],
                     "at": r["at"],
-                    "request": {
+                    "request": ({
                         k: v for k, v in json.loads(r["request"]).items() if k != "publication_ids"
-                    },
+                    } if "publication_ids" in json.loads(r["request"])
+                    and set(json.loads(r["request"])["publication_ids"]) <= allowed_publications
+                    else {"redacted_by_current_policy": True}),
                 }
                 for r in rows
             ]
@@ -589,6 +597,7 @@ class ResearchService:
                     "current_permissions_verified": True,
                 }
                 return result
+        request.pop("publication_ids", None)
         result = self.query(scope, **request)
         result["history"] = {
             "entry_id": entry_id,

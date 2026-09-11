@@ -85,11 +85,11 @@ def execute(args):
     if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace", "abstain"}:
         from cain.research.analysis import search, entities
         from cain.research.workflows import Workflows
-        from cain.cli import configured_llm
+        from cain.providers import configured_llm
         from cain.settings import load_settings
 
         if cmd == "search":
-            from cain.cli import configured_embedding
+            from cain.providers import configured_embedding
             encoder = configured_embedding(load_settings(args.config)) if args.semantic else None
             if args.semantic and encoder is None:
                 raise ValueError("Configure hybrid search for semantic mode")
@@ -138,7 +138,7 @@ def execute(args):
         }
         if cmd == "query":
             return service.query(scope, session_id=args.session, **filters)
-        from cain.cli import configured_llm
+        from cain.providers import configured_llm
         from cain.settings import load_settings
         from cain.research.historian import explain
 
