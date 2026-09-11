@@ -3,6 +3,10 @@
 Atualizado em 11/09/2026. Leia [DELIVERY_044](docs/DELIVERY_044.md) para usar,
 reproduzir, conferir limites e recuperar a instalação sem este chat.
 
+[Publicação, CI e alterações concorrentes](docs/PUBLICATION_044.md) delimitam o
+commit instalado. Há trabalho local concorrente preservado fora desta entrega;
+não presuma que a árvore inteira é igual ao wheel validado.
+
 Instalação principal: C:\CAIN; abrir ABRIR_CAIN.cmd, http://127.0.0.1:8877.
 Pacote 0.4.4 instalado por wheel em .venv; fontes em projeto, branch local/l0-historian.
 O contrato independente continua em contrato, branch local/l0-contract, sem alteração.
