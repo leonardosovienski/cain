@@ -1,3 +1,3 @@
-"""Cain: protótipo de pesquisa; decisões de identidade ainda provisórias."""
+"""Cain: protÃ³tipo de pesquisa; decisÃµes de identidade ainda provisÃ³rias."""
 
-__version__ = "0.4.4"
+__version__ = "0.4.5"

@@ -15,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from cain.cli import configured_llm, configured_embedding
+from cain.providers import configured_llm, configured_embedding
 from cain import __version__
 from cain.runtime import build_cain, build_retriever, build_profile
 from cain.orchestrator.routing import RuleRouter

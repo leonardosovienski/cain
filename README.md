@@ -144,3 +144,8 @@ validação de novidade, aceitação automática de ADRs ou coleta formal.
 - [ADRs](docs/adr/README.md)
 
 Os cinco anexos originais e os resultados anteriores estão preservados.
+
+
+## Implementação arquitetural local — 2026-09-11
+
+As alterações candidatas, seus limites, verificações e rollback estão em [ARCHITECTURE_IMPLEMENTATION.md](ARCHITECTURE_IMPLEMENTATION.md). Esta implementação local não publica releases, não atualiza automaticamente os consumidores e não altera os vereditos científicos históricos.

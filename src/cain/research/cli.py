@@ -79,7 +79,7 @@ def execute(args):
         }
         if cmd == "query":
             return service.query(scope, session_id=args.session, **filters)
-        from cain.cli import configured_llm
+        from cain.providers import configured_llm
         from cain.settings import load_settings
         from cain.research.historian import explain
 
