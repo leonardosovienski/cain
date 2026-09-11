@@ -39,6 +39,12 @@
         <label>Pergunta para explicação opcional<input id="research-question" maxlength="1000" placeholder="O que a fonte permite concluir?"></label>
         <button id="research-explain" type="button" class="secondary">Explicar com provider local</button>
         <button id="research-history" type="button" class="secondary">Histórico de pesquisa desta conversa</button>
+        <button id="research-inspect" type="button" class="secondary">Dossiê: relações, datas e lacunas</button>
+        <div class="research-filters">
+          <label>Revisão de origem<input id="research-before" maxlength="500"></label>
+          <label>Revisão de destino<input id="research-after" maxlength="500"></label>
+        </div>
+        <button id="research-compare" type="button" class="secondary">Comparar revisões da fonte</button>
       </form>
       <div id="research-result" aria-live="polite"></div>
     </details>

@@ -1,4 +1,10 @@
-# Continuidade do Cain — 0.4.4
+# Continuidade do Cain — 0.4.5
+
+Nova entrega: [dossiê, uso e validação 0.4.5](docs/DELIVERY_045.md).
+Implementação isolada em `C:\CAIN\work\research-capabilities-20260911`, branch
+`feature/research-capabilities-20260911`. A instalação principal usa o wheel 0.4.5.
+O checkout `C:\CAIN\projeto` permanece com alterações concorrentes preservadas;
+não é a origem integral deste wheel. A seção abaixo descreve a entrega anterior.
 
 Atualizado em 11/09/2026. Leia [DELIVERY_044](docs/DELIVERY_044.md) para usar,
 reproduzir, conferir limites e recuperar a instalação sem este chat.

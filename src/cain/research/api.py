@@ -28,6 +28,17 @@ class ResearchRequest(BaseModel):
     question: str | None = Field(default=None, max_length=1000)
 
 
+class InspectionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    user_id: str = Field(default="leo", min_length=1, max_length=200)
+    project_id: str | None = Field(default=None, max_length=200)
+    collection: str = Field(default="crypto", min_length=1, max_length=200)
+    source_id: str | None = Field(default=None, min_length=1, max_length=500)
+    domain: str | None = Field(default=None, min_length=1, max_length=500)
+    before: str | None = Field(default=None, min_length=1, max_length=500)
+    after: str | None = Field(default=None, min_length=1, max_length=500)
+
+
 def mount(
     app,
     storage_path,
@@ -60,6 +71,16 @@ def mount(
     def query(request: ResearchRequest):
         store, scope, filters = prepare(request)
         return store.query(scope, **filters)
+
+    @app.post("/research/inspect")
+    def inspection(request: InspectionRequest):
+        from cain.research.inspection import inspect
+
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        return inspect(store, store.scope(request.user_id, request.project_id, request.collection),
+                       source_id=request.source_id, domain=request.domain,
+                       before=request.before, after=request.after)
 
     @app.post("/research/explain")
     def explain_request(request: ResearchRequest):

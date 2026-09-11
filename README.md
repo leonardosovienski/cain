@@ -144,3 +144,8 @@ validação de novidade, aceitação automática de ADRs ou coleta formal.
 - [ADRs](docs/adr/README.md)
 
 Os cinco anexos originais e os resultados anteriores estão preservados.
+# Ampliação 0.4.5
+
+Consulte [o dossiê de pesquisa e sua validação](docs/DELIVERY_045.md) e
+[o inventário ampliado dos rivais](docs/research/capability-inventory-20260911.md).
+Nova inspeção local de relações, datas, revisões e lacunas, via interface/API/CLI.

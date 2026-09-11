@@ -486,6 +486,72 @@ function renderResearch(result) {
 async function runResearch(offset = 0) {
   renderResearch(await api('/research/query', 'POST', researchBody(offset)));
 }
+async function inspectResearch(compare = false) {
+  const result = await api('/research/inspect', 'POST', {
+    user_id: state.user, project_id: state.project,
+    collection: $('research-collection').value, source_id: $('research-id').value || null,
+    ...(compare ? { before: $('research-before').value, after: $('research-after').value } : {}),
+  });
+  const container = $('research-result');
+  container.replaceChildren(node('h3', 'Dossiê das evidências admitidas'));
+  container.append(node('p', `${result.metrics.record_revisions} revisões · ${result.metrics.source_occurrences} identidades · ${result.metrics.publications} publicações. Sem inferência por modelo.`));
+  container.append(node('p', 'Usa o acervo e a identidade da fonte. Os filtros de estado e texto são exclusivos da consulta. Datas de recebimento não determinam qual revisão é válida.'));
+  const recordNames = new Map(result.records.map(r => [r.id, `${r.namespace[0]} · ${r.source_id} · ${r.revision}`]));
+  const findingNames = {
+    unknown_fields: 'Campos não informados', ambiguous_identity: 'Identidade ambígua',
+    no_received_evidence: 'Conteúdo de apoio não recebido',
+    superseded_revision_not_received: 'Revisão anterior não recebida',
+    supersession_cycle_or_dependency: 'Ciclo de substituições ou dependência de ciclo',
+    coexisting_revisions: 'Revisões coexistentes', status_variation: 'Diferença de estado entre revisões',
+  };
+  const findings = node('ul');
+  for (const item of result.findings) {
+    findings.append(node('li', `${findingNames[item.code] ?? item.code}: ${recordNames.get(item.record) ?? item.namespace_and_source?.join(' · ') ?? ''}${item.fields ? ' — ' + item.fields.join(', ') : ''}${item.revision ? ' — ' + item.revision : ''}`));
+  }
+  container.append(node('h3', 'Pontos para conferir'), findings);
+  if (!result.findings.length) container.append(node('p', 'Nenhum achado nas verificações estruturais executadas.'));
+  const relations = node('details');
+  relations.append(node('summary', 'Navegar pelas relações e fontes'));
+  for (const record of result.records) {
+    const item = node('details');
+    item.append(node('summary', recordNames.get(record.id)));
+    item.append(node('p', `Estado original: ${record.source_status}. Substitui, segundo a fonte: ${record.supersedes.join(', ') || 'nenhuma revisão declarada'}.`));
+    for (const reference of record.references) {
+      const evidence = result.evidence.find(e => e.reference_id === reference);
+      const source = node('details');
+      source.append(node('summary', evidence.source + ' · ' + evidence.availability));
+      source.append(node('pre', evidence.text ?? 'Conteúdo não recebido.'), node('small', reference));
+      item.append(source);
+    }
+    relations.append(item);
+  }
+  container.append(relations);
+  for (const comparison of result.comparisons) {
+    const section = node('section', undefined, 'research-record');
+    section.append(node('h3', 'Mudanças entre as revisões escolhidas'));
+    for (const [field, change] of Object.entries(comparison.changes)) {
+      section.append(node('p', `${field}: ${JSON.stringify(change.before)} → ${JSON.stringify(change.after)}`));
+    }
+    if (!Object.keys(comparison.changes).length) section.append(node('p', 'Os campos comparados são iguais.'));
+    container.append(section);
+  }
+  for (const [label, value] of [
+    ['Comparação explícita', result.comparisons],
+    ['Lacunas e diferenças para revisão', result.findings],
+    ['Linha do tempo e datas desconhecidas', result.timeline],
+    ['Relações de proveniência', result.graph],
+    ['Fontes e conteúdo preservado', result.evidence],
+    ['Cobertura das publicações', result.publications],
+    ['Métricas e diagnóstico local', { ...result.metrics, ...result.diagnostics }],
+    ['Limitações', result.limitations],
+  ]) {
+    const detail = node('details');
+    detail.append(node('summary', label), node('pre', JSON.stringify(value, null, 2)));
+    container.append(detail);
+  }
+}
+$('research-inspect').addEventListener('click', handle(() => inspectResearch()));
+$('research-compare').addEventListener('click', handle(() => inspectResearch(true)));
 $('research-form').addEventListener('submit', (event) => {
   event.preventDefault();
   handle(() => runResearch())();

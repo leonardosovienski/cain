@@ -29,3 +29,8 @@ para substituir a instalação atual. A auditoria 0.4.2 indica as correções po
 Esses registros preservam hipóteses e limites de pesquisa; aprovação de testes não
 os transforma em validação científica. Versões arquiteturais anteriores em
 `architecture` devem ser lidas com as atualizações L0, 0.4.2 e 0.4.3.
+# Entrega 0.4.5
+
+- [Uso, validação e continuidade](DELIVERY_045.md)
+- [Inventário ampliado de capacidades](research/capability-inventory-20260911.md)
+- [ADR 0014: inspeção determinística](adr/0014-research-inspection.md)

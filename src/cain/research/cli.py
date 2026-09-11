@@ -44,6 +44,9 @@ def register(sub):
     recall.add_argument("entry_id")
     for name in ("coverage", "receipts", "verify", "rebuild"):
         commands.add_parser(name)
+    inspection = commands.add_parser("inspect", help="Local provenance, timeline and revision dossier")
+    for field in ("source-id", "domain", "before", "after"):
+        inspection.add_argument("--" + field)
     backup = commands.add_parser("backup")
     backup.add_argument("destination", type=Path)
     restore = commands.add_parser("restore", help="Restore a backup to a NEW database path")
@@ -59,6 +62,11 @@ def execute(args):
     service = ResearchService(args.db, args.policy)
     scope = service.scope(args.user, args.project, args.collection)
     cmd = args.research_command
+    if cmd == "inspect":
+        from cain.research.inspection import inspect
+
+        return inspect(service, scope, source_id=args.source_id, domain=args.domain,
+                       before=args.before, after=args.after)
     if cmd == "import":
         return service.ingest(args.publication, scope)
     if cmd in {"query", "explain"}:
