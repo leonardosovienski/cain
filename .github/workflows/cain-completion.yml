@@ -1,8 +1,6 @@
-name: CAIN completion exact candidate
+name: Historical CAIN completion exact candidate
 on:
   workflow_dispatch:
-  push:
-    branches: [validation/cain-supply-completion-20260912]
 permissions:
   contents: read
 jobs:

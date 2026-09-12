@@ -1,24 +1,15 @@
-> **Consolidação de 12/09/2026:** a branch vigente é `main`. Leia [o estado consolidado](docs/MAIN_CONSOLIDATION_20260912.md). Referências a outras branches e instalações abaixo são registros históricos; não representam o HEAD atual.
-
 # Estado atual do Cain — 0.4.7
 
-<!-- SUPPLY-GIT-DELIVERY-20260912 -->
-**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
-<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
-
-
-<!-- DOC-SYNC-20260912 -->
-> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
-<!-- /DOC-SYNC-20260912 -->
-
-
-Entrega atual: [capacidades locais e avaliação 0.4.6](docs/DELIVERY_047.md).
+Entrega atual: [auditoria operacional de 12/09/2026](docs/research/AUDITORIA_OPERACIONAL_20260912.md).
+Código instalado `0c8814901d3d365a2eec4b0c7386b59f460d349d`; 459 testes passaram,
+um skip Windows. Busca documental literal e Historian com contexto preservado.
+Resumos livres ainda apresentam erros e não estão aprovados semanticamente.
 Streaming, visão, busca L0, relações propostas, debate, workflows duráveis e MCP
 estão implementados. Ollama/modelos instalados e inferência real exercitada;
 qualidade das respostas é limitada e saídas inválidas são recusadas.
 Os resultados anteriores abaixo são históricos.
 
-Atualizado em 2026-09-11. O estado operacional, caminhos, validação e limites atuais
+Atualizado em 2026-09-12. O estado operacional, caminhos, validação e limites atuais
 estão em [CONTINUIDADE.md](CONTINUIDADE.md). A instalação principal é `C:\CAIN`,
 com entrada `C:\CAIN\ABRIR_CAIN.cmd`, porta 8877 e dados preservados localmente.
 

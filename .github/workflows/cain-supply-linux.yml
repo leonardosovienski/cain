@@ -1,8 +1,6 @@
-name: CAIN Supply Linux gate
+name: Historical CAIN Supply Linux gate
 on:
   workflow_dispatch:
-  push:
-    branches: [feature/research-bundle-v1]
     paths:
       - '.ci/cain-supply/**'
       - '.github/workflows/cain-supply-linux.yml'
