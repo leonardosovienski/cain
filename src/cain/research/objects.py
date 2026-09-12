@@ -33,9 +33,10 @@ class Objects:
                 os.fsync(out.fileno())
             try:
                 os.link(name, target)
-                fsync_dir(target.parent)
             except FileExistsError:
                 self.verify(digest, size)
+            # Also sync a concurrent writer's already linked object before commit.
+            fsync_dir(target.parent)
         finally:
             Path(name).unlink(missing_ok=True)
         return target

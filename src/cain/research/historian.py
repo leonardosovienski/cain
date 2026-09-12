@@ -240,6 +240,8 @@ def explain_metadata(service, scope, question, provider, **filters):
         refs = {}
         for entity in result["entities"]:
             refs["entity:" + entity["id"]] = canonical(entity).decode()
+        for item in result["evidence"]:
+            refs["evidence:" + item["bundle_id"] + ":" + item["id"]] = canonical(item).decode()
         for relation in result["relations"]:
             refs["relation:" + relation["bundle_id"] + ":" + relation["relation_id"]] = canonical(
                 relation

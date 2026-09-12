@@ -16,6 +16,7 @@ from research_bundle import (
     entity_key,
     keys,
     loads,
+    namespace,
     signature,
     validate,
 )
@@ -94,6 +95,17 @@ class BundleService:
                 CREATE INDEX IF NOT EXISTS bundle_relation_target ON research_relations(scope,target);
                 CREATE TABLE IF NOT EXISTS research_bundle_receipts(
                   id TEXT PRIMARY KEY, scope TEXT NOT NULL, at TEXT NOT NULL, payload TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS research_entity_reservations(
+                  id TEXT PRIMARY KEY, signature TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS research_bundle_approvals(
+                  scope TEXT NOT NULL, id TEXT NOT NULL, approved_at TEXT NOT NULL,
+                  raw BLOB NOT NULL,
+                  PRIMARY KEY(scope,id));
+                CREATE TABLE IF NOT EXISTS research_bundle_raw_variants(
+                  scope TEXT NOT NULL, bundle TEXT NOT NULL, raw_sha TEXT NOT NULL,
+                  raw BLOB NOT NULL, received_at TEXT NOT NULL,
+                  PRIMARY KEY(scope,bundle,raw_sha),
+                  FOREIGN KEY(scope,bundle) REFERENCES research_bundles(scope,id));
             """)
 
     def grants(self, scope, origin, restrictions, generate=False):
@@ -191,6 +203,7 @@ class BundleService:
             raw_manifest_sha256=raw_sha,
         )
         if package:
+            result["raw_preserved"] = True
             received = [a for a in package["artifacts"] if a["availability"] == "received"]
             result.update(
                 entities=len(package["entities"]),
@@ -206,6 +219,47 @@ class BundleService:
             )
         return result
 
+    def approve(self, relative, scope):
+        """Trusted local administrator only; never exposed to scoped HTTP callers.
+
+        Reserve global semantics before granting an exact scoped attachment.
+        Approval neither reads objects nor creates a readable membership.
+        """
+        root = Path(self.service.import_root(scope))
+        with safe_open(root, relative) as source:
+            buffer = io.BytesIO()
+            transfer(source, buffer, limit=MAX_BYTES)
+        raw = buffer.getvalue()
+        package = validate(loads(raw))
+        self._admit(scope, package, len(raw))
+        with self.service.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            count, used = db.execute(
+                "SELECT count(*),coalesce(sum(length(raw)),0) FROM research_bundle_approvals WHERE scope=?",
+                (scope,),
+            ).fetchone()
+            existing = db.execute(
+                "SELECT 1 FROM research_bundle_approvals WHERE scope=? AND id=?",
+                (scope, package["bundle_id"]),
+            ).fetchone()
+            if not existing and (count >= 100 or used + len(canonical(package)) > 20_000_000):
+                raise ValueError("APPROVAL_LIMIT")
+            for entity in package["entities"]:
+                eid, sig = entity_key(package["origin"], entity), signature(package, entity)
+                for table in ("research_entity_reservations", "research_entities"):
+                    if db.execute(
+                        "SELECT 1 FROM " + table + " WHERE id=? AND signature<>?", (eid, sig)
+                    ).fetchone():
+                        raise ValueError("CONFLICT")
+                db.execute(
+                    "INSERT OR IGNORE INTO research_entity_reservations VALUES(?,?)", (eid, sig)
+                )
+            db.execute(
+                "INSERT OR IGNORE INTO research_bundle_approvals VALUES(?,?,?,?)",
+                (scope, package["bundle_id"], now(), canonical(package)),
+            )
+        return dict(status="approved", bundle_id=package["bundle_id"], objects_received=False)
+
     def ingest(self, relative, scope):
         package = None
         raw_sha = None
@@ -217,6 +271,13 @@ class BundleService:
                 raw = buffer.getvalue()
             package = validate(loads(raw))
             self._admit(scope, package, len(raw))
+            # Only an administrator can approve publication. Read grants are insufficient.
+            with self.service.connection() as db:
+                if not db.execute(
+                    "SELECT 1 FROM research_bundle_approvals WHERE scope=? AND id=?",
+                    (scope, package["bundle_id"]),
+                ).fetchone():
+                    raise PermissionError("NOT_AUTHORIZED")
             raw_sha = digest(raw)
             bundle_root = root / Path(relative).parent
             total = sum(a["size"] for a in package["artifacts"] if a["availability"] == "received")
@@ -229,16 +290,26 @@ class BundleService:
                     "SELECT count(*),coalesce(sum(length(raw)),0) FROM research_bundles WHERE scope=?",
                     (scope,),
                 ).fetchone()
+                variant_bytes = db.execute(
+                    "SELECT coalesce(sum(length(raw)),0) FROM research_bundle_raw_variants WHERE scope=?",
+                    (scope,),
+                ).fetchone()[0]
                 old = db.execute(
-                    "SELECT raw FROM research_bundles WHERE scope=? AND id=?",
+                    "SELECT raw,raw_sha FROM research_bundles WHERE scope=? AND id=?",
                     (scope, package["bundle_id"]),
                 ).fetchone()
                 if old:
+                    if (
+                        digest(old["raw"]) != old["raw_sha"]
+                        or validate(loads(old["raw"])) != package
+                    ):
+                        raise ValueError("CORRUPTION: duplicate archive")
+                    self._check_raw_variants(db, scope, package)
                     self._check_projection(db, scope, package)
                     self._verify_objects(package)
                     status = "duplicate"
                 else:
-                    if count >= 100 or stored + len(raw) > 20_000_000:
+                    if count >= 100 or stored + variant_bytes + len(raw) > 20_000_000:
                         raise ValueError("SCOPE_LIMIT")
                     # No artifacts are opened until the entire manifest is admitted.
                     for a in package["artifacts"]:
@@ -260,6 +331,32 @@ class BundleService:
                     )
                     self._project(db, scope, package)
                     status = "admitted"
+                if (
+                    old
+                    and raw_sha != old["raw_sha"]
+                    and not db.execute(
+                        "SELECT 1 FROM research_bundle_raw_variants WHERE scope=? AND bundle=? AND raw_sha=?",
+                        (scope, package["bundle_id"], raw_sha),
+                    ).fetchone()
+                ):
+                    variants, variant_bytes = db.execute(
+                        "SELECT count(*),coalesce(sum(length(raw)),0) FROM research_bundle_raw_variants WHERE scope=?",
+                        (scope,),
+                    ).fetchone()
+                    per_bundle = db.execute(
+                        "SELECT count(*) FROM research_bundle_raw_variants WHERE scope=? AND bundle=?",
+                        (scope, package["bundle_id"]),
+                    ).fetchone()[0]
+                    if (
+                        per_bundle >= 7
+                        or variants >= 700
+                        or stored + variant_bytes + len(raw) > 20_000_000
+                    ):
+                        raise ValueError("RAW_VARIANT_LIMIT")
+                    db.execute(
+                        "INSERT INTO research_bundle_raw_variants VALUES(?,?,?,?,?)",
+                        (scope, package["bundle_id"], raw_sha, raw, now()),
+                    )
             return self._receipt(scope, status, package, raw_sha=raw_sha)
         except Exception as exc:
             # No producer text, filesystem paths or secrets in rejection receipts.
@@ -268,6 +365,40 @@ class BundleService:
                 code = "CONFLICT"
             self._receipt(scope, "rejected", error=code)
             raise
+
+    @staticmethod
+    def _check_raw_variants(db, scope, bundle):
+        """Verify preserved transports, including new receipt-to-byte commitments.
+
+        Old receipts never promised variant preservation and are not rewritten.
+        """
+        if not db.execute(
+            "SELECT 1 FROM sqlite_master WHERE name='research_bundle_raw_variants'"
+        ).fetchone():
+            return
+        bid = bundle["bundle_id"]
+        hashes = {
+            db.execute(
+                "SELECT raw_sha FROM research_bundles WHERE scope=? AND id=?", (scope, bid)
+            ).fetchone()[0]
+        }
+        for row in db.execute(
+            "SELECT raw_sha,raw FROM research_bundle_raw_variants WHERE scope=? AND bundle=?",
+            (scope, bid),
+        ):
+            if digest(row["raw"]) != row["raw_sha"] or validate(loads(row["raw"])) != bundle:
+                raise ValueError("CORRUPTION: raw variant")
+            hashes.add(row["raw_sha"])
+        for row in db.execute(
+            "SELECT payload FROM research_bundle_receipts WHERE scope=?", (scope,)
+        ):
+            receipt = json.loads(row[0])
+            if (
+                receipt.get("raw_preserved")
+                and receipt["bundle_id"] == bid
+                and receipt["raw_manifest_sha256"] not in hashes
+            ):
+                raise ValueError("CORRUPTION: missing receipted raw variant")
 
     def _archives(self, db, scope, generate=False):
         result = []
@@ -296,6 +427,7 @@ class BundleService:
                 or canonical(bundle["restrictions"]).decode() != row["restrictions"]
             ):
                 raise ValueError("CORRUPTION: raw authorization metadata")
+            self._check_raw_variants(db, scope, bundle)
             result.append((bundle, grants))
         return result
 
@@ -360,6 +492,7 @@ class BundleService:
         revision=None,
         bundle_id=None,
         artifact_id=None,
+        evidence_id=None,
         relation_type=None,
         domain=None,
         status=None,
@@ -375,8 +508,16 @@ class BundleService:
         ):
             raise ValueError("Invalid pagination")
         records, artifacts, relations, coverage = {}, [], [], []
+        evidence = []
         with self.service.connection() as db:
-            for bundle, grants in self._archives(db, scope, generate):
+            archives = self._archives(db, scope, generate)
+            descriptors = {
+                (tuple(namespace(b["origin"])), a["artifact_id"], digest(canonical(a)))
+                for b, g in archives
+                for a in b["artifacts"]
+                if self.resource_allowed(a, g)
+            }
+            for bundle, grants in archives:
                 self._check_projection(db, scope, bundle)
                 bid = bundle["bundle_id"]
                 if (bundle_id is not None and bid != bundle_id) or (
@@ -396,6 +537,18 @@ class BundleService:
                 )
                 if entity_filter and not selected:
                     continue
+                linked_evidence = {
+                    ref
+                    for e in bundle["entities"]
+                    if (e["entity_id"], e["revision"]) in selected
+                    for ref in e["evidence_ids"]
+                }
+                evidence.extend(
+                    dict(bundle_id=bid, **e)
+                    for e in bundle["evidence"]
+                    if (not entity_filter or e["id"] in linked_evidence)
+                    and (evidence_id is None or e["id"] == evidence_id)
+                )
                 coverage.append(dict(bundle_id=bid, **bundle["coverage"]))
                 visible = {
                     a["artifact_id"]
@@ -435,10 +588,21 @@ class BundleService:
                         for ep in (r["source"], r["target"])
                     ):
                         continue
-                    if all(
-                        ep["kind"] != "artifact" or ep["external"] or ep["id"] in visible
-                        for ep in (r["source"], r["target"])
-                    ):
+
+                    def allowed(ep):
+                        if ep["kind"] != "artifact":
+                            return True
+                        if not ep["external"]:
+                            return ep["id"] in visible
+                        if bundle["profile"] == "local-research/1":
+                            # Legacy external identity is only unambiguous when local.
+                            return (
+                                ep["namespace"] == namespace(bundle["origin"])
+                                and ep["id"] in visible
+                            )
+                        return (tuple(ep["namespace"]), ep["id"], ep["revision"]) in descriptors
+
+                    if all(allowed(ep) for ep in (r["source"], r["target"])):
                         relations.append(dict(bundle_id=bid, **r))
                 for e in bundle["entities"]:
                     if (
@@ -463,8 +627,16 @@ class BundleService:
             artifact_total=len(artifacts),
             relations=relations[offset : offset + limit],
             relation_total=len(relations),
+            evidence=evidence[offset : offset + limit],
+            evidence_total=len(evidence),
             coverage=coverage,
         )
+
+    def evidence(self, scope, bundle_id, evidence_id):
+        result = self.query(scope, bundle_id=bundle_id, evidence_id=evidence_id, limit=1)
+        if not result["evidence"]:
+            raise ValueError("NOT_FOUND")
+        return dict(classification="FACTUAL", evidence=result["evidence"][0])
 
     def entity(self, scope, bundle_id, entity_id, revision):
         result = self.query(
@@ -511,6 +683,15 @@ class BundleService:
         with self.service.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             archives = self._archives(db, scope)
+            count = db.execute(
+                "SELECT count(*) FROM research_bundles WHERE scope=?", (scope,)
+            ).fetchone()[0]
+            if count != len(archives) or any(
+                not self.resource_allowed(a, grants)
+                for bundle, grants in archives
+                for a in bundle["artifacts"]
+            ):
+                raise PermissionError("NOT_AUTHORIZED: complete scope required")
             for bundle, _ in archives:
                 self._verify_objects(bundle)
             if rebuild:

@@ -1,5 +1,8 @@
 # Índice documental do Cain
 
+[Remediação local CAIN Supply F01–F10, E2E e mini-auditoria](research/BUNDLE_REMEDIATION.md).
+Esta rodada não declara estabilização; a CI Linux anterior não cobre suas alterações.
+
 ## Estado operacional atual
 
 [Entrega 0.4.7: streaming, visão, busca, extração, debate, workflows e MCP](DELIVERY_047.md).

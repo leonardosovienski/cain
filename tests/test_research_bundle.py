@@ -109,6 +109,7 @@ def setup(tmp_path):
     path.write_bytes(canonical(policy))
     service = ResearchService(tmp_path / "research.db", path)
     store = BundleService(service)
+    store.approve("one/bundle.json", service.scope("test", None, "a"))
     return store, service.scope("test", None, "a"), b, root, path, policy
 
 
@@ -155,6 +156,7 @@ def test_dedupe_independent_memberships(setup):
     policy["imports"].append(dict(user="test", project="", collection="b", root=str(root)))
     path.write_bytes(canonical(policy))
     other = s.service.scope("test", None, "b")
+    s.approve("one/bundle.json", other)
     s.ingest("one/bundle.json", other)
     policy["bundle_grants"].pop(0)
     path.write_bytes(canonical(policy))
@@ -205,7 +207,7 @@ def test_conflict_atomicity_and_orphan(setup, monkeypatch):
     b["entities"][0]["status"] = "DIFFERENT"
     (root / "one/bundle.json").write_bytes(canonical(seal(b)))
     with pytest.raises(ValueError, match="CONFLICT"):
-        s.ingest("one/bundle.json", scope)
+        s.approve("one/bundle.json", scope)
     assert s.query(scope)["entities"][0]["status"] == "UNKNOWN"
 
 
@@ -240,6 +242,7 @@ def test_reference_no_io(setup, tmp_path):
     b = seal(b)
     (root / "one/files/report.txt").unlink()
     (root / "one/bundle.json").write_bytes(canonical(b))
+    s.approve("one/bundle.json", scope)
     s.ingest("one/bundle.json", scope)
     assert s.verify(scope)["bundles"] == 1
     with pytest.raises(ValueError, match="REFERENCE_ONLY"):
@@ -295,6 +298,7 @@ def test_backup_restore(setup, tmp_path, mode):
         b = seal(b)
         (root / "one/bundle.json").write_bytes(canonical(b))
     if mode in {"received", "reference"}:
+        s.approve("one/bundle.json", scope)
         s.ingest("one/bundle.json", scope)
     workspace = WorkspaceStore(tmp_path / "workspace.db")
     backup_dir = tmp_path / "backup"

@@ -1,0 +1,280 @@
+{
+  "schema": "cain-candidate/1",
+  "candidate_id": "74da061d1be17326d07d333b7923a717c6ce21c41d6f65f00c5d3947b6d2f248",
+  "previous_integrity_sha256": "3cec8407949948d0cd200bee0e31375fefa38d6002dacfcfcf4582fd9304ba11",
+  "source_equivalence_linux": "NOT_EXECUTED",
+  "repositories": [
+    {
+      "repository": "cain",
+      "root": "C:\\CAIN\\work\\research-bundle-v1",
+      "base_head": "33c9c35cacd57584566f56aee6abef3494715017",
+      "branch": "feature/research-bundle-v1",
+      "dirty_files": [
+        "docs/README.md",
+        "docs/adr/0020-research-bundles.md",
+        "src/cain/research/api.py",
+        "src/cain/research/bundle_backup.py",
+        "src/cain/research/bundles.py",
+        "src/cain/research/cli.py",
+        "src/cain/research/historian.py",
+        "src/cain/research/objects.py",
+        "tests/test_research_bundle.py",
+        "vendor/bundle-provenance.json",
+        "vendor/predictor_research_bundle-1.0.0-py3-none-any.whl"
+      ],
+      "relevant_untracked": [
+        "docs/research/BUNDLE_REMEDIATION.md",
+        "docs/research/BUNDLE_REMEDIATION_DESIGN.md",
+        "tests/test_bundle_remediation.py"
+      ],
+      "file_hashes": {
+        "docs/README.md": "6eb814c57a4bf41ff9fcc6c4eec993bacf3cf15ef21fabf3cac981b457c74105",
+        "docs/adr/0020-research-bundles.md": "1763bd96371b00805c6afaa655e3d57c25d59772fa66834e0d9f21dc9bbabc53",
+        "docs/research/BUNDLE_REMEDIATION.md": "ede2aebaa90af0532c1170a622baadb5f2cad4d6365f7c81cfb2a88fa8ee4d8b",
+        "docs/research/BUNDLE_REMEDIATION_DESIGN.md": "5d7b755d34895ac5479a4f575a3511171d5b9d1ffa82f44235ce643abcab54f0",
+        "src/cain/research/api.py": "996d2f9ebf9cd41a027669e5d782cb98eacb672c4bd07034a369dc167cd1e558",
+        "src/cain/research/bundle_backup.py": "6dcac0cd58b53d7067c08983a2984bb6a2753bf4e44301b7cf2ecb41570b24de",
+        "src/cain/research/bundles.py": "d526424252eeef0ed958a765682a9a8e43f3d539874d0bec5955c10ff5960cc2",
+        "src/cain/research/cli.py": "0e613b135b1e346610a3184fda37c368c87152b5626552906d3500026acfbae2",
+        "src/cain/research/historian.py": "dbc0c9355a06f4cb984aa05ded55279be18214ef609d8850bfe821ef2d03e39e",
+        "src/cain/research/objects.py": "b7b578c59631b88c63c44f9b3122c17920d89527056bf4d3d6fc0a70ee8ba12d",
+        "tests/test_bundle_remediation.py": "5dfce5bf47e8652d12669d96a7571bf13dfd448097d8b72f42827b2e460ad829",
+        "tests/test_research_bundle.py": "5b700252d9f75b7739e1631cdf5b016a6d1d48642b3b6272933a1abc25742e9a",
+        "vendor/bundle-provenance.json": "93a4eef1d440ae08ae16594160b08548dd58f85d2ef8ad79ed37a10b810b2af8",
+        "vendor/predictor_research_bundle-1.0.0-py3-none-any.whl": "79fe4d595de0c0f4540c41404406c4974f2d7e656d466b1905ad5614b8138ad5"
+      },
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "cain-research",
+          "version": "0.4.7",
+          "requires-python": ">=3.11",
+          "dependencies": [
+            "predictor-research-snapshot==1.0.0",
+            "predictor-research-bundle==1.0.0"
+          ]
+        }
+      },
+      "previous_integrity_comparison": "PASS",
+      "capture": {
+        "directory": "C:\\CAIN\\work\\bundle-linux-validation-20260912\\cain",
+        "patch_sha256": "3608c9ccaa19641196dae3db35396d0b81ddc13be8674168fceb1917bc344bac",
+        "overlay_sha256": "3c3a138f7a9ad4c767930feda881a6a47eb6a67dfc6a3107ae042489138f986a"
+      }
+    },
+    {
+      "repository": "ecosystem",
+      "root": "C:\\CAIN\\contrato",
+      "base_head": "8586bd58303cbce629498e3243bff5cca951ce87",
+      "branch": "feature/research-bundle-v1",
+      "dirty_files": [
+        "packages/research-bundle/README.md",
+        "packages/research-bundle/src/research_bundle/__init__.py",
+        "packages/research-bundle/src/research_bundle/contract.json",
+        "packages/research-bundle/src/research_bundle/export.py",
+        "packages/research-bundle/src/research_bundle/files.py",
+        "packages/research-bundle/tests/test_files_export.py"
+      ],
+      "relevant_untracked": [],
+      "file_hashes": {
+        "packages/research-bundle/README.md": "06f477d846b9ddc09d10934048d497dbe30397429c17f7ab788a4fd3e5e41bb3",
+        "packages/research-bundle/src/research_bundle/__init__.py": "eadc9bffface70cfe79ba1cd2a0b50a18358f5d1d6dd3d9224bb732df85a2d36",
+        "packages/research-bundle/src/research_bundle/contract.json": "f72bd112257bc8b472c925ed4c9ab66f955ab013f4cdf5fc4446fdcb260e646d",
+        "packages/research-bundle/src/research_bundle/export.py": "834c7894dd995330cc8fb46ca594b72aeae449d613ba2a43a40151bcafdce0c5",
+        "packages/research-bundle/src/research_bundle/files.py": "e428434ccfcdaa62011b9693cdcd3a50dab9ce4cfa03328de58264a495363585",
+        "packages/research-bundle/tests/test_files_export.py": "4c6bc99ab2f6fb8f574183014fd4ebb1087f02114dde04151fdddbb7eb4226c5"
+      },
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "ecosystem-predictor",
+          "version": "0.2.0",
+          "requires-python": ">=3.13,<3.15",
+          "dependencies": [
+            "pydantic>=2.11,<3"
+          ]
+        },
+        "packages/research-bundle/pyproject.toml": {
+          "name": "predictor-research-bundle",
+          "version": "1.0.0",
+          "requires-python": ">=3.11",
+          "dependencies": [
+            "predictor-research-snapshot>=1.0.0,<2"
+          ]
+        },
+        "packages/research-snapshot/pyproject.toml": {
+          "name": "predictor-research-snapshot",
+          "version": "1.0.1",
+          "requires-python": ">=3.11",
+          "dependencies": null
+        }
+      },
+      "previous_integrity_comparison": "PASS",
+      "capture": {
+        "directory": "C:\\CAIN\\work\\bundle-linux-validation-20260912\\ecosystem",
+        "patch_sha256": "6495d4deb696b6569e30c43a528f1a5b739fb23554891f0913de05240811220f",
+        "overlay_sha256": "e5d831208107ab142d7848eca3a953dfac5dce9aaf9405850a82ded2bb20f6f8"
+      }
+    },
+    {
+      "repository": "crypto",
+      "root": "C:\\CRIPTO\\pesquisa-20260909",
+      "base_head": "525203fe60b51923cba04ffd97a85c370d7ea15f",
+      "branch": "validation/retest-six-20260911",
+      "dirty_files": [
+        "docs/RESEARCH_BUNDLE_V1.md",
+        "packages/research-export/src/crypto_research_export/bundle.py"
+      ],
+      "relevant_untracked": [],
+      "file_hashes": {
+        "docs/RESEARCH_BUNDLE_V1.md": "d4651cb230d1678210835167b5e30f2c38bf995709649520caded8c1d3c8ea21",
+        "packages/research-export/src/crypto_research_export/bundle.py": "9309e689ca3951994e2c5b99cb504b5bc09800401c1ec8879424fb69cd7bf50f"
+      },
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "cripto-predictor",
+          "version": "1.1.0",
+          "requires-python": ">=3.13,<3.15",
+          "dependencies": [
+            "httpx>=0.28.1,<1",
+            "predictor-core>=3.2.1,<4",
+            "predictor-ops>=4.2.0,<5",
+            "pydantic>=2.12,<3",
+            "pydantic-settings>=2.10,<3",
+            "platformdirs>=4.3,<5",
+            "pyyaml>=6.0.3,<7",
+            "websockets>=15,<17"
+          ]
+        },
+        "packages/research-export/pyproject.toml": {
+          "name": "crypto-research-export",
+          "version": "1.0.1",
+          "requires-python": ">=3.11",
+          "dependencies": [
+            "predictor-research-snapshot>=1.0.1,<2"
+          ]
+        }
+      },
+      "previous_integrity_comparison": "PASS",
+      "capture": {
+        "directory": "C:\\CRIPTO\\operacao\\relatorios\\bundle-linux-validation-20260912",
+        "patch_sha256": "7037419ab44e6f5b230199a33714d2babd1bc9da68f28a920edbd9990462bf54",
+        "overlay_sha256": "136a44de7f00764bc4a49689c47fae407672a87539995b0b2ef5d59bfabf3f80"
+      }
+    },
+    {
+      "repository": "brasileirao",
+      "root": "C:\\BRASILEIRAO\\brasileirao-predictor",
+      "base_head": "339b5536e0fdc98cead99c01b8f6dac7aaa22877",
+      "branch": "publication-validation-architecture-20260911",
+      "dirty_files": [
+        "README.md",
+        "docs/RESEARCH_BUNDLE_V1.md",
+        "tools/export_cain_bundle.py"
+      ],
+      "relevant_untracked": [],
+      "file_hashes": {
+        "README.md": "bd1fdacd277d66b684f4fad0755814ddcbe36384a04c52847e8bcaa1c1078100",
+        "docs/RESEARCH_BUNDLE_V1.md": "29dc7ce500ca730ffdaea3f4ab1be6a4edba708960a14302f281f5bce21e4e28",
+        "tools/export_cain_bundle.py": "ad7be178f5325bcc766dff1a47f83d10369f24773fd1c59b44d0adf08a48cf18"
+      },
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "brasileirao-predictor",
+          "version": "0.2.0",
+          "requires-python": ">=3.13,<3.15",
+          "dependencies": [
+            "predictor-core>=3.2.1,<4",
+            "predictor-ops>=4.2.0,<5",
+            "pydantic>=2.11,<3",
+            "pydantic-settings>=2.10,<3",
+            "numpy>=2.2,<3",
+            "pandas>=2.2,<4",
+            "scipy>=1.15,<2",
+            "PyYAML>=6.0,<7",
+            "truststore>=0.10,<1",
+            "requests>=2.32,<3",
+            "jsonschema>=4.25,<5"
+          ]
+        }
+      },
+      "previous_integrity_comparison": "PASS",
+      "capture": {
+        "directory": "C:\\BRASILEIRAO\\work\\bundle-linux-validation-20260912",
+        "patch_sha256": "002e8054297b70f59966e605e2e3204af38a9f829eb6f443f166f9a5f626db97",
+        "overlay_sha256": "7420b04c52d6eba94fddb48e56bec1c07a7d8e1cda134bc297b2ec686e016fba"
+      }
+    },
+    {
+      "repository": "stocks",
+      "root": "C:\\STOCKS\\stocks-predictor",
+      "base_head": "d94e7321ab64d04f3901bb39f2ad90814b328e17",
+      "branch": "validation/retest-six-20260911",
+      "dirty_files": [
+        "HANDOFF.md",
+        "docs/RESEARCH_BUNDLE_V1.md",
+        "tools/export_cain_bundle.py"
+      ],
+      "relevant_untracked": [],
+      "file_hashes": {
+        "HANDOFF.md": "f9e0a8721e749b15db91d4dea5bd8695dfaf31a609f801bdbd54a6d08cff3486",
+        "docs/RESEARCH_BUNDLE_V1.md": "82103e7f409c99e61e1b213922be6e806befd2006cf3c0d58f6e4ac6033a5bae",
+        "tools/export_cain_bundle.py": "a69397d84ddb5655fb31a47bedd8089df6ef7c39bec612abfaa9f92095dcf63a"
+      },
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "stocks-predictor",
+          "version": "0.2.0",
+          "requires-python": ">=3.13,<3.15",
+          "dependencies": [
+            "PyYAML>=6.0,<7",
+            "predictor-core>=3.2,<4"
+          ]
+        }
+      },
+      "previous_integrity_comparison": "PASS",
+      "capture": {
+        "directory": "C:\\STOCKS\\work\\bundle-linux-validation-20260912",
+        "patch_sha256": "6aa1903d8eacbb6e7a534765ce4b1a576e44418073a7723b8cb8074ed3daf8fb",
+        "overlay_sha256": "0fc2ec5557c1a4e60e91638beee55e438d5883dd322acf9f7060b11e19ba0d17"
+      }
+    },
+    {
+      "repository": "core",
+      "root": "C:\\PREDICTORS\\core-predictor",
+      "base_head": "de79cc19914b70bd8a8fa74a6e49b4ea192c1f91",
+      "branch": "validation/retest-six-20260911",
+      "dirty_files": [],
+      "relevant_untracked": [],
+      "file_hashes": {},
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "predictor-core",
+          "version": "3.2.1",
+          "requires-python": ">=3.13",
+          "dependencies": []
+        }
+      },
+      "previous_integrity_comparison": "PASS"
+    },
+    {
+      "repository": "ops",
+      "root": "C:\\PREDICTORS\\predictor-ops",
+      "base_head": "0aa803fcaf0656061d9e251a85cbf0cf55071066",
+      "branch": "validation/retest-six-20260911",
+      "dirty_files": [],
+      "relevant_untracked": [],
+      "file_hashes": {},
+      "package_metadata": {
+        "pyproject.toml": {
+          "name": "predictor-ops",
+          "version": "4.2.0",
+          "requires-python": ">=3.13",
+          "dependencies": [
+            "pydantic>=2.11,<3",
+            "pydantic-settings>=2.10,<3"
+          ]
+        }
+      },
+      "previous_integrity_comparison": "PASS"
+    }
+  ]
+}

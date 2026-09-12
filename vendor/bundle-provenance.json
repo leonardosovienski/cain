@@ -2,15 +2,14 @@
   "package": "predictor-research-bundle",
   "version": "1.0.0",
   "source_repository": "https://github.com/leonardosovienski/ecosystem-predictor",
-  "source_base_commit": "8c62a07255dee103cbd2bc0ad847d68c4b053cdd",
-  "source_state": "committed feature branch candidate; wheel built from Windows source bytes whose hashes are listed; not a released package",
+  "source_base_commit": "8586bd58303cbce629498e3243bff5cca951ce87",
+  "source_state": "local uncommitted remediation on recorded base; actual file bytes below, not Git newline-normalized blobs; no release",
   "source_files": {
     "packages/research-bundle/pyproject.toml": "27e9e457fb3205e2d18d8396fe57db80c2600609eb65726b4ee61a5765c81f0c",
-    "packages/research-bundle/src/research_bundle/contract.json": "9cbe367e5c78d2a4f46766ad536a62fdf74c18126c4913360b75451be66ce799",
-    "packages/research-bundle/src/research_bundle/export.py": "a8b2809ee6e43f9c8749fc24e4727163b52a04177c9bbf8e560a1a4b8f7c9b00",
-    "packages/research-bundle/src/research_bundle/files.py": "ad5d47ffb32ea394b4c70e98c4af6fe3c798c3e2f3a5a533f912645b53e644cc",
-    "packages/research-bundle/src/research_bundle/__init__.py": "65b8a2ee3c69757312119e440c70361dce6166fa7a6cb09c2404f2c38543e10a"
+    "packages/research-bundle/src/research_bundle/contract.json": "f72bd112257bc8b472c925ed4c9ab66f955ab013f4cdf5fc4446fdcb260e646d",
+    "packages/research-bundle/src/research_bundle/export.py": "834c7894dd995330cc8fb46ca594b72aeae449d613ba2a43a40151bcafdce0c5",
+    "packages/research-bundle/src/research_bundle/files.py": "e428434ccfcdaa62011b9693cdcd3a50dab9ce4cfa03328de58264a495363585",
+    "packages/research-bundle/src/research_bundle/__init__.py": "eadc9bffface70cfe79ba1cd2a0b50a18358f5d1d6dd3d9224bb732df85a2d36"
   },
-  "wheel_sha256": "01898de5f42d6eec2923ef611b0a9f6f24d89013e1e231ede0a158fa8d4d51a2",
-  "source_commit": "8586bd58303cbce629498e3243bff5cca951ce87"
+  "wheel_sha256": "79fe4d595de0c0f4540c41404406c4974f2d7e656d466b1905ad5614b8138ad5"
 }

@@ -20,11 +20,13 @@ def register(sub):
     actions = bundle.add_subparsers(dest="bundle_command", required=True)
     intake = actions.add_parser("import")
     intake.add_argument("manifest", help="Safe relative bundle.json path under admitted root")
+    approval = actions.add_parser("approve", help="LOCAL ADMIN ONLY: reserve global publication and approve exact scoped import")
+    approval.add_argument("manifest", help="Manifest reviewed by the receiver administrator")
     for action in ("query", "artifacts", "lineage", "historian"):
         command = actions.add_parser(action)
         command.add_argument("--entity-id")
         command.add_argument("--entity-type")
-        for name in ("revision", "bundle-id", "artifact-id", "relation-type"):
+        for name in ("revision", "bundle-id", "artifact-id", "evidence-id", "relation-type"):
             command.add_argument("--" + name)
         command.add_argument("--domain")
         command.add_argument("--status")
@@ -39,6 +41,9 @@ def register(sub):
     detail = actions.add_parser("artifact")
     detail.add_argument("bundle_id")
     detail.add_argument("artifact_id")
+    detail = actions.add_parser("evidence")
+    detail.add_argument("bundle_id")
+    detail.add_argument("evidence_id")
     materialize = actions.add_parser("materialize")
     materialize.add_argument("bundle_id")
     materialize.add_argument("artifact_id")
@@ -116,10 +121,14 @@ def execute(args):
         action = args.bundle_command
         if action == "import":
             return bundles.ingest(args.manifest, scope)
+        if action == "approve":
+            return bundles.approve(args.manifest, scope)
         if action == "entity":
             return bundles.entity(scope, args.bundle_id, args.entity_id, args.revision)
         if action == "artifact":
             return bundles.artifact(scope, args.bundle_id, args.artifact_id)
+        if action == "evidence":
+            return bundles.evidence(scope, args.bundle_id, args.evidence_id)
         if action == "materialize":
             return bundles.materialize(scope, args.bundle_id, args.artifact_id, args.destination)
         if action in {"verify", "rebuild"}:
@@ -128,7 +137,7 @@ def execute(args):
             return bundles.receipts(scope)
         if action == "orphans":
             return bundles.orphan_report()
-        filters = {k: getattr(args, k) for k in ("entity_id", "entity_type", "revision", "bundle_id", "artifact_id", "relation_type", "domain", "status", "limit", "offset")}
+        filters = {k: getattr(args, k) for k in ("entity_id", "entity_type", "revision", "bundle_id", "artifact_id", "evidence_id", "relation_type", "domain", "status", "limit", "offset")}
         if action == "historian":
             from cain.research.historian import metadata_context
             return metadata_context(service, scope, bundles=bundles, **filters)

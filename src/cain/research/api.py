@@ -48,6 +48,7 @@ class BundleRequest(BaseModel):
     revision: str | None = Field(default=None, max_length=500)
     bundle_id: str | None = Field(default=None, max_length=64)
     artifact_id: str | None = Field(default=None, max_length=500)
+    evidence_id: str | None = Field(default=None, max_length=500)
     relation_type: str | None = Field(default=None, max_length=500)
     entity_type: str | None = Field(default=None, max_length=500)
     domain: str | None = Field(default=None, max_length=500)
@@ -65,6 +66,11 @@ class BundleEntityRequest(BundleRequest):
 class BundleArtifactRequest(BundleRequest):
     bundle_id: str = Field(min_length=64, max_length=64)
     artifact_id: str = Field(min_length=1, max_length=500)
+
+
+class BundleEvidenceRequest(BundleRequest):
+    bundle_id: str = Field(min_length=64, max_length=64)
+    evidence_id: str = Field(min_length=1, max_length=500)
 
 
 class BundleExplainRequest(BundleRequest):
@@ -131,6 +137,15 @@ def mount(
     def bundle_artifacts(request: BundleRequest):
         result = bundle_query(request)
         return {"artifacts": result["artifacts"], "total": result["artifact_total"]}
+
+    @app.post("/research/bundles/evidence")
+    def bundle_evidence(request: BundleEvidenceRequest):
+        from cain.research.bundles import BundleService
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        return BundleService(store).evidence(
+            store.scope(request.user_id, request.project_id, request.collection),
+            request.bundle_id, request.evidence_id)
 
     @app.post("/research/bundles/lineage")
     def bundle_lineage(request: BundleRequest):
