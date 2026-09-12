@@ -1,3 +1,5 @@
+> **Estado atual: substituído/retirado para novas execuções.** A versão /2 permitia que um recibo reprovado fosse tratado como sucesso em uma segunda retomada. Use PROCEDURE_SELECTION_COMPARISON_V3.md. O texto abaixo é histórico e não constitui aprovação atual.
+
 # Procedimento selection-comparison/2
 
 Estado: **disponível no escopo de verificação documental local**, sustentado por

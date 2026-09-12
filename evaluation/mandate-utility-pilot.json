@@ -1,0 +1,17 @@
+{
+  "protocol": "mandate-utility-pilot/1",
+  "classification": "development, known cases, no held-out set",
+  "primary_metric": "task correctly concluded within the declared documentary slice",
+  "comparators": ["CAIN candidate", "direct JSON pointer lookup and persisted receipt parsing"],
+  "missions": {
+    "reconstruct": "Exact status/trial and explicit selected-slice limits for reason/sample; no causal or scientific inference",
+    "resume": "Completed workflow is readable in a later process, steps not repeated, cancelled workflow stays cancelled",
+    "compare": "Both result artifacts match independently read source field values; count units are fields",
+    "reuse": "Same procedure succeeds on another identity, refuses a missing pointer, and keeps confirmed receipts byte-stable"
+  },
+  "eliminating_errors": ["identity mixture", "invented result", "unauthorized access", "source modification"],
+  "human_time": null,
+  "independent_judge": false,
+  "confirmatory_minimum_gain": null,
+  "claim_limit": "No product superiority or scientific contribution may be inferred from this pilot. Repeated missions use the same two sources, not independent episodes."
+}
