@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.13', '3.14']
+        python: ['3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,3 +61,4 @@ jobs:
             ${{ runner.temp }}/cain-linux-results/*.exit
             ${{ runner.temp }}/cain-linux-results/wheels/*.whl
             ${{ runner.temp }}/cain-linux-results/e2e/evidence.json
+            ${{ runner.temp }}/cain-linux-results/real-reports/*.json

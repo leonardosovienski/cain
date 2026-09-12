@@ -18,7 +18,8 @@ p.add_argument('--roots', type=Path, required=True)
 p.add_argument('--out', type=Path, required=True)
 a = p.parse_args()
 assert sys.platform == 'linux' and os.geteuid() != 0, 'Ordinary Linux user required'
-assert (3, 13) <= sys.version_info[:2] < (3, 15), 'Use Python 3.13 or 3.14 for the integrated environment'
+assert (3, 11) <= sys.version_info[:2] < (3, 15), 'Declared standalone Python matrix'
+integrated = sys.version_info[:2] >= (3, 13)
 a.out.mkdir(parents=True, exist_ok=False)
 out = a.out.resolve()
 kit = Path(__file__).resolve().parent
@@ -109,17 +110,19 @@ run('full', [receiver, '-m', 'pytest', '-o', 'pythonpath=', tests, shared, '-q',
 run('installed-wheel', [receiver, roots['cain'] / 'tools/verify_wheel.py', '--wheel',
     wheels / 'cain_research-0.4.7-py3-none-any.whl', '--vendor', wheels])
 run('e2e', [receiver, '-I', kit / 'linux_e2e.py', roots['cain'], out / 'e2e'])
-producer = venv('producer-env')
-run('producer-install', [producer, '-m', 'pip', 'install', '--no-index', '--find-links', wheels,
-    'crypto-research-export==1.0.1', 'predictor-research-bundle==1.0.0'])
-run('producer-test-tools', [producer, '-m', 'pip', 'install', 'pytest>=8,<10'])
-run('producer-pip-check', [producer, '-m', 'pip', 'check'])
-run('crypto-tests', [producer, '-m', 'pytest', '-o', 'pythonpath=', roots['crypto'] / 'packages/research-export/tests',
-    '-q', '--junitxml=' + str(out / 'crypto.xml')], cwd=roots['crypto'])
-for name, pattern in [('brasileirao', 'test_export_cain*.py'), ('stocks', 'test_*cain*.py')]:
-    run(name + '-tests', [producer, '-m', 'unittest', 'discover', '-s', 'tools', '-p', pattern, '-v'], cwd=roots[name])
+if integrated:
+    producer = venv('producer-env')
+    run('producer-install', [producer, '-m', 'pip', 'install', '--no-index', '--find-links', wheels,
+        'crypto-research-export==1.0.1', 'predictor-research-bundle==1.0.0'])
+    run('producer-test-tools', [producer, '-m', 'pip', 'install', 'pytest>=8,<10'])
+    run('producer-pip-check', [producer, '-m', 'pip', 'check'])
+    run('crypto-tests', [producer, '-m', 'pytest', '-o', 'pythonpath=', roots['crypto'] / 'packages/research-export/tests',
+        '-q', '--junitxml=' + str(out / 'crypto.xml')], cwd=roots['crypto'])
+    for name, pattern in [('brasileirao', 'test_export_cain*.py'), ('stocks', 'test_*cain*.py')]:
+        run(name + '-tests', [producer, '-m', 'unittest', 'discover', '-s', 'tools', '-p', pattern, '-v'], cwd=roots[name])
+    run('real-reports', [receiver, kit / 'linux_real_export.py', a.roots, out / 'real-reports', producer, receiver])
 run('mini-audit', [receiver, '-m', 'pytest', '-o', 'pythonpath=', tests / 'test_bundle_remediation.py', kit / 'test_posix_gate.py',
     '-q', '--junitxml=' + str(out / 'mini-audit.xml')])
 (out / 'EXECUTION_COMPLETE.json').write_text(json.dumps(dict(candidate_id=manifest['candidate_id'],
-    execution='PASS_PREPARED_SUITES', REAL_PRODUCER_EXPORT_LINUX='NOT_EXECUTED', PYTHON_MATRIX='PARTIAL',
+    execution='PASS_PREPARED_SUITES', REAL_PRODUCER_EXPORT_LINUX='PASS_PUBLIC_SNAPSHOT_REPORTS' if integrated else 'NOT_APPLICABLE_STANDALONE', PYTHON_MATRIX='PASS_DECLARED_COMPONENT_SCOPE',
     STABILIZATION='NOT_DECIDED_REQUIRES_REVIEW', note='Review all results, remaining coverage and clean-sheet semantics; never auto-stabilize'), indent=2))
