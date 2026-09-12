@@ -1,0 +1,63 @@
+name: CAIN completion exact candidate
+on:
+  workflow_dispatch:
+  push:
+    branches: [validation/cain-supply-completion-20260912]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: repositories/cain
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/ecosystem-predictor
+          ref: a9f6594c840482419d6c310f373813e0e71f17d0
+          path: repositories/ecosystem
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/cripto-predictor
+          ref: 97d60222d14ff211bfd415fff374d0751d5ac235
+          path: repositories/crypto
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/brasileirao-predictor
+          ref: 5efb4716d4805e37e0aa09b09dcdc52022cae039
+          path: repositories/brasileirao
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/stocks-predictor
+          ref: a3d570fd33749ad62bdb4735bbc24b1ecd421e38
+          path: repositories/stocks
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Reconstruct preserved runtime candidate
+        run: python repositories/cain/.ci/completion/prepare_ci.py "$GITHUB_WORKSPACE/repositories" "$RUNNER_TEMP/cain-candidate"
+      - name: Linux gates
+        run: python repositories/cain/.ci/completion/run_linux.py --manifest repositories/cain/.ci/completion/CANDIDATE_MANIFEST.json --roots "$RUNNER_TEMP/cain-candidate/roots.json" --out "$RUNNER_TEMP/cain-linux-results"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cain-completion-${{ matrix.python }}
+          path: |
+            ${{ runner.temp }}/cain-linux-results/*.json
+            ${{ runner.temp }}/cain-linux-results/*.xml
+            ${{ runner.temp }}/cain-linux-results/*.stdout
+            ${{ runner.temp }}/cain-linux-results/*.stderr
+            ${{ runner.temp }}/cain-linux-results/*.exit
+            ${{ runner.temp }}/cain-linux-results/wheels/*.whl
+            ${{ runner.temp }}/cain-linux-results/e2e/evidence.json
