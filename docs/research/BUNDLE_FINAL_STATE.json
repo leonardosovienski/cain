@@ -1,0 +1,122 @@
+{
+  "cain": {
+    "root": "C:\\CAIN\\work\\research-bundle-v1",
+    "head": "823ed2c2dd959dba67892aa57316d5701b2092cc",
+    "branch": "feature/research-bundle-v1",
+    "changes": [
+      " M docs/research/BUNDLE_E2E.json",
+      " M docs/research/BUNDLE_REPORT.md",
+      "?? docs/research/BUNDLE_CI.json"
+    ]
+  },
+  "ecosystem": {
+    "root": "C:\\CAIN\\contrato",
+    "head": "8586bd58303cbce629498e3243bff5cca951ce87",
+    "branch": "feature/research-bundle-v1",
+    "changes": []
+  },
+  "crypto": {
+    "root": "C:\\CRIPTO\\pesquisa-20260909",
+    "head": "525203fe60b51923cba04ffd97a85c370d7ea15f",
+    "branch": "validation/retest-six-20260911",
+    "changes": []
+  },
+  "brasileirao": {
+    "root": "C:\\BRASILEIRAO\\brasileirao-predictor",
+    "head": "339b5536e0fdc98cead99c01b8f6dac7aaa22877",
+    "branch": "publication-validation-architecture-20260911",
+    "changes": []
+  },
+  "stocks": {
+    "root": "C:\\STOCKS\\stocks-predictor",
+    "head": "d94e7321ab64d04f3901bb39f2ad90814b328e17",
+    "branch": "validation/retest-six-20260911",
+    "changes": []
+  },
+  "core": {
+    "root": "C:\\PREDICTORS\\core-predictor",
+    "head": "de79cc19914b70bd8a8fa74a6e49b4ea192c1f91",
+    "branch": "validation/retest-six-20260911",
+    "changes": []
+  },
+  "ops": {
+    "root": "C:\\PREDICTORS\\predictor-ops",
+    "head": "0aa803fcaf0656061d9e251a85cbf0cf55071066",
+    "branch": "validation/retest-six-20260911",
+    "changes": []
+  },
+  "wheels": {
+    "C:\\CAIN\\work\\bundle-validation\\completion-wheels\\cain_research-0.4.7-py3-none-any.whl": "4b38471a021533d4e67991340c0c9e78cae6e996d8bc1ead6dcb7fc868301215",
+    "C:\\CAIN\\work\\bundle-validation\\completion-wheels\\predictor_research_bundle-1.0.0-py3-none-any.whl": "01898de5f42d6eec2923ef611b0a9f6f24d89013e1e231ede0a158fa8d4d51a2"
+  },
+  "matrix": {
+    "3.11": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "2",
+      "tests": "540",
+      "time": "94.105",
+      "timestamp": "2026-09-11T23:33:27.339566-03:00",
+      "hostname": "Leo",
+      "optional_vision_followup": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "1",
+        "time": "3.673",
+        "timestamp": "2026-09-11T23:37:03.338015-03:00",
+        "hostname": "Leo"
+      }
+    },
+    "3.12": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "1",
+      "tests": "540",
+      "time": "93.643",
+      "timestamp": "2026-09-11T23:36:42.396747-03:00",
+      "hostname": "Leo"
+    },
+    "3.13": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "1",
+      "tests": "540",
+      "time": "94.440",
+      "timestamp": "2026-09-11T23:36:44.116012-03:00",
+      "hostname": "Leo"
+    },
+    "3.14": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "2",
+      "tests": "540",
+      "time": "92.874",
+      "timestamp": "2026-09-11T23:33:27.697997-03:00",
+      "hostname": "Leo",
+      "optional_vision_followup": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "1",
+        "time": "3.261",
+        "timestamp": "2026-09-11T23:37:06.062489-03:00",
+        "hostname": "Leo"
+      }
+    }
+  },
+  "capture_scope": "Captured after code commits and green Linux CI, before this documentation-only commit. CAIN code HEAD is 823ed2c; final branch HEAD is verified separately.",
+  "windows_posix_fix_followup": {
+    "passed": 95,
+    "failed": 0,
+    "contract_tests": 60,
+    "cain_bundle_tests": 35
+  },
+  "linux_ci_evidence": "BUNDLE_CI.json"
+}

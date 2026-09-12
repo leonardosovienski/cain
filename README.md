@@ -1,11 +1,35 @@
 # Cain 0.4.7 — conversa, memória e pesquisa local L0
 
+## Retomada após o diagnóstico de partida — 12/09/2026
+
+Leia primeiro [o diagnóstico, as evidências e o próximo caso](docs/supply/DIAGNOSTICO_PARTIDA_20260912.md). Diagnóstico encerrado; verificação de H4 pela interface ainda não executada. A branch de entrega é `validation/cain-supply-completion-20260912`; a instalação principal permanece separada. Este é o próximo trabalho recomendado; as instruções de execução das rodadas anteriores abaixo são históricas.
+
+
+<!-- SUPPLY-GIT-DELIVERY-20260912 -->
+**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
+<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+
+
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
+**Atualização operacional autorizada:** a revisão foi instalada e publicada na branch
+`review/individual-models-20260911`. Leia [o recibo de instalação](docs/research/INSTALACAO_REVISAO_20260911.md).
+As afirmações de não instalação abaixo descrevem a etapa anterior à autorização.
+
 Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_047.md).
 Os resultados de versões anteriores abaixo são históricos.
 
 Esta branch contém a [validação individual de modelos e relatos de pesquisa](docs/research/TESTES_INDIVIDUAIS_20260911.md)
 e correções isoladas. Os testes não substituíram a instalação principal nem
 estabeleceram confiabilidade da interpretação livre dos modelos.
+
+A revisão deste chat está em [Revisão independente](docs/research/REVISAO_INDEPENDENTE_20260911.md),
+na branch `review/individual-models-20260911`. Ela separa defeitos herdados,
+regressões da entrega anterior e erros dos modelos. Não houve merge nem instalação
+operacional dessa revisão; os relatórios anteriores permanecem como histórico.
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.

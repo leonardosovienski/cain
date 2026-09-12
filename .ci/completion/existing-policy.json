@@ -1,0 +1,112 @@
+{
+  "grants": [
+    {
+      "collection": "crypto",
+      "domain": "crypto",
+      "generate": true,
+      "policies": [
+        "crypto-frozen-reports-local/1"
+      ],
+      "project": "",
+      "publisher": "crypto-local",
+      "repository": "https://github.com/leonardosovienski/cripto-predictor",
+      "sources": [
+        "charters/scientific_state.json",
+        "docs/EVIDENCE_REGISTRY.md"
+      ],
+      "stream": "frozen-reports",
+      "user": "leo"
+    },
+    {
+      "collection": "heterogeneous",
+      "domain": "stocks",
+      "generate": true,
+      "policies": [
+        "public-report-local-example/1"
+      ],
+      "project": "",
+      "publisher": "local-document-curator",
+      "repository": "https://github.com/leonardosovienski/stocks-predictor",
+      "sources": [
+        "STOCKS_CURRENT_STATE.md"
+      ],
+      "stream": "compatibility-examples",
+      "user": "leo"
+    },
+    {
+      "collection": "heterogeneous",
+      "domain": "brasileirao",
+      "generate": true,
+      "policies": [
+        "public-report-local-example/1"
+      ],
+      "project": "",
+      "publisher": "local-document-curator",
+      "repository": "https://github.com/leonardosovienski/brasileirao-predictor",
+      "sources": [
+        "docs/EVIDENCE_REGISTRY.md"
+      ],
+      "stream": "compatibility-examples",
+      "user": "leo"
+    },
+    {
+      "user": "leo",
+      "project": "",
+      "collection": "stocks",
+      "domain": "stocks",
+      "repository": "https://github.com/leonardosovienski/stocks-predictor",
+      "publisher": "stocks-local",
+      "stream": "public-status-reports",
+      "sources": [
+        "STOCKS_CURRENT_STATE.md"
+      ],
+      "policies": [
+        "stocks-public-status-local/1"
+      ],
+      "generate": true
+    },
+    {
+      "user": "leo",
+      "project": "",
+      "collection": "brasileirao",
+      "domain": "brasileirao",
+      "repository": "https://github.com/leonardosovienski/brasileirao-predictor",
+      "publisher": "brasileirao-local",
+      "stream": "public-status-reports",
+      "sources": [
+        "docs/EVIDENCE_REGISTRY.md"
+      ],
+      "policies": [
+        "brasileirao-public-status-local/1"
+      ],
+      "generate": true
+    }
+  ],
+  "version": 2,
+  "imports": [
+    {
+      "user": "leo",
+      "project": "",
+      "collection": "crypto",
+      "root": "C:\\Cripto\\cain-l0\\publications"
+    },
+    {
+      "user": "leo",
+      "project": "",
+      "collection": "heterogeneous",
+      "root": "C:\\Cripto\\cain-l0\\publications"
+    },
+    {
+      "user": "leo",
+      "project": "",
+      "collection": "stocks",
+      "root": "C:\\STOCKS\\work\\cain-l0\\publications"
+    },
+    {
+      "user": "leo",
+      "project": "",
+      "collection": "brasileirao",
+      "root": "C:\\BRASILEIRAO\\work\\cain-l0\\publications"
+    }
+  ]
+}

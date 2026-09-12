@@ -1,5 +1,23 @@
 # Índice documental do Cain
 
+## Retomada após o diagnóstico de partida — 12/09/2026
+
+Leia primeiro [o diagnóstico, as evidências e o próximo caso](supply/DIAGNOSTICO_PARTIDA_20260912.md). Diagnóstico encerrado; verificação de H4 pela interface ainda não executada. A branch de entrega é `validation/cain-supply-completion-20260912`; a instalação principal permanece separada. Este é o próximo trabalho recomendado; as instruções de execução das rodadas anteriores abaixo são históricas.
+
+
+<!-- SUPPLY-GIT-DELIVERY-20260912 -->
+**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
+<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+
+
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](../PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
+[Remediação local CAIN Supply F01–F10, E2E e mini-auditoria](research/BUNDLE_REMEDIATION.md).
+Esta rodada não declara estabilização; a CI Linux anterior não cobre suas alterações.
+
 ## Estado operacional atual
 
 [Entrega 0.4.7: streaming, visão, busca, extração, debate, workflows e MCP](DELIVERY_047.md).

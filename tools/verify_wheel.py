@@ -28,13 +28,16 @@ from pathlib import Path
 import sys
 import cain
 import research_snapshot
+import research_bundle
 from cain.workspace import WorkspaceStore
 assert Path(cain.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
 assert Path(research_snapshot.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
+assert Path(research_bundle.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
 assert cain.__version__ == metadata.version("cain-research")
 for asset in ("index.html", "app.js", "style.css"):
     assert resources.files("cain").joinpath("web", asset).read_bytes()
 assert resources.files("research_snapshot").joinpath("contract.json").read_bytes()
+assert resources.files("research_bundle").joinpath("contract.json").read_bytes()
 store = WorkspaceStore("workspace.db")
 project = store.create_project("wheel-user", "Wheel check")["id"]
 store.add_document("wheel-user", project, "source.md", "Installed evidence")

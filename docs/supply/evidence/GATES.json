@@ -1,0 +1,54 @@
+{
+  "candidate": "d00bbc6fb910b3c51be6720d21012f4655258468adb7d7335451974929c58752",
+  "gates": {
+    "CANDIDATE_IDENTITY_STATUS": "PASS",
+    "LEGACY_COMPATIBILITY_STATUS": "PASS",
+    "CONTRACT_AND_PROFILE_STATUS": "PASS",
+    "WINDOWS_STATUS": "PASS",
+    "LINUX_STATUS": "PASS",
+    "PYTHON_MATRIX_STATUS": "PASS",
+    "F01_F10_STATUS_BY_PLATFORM": {
+      "Windows": "PASS within executed regression cases; symlink privilege case not executed here",
+      "Linux": "PASS within executed remediations and POSIX probes; required symlink executed; F09 documentation review is platform-neutral"
+    },
+    "INVENTORY_STATUS": "PARTIAL_JUSTIFIED",
+    "POPULATION_STATUS_BY_SOURCE_AND_CLASS": {
+      "brasileirao": "PARTIAL_JUSTIFIED",
+      "core": "PARTIAL_JUSTIFIED",
+      "crypto": "PARTIAL_JUSTIFIED",
+      "ecosystem": "PARTIAL_JUSTIFIED",
+      "ops": "PARTIAL_JUSTIFIED",
+      "stocks": "PARTIAL_JUSTIFIED"
+    },
+    "COVERAGE_STATUS": "PARTIAL_JUSTIFIED",
+    "DETERMINISTIC_QUERY_STATUS": "PASS",
+    "TEMPORAL_AND_LINEAGE_STATUS": "PASS",
+    "MODEL_UTILITY_STATUS": "INCONCLUSIVE",
+    "DERIVED_PIPELINE_STATUS": "PASS",
+    "DERIVED_BENEFIT_STATUS": "INCONCLUSIVE",
+    "SECURITY_AND_REVOCATION_STATUS": "PASS",
+    "BACKUP_RESTORE_OFFLINE_STATUS": "PASS",
+    "WHEEL_INSTALL_STATUS": "PASS",
+    "REMOTE_CI_STATUS": "PASS",
+    "INDEPENDENT_REVIEW_STATUS": "PASS",
+    "SCIENTIFIC_INTEGRITY_STATUS": "PASS",
+    "READY_FOR_FREEZE_REVIEW": "PASS",
+    "USER_PREVIEW_STATUS": "LIMITED_IN_STAGING"
+  },
+  "meaning": "Ready to review the bounded Supply engineering candidate, not administratively frozen, deployed or scientifically validated",
+  "matrix_scope": "CAIN/Bundle/Snapshot standalone 3.11\u20133.14; producer integration/export tools 3.13\u20133.14. Not the full economic runtimes or every OS/version Cartesian combination.",
+  "derived_scope": "Original six bundles retain generation restrictions. Three newly authorized documentation publications passed real structural comparison, restart/offline restore and revocation. Neutral count recovery is not demonstrated learning or generalization.",
+  "source_scope": "70 Bundle entities and 19 legacy record revisions are different units; not 89 experiments. Inventory covers tracked paths plus explicitly admitted publications, not all disks/databases.",
+  "scientific_integrity_evidence": "No scientific write command; original seven HEAD/status and selected hashes unchanged. No kernel-wide proof and no claim of zero protected reads during the earlier interrupted baseline scan.",
+  "model_scope": "Three real successful local generations, one timeout retained, one longer-timeout retry. Exact quotations passed; synthesis not certified. Stocks synthesis adds an unsupported individual interpretation.",
+  "linux_scope": "Real Bundle Crypto 20/BR 14/Stocks 2; Windows existing Stocks3 additionally contains an optional selection. No scientific backup uploaded to reproduce that optional real selection on Linux.",
+  "supplemental_real_derivation": {
+    "status": "PASS_BOUNDED_REAL_DOCUMENTATION",
+    "comparison": "NEUTRAL",
+    "identity": "3f3b34cf116201aea601459668b70480570fa9583575e727228e75fd0c2a8063",
+    "corpus": "33 previously admitted authored documents in three new publications",
+    "platform": "Windows only for this supplemental corpus",
+    "review": "closure-real-20260912/INDEPENDENT_REVIEW.md",
+    "default_enabled": false
+  }
+}

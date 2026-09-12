@@ -1,0 +1,17 @@
+{
+  "crypto": {
+    "GarimpoInvestimentos/trials.harness_attestation.json": true,
+    "GarimpoInvestimentos/trials.json": true,
+    "GarimpoInvestimentos/trials.phase1_harness_attestation.json": true,
+    "charters/scientific_state.json": true
+  },
+  "brasileirao": {
+    "docs/EVIDENCE_REGISTRY.md": true,
+    "reports/replay_round_2026_08_22.json": true
+  },
+  "stocks": {
+    "docs/engineering/2026-09-11-architecture/evidence/real-v020.json": true,
+    "work/architecture-20260911/real-v020/backup/snapshot.sqlite": true
+  },
+  "contract_wheel_matches_source": true
+}

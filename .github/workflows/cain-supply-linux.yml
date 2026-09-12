@@ -1,0 +1,71 @@
+name: CAIN Supply Linux gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/research-bundle-v1]
+    paths:
+      - '.ci/cain-supply/**'
+      - '.github/workflows/cain-supply-linux.yml'
+permissions:
+  contents: read
+jobs:
+  frozen-candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: repositories/cain
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/ecosystem-predictor
+          ref: 0dd0d5f7515238ed0f2bc88f27a3d569a57dbbb5
+          path: repositories/ecosystem
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/cripto-predictor
+          ref: aeb1b779703def8e3b188e05cde0e7fbfc4552f1
+          path: repositories/crypto
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/brasileirao-predictor
+          ref: 09821c4596f9d5cf92c6568028402bdb5e287862
+          path: repositories/brasileirao
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: leonardosovienski/stocks-predictor
+          ref: 492a3321efb2a1bfe1c7e3e784016661fad08442
+          path: repositories/stocks
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Reconstruct exact frozen candidate
+        run: python repositories/cain/.ci/cain-supply/prepare_ci.py "$GITHUB_WORKSPACE/repositories" "$RUNNER_TEMP/cain-candidate"
+      - name: Security first, installed distributions, E2E and adversarial tests
+        run: >-
+          python repositories/cain/.ci/cain-supply/run_linux.py
+          --manifest repositories/cain/.ci/cain-supply/CANDIDATE_MANIFEST.json
+          --roots "$RUNNER_TEMP/cain-candidate/roots.json"
+          --out "$RUNNER_TEMP/cain-linux-results"
+      - name: Preserve evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cain-supply-linux-${{ matrix.python }}
+          path: |
+            ${{ runner.temp }}/cain-linux-results/*.json
+            ${{ runner.temp }}/cain-linux-results/*.xml
+            ${{ runner.temp }}/cain-linux-results/*.stdout
+            ${{ runner.temp }}/cain-linux-results/*.stderr
+            ${{ runner.temp }}/cain-linux-results/*.exit
+            ${{ runner.temp }}/cain-linux-results/e2e/evidence.json
+            ${{ runner.temp }}/cain-linux-results/wheels/*.whl

@@ -20,7 +20,8 @@ def installed_identity() -> dict:
     except metadata.PackageNotFoundError:
         version = None
     dependencies = {}
-    for package, distribution in (('research_snapshot', 'predictor-research-snapshot'),):
+    for package, distribution in (('research_bundle', 'predictor-research-bundle'),
+                                  ('research_snapshot', 'predictor-research-snapshot')):
         try:
             dependency_root = Path(str(resources.files(package)))
             dependencies[package] = dict(version=metadata.version(distribution), files={
