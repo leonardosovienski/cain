@@ -39,6 +39,38 @@ class InspectionRequest(BaseModel):
     after: str | None = Field(default=None, min_length=1, max_length=500)
 
 
+class BundleRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    user_id: str = Field(default="leo", min_length=1, max_length=200)
+    project_id: str | None = Field(default=None, max_length=200)
+    collection: str = Field(default="crypto", min_length=1, max_length=200)
+    entity_id: str | None = Field(default=None, max_length=500)
+    revision: str | None = Field(default=None, max_length=500)
+    bundle_id: str | None = Field(default=None, max_length=64)
+    artifact_id: str | None = Field(default=None, max_length=500)
+    relation_type: str | None = Field(default=None, max_length=500)
+    entity_type: str | None = Field(default=None, max_length=500)
+    domain: str | None = Field(default=None, max_length=500)
+    status: str | None = Field(default=None, max_length=500)
+    limit: int = Field(default=20, ge=1, le=50)
+    offset: int = Field(default=0, ge=0, le=100000)
+
+
+class BundleEntityRequest(BundleRequest):
+    bundle_id: str = Field(min_length=64, max_length=64)
+    entity_id: str = Field(min_length=1, max_length=500)
+    revision: str = Field(min_length=1, max_length=500)
+
+
+class BundleArtifactRequest(BundleRequest):
+    bundle_id: str = Field(min_length=64, max_length=64)
+    artifact_id: str = Field(min_length=1, max_length=500)
+
+
+class BundleExplainRequest(BundleRequest):
+    question: str = Field(min_length=1, max_length=1000)
+
+
 def mount(
     app,
     storage_path,
@@ -69,6 +101,59 @@ def mount(
 
     from cain.research.agent_api import mount as mount_agent_tools
     mount_agent_tools(app, service, validate_context, provider_factory, generation_lock)
+
+    @app.post("/research/bundles/query")
+    def bundle_query(request: BundleRequest):
+        from cain.research.bundles import BundleService
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        scope = store.scope(request.user_id, request.project_id, request.collection)
+        filters = request.model_dump(exclude={"user_id", "project_id", "collection"})
+        return BundleService(store).query(scope, **filters)
+
+    @app.post("/research/bundles/entity")
+    def bundle_entity(request: BundleEntityRequest):
+        from cain.research.bundles import BundleService
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        return BundleService(store).entity(store.scope(request.user_id, request.project_id, request.collection),
+                                           request.bundle_id, request.entity_id, request.revision)
+
+    @app.post("/research/bundles/artifact")
+    def bundle_artifact(request: BundleArtifactRequest):
+        from cain.research.bundles import BundleService
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        return BundleService(store).artifact(store.scope(request.user_id, request.project_id, request.collection),
+                                             request.bundle_id, request.artifact_id)
+
+    @app.post("/research/bundles/artifacts")
+    def bundle_artifacts(request: BundleRequest):
+        result = bundle_query(request)
+        return {"artifacts": result["artifacts"], "total": result["artifact_total"]}
+
+    @app.post("/research/bundles/lineage")
+    def bundle_lineage(request: BundleRequest):
+        result = bundle_query(request)
+        return {"relations": result["relations"], "total": result["relation_total"]}
+
+    @app.post("/research/bundles/historian")
+    def bundle_context(request: BundleRequest):
+        from cain.research.historian import metadata_context
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        filters = request.model_dump(exclude={"user_id", "project_id", "collection"})
+        return metadata_context(store, store.scope(request.user_id, request.project_id, request.collection), **filters)
+
+    @app.post("/research/bundles/explain")
+    def bundle_explain(request: BundleExplainRequest):
+        from cain.research.historian import explain_metadata
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        filters = request.model_dump(exclude={"user_id", "project_id", "collection", "question"})
+        with generation_lock:
+            return explain_metadata(store, store.scope(request.user_id, request.project_id, request.collection),
+                                    request.question, provider_factory(), **filters)
 
     @app.post("/research/query")
     def query(request: ResearchRequest):

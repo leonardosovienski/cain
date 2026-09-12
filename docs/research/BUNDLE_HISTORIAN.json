@@ -1,0 +1,17 @@
+{
+  "crypto": {
+    "entities": 20,
+    "classification": "FACTUAL",
+    "artifact_content_included": false
+  },
+  "brasileirao": {
+    "entities": 14,
+    "classification": "FACTUAL",
+    "artifact_content_included": false
+  },
+  "stocks": {
+    "entities": 3,
+    "classification": "FACTUAL",
+    "artifact_content_included": false
+  }
+}

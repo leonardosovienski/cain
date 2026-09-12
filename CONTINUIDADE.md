@@ -1,5 +1,12 @@
 # Continuidade do Cain - 0.4.7
 
+## Candidato local ResearchBundleV1
+
+Leia [BUNDLE_REPORT](docs/research/BUNDLE_REPORT.md) e o baseline/ADR vinculados.
+Worktree `C:/CAIN/work/research-bundle-v1`, base `780b020`, sem instalação operacional
+ou publicação. Records/Objects/References/Lineage passaram no E2E de três recortes;
+as lacunas temporais, de dados e de matriz estão explicitadas. Preserve o acervo.
+
 **Atualização operacional autorizada:** a revisão foi instalada e publicada na branch
 `review/individual-models-20260911`. Leia [o recibo de instalação](docs/research/INSTALACAO_REVISAO_20260911.md).
 As afirmações de não instalação abaixo descrevem a etapa anterior à autorização.

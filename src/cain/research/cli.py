@@ -15,6 +15,34 @@ def register(sub):
     research.add_argument("--session")
     research.add_argument("--collection", default="crypto")
     commands = research.add_subparsers(dest="research_command", required=True)
+    bundle = commands.add_parser("bundle", help="Explicitly authorized records, resources and lineage")
+    bundle.add_argument("--objects", type=Path)
+    actions = bundle.add_subparsers(dest="bundle_command", required=True)
+    intake = actions.add_parser("import")
+    intake.add_argument("manifest", help="Safe relative bundle.json path under admitted root")
+    for action in ("query", "artifacts", "lineage", "historian"):
+        command = actions.add_parser(action)
+        command.add_argument("--entity-id")
+        command.add_argument("--entity-type")
+        for name in ("revision", "bundle-id", "artifact-id", "relation-type"):
+            command.add_argument("--" + name)
+        command.add_argument("--domain")
+        command.add_argument("--status")
+        command.add_argument("--limit", type=int, default=20)
+        command.add_argument("--offset", type=int, default=0)
+    for action in ("verify", "rebuild", "receipts", "orphans"):
+        actions.add_parser(action)
+    detail = actions.add_parser("entity")
+    detail.add_argument("bundle_id")
+    detail.add_argument("entity_id")
+    detail.add_argument("revision")
+    detail = actions.add_parser("artifact")
+    detail.add_argument("bundle_id")
+    detail.add_argument("artifact_id")
+    materialize = actions.add_parser("materialize")
+    materialize.add_argument("bundle_id")
+    materialize.add_argument("artifact_id")
+    materialize.add_argument("destination", type=Path)
     ingest = commands.add_parser("import", help="Publication path relative to trusted import_root")
     ingest.add_argument("publication")
     for name in ("query", "explain"):
@@ -82,6 +110,33 @@ def execute(args):
     service = ResearchService(args.db, args.policy)
     scope = service.scope(args.user, args.project, args.collection)
     cmd = args.research_command
+    if cmd == "bundle":
+        from cain.research.bundles import BundleService
+        bundles = BundleService(service, args.objects)
+        action = args.bundle_command
+        if action == "import":
+            return bundles.ingest(args.manifest, scope)
+        if action == "entity":
+            return bundles.entity(scope, args.bundle_id, args.entity_id, args.revision)
+        if action == "artifact":
+            return bundles.artifact(scope, args.bundle_id, args.artifact_id)
+        if action == "materialize":
+            return bundles.materialize(scope, args.bundle_id, args.artifact_id, args.destination)
+        if action in {"verify", "rebuild"}:
+            return bundles.verify(scope, rebuild=action == "rebuild")
+        if action == "receipts":
+            return bundles.receipts(scope)
+        if action == "orphans":
+            return bundles.orphan_report()
+        filters = {k: getattr(args, k) for k in ("entity_id", "entity_type", "revision", "bundle_id", "artifact_id", "relation_type", "domain", "status", "limit", "offset")}
+        if action == "historian":
+            from cain.research.historian import metadata_context
+            return metadata_context(service, scope, bundles=bundles, **filters)
+        result = bundles.query(scope, **filters)
+        if action in {"artifacts", "lineage"}:
+            field = "artifacts" if action == "artifacts" else "relations"
+            return {field: result[field], "total": result["artifact_total" if action == "artifacts" else "relation_total"]}
+        return result
     if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace", "abstain"}:
         from cain.research.analysis import search, entities
         from cain.research.workflows import Workflows

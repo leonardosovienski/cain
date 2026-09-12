@@ -8,7 +8,7 @@ version = "0.4.7"
 description = "Assistente experimental com identidade persistente e agentes locais"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["predictor-research-snapshot==1.0.0"]
+dependencies = ["predictor-research-snapshot==1.0.0", "predictor-research-bundle==1.0.0"]
 
 [project.optional-dependencies]
 api = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1"]

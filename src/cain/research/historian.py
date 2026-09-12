@@ -8,6 +8,32 @@ from urllib.parse import urlsplit
 from research_snapshot import canonical, digest, keys, loads
 
 PROMPT_VERSION = "historian-extractive/2"
+
+
+def metadata_context(service, scope, *, bundles=None, **filters):
+    """Factual bounded context; never opens objects or calls a model.
+
+    Not persisted, so every call re-evaluates current source authorization.
+    The existing extractive explanation workflow remains SnapshotV1 compatible.
+    """
+    from cain.research.bundles import BundleService
+
+    result = (bundles or BundleService(service)).query(scope, **filters)
+    snapshots = service.query(
+        scope, limit=filters.get("limit", 20), offset=filters.get("offset", 0)
+    )
+    context = dict(
+        classification="FACTUAL",
+        snapshots=snapshots,
+        bundles=result,
+        artifact_content_included=False,
+        derived=[],
+    )
+    if len(canonical(context)) > 100_000:
+        raise ValueError("Historian context exceeds 100000 bytes; filter explicitly")
+    return context
+
+
 OUTPUT_SCHEMA = {
     "type": "object",
     "additionalProperties": False,
@@ -106,7 +132,9 @@ def _explain(service, scope, question, provider, **filters):
             schema = deepcopy(OUTPUT_SCHEMA)
             # Copying long hashes is fragile in small models. Constrain the choice
             # to admitted references; still resolve and validate every quote below.
-            schema["properties"]["claims"]["items"]["properties"]["evidence_id"]["enum"] = list(evidence)
+            schema["properties"]["claims"]["items"]["properties"]["evidence_id"]["enum"] = list(
+                evidence
+            )
             raw = provider.generate_json(prompt, INSTRUCTION, schema)
         else:
             raw = provider.generate(prompt, context=INSTRUCTION)
@@ -189,3 +217,113 @@ def _explain(service, scope, question, provider, **filters):
                 "measured": getattr(provider, "last_metadata", {}),
             },
         }
+
+
+def explain_metadata(service, scope, question, provider, **filters):
+    """Opt-in, bounded extractive explanation; ephemeral and never a source record.
+
+    Only receiver AND producer generation permissions admit records. No object
+    reads, history writes or replay cache; every invocation reauthorizes inputs.
+    """
+    from cain.research.bundles import BundleService
+
+    if type(question) is not str or not question.strip() or len(question) > 1000:
+        raise ValueError("Question limit: 1000 characters")
+    if hasattr(provider, "base_url"):
+        parts = urlsplit(provider.base_url)
+        if parts.scheme != "http" or parts.hostname not in {"127.0.0.1", "localhost", "::1"}:
+            raise ValueError("L0 only permits explicitly configured local providers")
+    bundles = BundleService(service)
+
+    def admitted():
+        result = bundles.query(scope, generate=True, **filters)
+        refs = {}
+        for entity in result["entities"]:
+            refs["entity:" + entity["id"]] = canonical(entity).decode()
+        for relation in result["relations"]:
+            refs["relation:" + relation["bundle_id"] + ":" + relation["relation_id"]] = canonical(
+                relation
+            ).decode()
+        snapshots = service.query(
+            scope,
+            generate=True,
+            limit=filters.get("limit", 20),
+            offset=filters.get("offset", 0),
+            domain=filters.get("domain"),
+        )
+        for record in snapshots["records"]:
+            for item in record["evidence"]:
+                if item["availability"] == "received":
+                    refs["snapshot:" + item["reference_id"]] = item["text"]
+        return refs
+
+    evidence = admitted()
+    facts = metadata_context(service, scope, **filters)
+    if not evidence:
+        return dict(
+            facts=facts, derived=[], status="abstained_not_admitted_for_generation", persisted=False
+        )
+    prompt = canonical(dict(question=question, evidence=evidence)).decode()
+    if len((INSTRUCTION + prompt).encode()) > 20_000:
+        raise ValueError("Explanation exceeds 20000 input bytes; filter explicitly")
+    try:
+        if callable(getattr(provider, "generate_json", None)):
+            schema = deepcopy(OUTPUT_SCHEMA)
+            schema["properties"]["claims"]["items"]["properties"]["evidence_id"]["enum"] = list(
+                evidence
+            )
+            raw = provider.generate_json(prompt, INSTRUCTION, schema)
+        else:
+            raw = provider.generate(prompt, context=INSTRUCTION)
+        if type(raw) is not str or len(raw.encode()) > 6000:
+            raise ValueError("Invalid response")
+        response = loads(raw.encode())
+        keys(response, "claims synthesis")
+        if type(response["claims"]) is not list or len(response["claims"]) > 10:
+            raise ValueError("Invalid claims")
+        if type(response["synthesis"]) is not str or len(response["synthesis"]) > 2000:
+            raise ValueError("Invalid synthesis")
+        if response["synthesis"] and not response["claims"]:
+            raise ValueError("Unsupported synthesis")
+        quotes = []
+        for claim in response["claims"]:
+            keys(claim, "evidence_id quote")
+            ref, quote = claim["evidence_id"], claim["quote"]
+            if (
+                type(ref) is not str
+                or ref not in evidence
+                or type(quote) is not str
+                or not quote.strip()
+                or len(quote) > 1500
+                or quote not in evidence[ref]
+            ):
+                raise ValueError("Unsupported citation")
+            quotes.append(dict(classification="FACTUAL", **claim))
+        # Compare all supplied input, not just cited items: synthesis may depend on any item.
+        if admitted() != evidence:
+            raise PermissionError("Generation permission changed")
+        return dict(
+            facts=metadata_context(service, scope, **filters),
+            source_quotes=quotes,
+            derived=[
+                dict(
+                    classification="DERIVED",
+                    text=response["synthesis"],
+                    semantic_support="not_certified",
+                )
+            ]
+            if response["synthesis"]
+            else [],
+            status="generated",
+            artifact_content_included=False,
+            persisted=False,
+        )
+    except (ValueError, RuntimeError, OSError, TypeError):
+        # Never expose provider error strings, stale facts or partially generated output.
+        return dict(
+            facts=metadata_context(service, scope, **filters),
+            derived=[],
+            status="generation_failed",
+            error_code="GENERATION_REJECTED",
+            persisted=False,
+        )
