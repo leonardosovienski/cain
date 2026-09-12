@@ -2,6 +2,7 @@
 import json
 import re
 import unicodedata
+from research_snapshot import digest
 
 VERSION = 'literal-json-field-review/1'
 ALIASES = {
@@ -18,6 +19,23 @@ KEYS = {
     'sample': {'sample', 'sample_size', 'amostra', 'tamanho_da_amostra'},
 }
 IDENTITY_MAPS = {'hypotheses': 'state', 'hypothesis_trials': 'trial'}
+
+
+def resolve_reply(service, scope, excerpts, reply):
+    """Resolve exact source versions; caller must guard its full policy snapshot."""
+    resolved = []
+    for key, entry in excerpts.items():
+        source = service.evidence(scope, entry['reference'])
+        if (digest(source['text'].encode()) != entry['source_sha256']
+                or source['text'][entry['start']:entry['end']] != entry['quote']):
+            raise ValueError('Source excerpt changed')
+        resolved.append({'excerpt_id': key, 'evidence_id': entry['reference'], 'quote': entry['quote'],
+                         'start': entry['start'], 'end': entry['end'], 'support': source})
+    return {'source_quotes': resolved, 'proposed_synthesis': reply['text'],
+            'fields': reply['fields'], 'semantic_support': 'literal_field_values_only',
+            'answer_mode': 'literal_fields',
+            'verification': {'method': reply['method'], 'selected_ids': reply['selected_ids'],
+                             'interpretation_verified': False}}
 
 
 def normalize(text):

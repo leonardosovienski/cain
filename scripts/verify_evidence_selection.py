@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 import sqlite3
 import sys
+import os
+from threading import Timer
 
 from cain.research import ResearchService
 from cain.research.analysis import fingerprint, guard
@@ -18,6 +20,15 @@ from research_snapshot import canonical, digest
 
 class NoInference:
     model = 'deterministic-no-inference'
+
+
+def implementation_identity():
+    import cain.research.grounding as grounding
+    import cain.research.workflows as workflows
+    import cain.research.analysis as analysis
+    import cain.research.field_review as field_review
+    return digest(canonical([digest(Path(p).read_bytes()) for p in
+                             (__file__, grounding.__file__, workflows.__file__, analysis.__file__, field_review.__file__)]))
 
 
 def offline_boundary(root):
@@ -40,10 +51,12 @@ def run(args):
     if args.phase == 'start':
         if not args.database or not args.policy or not args.identity or not args.pointer:
             raise ValueError('Start requires database, policy, identity and expected JSON pointers')
+        if Path(args.database).stat().st_size > 128 * 1024 * 1024:
+            raise ValueError('Input database exceeds the 128 MiB procedure limit')
         root.mkdir(parents=True, exist_ok=False)
         with sqlite3.connect(Path(args.database).resolve().as_uri() + '?mode=ro', uri=True) as src, sqlite3.connect(root/'research.db') as target:
             src.backup(target)
-        manifest = {'protocol': 'selection-comparison/2', 'implementation_sha256': digest(Path(__file__).read_bytes()), 'identity': args.identity,
+        manifest = {'protocol': 'selection-comparison/3', 'implementation_sha256': implementation_identity(), 'identity': args.identity,
                     'pointers': args.pointer, 'policy': str(Path(args.policy).resolve()),
                     'policy_sha256': digest(Path(args.policy).read_bytes()),
                     'source_database': str(Path(args.database).resolve()),
@@ -52,7 +65,7 @@ def run(args):
         (root/'task.json').write_bytes(canonical(manifest))
     else:
         manifest = json.loads((root/'task.json').read_bytes())
-    if manifest.get('implementation_sha256') != digest(Path(__file__).read_bytes()):
+    if manifest.get('implementation_sha256') != implementation_identity():
         raise ValueError('Procedure implementation changed; preserve receipt and start a new task')
     offline_boundary(root)
     if digest(Path(manifest['policy']).read_bytes()) != manifest['policy_sha256']:
@@ -72,6 +85,11 @@ def run(args):
     if job['status'] == 'cancelled':
         raise ValueError('Cancelled task cannot be resumed')
     if (root/'verification.json').exists():
+        previous = (root/'verification.json').read_bytes()
+        if not json.loads(previous).get('verified'):
+            raise ValueError('Previous verification failed; no successful receipt exists')
+        if not (root/'verification.sha256').exists() or (root/'verification.sha256').read_text() != digest(previous):
+            raise ValueError('Verification receipt changed or is incomplete')
         print('Verified receipt already exists; no effect repeated.')
         return
     job = jobs.advance(scope, job['id'], NoInference())
@@ -110,11 +128,20 @@ def run(args):
     for row in selected.values():
         if evidence[row['reference']]['text'][row['start']:row['end']] != row['quote']:
             raise ValueError('Nonliteral selection')
-    selected_keys = {(row['reference'], row.get('json_pointer')) for row in selected.values()}
+    selected_keys = set()
+    for row in selected.values():
+        key = (row['reference'], row.get('json_pointer'))
+        if key not in expected:
+            continue
+        decoded = json.loads('{' + row['quote'] + '}')
+        leaf = key[1].split('/')[-1].replace('~1', '/').replace('~0', '~')
+        if len(decoded) != 1 or leaf not in decoded or canonical(decoded[leaf]) != canonical(expected[key]):
+            raise ValueError('Selected field differs from independent JSON pointer lookup')
+        selected_keys.add(key)
     compact_keys = {(row['reference'], row.get('json_pointer')) for row in compact['relations']}
     verified = all(key in selected_keys for key in expected)
     guard(service, scope, snapshot)
-    report = {'procedure': 'selection-comparison/2', 'verified': verified,
+    report = {'procedure': 'selection-comparison/3', 'verified': verified,
               'expected_fields': len(expected), 'selected_expected_fields': sum(k in selected_keys for k in expected),
               'compact_expected_fields': sum(k in compact_keys for k in expected),
               'units': 'literal JSON fields, not semantic claims', 'selected': selected,
@@ -122,12 +149,16 @@ def run(args):
               'identical_source_references': duplicates,
               'model_calls': 0, 'semantic_support': 'not_evaluated', 'network': 'blocked_by_python_audit_hook'}
     (root/'verification.json').write_bytes(canonical(report))
+    (root/'verification.sha256').write_text(digest(canonical(report)))
     if not verified:
         raise ValueError('Required fields missing; procedure remains unverified for this case')
     print('Verified exact fields:', len(expected), '; no inference.')
 
 
 if __name__ == '__main__':
+    deadline = Timer(30, lambda: os._exit(124))
+    deadline.daemon = True
+    deadline.start()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('phase', choices=['start', 'resume'])
     parser.add_argument('--output', required=True)

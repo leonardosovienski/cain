@@ -9,7 +9,7 @@ from research_snapshot import canonical, digest, keys, loads
 from cain.llm.streaming import require_local
 from cain.research.grounding import structured, cards
 from cain.research.inspection import inspect
-from cain.research.field_review import field_reply
+from cain.research.field_review import field_reply, resolve_reply
 
 
 def fingerprint(service, scope):
@@ -185,20 +185,10 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                 "generation": {"called": False}, "model_calls": 0, "independent_models": False}
     literal = field_reply(excerpts, question, source_id) if role == 'support' else None
     if literal is not None:
-        resolved = []
-        for entry in excerpts.values():
-            source = service.evidence(scope, entry['reference'])
-            if (digest(source['text'].encode()) != entry['source_sha256']
-                    or source['text'][entry['start']:entry['end']] != entry['quote']):
-                raise ValueError('Source excerpt changed')
-            resolved.append({'evidence_id': entry['reference'], 'quote': entry['quote'],
-                             'start': entry['start'], 'end': entry['end'], 'support': source})
+        explanation = resolve_reply(service, scope, excerpts, literal)
         guard(service, scope, snapshot)
         return {'role': role, 'status': 'literal_fields', 'facts': facts,
-                'explanation': {'source_quotes': resolved, 'proposed_synthesis': literal['text'],
-                                'fields': literal['fields'], 'semantic_support': 'literal_field_values_only',
-                                'verification': {'method': literal['method'], 'selected_ids': literal['selected_ids'],
-                                                 'interpretation_verified': False}},
+                'explanation': explanation,
                 'generation': {'called': False}, 'model_calls': 0, 'coverage': coverage,
                 'independent_models': False, 'memory_promoted': False}
     payload = {"question": question, "role": roles[role],

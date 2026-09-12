@@ -483,7 +483,8 @@ function renderResearch(result) {
   if (result.generation) {
     const explanation = node('details');
     explanation.open = true;
-    const extractive = result.explanation?.answer_mode === 'source_excerpts';
+    const fields = result.explanation?.answer_mode === 'literal_fields';
+    const extractive = fields || result.explanation?.answer_mode === 'source_excerpts';
     const statusMessages = {
       abstained_no_received_evidence: 'Nenhuma evidência recebida para os filtros escolhidos. Confira a identidade da fonte e o acervo.',
       abstained_not_admitted_for_generation: 'As fontes encontradas não autorizam geração neste contexto.',
@@ -499,6 +500,7 @@ function renderResearch(result) {
     explanation.append(node('summary', statusMessages[result.status] ?? (extractive ? 'Explicação por trechos da fonte' : `Explicação opcional: ${result.status} · suporte semântico não certificado`)));
     if (errorMessages[result.error_code]) explanation.append(node('p', errorMessages[result.error_code]));
     if (extractive) {
+      if (fields) explanation.append(node('p', result.explanation.proposed_synthesis));
       for (const quote of result.explanation.source_quotes ?? []) {
         explanation.append(node('blockquote', quote.quote));
         explanation.append(node('small', `${quote.support?.source ?? ''} · ${quote.evidence_id}`));

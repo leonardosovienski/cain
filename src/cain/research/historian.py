@@ -6,6 +6,9 @@ from time import perf_counter
 from urllib.parse import urlsplit
 
 from research_snapshot import canonical, digest, keys, loads
+from cain.research.analysis import fingerprint, guard
+from cain.research.field_review import field_reply, requested_fields, resolve_reply
+from cain.research.grounding import cards
 
 PROMPT_VERSION = "historian-extractive/3"
 
@@ -119,6 +122,7 @@ def _explain(service, scope, question, provider, **filters):
         parts = urlsplit(provider.base_url)
         if parts.scheme != "http" or parts.hostname not in {"127.0.0.1", "localhost", "::1"}:
             raise ValueError("L0 only permits explicitly configured local providers")
+    snapshot = fingerprint(service, scope)
     result = service.query(scope, **filters)
     generation_result = service.query(scope, generate=True, **filters)
     evidence = {}
@@ -126,6 +130,18 @@ def _explain(service, scope, question, provider, **filters):
         for item in record["evidence"]:
             if item["availability"] == "received":
                 evidence[item["reference_id"]] = item
+    if requested_fields(question, filters.get('source_id')):
+        excerpts, coverage = cards(evidence, question, filters.get('source_id'))
+        coverage['retrieval'] = {'limit': generation_result['limit'],
+                                 'offset': generation_result['offset'],
+                                 'has_more': generation_result['has_more']}
+        literal = field_reply(excerpts, question, filters.get('source_id'))
+        if literal is not None:
+            explanation = resolve_reply(service, scope, excerpts, literal)
+            guard(service, scope, snapshot)
+            return {'status': 'literal_fields', 'facts': result, 'explanation': explanation,
+                    'coverage': coverage, 'generation': {'called': False,
+                    'prompt_version': 'historian-literal-fields/1'}, 'model_calls': 0}
     # Compact, request-local handles avoid spending the output budget copying hashes.
     # Public citations are restored to the full admitted reference after validation.
     references = {f"e{index}": ref for index, ref in enumerate(evidence, start=1)}
