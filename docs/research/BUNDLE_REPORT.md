@@ -1,10 +1,12 @@
 # ResearchBundleV1 — entrega consolidada
 
-Estado da missão integral: **PARTIAL — validação Linux pendente**. A implementação aditiva e os recortes admitidos
-estão executados e testados. A seleção real Stocks foi concluída em leitura, pelo DatasetSelection existente.
-Inputs exatos Crypto e prediction/settlement BR não são fabricados quando indisponíveis,
-conforme seções 42/45/62 do mandato. A pendência de execução é a validação Linux. Ausência de fonte/licença não foi convertida em aprovação.
-Candidato com commits locais revisáveis; sem push/release ou instalação operacional.
+Estado da missão: **PASS — escopo de engenharia implementado e validado**.
+Contrato, CAIN e exportadores dos três produtores estão entregues, com testes Windows,
+Linux Python 3.11–3.14 e E2E real limitado. As exceções previstas nas seções 42/45/62
+continuam explícitas: não fabricar inputs, prediction/settlement ou autorização de licença.
+CAIN e Ecosystem foram publicados somente nas branches feature/research-bundle-v1,
+com autorização expressa do usuário. Sem merge em main, release ou instalação operacional.
+Os três exportadores têm commits locais; sua publicação remota não integrou essa autorização.
 
 ## Implementação entregue
 
@@ -52,7 +54,7 @@ Core/Ops, bancos operacionais, coortes e hipóteses congeladas permanecem preser
 - [Historian factual no acervo restaurado](BUNDLE_HISTORIAN.json).
 - [Oito fontes byte-estáveis e wheel confrontado com código](BUNDLE_PRESERVATION.json).
 - Ambientes, scripts, logs e XMLs: C:/CAIN/work/bundle-validation.
-- Execução final: e2e-selection-installed/evidence.json; script e2e_selection_installed.py.
+- Execução final: e2e-ci-823ed2c-installed/evidence.json; script e2e_final_installed.py.
 
 | Matriz local | Resultado |
 |---|---|
@@ -62,16 +64,24 @@ Core/Ops, bancos operacionais, coortes e hipóteses congeladas permanecem preser
 | CAIN + contrato, Python 3.14 | 538 passed, 2 skipped; teste de imagem então executado: 1 passed |
 | Crypto exportador instalado | 11 unittests passed |
 | Brasileirão exportador/contrato instalado | 10 unittests passed |
-| Stocks exportador/contrato instalado | 9 unittests + 4 testes do seletor passed |
+| Stocks exportador/contrato instalado | 9 unittests + 5 testes do seletor passed |
 | Ruff | PASS |
 | Stocks índice/documentos | PASS; 1.677 arquivos, 152 Markdown, zero links atuais quebrados |
 
-São 482 testes CAIN e 57 de contrato aprovados por versão; não somar repetições como testes
+A matriz Windows anterior à correção POSIX teve 482 testes CAIN e 57 de contrato aprovados por versão; não somar repetições como testes
 únicos. O skip restante exige privilégio de symlink Windows; junction é testada. A primeira
 execução 3.11/3.14 falhou por ausência da dependência Snapshot no subprocesso MCP; instalaram-se
 os wheels declarados e a suíte foi repetida, sem mudar o teste para ocultar o erro.
 Testes legados Snapshot e compatibilidade com service.py original do HEAD 780b020 passaram.
-A matriz Linux foi configurada, mas não executada: WSL não instalado e Docker não disponível.
+A correção POSIX foi revalidada localmente: 35 testes Bundle CAIN + 60 testes de contrato,
+95 passed. A CI Linux final passou nas quatro versões 3.11/3.12/3.13/3.14:
+481 testes CAIN aprovados e dois skips exclusivos do launcher Windows por versão;
+60 testes do contrato aprovados por versão. Symlinks Linux e junction Windows foram exercitados.
+Cada job CAIN também construiu e instalou o wheel sem rede em venv limpo, fora do checkout.
+Os 11 jobs Ecosystem passaram, incluindo compatibilidade imutável, seis wheels e três plugins.
+Evidência com commits, jobs e trechos dos logs: [BUNDLE_CI.json](BUNDLE_CI.json).
+[CI CAIN](https://github.com/leonardosovienski/cain/actions/runs/34669681741) e
+[CI Ecosystem](https://github.com/leonardosovienski/ecosystem-predictor/actions/runs/34669660692).
 
 Testes de segurança incluem corrupção, truncamento, referências sem I/O, scope/roles/revogação,
 conflitos, concorrência, retry, staging e backup adulterado. Novos processos encerrados com
@@ -85,8 +95,7 @@ ENOSPC injetado limpou staging incompleto. Não equivale a corte físico de ener
 | Stocks | 3 | 6 | 0 | 3 | 0 |
 
 37 entidades, 62 relações, 23.573 bytes no CAS e SQLite de 532.480 bytes.
-Importação/query/verify medidos respectivamente: Crypto 393/26/103 ms; BR 83/20/47 ms;
-Stocks 57/23/15 ms. Medições locais concorrentes com testes, não benchmark econômico.
+Tempos por operação da execução final constam em BUNDLE_E2E.json; são medições locais de engenharia, não benchmark econômico.
 Todos passaram exportação, importação, duplicação, detalhe, linhagem, verificação, backup,
 restore, rebuild e consulta offline. Todos os objetos recebidos foram materializados;
 Stocks é NOT_APPLICABLE_REFERENCE_ONLY. Diretórios de transporte foram temporariamente
@@ -97,18 +106,18 @@ indisponibilizados, sem mover checkouts. Zero órfãos/staging ao final.
 | Status | Valor | Escopo/pendência |
 |---|---|---|
 | BASELINE_STATUS | PASS | baseline pertinente preservado |
-| CONTRACT_STATUS | PASS_LOCAL | 57 testes; Linux pendente |
+| CONTRACT_STATUS | PASS | 60 testes em Linux 3.11–3.14 e Windows |
 | SNAPSHOT_COMPATIBILITY_STATUS | PASS | pacote anterior intacto e leitor antigo executado |
-| CAIN_STORAGE_STATUS | PASS_LOCAL | CAS, falhas de processo, dedupe/retry |
-| CAIN_AUTH_STATUS | PASS_LOCAL | grants, scopes, roles e revogação |
-| CAIN_QUERY_STATUS | PASS_LOCAL | CLI/API/detalhe/linhagem/Historian |
-| CAIN_VERIFY_STATUS | PASS_LOCAL | raw/projeção/objetos/rebuild |
-| BACKUP_RESTORE_STATUS | PASS_LOCAL | v1/v2 e três recortes offline |
+| CAIN_STORAGE_STATUS | PASS | CAS, falhas de processo, dedupe/retry |
+| CAIN_AUTH_STATUS | PASS | grants, scopes, roles e revogação |
+| CAIN_QUERY_STATUS | PASS | CLI/API/detalhe/linhagem/Historian |
+| CAIN_VERIFY_STATUS | PASS | raw/projeção/objetos/rebuild |
+| BACKUP_RESTORE_STATUS | PASS | v1/v2 e três recortes offline |
 | CRYPTO_EXPORT_STATUS | PASS_BOUNDED | inputs exatos opcionais indisponíveis; preservada a limitação (§42) |
 | BRASILEIRAO_EXPORT_STATUS | PASS_BOUNDED | evento real e clocks; prediction/settlement indisponível conforme §45 |
 | STOCKS_EXPORT_STATUS | PASS_BOUNDED | DatasetSelection de exportação executada; materialização NOT_APPLICABLE por licença UNKNOWN (§48/62) |
 | E2E_STATUS | PASS_BOUNDED_ADMITTED_SLICES | três produtores com fontes reais e limites explícitos |
-| SECURITY_STATUS | PARTIAL | Windows testado; Linux e falha física não exercitados |
+| SECURITY_STATUS | PASS_TESTED_SCOPE | Windows/Linux; falhas de processo e ENOSPC injetadas; corte físico de energia não exercitado |
 | SCIENTIFIC_INTEGRITY_STATUS | PASS | fontes pinadas iguais; nenhuma reexecução |
 | EXTERNAL_DOC_REVALIDATION_STATUS | PASS | cinco fontes oficiais no ADR |
 
@@ -119,8 +128,8 @@ FROZEN_COHORTS_CHANGED=NO; SCIENTIFIC_STATE_MUTATED=NO.
 
 Ler este relatório e o ADR antes de retomar; verificar HEAD/status atuais. Próximos requisitos
 condicionais precisam de fontes admissíveis reais: manifesto preciso de inputs Crypto,
-registro temporal BR com observações selecionadas pelo PIT existente, recibo executado
-DatasetSelection Stocks e direito de redistribuição se houver bytes. Não executar nova
+registro temporal BR com observações selecionadas pelo PIT existente e direito de
+redistribuição se houver bytes. DatasetSelection Stocks de exportação já está executada. Não executar nova
 pesquisa para fabricar essas entradas. A regra do prompt para ausência de prediction/settlement
 foi preservada; UNKNOWN/licença não concedem autorização.
 
@@ -130,16 +139,19 @@ não publicar como releases oficiais. Bundle wheel/proveniência atualizados em 
 Rollback: abandonar o uso do candidato e manter instalação/política anterior; preservar raw,
 CAS e backups. Nenhuma exclusão destrutiva ou downgrade de backup com perda de objetos.
 
-## Fechamento condicionado ao Linux
+## Fechamento e limites explícitos
 
 Os casos não aplicáveis acima vêm expressamente do mandato, não de redução de critérios:
 §42 admite reference_only quando o input exato não é comprovável; §45 manda preservar
 inexistência de prediction/settlement admissível; §62 proíbe fabricar objeto recebido.
 São limitações de conhecimento/redistribuição, não autorização para pesquisa nova.
 
-Tentativa de Linux descartável com QEMU/Alpine: executáveis foram obtidos dos distribuidores
-oficiais, QEMU conferido por SHA512, mas a revisão automática bloqueou o comando de
-preparação/inicialização com "blocked by policy". Nenhuma VM ou servidor foi iniciado.
-Não foi tentado contornar o bloqueio. CI CAIN agora preserva e amplia a matriz 3.11–3.14,
-instala os contratos pelos wheels locais e busca histórico completo. Para executá-la,
-a publicação de branches de validação exige autorização conforme §72 do prompt.
+A alternativa local QEMU foi bloqueada pela revisão automática antes de iniciar VM/servidor.
+O bloqueio não foi contornado. Após autorização expressa do usuário, executou-se a CI GitHub.
+A primeira CI CAIN revelou apenas diferença no tipo da exceção para symlink POSIX;
+o contrato agora traduz ELOOP/ENOTDIR para UNSAFE_PATH preservando O_NOFOLLOW e erros não
+relacionados. A matriz completa passou após a correção, sem remoção de testes ou gates.
+
+Fontes científicas, bases operacionais, hipóteses congeladas e infraestrutura Core/Ops não
+foram modificadas. Estes resultados validam engenharia e transporte; não validam resultados
+econômicos, causalidade, PIT ausente ou a semântica de síntese gerada.

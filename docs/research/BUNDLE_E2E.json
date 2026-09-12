@@ -1,1 +1,168 @@
-{"cas_bytes":15010,"db_bytes":385024,"domains":{"brasileirao":{"import_seconds":0.03144160000374541,"lineage":6,"manifest_bytes":10766,"materialization_status":"PASS","materialized":[{"bytes":1825,"seconds":0.009539499995298684}],"offline_restore":"PASS","query_entities":3,"query_seconds":0.005156300001544878,"receipt":{"attempt_id":"49f7ead3-52cd-430a-9472-73aa8b73a410","bundle_id":"fed4196bc0df0ae34bb059e4f05a7b386389a5e477ad234b9bcab012ecb1b529","contract":"ResearchBundleV1","entities":3,"error":null,"raw_manifest_sha256":"ee0b287affd03f152bff6f84a163a3b9665caf0e4a4a84ce3d68bd6258fc5f8a","received_bytes":1825,"received_objects":1,"references":3,"resources":4,"status":"admitted"},"verified":{"bundles":1,"rebuilt":false,"status":"verified"},"verify_seconds":0.010717500001192093},"crypto":{"import_seconds":0.3002834999933839,"lineage":27,"manifest_bytes":75886,"materialization_status":"PASS","materialized":[{"bytes":1995,"seconds":0.02097500002128072},{"bytes":791,"seconds":0.017557299986947328},{"bytes":391,"seconds":0.023547900025732815},{"bytes":556,"seconds":0.025688499998068437},{"bytes":574,"seconds":0.03601770001114346},{"bytes":3180,"seconds":0.03146529998048209},{"bytes":1904,"seconds":0.056919599999673665},{"bytes":1239,"seconds":0.025956700003007427},{"bytes":1219,"seconds":0.02117649998399429},{"bytes":1336,"seconds":0.024177499988581985}],"offline_restore":"PASS","query_entities":18,"query_seconds":0.015526500006671995,"receipt":{"attempt_id":"133de8c6-8a84-4b2d-b0ab-25f168d51761","bundle_id":"027fcf65ac92998da4ae05354ac38ac019922b5545a662ea354e61cb4adb7e30","contract":"ResearchBundleV1","entities":18,"error":null,"raw_manifest_sha256":"90d5eb1c852fd29f6928a08468a213ed18b5ace655f4bfd250c86a907e3eb284","received_bytes":13185,"received_objects":10,"references":0,"resources":10,"status":"admitted"},"verified":{"bundles":1,"rebuilt":false,"status":"verified"},"verify_seconds":0.03484709997428581},"stocks":{"import_seconds":0.0228789999964647,"lineage":3,"manifest_bytes":7753,"materialization_status":"NOT_APPLICABLE_REFERENCE_ONLY","materialized":[],"offline_restore":"PASS","query_entities":2,"query_seconds":0.006154799979412928,"receipt":{"attempt_id":"a846e48c-0923-4f99-8df1-6360874f556e","bundle_id":"18e1e0a68e1913358736cd1bdade4e3c9bef3e610616daa45559aa911420f574","contract":"ResearchBundleV1","entities":2,"error":null,"raw_manifest_sha256":"99def6ce456ec937c4856350cbf23f06cdc296921272bce182c11628d9e14dc5","received_bytes":0,"received_objects":0,"references":2,"resources":2,"status":"admitted"},"verified":{"bundles":1,"rebuilt":false,"status":"verified"},"verify_seconds":0.0038434999878518283}},"limitations":["No frozen campaign run","Brasileirao prediction/settlement not admitted","Stocks catalog receipt is not a DatasetSelection execution receipt","No Stocks received bytes; licensing UNKNOWN","Fixed exported_at is a reproducibility transport label, not a scientific clock"],"modules":{"cain":"C:\\CAIN\\work\\bundle-validation\\wheel-env\\Lib\\site-packages\\cain\\__init__.py","contract":"C:\\CAIN\\work\\bundle-validation\\wheel-env\\Lib\\site-packages\\research_bundle\\__init__.py"},"orphans":{"destructive":false,"orphans":[],"temporary":[]},"status":"PASS_BOUNDED_ADMITTED_SLICES"}
+{
+  "cas_bytes": 23573,
+  "db_bytes": 532480,
+  "domains": {
+    "brasileirao": {
+      "import_seconds": 0.09539229999063537,
+      "lineage": 27,
+      "manifest_bytes": 44924,
+      "materialization_status": "PASS",
+      "materialized": [
+        {
+          "bytes": 1825,
+          "seconds": 0.05605299997841939
+        },
+        {
+          "bytes": 7448,
+          "seconds": 0.05107260000659153
+        }
+      ],
+      "offline_restore": "PASS",
+      "query_entities": 14,
+      "query_seconds": 0.028604899998754263,
+      "receipt": {
+        "attempt_id": "55eab600-6575-443b-b3c1-c41d02b5a6ba",
+        "bundle_id": "d565012f0d3fedfe226c5455f1c9258807968ce690dac665efcddb1332e8e894",
+        "contract": "ResearchBundleV1",
+        "entities": 14,
+        "error": null,
+        "raw_manifest_sha256": "65cf3c1113bef3f9762e60e55155cdc7bcc6f02cf8b86489018923c1e921225e",
+        "received_bytes": 9273,
+        "received_objects": 2,
+        "references": 3,
+        "resources": 5,
+        "status": "admitted"
+      },
+      "verified": {
+        "bundles": 1,
+        "rebuilt": false,
+        "status": "verified"
+      },
+      "verify_seconds": 0.045847400004277006
+    },
+    "crypto": {
+      "import_seconds": 0.36106589998234995,
+      "lineage": 29,
+      "manifest_bytes": 82049,
+      "materialization_status": "PASS",
+      "materialized": [
+        {
+          "bytes": 1995,
+          "seconds": 0.045512600016081706
+        },
+        {
+          "bytes": 525,
+          "seconds": 0.03523860001587309
+        },
+        {
+          "bytes": 590,
+          "seconds": 0.05861839998397045
+        },
+        {
+          "bytes": 791,
+          "seconds": 0.05676139998831786
+        },
+        {
+          "bytes": 391,
+          "seconds": 0.06070139998337254
+        },
+        {
+          "bytes": 556,
+          "seconds": 0.05507460000808351
+        },
+        {
+          "bytes": 574,
+          "seconds": 0.04928879998624325
+        },
+        {
+          "bytes": 3180,
+          "seconds": 0.048973900004057214
+        },
+        {
+          "bytes": 1904,
+          "seconds": 0.038260299974353984
+        },
+        {
+          "bytes": 1239,
+          "seconds": 0.04198239999823272
+        },
+        {
+          "bytes": 1219,
+          "seconds": 0.038155099988216534
+        },
+        {
+          "bytes": 1336,
+          "seconds": 0.0361863000143785
+        }
+      ],
+      "offline_restore": "PASS",
+      "query_entities": 20,
+      "query_seconds": 0.03306970000267029,
+      "receipt": {
+        "attempt_id": "09eff84d-b715-4e9b-b743-4fde88d5acf9",
+        "bundle_id": "0827c20cd19b2e7f4743f6de3e0a7a968627eeb9150f10bfc3992318792e4dc4",
+        "contract": "ResearchBundleV1",
+        "entities": 20,
+        "error": null,
+        "raw_manifest_sha256": "a8d41a5a36bc1b925d1e180e22116d80a221cbb887801650a8d3667505ac7e40",
+        "received_bytes": 14300,
+        "received_objects": 12,
+        "references": 0,
+        "resources": 12,
+        "status": "admitted"
+      },
+      "verified": {
+        "bundles": 1,
+        "rebuilt": false,
+        "status": "verified"
+      },
+      "verify_seconds": 0.07026219999534078
+    },
+    "stocks": {
+      "import_seconds": 0.058192100026644766,
+      "lineage": 6,
+      "manifest_bytes": 13418,
+      "materialization_status": "NOT_APPLICABLE_REFERENCE_ONLY",
+      "materialized": [],
+      "offline_restore": "PASS",
+      "query_entities": 3,
+      "query_seconds": 0.019860499975038692,
+      "receipt": {
+        "attempt_id": "905b30d7-8046-4413-9354-fe70251e3a02",
+        "bundle_id": "462221879f9c88c163748800699027ce3a0fb2dc6368e4624e33c8c209353c77",
+        "contract": "ResearchBundleV1",
+        "entities": 3,
+        "error": null,
+        "raw_manifest_sha256": "f303047fab5c9bdc4b9aee80794684f046f5cb771c7d2f5bbc036669d15dde85",
+        "received_bytes": 0,
+        "received_objects": 0,
+        "references": 3,
+        "resources": 3,
+        "status": "admitted"
+      },
+      "verified": {
+        "bundles": 1,
+        "rebuilt": false,
+        "status": "verified"
+      },
+      "verify_seconds": 0.017074500006856397
+    }
+  },
+  "limitations": [
+    "No frozen campaign run",
+    "Brasileirao prediction/settlement not admitted",
+    "Stocks selection is for this export, not a historical experiment input claim",
+    "No Stocks received bytes; licensing UNKNOWN",
+    "Fixed exported_at is a reproducibility transport label, not a scientific clock"
+  ],
+  "modules": {
+    "cain": "C:\\CAIN\\work\\bundle-validation\\wheel-env\\Lib\\site-packages\\cain\\__init__.py",
+    "contract": "C:\\CAIN\\work\\bundle-validation\\wheel-env\\Lib\\site-packages\\research_bundle\\__init__.py"
+  },
+  "orphans": {
+    "destructive": false,
+    "orphans": [],
+    "temporary": []
+  },
+  "status": "PASS_BOUNDED_ADMITTED_SLICES"
+}

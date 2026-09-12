@@ -1,0 +1,148 @@
+{
+  "cain": {
+    "commit": "823ed2c2dd959dba67892aa57316d5701b2092cc",
+    "run_id": 34669681741,
+    "url": "https://github.com/leonardosovienski/cain/actions/runs/34669681741"
+  },
+  "ecosystem": {
+    "commit": "8586bd58303cbce629498e3243bff5cca951ce87",
+    "run_id": 34669660692,
+    "url": "https://github.com/leonardosovienski/ecosystem-predictor/actions/runs/34669660692"
+  },
+  "matrix_evidence": [
+    {
+      "repository": "cain",
+      "job_id": 103488554654,
+      "name": "test (3.12)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:11:46.4495198Z 481 passed, 2 skipped, 2 warnings in 17.68s",
+        "2026-09-12T03:11:52.1239220Z {\"wheel\": \"cain_research-0.4.7-py3-none-any.whl\", \"verification\": \"passed\", \"installation\": \"offline noneditable clean venv\"}"
+      ]
+    },
+    {
+      "repository": "cain",
+      "job_id": 103488554736,
+      "name": "test (3.14)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:11:48.6533127Z 481 passed, 2 skipped, 2 warnings in 15.97s",
+        "2026-09-12T03:11:55.4370073Z {\"wheel\": \"cain_research-0.4.7-py3-none-any.whl\", \"verification\": \"passed\", \"installation\": \"offline noneditable clean venv\"}"
+      ]
+    },
+    {
+      "repository": "cain",
+      "job_id": 103488554768,
+      "name": "test (3.13)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:11:48.6795810Z 481 passed, 2 skipped, 2 warnings in 18.25s",
+        "2026-09-12T03:11:54.6729881Z {\"wheel\": \"cain_research-0.4.7-py3-none-any.whl\", \"verification\": \"passed\", \"installation\": \"offline noneditable clean venv\"}"
+      ]
+    },
+    {
+      "repository": "cain",
+      "job_id": 103488554794,
+      "name": "test (3.11)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:11:45.5794494Z 481 passed, 2 skipped, 2 warnings in 16.14s",
+        "2026-09-12T03:11:52.2832792Z {\"wheel\": \"cain_research-0.4.7-py3-none-any.whl\", \"verification\": \"passed\", \"installation\": \"offline noneditable clean venv\"}"
+      ]
+    },
+    {
+      "repository": "ecosystem-predictor",
+      "job_id": 103488492355,
+      "name": "research-bundle (3.13)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:10:57.3450214Z 60 passed in 0.26s"
+      ]
+    },
+    {
+      "repository": "ecosystem-predictor",
+      "job_id": 103488492358,
+      "name": "research-bundle (3.12)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:10:56.3593905Z 60 passed in 0.27s"
+      ]
+    },
+    {
+      "repository": "ecosystem-predictor",
+      "job_id": 103488492402,
+      "name": "research-bundle (3.14)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:10:58.1635380Z 60 passed in 0.27s"
+      ]
+    },
+    {
+      "repository": "ecosystem-predictor",
+      "job_id": 103488492415,
+      "name": "research-bundle (3.11)",
+      "conclusion": "success",
+      "evidence": [
+        "2026-09-12T03:10:56.6029947Z 60 passed in 0.25s"
+      ]
+    }
+  ],
+  "ecosystem_jobs": [
+    {
+      "name": "Seven-project immutable compatibility manifest",
+      "id": 103488492263,
+      "conclusion": "success"
+    },
+    {
+      "name": "Three real plugins installed together",
+      "id": 103488492335,
+      "conclusion": "success"
+    },
+    {
+      "name": "quality (3.13, false)",
+      "id": 103488492342,
+      "conclusion": "success"
+    },
+    {
+      "name": "research-bundle (3.13)",
+      "id": 103488492355,
+      "conclusion": "success"
+    },
+    {
+      "name": "research-bundle (3.12)",
+      "id": 103488492358,
+      "conclusion": "success"
+    },
+    {
+      "name": "Standalone exporter and snapshot contract",
+      "id": 103488492372,
+      "conclusion": "success"
+    },
+    {
+      "name": "quality (3.14, true)",
+      "id": 103488492383,
+      "conclusion": "success"
+    },
+    {
+      "name": "secrets",
+      "id": 103488492387,
+      "conclusion": "success"
+    },
+    {
+      "name": "Six published wheels with exact hashes",
+      "id": 103488492394,
+      "conclusion": "success"
+    },
+    {
+      "name": "research-bundle (3.14)",
+      "id": 103488492402,
+      "conclusion": "success"
+    },
+    {
+      "name": "research-bundle (3.11)",
+      "id": 103488492415,
+      "conclusion": "success"
+    }
+  ],
+  "authorization": "User explicitly authorized pushing the two feature/research-bundle-v1 branches and running Actions; no merge to main or release."
+}

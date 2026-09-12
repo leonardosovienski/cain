@@ -1,72 +1,37 @@
 {
   "cain": {
     "root": "C:\\CAIN\\work\\research-bundle-v1",
-    "head": "780b020540e67bd6c8268033c5a012cab207fcd1",
+    "head": "823ed2c2dd959dba67892aa57316d5701b2092cc",
     "branch": "feature/research-bundle-v1",
     "changes": [
-      " M CONTINUIDADE.md",
-      " A docs/adr/0020-research-bundles.md",
-      " A docs/research/BUNDLE_BASELINE.md",
-      " A docs/research/BUNDLE_E2E.json",
-      " A docs/research/BUNDLE_FINAL_STATE.json",
-      " A docs/research/BUNDLE_HISTORIAN.json",
-      " A docs/research/BUNDLE_PRESERVATION.json",
-      " A docs/research/BUNDLE_REPORT.md",
-      " M pyproject.toml",
-      " M src/cain/archive.py",
-      " M src/cain/research/api.py",
-      " A src/cain/research/bundle_backup.py",
-      " A src/cain/research/bundles.py",
-      " M src/cain/research/cli.py",
-      " M src/cain/research/historian.py",
-      " A src/cain/research/objects.py",
-      " M src/cain/research/service.py",
-      " A tests/test_research_bundle.py",
-      " M tools/verify_wheel.py",
-      " A vendor/bundle-provenance.json",
-      " A vendor/predictor_research_bundle-1.0.0-py3-none-any.whl"
+      " M docs/research/BUNDLE_E2E.json",
+      " M docs/research/BUNDLE_REPORT.md",
+      "?? docs/research/BUNDLE_CI.json"
     ]
   },
   "ecosystem": {
     "root": "C:\\CAIN\\contrato",
-    "head": "b01ebe1bb1d753e52e3362eb442b94e709a3de79",
+    "head": "8586bd58303cbce629498e3243bff5cca951ce87",
     "branch": "feature/research-bundle-v1",
     "changes": []
   },
   "crypto": {
     "root": "C:\\CRIPTO\\pesquisa-20260909",
-    "head": "2d53d4a79112642837eb0cff2f4942c0af0482c0",
+    "head": "525203fe60b51923cba04ffd97a85c370d7ea15f",
     "branch": "validation/retest-six-20260911",
-    "changes": [
-      "M HANDOFF.md",
-      " A docs/RESEARCH_BUNDLE_V1.md",
-      " M packages/research-export/pyproject.toml",
-      " A packages/research-export/src/crypto_research_export/bundle.py",
-      " A packages/research-export/tests/test_bundle.py"
-    ]
+    "changes": []
   },
   "brasileirao": {
     "root": "C:\\BRASILEIRAO\\brasileirao-predictor",
-    "head": "24bdb9d0403071f38cba087b16768f105b9964d7",
+    "head": "339b5536e0fdc98cead99c01b8f6dac7aaa22877",
     "branch": "publication-validation-architecture-20260911",
-    "changes": [
-      "M README.md",
-      " A docs/RESEARCH_BUNDLE_V1.md",
-      " A tools/export_cain_bundle.py",
-      " A tools/test_export_cain_bundle.py"
-    ]
+    "changes": []
   },
   "stocks": {
     "root": "C:\\STOCKS\\stocks-predictor",
-    "head": "bce4e2ad3681b71d2a7f67ad326228bf432726f7",
+    "head": "d94e7321ab64d04f3901bb39f2ad90814b328e17",
     "branch": "validation/retest-six-20260911",
-    "changes": [
-      "M HANDOFF.md",
-      " M docs/DOCUMENTATION_INDEX.md",
-      " A docs/RESEARCH_BUNDLE_V1.md",
-      " A tools/export_cain_bundle.py",
-      " A tools/test_export_cain_bundle.py"
-    ]
+    "changes": []
   },
   "core": {
     "root": "C:\\PREDICTORS\\core-predictor",
@@ -82,7 +47,7 @@
   },
   "wheels": {
     "C:\\CAIN\\work\\bundle-validation\\completion-wheels\\cain_research-0.4.7-py3-none-any.whl": "4b38471a021533d4e67991340c0c9e78cae6e996d8bc1ead6dcb7fc868301215",
-    "C:\\CAIN\\work\\bundle-validation\\completion-wheels\\predictor_research_bundle-1.0.0-py3-none-any.whl": "c3839b86c1803c59a61d381349fb1351d2ebbec5a8da2ed40f69b92abcd18cdf"
+    "C:\\CAIN\\work\\bundle-validation\\completion-wheels\\predictor_research_bundle-1.0.0-py3-none-any.whl": "01898de5f42d6eec2923ef611b0a9f6f24d89013e1e231ede0a158fa8d4d51a2"
   },
   "matrix": {
     "3.11": {
@@ -146,5 +111,12 @@
       }
     }
   },
-  "capture_scope": "Local state before publication; subsequent commits must be checked with Git"
+  "capture_scope": "Captured after code commits and green Linux CI, before this documentation-only commit. CAIN code HEAD is 823ed2c; final branch HEAD is verified separately.",
+  "windows_posix_fix_followup": {
+    "passed": 95,
+    "failed": 0,
+    "contract_tests": 60,
+    "cain_bundle_tests": 35
+  },
+  "linux_ci_evidence": "BUNDLE_CI.json"
 }
