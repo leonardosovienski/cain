@@ -35,7 +35,6 @@ A classificação não significa que o produto foi corrigido.
 
 O fail-fast impediu as etapas posteriores de E2E instalado, restore offline,
 testes dos produtores e mini-auditoria nesta execução dedicada. Não se atribui
-PASS a essas etapas com base em testes Windows anteriores. Os dois skips da
-suíte completa ainda exigem análise. Estabilização: NÃO APROVADA.
+PASS a essas etapas com base em testes Windows anteriores. Os dois skips 3.13 foram conferidos no encerramento: são testes exclusivos do launcher Windows. Os detalhes do artefato 3.14 ainda exigem análise. Estabilização: NÃO APROVADA.
 Os artefatos originais foram preservados no GitHub; cópia do ZIP 3.13 e dos
 logs está em C:\CAIN\work\bundle-linux-ci-20260912.
