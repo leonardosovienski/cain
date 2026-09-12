@@ -82,7 +82,9 @@ for domain, count in counts.items():
 # Exercise the actual Bundle exporters too, without a scientific database or pipeline.
 bundle_policy = json.loads((Path(__file__).parent / 'existing-bundle-policy.json').read_text())
 for binding in bundle_policy['imports']:
-    binding['root'] = str(area / 'exports' / binding['collection'])
+    domain = binding['collection']
+    binding['root'] = str(roots[domain].parent / 'exports' / domain if domain in roots
+                          else area / 'exports' / domain)
 bp = area / 'bundle-policy.json'
 bp.write_text(json.dumps(bundle_policy))
 bundle_sources = {
@@ -96,7 +98,7 @@ bundle_receipts = {}
 for domain, names in bundle_sources.items():
     root = roots[domain]
     pins = {n: hashlib.sha256((root / n).read_bytes()).hexdigest() for n in names}
-    target = area / 'exports' / domain / 'bundle'
+    target = root.parent / 'exports' / domain / 'bundle'
     command = ([producer, '-m', 'crypto_research_export.bundle'] if domain == 'crypto'
                else [producer, root / 'tools/export_cain_bundle.py'])
     command += ['--root', root, '--expected-sha', pins[names[0]], '--destination', target,
