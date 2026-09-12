@@ -122,6 +122,13 @@ class RuleRouter:
     def route(self, payload: str, intent: str | None, registry: AgentRegistry) -> Route:
         if intent is not None:
             return self._selected(intent, registry, f"explicit_intent:{intent}; prototype_ADR-0008")
+        # Match the entire message: a greeting prefix must never hide a task,
+        # quoted source, or subsequent line from the operation router.
+        if re.fullmatch(
+            r'\s*(?:oi|olá|ola|bom dia|boa tarde|boa noite|hello|hi)'
+            r'(?:[ ,]+cain)?[.!?\s]*', payload, flags=re.I,
+        ):
+            return self._selected("resumo", registry, "social_greeting")
         head = strip_preference_scope_marks(instruction_head(payload))
         # A preference declaration may precede the task in a separate sentence.
         # Only sentence-leading commands qualify; embedded words remain content.
