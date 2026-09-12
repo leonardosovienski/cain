@@ -1,0 +1,140 @@
+[
+  {
+    "ref": "refs/heads/architecture/complete-20260911",
+    "head": "2e9350ce7eaebee9758ae3ad6f5e2c241b1c4e5e",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/feature/research-bundle-v1",
+    "head": "945f58e9d780d8121c584e7d9bd271d0a7c40296",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/feature/research-capabilities-20260911",
+    "head": "231ffa8791b6cd89de0a025ddb4ec02298e8cd45",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/local/l0-historian",
+    "head": "f6a7a7a029918fc7316f3a1a455c9cf8c693c844",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/review/individual-models-20260911",
+    "head": "780b020540e67bd6c8268033c5a012cab207fcd1",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/validation/individual-models-20260911",
+    "head": "e1786feb70f1a0175be8238b0cf4c1ecaec2637b",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/completion/cain-mandate-20260912",
+    "head": "12f0c7b65df9bda2969f32a02928ff50d9b95368",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/fix/evidence-selection-20260912",
+    "head": "88bfd20681ba9c7a73f343c62a0973066d809bf8",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/fix/historian-integrity-20260912",
+    "head": "8b4328213334edfd7a9ef54bf6da73cd996e256a",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/fix/verified-field-review-20260912",
+    "head": "30fd6ef51097d37bd385e7640f84e520ab13a360",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/integration/cain-full-mandate-20260912",
+    "head": "082aee2f12db0e74e8067fcdcf438160cbccd5ad",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/validation/cain-supply-completion-20260912",
+    "head": "9001a33e89387f1d1b095ba303bc8c687d94108d",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/heads/validation/cain-system-20260912",
+    "head": "fbee63337ff6a9662984c8b39dafa2316cfba838",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/HEAD",
+    "head": "945f58e9d780d8121c584e7d9bd271d0a7c40296",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/architecture/complete-20260911",
+    "head": "2e9350ce7eaebee9758ae3ad6f5e2c241b1c4e5e",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/feature/research-bundle-v1",
+    "head": "945f58e9d780d8121c584e7d9bd271d0a7c40296",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/feature/research-capabilities-20260911",
+    "head": "231ffa8791b6cd89de0a025ddb4ec02298e8cd45",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/fix/historian-integrity-20260912",
+    "head": "8b4328213334edfd7a9ef54bf6da73cd996e256a",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/local/l0-historian",
+    "head": "f6a7a7a029918fc7316f3a1a455c9cf8c693c844",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/main",
+    "head": "2e9350ce7eaebee9758ae3ad6f5e2c241b1c4e5e",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/review/individual-models-20260911",
+    "head": "780b020540e67bd6c8268033c5a012cab207fcd1",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/validation/cain-supply-completion-20260912",
+    "head": "9001a33e89387f1d1b095ba303bc8c687d94108d",
+    "ancestor": true,
+    "missing_paths": []
+  },
+  {
+    "ref": "refs/remotes/origin/validation/individual-models-20260911",
+    "head": "e1786feb70f1a0175be8238b0cf4c1ecaec2637b",
+    "ancestor": true,
+    "missing_paths": []
+  }
+]
