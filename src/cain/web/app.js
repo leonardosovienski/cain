@@ -483,8 +483,36 @@ function renderResearch(result) {
   if (result.generation) {
     const explanation = node('details');
     explanation.open = true;
-    explanation.append(node('summary', `Explicação opcional: ${result.status} · síntese proposta, suporte semântico não certificado`));
-    explanation.append(node('pre', JSON.stringify({ explanation: result.explanation, generation: result.generation, error: result.error }, null, 2)));
+    const extractive = result.explanation?.answer_mode === 'source_excerpts';
+    const statusMessages = {
+      abstained_no_received_evidence: 'Nenhuma evidência recebida para os filtros escolhidos. Confira a identidade da fonte e o acervo.',
+      abstained_not_admitted_for_generation: 'As fontes encontradas não autorizam geração neste contexto.',
+      abstained_no_supported_answer: 'As evidências disponíveis não sustentaram uma resposta à pergunta.',
+      generation_failed: 'Não foi possível produzir uma explicação verificável. Nenhuma resposta parcial foi aceita.',
+    };
+    const errorMessages = {
+      TIMEOUT: 'A geração atingiu o tempo limite. Você pode tentar novamente.',
+      UNSUPPORTED_SYNTHESIS: 'O modelo acrescentou uma interpretação que não pôde ser verificada; a resposta foi recusada.',
+      UNSUPPORTED_QUOTE: 'O modelo alterou o texto citado; a resposta foi recusada.',
+      GENERATION_TRUNCATED: 'A geração terminou incompleta; a resposta foi recusada.',
+    };
+    explanation.append(node('summary', statusMessages[result.status] ?? (extractive ? 'Explicação por trechos da fonte' : `Explicação opcional: ${result.status} · suporte semântico não certificado`)));
+    if (errorMessages[result.error_code]) explanation.append(node('p', errorMessages[result.error_code]));
+    if (extractive) {
+      for (const quote of result.explanation.source_quotes ?? []) {
+        explanation.append(node('blockquote', quote.quote));
+        explanation.append(node('small', `${quote.support?.source ?? ''} · ${quote.evidence_id}`));
+      }
+      for (const context of result.explanation.source_contexts ?? []) {
+        explanation.append(node('h4', 'Contexto completo da fonte'));
+        explanation.append(node('blockquote', context.text));
+        explanation.append(node('small', `${context.source} · ${context.json_pointer} · ${context.evidence_id}`));
+      }
+      explanation.append(node('p', 'Estes trechos registram o que a fonte afirma. Não reproduzem cálculos nem resolvem informações ausentes.'));
+    }
+    const receipt = node('details');
+    receipt.append(node('summary', 'Resposta, referências e recibo'), node('pre', JSON.stringify({ explanation: result.explanation, generation: result.generation, error: result.error, error_code: result.error_code }, null, 2)));
+    explanation.append(receipt);
     container.append(explanation);
   }
 }
@@ -607,6 +635,9 @@ function renderJob(job, scope) {
     if (step.result.explanation) {
       detail.append(node('p', step.result.explanation.proposed_synthesis));
       for (const quote of step.result.explanation.source_quotes ?? []) detail.append(node('blockquote', quote.quote));
+      for (const context of step.result.explanation.source_contexts ?? []) {
+        detail.append(node('p', 'Contexto completo da fonte'), node('blockquote', context.text));
+      }
     }
     for (const relation of step.result.relations ?? []) detail.append(node('p', `${relation.subject} → ${relation.object}`));
     const diagnostic = node('details');
@@ -731,7 +762,16 @@ $('research-form').addEventListener('submit', (event) => {
   handle(() => runResearch())();
 });
 $('research-explain').addEventListener('click', handle(async () => {
-  renderResearch(await api('/research/explain', 'POST', { ...researchBody(), question: $('research-question').value }));
+  const container = $('research-result');
+  container.replaceChildren();
+  const question = $('research-question').value.trim();
+  if (!question) throw new Error('Escreva a pergunta que deseja conferir nas fontes.');
+  try {
+    renderResearch(await api('/research/explain', 'POST', { ...researchBody(), question }));
+  } catch (error) {
+    container.replaceChildren(node('p', 'Esta tentativa não produziu uma resposta. Confira a mensagem e tente novamente.'));
+    throw error;
+  }
 }));
 $('research-history').addEventListener('click', handle(async () => {
   const scope = { user_id: state.user, project_id: state.project,
