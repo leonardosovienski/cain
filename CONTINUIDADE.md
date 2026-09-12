@@ -1,5 +1,10 @@
 # Continuidade do Cain - 0.4.7
 
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
 ## Candidato local ResearchBundleV1
 
 Leia [BUNDLE_REPORT](docs/research/BUNDLE_REPORT.md) e o baseline/ADR vinculados.

@@ -1,5 +1,10 @@
 # Estado atual do Cain — 0.4.7
 
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
 Entrega atual: [capacidades locais e avaliação 0.4.6](docs/DELIVERY_047.md).
 Streaming, visão, busca L0, relações propostas, debate, workflows duráveis e MCP
 estão implementados. Ollama/modelos instalados e inferência real exercitada;

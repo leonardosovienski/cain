@@ -1,5 +1,10 @@
 # Cain 0.4.7 — conversa, memória e pesquisa local L0
 
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
 **Atualização operacional autorizada:** a revisão foi instalada e publicada na branch
 `review/individual-models-20260911`. Leia [o recibo de instalação](docs/research/INSTALACAO_REVISAO_20260911.md).
 As afirmações de não instalação abaixo descrevem a etapa anterior à autorização.

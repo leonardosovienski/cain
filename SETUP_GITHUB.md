@@ -1,5 +1,10 @@
 # Repositório e verificação
 
+<!-- DOC-SYNC-20260912 -->
+> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
+<!-- /DOC-SYNC-20260912 -->
+
+
 O repositório está publicado em [leonardosovienski/cain](https://github.com/leonardosovienski/cain).
 A entrega 0.4.4 está na branch `local/l0-historian`; não presuma que `main` contém
 esta entrega. O checkout desta máquina é `C:\CAIN\projeto`.

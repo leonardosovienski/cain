@@ -10,11 +10,10 @@ A CI CAIN Supply Linux gate reconstrói exatamente o candidato
 usando HEADs anteriores e overlays SHA256, antes de executar testes em Ubuntu
 24.04 como usuário comum, Python 3.13/3.14, filesystem Linux nativo.
 
-Os pushes dos produtores suprimem suas CIs gerais. A CI central executa somente
+Os pushes dos produtores suprimem suas CIs gerais. A CI central foi configurada para executar somente
 os exportadores e o seletor de metadados, sem campanhas científicas/coortes.
 O workflow registra equivalência, ambiente, builds novos, segurança, regressão,
-consumo instalado, restore offline e mini-auditoria. Resultados ainda precisam
-ser observados; publicação de código não significa estabilização.
+consumo instalado, restore offline e mini-auditoria. Os resultados observados estão abaixo; publicação de código não significa estabilização.
 
 ## Resultado observado após publicação
 
