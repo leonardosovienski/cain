@@ -1,5 +1,10 @@
 # Continuidade do Cain - 0.4.7
 
+## Retomada após o diagnóstico de partida — 12/09/2026
+
+Leia primeiro [o diagnóstico, as evidências e o próximo caso](docs/supply/DIAGNOSTICO_PARTIDA_20260912.md). Diagnóstico encerrado; verificação de H4 pela interface ainda não executada. A branch de entrega é `validation/cain-supply-completion-20260912`; a instalação principal permanece separada. Este é o próximo trabalho recomendado; as instruções de execução das rodadas anteriores abaixo são históricas.
+
+
 <!-- SUPPLY-GIT-DELIVERY-20260912 -->
 **Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
 <!-- /SUPPLY-GIT-DELIVERY-20260912 -->

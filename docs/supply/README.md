@@ -1,5 +1,10 @@
 # CAIN Supply — retomar sem o chat
 
+## Retomada após o diagnóstico de partida — 12/09/2026
+
+Leia primeiro [o diagnóstico, as evidências e o próximo caso](DIAGNOSTICO_PARTIDA_20260912.md). Diagnóstico encerrado; verificação de H4 pela interface ainda não executada. A branch de entrega é `validation/cain-supply-completion-20260912`; a instalação principal permanece separada. Este é o próximo trabalho recomendado; as instruções de execução das rodadas anteriores abaixo são históricas.
+
+
 Esta é a entrada atual da entrega de engenharia. A branch é `validation/cain-supply-completion-20260912`; o checkout local é `C:/CAIN/work/supply-publish-20260912`. O código final agora está diretamente em `src/`, além do overlay preservado. Não usar `main` ou a instalação ativa como substitutos deste candidato.
 
 Leia [o fechamento](FECHAMENTO_DO_PROMPT.md), [o guia de uso](USER_ACCEPTANCE.md) e [o handoff de evidências](FINAL_HANDOFF.md). O mapa [LOCAL_LAYOUT.json](LOCAL_LAYOUT.json) identifica pastas, bancos, políticas, ambiente e histórico. A pasta de entrega local é `C:/CAIN/entregas/supply-20260912`.
