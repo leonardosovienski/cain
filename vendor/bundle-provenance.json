@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "source_repository": "https://github.com/leonardosovienski/ecosystem-predictor",
   "source_base_commit": "8c62a07255dee103cbd2bc0ad847d68c4b053cdd",
-  "source_state": "committed local candidate; wheel built from Windows source bytes whose hashes are listed; not a released package",
+  "source_state": "committed feature branch candidate; wheel built from Windows source bytes whose hashes are listed; not a released package",
   "source_files": {
     "packages/research-bundle/pyproject.toml": "27e9e457fb3205e2d18d8396fe57db80c2600609eb65726b4ee61a5765c81f0c",
     "packages/research-bundle/src/research_bundle/contract.json": "9cbe367e5c78d2a4f46766ad536a62fdf74c18126c4913360b75451be66ce799",
     "packages/research-bundle/src/research_bundle/export.py": "a8b2809ee6e43f9c8749fc24e4727163b52a04177c9bbf8e560a1a4b8f7c9b00",
-    "packages/research-bundle/src/research_bundle/files.py": "57a91993d14f52778a850c19d97d46d981ce53ffc2cf49ceec650e00fc61ff0e",
+    "packages/research-bundle/src/research_bundle/files.py": "ad5d47ffb32ea394b4c70e98c4af6fe3c798c3e2f3a5a533f912645b53e644cc",
     "packages/research-bundle/src/research_bundle/__init__.py": "65b8a2ee3c69757312119e440c70361dce6166fa7a6cb09c2404f2c38543e10a"
   },
-  "wheel_sha256": "c3839b86c1803c59a61d381349fb1351d2ebbec5a8da2ed40f69b92abcd18cdf",
-  "source_commit": "b01ebe1bb1d753e52e3362eb442b94e709a3de79"
+  "wheel_sha256": "01898de5f42d6eec2923ef611b0a9f6f24d89013e1e231ede0a158fa8d4d51a2",
+  "source_commit": "8586bd58303cbce629498e3243bff5cca951ce87"
 }
