@@ -1,5 +1,5 @@
 {
-  "candidate_id": "c17d1959e560fe9524c787aa4fd64694a3eee092fd64c96cd510cdffaa992b2f",
+  "candidate_id": "d00bbc6fb910b3c51be6720d21012f4655258468adb7d7335451974929c58752",
   "identity_payload": {
     "schema": "cain-preview-candidate/2",
     "base_repositories": [
@@ -78,7 +78,7 @@
       "stocks": "d385fbe3d7de5f780619083872f42bcabeaede41f845874ab2beca9909d5809d"
     },
     "policy_sha256": "e78dae778cf41cbbda3aa3d45b22b5dad9533d4128545cd772ad3ff9d580daf7",
-    "runner_sha256": "5d665e2e80a0a729c881f0b9454edc3ce7d54186019f0443f8791cd800c7fed0",
+    "runner_sha256": "f6bf86773da1316360e67c51b30c3f870564510ed89b5846a08dbba29cd4b1ae",
     "protocol_sha256": "007b284b1a211d51d75c48a92951e5159487db0f244015be54849d4c2bc24087",
     "old_manifest_preserved": "C:\\CAIN\\work\\bundle-linux-validation-20260912\\CANDIDATE_MANIFEST.json",
     "overlay_files": {
