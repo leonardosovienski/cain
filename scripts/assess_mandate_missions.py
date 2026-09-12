@@ -71,7 +71,8 @@ def assess(root):
     refused = root/'procedure-refuse'
     refusal = (refused/'task.json').exists() and not (refused/'verification.json').exists() and (root/'procedure-refuse.txt').exists()
     result = {'protocol':protocol, 'cases':results, 'missing_pointer_refused':refusal,
-              'human_time':None, 'independent_judgment':False, 'hermes':'not_executed_not_installed',
+              'human_time':None, 'independent_judgment':False,
+              'hermes':'separate_execution_receipt' if (root/'hermes-result.json').exists() else 'not_executed_in_this_pilot',
               'overall_claim':'Equivalent documentary result in this small slice; no superiority established'}
     if not all(r[m]['cain'] and r[m]['simple'] for r in results for m in ['reconstruct','resume','compare','reuse']) or not refusal:
         raise ValueError('Pilot criteria not all met; retain cases for investigation')

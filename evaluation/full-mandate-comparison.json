@@ -1,0 +1,12 @@
+{
+  "version": "full-mandate-comparison/1",
+  "scope": "Known documentary development cases; no held-out or scientific evaluation",
+  "question": "Can the named local generators or actual reranker improve the known field task, and can Hermes complete the same bounded documentary task?",
+  "primary": "Task correctly completed with exact identity, state and trial, explicit missing reason/sample, no invented changes or other-identity numbers",
+  "ranking": "Same authorized corrected candidate pool, same card budget, compare required-field retention before and after yes/no logit scoring",
+  "models": ["qwen3.5:0.8b", "qwen3.5:4b", "SmolLM3-3B Q4_K_M", "Qwen/Qwen3-Reranker-0.6B"],
+  "hermes": "Local-only documentary comparison with same known evidence and local model; tools disabled, separate home, no external inference",
+  "resource_rule": "One inference model at a time; bounded requests; resource failures are outcomes, not successful runs",
+  "promotion": "No default component promotion from one development episode. Deterministic verified field lookup remains available.",
+  "unmeasured": ["human time to acceptance", "independent human judgment", "held-out generalization"]
+}
