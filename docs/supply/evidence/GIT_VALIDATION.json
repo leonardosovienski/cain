@@ -1,0 +1,26 @@
+{
+  "windows": {
+    "scope": "CAIN repository tests",
+    "passed": 513,
+    "skipped": 1
+  },
+  "runtime_commit": "f1f1f5632fe5b6856c31abf6d96c4f0af5780004",
+  "runs": [
+    {
+      "id": 34704404633,
+      "name": "CI",
+      "head_sha": "f1f1f5632fe5b6856c31abf6d96c4f0af5780004",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/leonardosovienski/cain/actions/runs/34704404633"
+    },
+    {
+      "id": 34704404603,
+      "name": "CAIN completion exact candidate",
+      "head_sha": "f1f1f5632fe5b6856c31abf6d96c4f0af5780004",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/leonardosovienski/cain/actions/runs/34704404603"
+    }
+  ]
+}
