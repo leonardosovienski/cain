@@ -213,7 +213,7 @@ def test_evidence_shared_budget_prioritizes_sources_and_identifies_clipping():
     assert "MEMORY_ONLY" not in llm.calls[0][1]
     assert "memória:past" not in response
     assert message.metadata["retrieval_budget"]["evidence_truncated"] is True
-    assert message.metadata["retrieval_budget"]["omitted_count"] == 1
+    assert message.metadata["retrieval_budget"]["omitted_count"] == 0  # History is not a document candidate.
     assert message.metadata["retrieval_budget"]["included_text_chars"] == 2400
 
 
@@ -224,3 +224,22 @@ def test_preference_confirmation_uses_observed_profile_without_model_generation(
     }))
     assert response == "Preferências atuais: respostas curtas."
     assert llm.calls == []
+
+
+@pytest.mark.parametrize("has_document", [True, False])
+def test_document_facts_are_not_mixed_with_conflicting_conversation(has_document):
+    memory = LexicalMemoryIndex()
+    memory.index("old", "Sentinela: code OLD733, from an earlier conversation.",
+                 {"user_id": "alice"})
+    model = RecordingLLM()
+    corpus = {"source.md": "Sentinela: code NEW928."} if has_document else {}
+    message = Message("busca", "", "Busque Sentinela", {"user_id": "alice"})
+    SearchAgent(memory, corpus, llm=model).handle(message)
+    context = model.calls[0][1]
+    sources = message.metadata["retrieval_sources"]
+    if has_document:
+        assert "NEW928" in context and "OLD733" not in context
+        assert [s["source"] for s in sources] == ["source.md"]
+    else:
+        assert "OLD733" in context and "NEW928" not in context
+        assert sources[0]["metadata"]["retrieval_mode"] == "user_history"

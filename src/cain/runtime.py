@@ -61,12 +61,12 @@ def build_cain(
         provider = llm if llm is not None else FakeLLM()
         registry = AgentRegistry()
         if retrieval_factory is not None:
-            registry.register(SearchAgent(memory, retriever=_LazyRetriever(retrieval_factory), llm=provider))
+            registry.register(SearchAgent(memory, retriever=_LazyRetriever(retrieval_factory), llm=provider, synthesize=False))
         elif source_paths is not None or allow_public_urls:
             retriever = build_retriever(corpus=corpus, paths=source_paths or (),
                                         search_mode=search_mode, embedding=embedding,
                                         cache_path=embedding_cache_path, allow_public_urls=allow_public_urls)
-            registry.register(SearchAgent(memory, retriever=retriever, llm=provider))
+            registry.register(SearchAgent(memory, retriever=retriever, llm=provider, synthesize=False))
         else:
             registry.register(SearchAgent(memory, DEMO_CORPUS if corpus is None else corpus))
         registry.register(CodeAgent(provider))

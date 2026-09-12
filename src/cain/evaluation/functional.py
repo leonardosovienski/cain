@@ -165,6 +165,11 @@ def functional_checks(records: list[dict], plan: list[dict], process_mode: bool)
                              "Compare persisted format with the explicit preference expected at this stage",
                              [stage["id"]]))
         calls = record.get("llm_calls", [])
+        if stage["expected_agent"] == "busca":
+            checks.append(_check(stage["id"] + ":literal_search", not calls,
+                                 "Document search returns source excerpts without model synthesis",
+                                 [stage["id"]]))
+            continue
         checks.append(_check(stage["id"] + ":llm_generation",
                              bool(calls) and all(call["status"] == "completed" for call in calls),
                              "At least one observed generation call completed; quality needs human review",
@@ -195,12 +200,10 @@ def functional_checks(records: list[dict], plan: list[dict], process_mode: bool)
                          ["05-other-user"]))
     search = by_id.get("06-search-source", {})
     search_response = search.get("response") or ""
-    search_context = "\n".join(call["context"] + "\n" + call["prompt"]
-                               for call in search.get("llm_calls", []))
     checks.append(_check("search_source_recorded", "guia-funcional-cain.txt" in search_response
-                         and "BOREAL-731" in search_context,
-                         "Response identifies the supplied corpus source and LLM received its actual evidence; "
-                         "this check does not establish faithful summarization", ["06-search-source"]))
+                         and "BOREAL-731" in search_response and not search.get("llm_calls"),
+                         "Response includes the supplied document fact literally without generation",
+                         ["06-search-source"]))
     pids = [record.get("pid") for record in records]
     checks.append(_check("process_restart", len(set(pids)) == len(plan) if process_mode else None,
                          "Each real stage executed in a distinct subprocess" if process_mode else

@@ -75,11 +75,13 @@ class SearchAgent:
     def __init__(
         self, memory: MemoryIndex, corpus: dict[str, str] | None = None, *,
         retriever: SearchProvider | None = None, llm: LLM | None = None,
+        synthesize: bool = True,
     ):
         self.memory = memory
         self.corpus = dict(corpus or {})
         self.retriever = retriever or LocalDocumentRetriever(self.corpus)
         self.llm = llm
+        self.synthesize = synthesize
 
     def describe(self) -> Capabilities:
         return Capabilities(
@@ -110,7 +112,12 @@ class SearchAgent:
             )
         results = self.retriever.search(message.payload, k=3)
         external_count = len(results)
-        for hit in self.memory.query(message.payload, 6, {"user_id": user_id, "project_id": project_id}):
+        # Retrieved documents are the authority for this search. Historical
+        # conversations are a fallback only; mixing them can displace direct facts.
+        history = [] if external_count else self.memory.query(
+            message.payload, 6, {"user_id": user_id, "project_id": project_id},
+        )
+        for hit in history:
             # Repeat the boundary check even if an index adapter ignores filters.
             if hit.metadata.get("user_id") != user_id or hit.metadata.get("project_id") != project_id:
                 continue
@@ -197,7 +204,7 @@ class SearchAgent:
         references = "\n".join(
             f"[{item['citation']}] {item['title']} — {item['source']}" for item in evidence
         )
-        if self.llm is None:
+        if self.llm is None or not self.synthesize:
             scope = (
                 "Trechos de URLs fornecidas" if any(item.source.startswith("http") for item in results)
                 else "Busca híbrida local (sem pesquisa na internet)" if any(
@@ -205,7 +212,7 @@ class SearchAgent:
                 )
                 else "Busca lexical local (sem pesquisa na internet)"
             )
-            return scope + ":\n" + "\n\n".join(
+            return scope + " — trechos literais, sem síntese do modelo:\n" + "\n\n".join(
                 f"[{item['citation']}] {item['text']}" for item in evidence
             ) + "\n\nFontes consultadas:\n" + references
         context = fixed_context + serialized_evidence

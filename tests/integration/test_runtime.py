@@ -176,7 +176,7 @@ def test_informational_question_routes_then_retrieves_without_imperative(tmp_pat
         assert result.selected_agent == "busca"
         assert "SQLite" in result.response and str(source.resolve()) in result.response
         assert len(result.steps) == 8
-        assert len(llm.calls) == 1
+        assert llm.calls == []  # Literal search needs no generation.
         assert cain.identity.get("alice").user_model.preferences == {}
         logs = list(cain.decision_log.export(result.run_id))
         assert logs[0].reason.startswith("question_rule:busca:")

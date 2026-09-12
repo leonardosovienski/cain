@@ -64,6 +64,9 @@ try:
             checks['project_used_in_new_session'] = code['preferences_used']['format'] == 'steps'
             answer = run('Busque nos documentos a chave de teste IRIS731.', sid=other_session)
             checks['source_returned'] = bool(answer['sources'])
+            checks['document_fact_visible_literally'] = doc_text in answer['response']
+            checks['search_has_no_free_generation'] = not answer['generation']
+            checks['document_search_excludes_history'] = all(s['metadata'].get('retrieval_mode') != 'user_history' for s in answer['sources'])
             checks['source_hash'] = any(s['document_hash'] == document['content_hash'] for s in answer['sources'])
             checks['source_excerpt_reproducible'] = all(
                 doc_text[s['start_offset']:s['end_offset']] == s['excerpt']

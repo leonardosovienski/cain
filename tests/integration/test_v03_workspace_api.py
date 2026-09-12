@@ -109,9 +109,9 @@ def test_search_uses_only_the_selected_projects_uploaded_evidence(api):
         assert source["document_hash"] == documents[index]["content_hash"]
         assert Path(source["source"]).name == Path(documents[index]["path"]).name
         assert "[S1]" in result["response"]
-        assert facts[index] in model.calls[-1][1]
-        assert facts[1 - index] not in model.calls[-1][1]
-    assert len(model.calls) == 2
+        assert facts[index] in result["response"]
+        assert facts[1 - index] not in result["response"]
+    assert model.calls == []  # Search returns literal evidence, without model synthesis.
 
 
 def test_feedback_requires_owned_response_and_does_not_update_preferences(api):

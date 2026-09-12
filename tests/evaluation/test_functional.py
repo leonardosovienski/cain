@@ -28,7 +28,9 @@ def test_functional_persistence_correction_isolation_and_source(tmp_path):
     restart = next(check for check in metrics["checks"] if check["id"] == "process_restart")
     assert restart["passed"] is None  # This injected test never claims a real process restart.
     raw = [json.loads(line) for line in (result / "raw.jsonl").read_text(encoding="utf-8").splitlines()]
-    assert all(record["llm_calls"] for record in raw)
+    assert all(record["llm_calls"] for record in raw[:-1])
+    assert raw[-1]["llm_calls"] == []
+    assert "BOREAL-731" in raw[-1]["response"]
     assert all(record["context_budget_applied"] is False for record in raw)
     assert len({record["request_run_id"] for record in raw}) == 6
     config = json.loads((result / "config.json").read_text(encoding="utf-8"))
