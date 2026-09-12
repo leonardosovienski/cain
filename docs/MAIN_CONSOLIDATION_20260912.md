@@ -41,6 +41,10 @@ incluindo build e verificação da instalação não editável.
 
 ## Verificação e recuperação
 
+Suíte consolidada no Windows: **586 passaram, 1 ignorado, 2 avisos de
+depreciação, 149,92 segundos**. Ruff passou. O teste ignorado requer Linux.
+O resultado local não antecipa o resultado da CI remota.
+
 Recibos locais e bundles Git completos, verificados antes da integração:
 `C:\CAIN\entregas\git-consolidation-20260912`.
 Arquivos `system-before.bundle` e `project-before.bundle` conservam as refs
