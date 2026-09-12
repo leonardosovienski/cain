@@ -586,6 +586,31 @@ async function inspectResearch(compare = false) {
   }
 }
 $('research-inspect').addEventListener('click', handle(() => inspectResearch()));
+$('research-bundles').addEventListener('click', handle(async () => {
+  const scope = {user_id: state.user, project_id: state.project,
+    collection: $('research-collection').value};
+  const result = await api('/research/bundles/historian', 'POST', {
+    ...scope,
+    entity_id: $('research-id').value || null, limit: 10, offset: 0,
+  });
+  if (scope.user_id !== state.user || scope.project_id !== state.project ||
+      scope.collection !== $('research-collection').value) return;
+  const container = $('research-result');
+  container.replaceChildren(node('h3', 'Metadados Bundle autorizados'),
+    node('p', 'Consulta parcial. O conteúdo dos artefatos não foi aberto.'));
+  for (const entity of result.bundles.entities) {
+    container.append(node('h4', entity.entity_id + ' · ' + entity.status),
+      node('p', 'Revisão: ' + entity.revision));
+  }
+  for (const relation of result.bundles.relations) {
+    container.append(node('p', relation.source.id + ' · ' + relation.type + ' · ' + relation.target.id));
+  }
+  if (!result.bundles.entities.length) container.append(node('p', 'Nenhuma entidade localizada neste recorte autorizado.'));
+  const details = node('details');
+  details.append(node('summary', 'Fontes, cobertura e referências'),
+    node('pre', JSON.stringify(result.bundles, null, 2)));
+  container.append(details);
+}));
 $('research-compare').addEventListener('click', handle(() => inspectResearch(true)));
 const agentScope = () => ({user_id: state.user, project_id: state.project, collection: $('research-collection').value});
 const agentQuestion = () => ({...agentScope(), question: $('research-question').value,

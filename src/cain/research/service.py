@@ -72,9 +72,13 @@ class ResearchService:
         if type(policy) is not dict:
             raise ValueError("Invalid receiver policy")
         version = policy.get("version")
-        keys(policy, "version import_root grants" if version == 1 else "version imports grants")
-        if type(version) is not int or version not in (1, 2) or type(policy["grants"]) is not list:
+        keys(policy, "version import_root grants" if version == 1 else
+             "version imports grants bundle_grants" if version == 3 else "version imports grants")
+        if type(version) is not int or version not in (1, 2, 3) or type(policy["grants"]) is not list:
             raise ValueError("Invalid receiver policy")
+        if version == 3:
+            from cain.research.bundles import validate_grants
+            validate_grants(policy["bundle_grants"])
         if version == 1:
             roots = [policy["import_root"]]
         else:
@@ -699,6 +703,9 @@ class ResearchService:
             }
 
     def backup(self, destination):
+        from cain.research.bundle_backup import reachables
+        if reachables(self.path):
+            raise ValueError("Received objects require complete cain archive backup")
         destination = Path(destination)
         destination.parent.mkdir(parents=True, exist_ok=True)
         with destination.open("xb"):
@@ -708,6 +715,8 @@ class ResearchService:
                 target = sqlite3.connect(destination)
                 try:
                     source.backup(target)
+                    if reachables(destination):
+                        raise ValueError("Incomplete metadata-only backup; use cain archive backup")
                     if target.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
                         raise ValueError("Backup integrity failure")
                 finally:
@@ -723,6 +732,9 @@ class ResearchService:
 
     @staticmethod
     def restore(source, destination):
+        from cain.research.bundle_backup import reachables
+        if reachables(source):
+            raise ValueError("Received objects require complete cain archive restore")
         destination = Path(destination)
         with destination.open("xb"):
             pass

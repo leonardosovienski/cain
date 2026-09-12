@@ -20,6 +20,11 @@ def test_historian_route_covers_explicit_fields_without_inference(setup, tmp_pat
         assert 'beta' in result['explanation']['proposed_synthesis']
         assert result['generation']['called'] is False
         assert result['response_id']
+        # Snapshot authorization must not grant Bundle access in the integrated app.
+        metadata=client.post('/research/bundles/historian',json={'entity_id':'R17'})
+        assert metadata.status_code == 200, metadata.text
+        assert metadata.json()['bundles']['entities'] == []
+        assert metadata.json()['artifact_content_included'] is False
 
 
 def test_procedure_failed_verification_never_becomes_success_on_resume(setup,tmp_path):
