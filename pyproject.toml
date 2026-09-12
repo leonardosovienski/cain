@@ -24,7 +24,7 @@ cain-stream = "cain.playground:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-cain = ["web/*.html", "web/*.css", "web/*.js"]
+cain = ["web/*.html", "web/*.css", "web/*.js", "evaluation/data/scenarios/*.json", "evaluation/data/probes/*.json", "evaluation/data/rubrics/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

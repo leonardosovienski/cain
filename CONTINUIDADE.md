@@ -1,5 +1,10 @@
 # Continuidade do Cain - 0.4.7
 
+<!-- SUPPLY-GIT-DELIVERY-20260912 -->
+**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
+<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+
+
 Leia primeiro o [encerramento da sessão CAIN Supply](docs/research/SESSION_HANDOFF_20260912.md), com decisões, erros, pendências e prompt de retomada.
 
 <!-- DOC-SYNC-20260912 -->

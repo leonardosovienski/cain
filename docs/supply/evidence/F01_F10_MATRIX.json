@@ -1,0 +1,72 @@
+{
+  "F01": {
+    "problem": "Verification before protected object I/O",
+    "evidence": "test_verify_denies_entire_scope_before_object_io",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F02": {
+    "problem": "External relations do not bypass roles",
+    "evidence": "test_external_is_not_role_permission",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F03": {
+    "problem": "Administrative approval and atomic reservations",
+    "evidence": "test_admin_reservation_precedes_membership",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F04": {
+    "problem": "Descriptor revision disambiguation",
+    "evidence": "test_descriptor_revision_disambiguates_and_unresolved_hidden",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F05": {
+    "problem": "Raw variants preserved with quotas",
+    "evidence": "test_raw_variants_backup_integrity",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F06": {
+    "problem": "Evidence-only facts reachable and revocable",
+    "evidence": "test_evidence_only_fact_retrievable_and_revoked",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F07": {
+    "problem": "Directory durability failure blocks commit",
+    "evidence": "test_directory_sync_failure_prevents_metadata_commit",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F08": {
+    "problem": "No domain defaults in shared exporter",
+    "evidence": "test_provenance_tracks_dependency_bytes_and_builder_has_no_domain_defaults",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F09": {
+    "problem": "Current handoff distinguishes historical claims",
+    "evidence": "FINAL_HANDOFF.md plus preserved BUNDLE_REMEDIATION.md",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "NOT_APPLICABLE_DOCUMENTATION",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  },
+  "F10": {
+    "problem": "Executed dependency/code provenance",
+    "evidence": "test_provenance_tracks_dependency_bytes_and_builder_has_no_domain_defaults plus DELIVERY_REVIEW.md",
+    "windows": "PASS_EXECUTED_SCOPE",
+    "linux": "PASS_EXECUTED_SCOPE",
+    "limit": "Not universal vulnerability or physical power-loss proof"
+  }
+}

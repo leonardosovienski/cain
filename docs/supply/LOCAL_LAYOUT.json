@@ -1,0 +1,49 @@
+{
+  "schema": "cain-local-delivery-layout/1",
+  "source_checkout": "C:\\CAIN\\work\\supply-publish-20260912",
+  "branch": "validation/cain-supply-completion-20260912",
+  "base_candidate": "d00bbc6fb910b3c51be6720d21012f4655258468adb7d7335451974929c58752",
+  "local_delivery": "C:\\CAIN\\entregas\\supply-20260912",
+  "evidence_root": "C:\\CAIN\\work\\supply-final-20260912",
+  "installed_python": "C:\\CAIN\\work\\supply-final-20260912\\venv\\Scripts\\python.exe",
+  "source_rules": "Only CAIN delivery files committed. Original producer checkouts and active CAIN instance preserved.",
+  "retained_local": [
+    {
+      "path": "C:\\CAIN\\work\\supply-final-20260912\\staging",
+      "purpose": "Six original Bundle collections, policy and CAS"
+    },
+    {
+      "path": "C:\\CAIN\\work\\supply-final-20260912\\model",
+      "purpose": "Legacy factual web corpus and preserved model history"
+    },
+    {
+      "path": "C:\\CAIN\\work\\supply-final-20260912\\closure-real-20260912",
+      "purpose": "Supplemental authorized documentation corpus and receipts"
+    },
+    {
+      "path": "C:\\CAIN\\work\\supply-final-20260912\\backup",
+      "purpose": "Consistent original staging backup"
+    },
+    {
+      "path": "C:\\CAIN\\work\\supply-final-20260912\\venv",
+      "purpose": "Installed noneditable runtime"
+    },
+    {
+      "path": "C:/CAIN/work/supply-review-20260912",
+      "purpose": "Independent reviews"
+    },
+    {
+      "path": "C:/CAIN/work/supply-preview-20260912",
+      "purpose": "Preserved predecessor evidence"
+    },
+    {
+      "path": "C:/CAIN/work/supply-completion-20260912",
+      "purpose": "Preserved previous model work"
+    }
+  ],
+  "excludes_from_remote": "Databases, CAS/received objects, private model outputs, model weights, environments and full local logs remain local. Source-specific non-disclosure restrictions are preserved.",
+  "harness_archive": ".ci/completion/local-delivery-harness.zip",
+  "harness_limit": "Historical finite scripts have fixed paths and some create-only destinations. Read their headers/arguments; do not batch rerun or regenerate old reports over later evidence.",
+  "old_collectors": "collect_final.py verifies f0cfb92 deliberately; it is a historical receipt collector, not a current-HEAD verifier.",
+  "source_materialization": "Current branch source is populated from the verified overlay. Older commit f0cfb92 had baseline source plus overlay only."
+}

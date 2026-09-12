@@ -1,5 +1,10 @@
 # Estado de publicação e continuidade — CAIN
 
+<!-- SUPPLY-GIT-DELIVERY-20260912 -->
+**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
+<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+
+
 Conferência documental de 12/09/2026. Este registro complementa os protocolos científicos e substitui apenas afirmações anteriores de que o candidato ainda não teve commit/push.
 
 - Checkout de trabalho: `C:\CAIN\work\research-bundle-v1`.

@@ -1,0 +1,178 @@
+{
+  "candidate_id": "d00bbc6fb910b3c51be6720d21012f4655258468adb7d7335451974929c58752",
+  "identity_payload": {
+    "schema": "cain-preview-candidate/2",
+    "base_repositories": [
+      {
+        "repository": "cain",
+        "root": "C:\\CAIN\\work\\research-bundle-v1",
+        "head": "945f58e9d780d8121c584e7d9bd271d0a7c40296",
+        "branch": "feature/research-bundle-v1"
+      },
+      {
+        "repository": "ecosystem",
+        "root": "C:\\CAIN\\contrato",
+        "head": "a9f6594c840482419d6c310f373813e0e71f17d0",
+        "branch": "feature/research-bundle-v1"
+      },
+      {
+        "repository": "crypto",
+        "root": "C:\\CRIPTO\\pesquisa-20260909",
+        "head": "97d60222d14ff211bfd415fff374d0751d5ac235",
+        "branch": "validation/retest-six-20260911"
+      },
+      {
+        "repository": "brasileirao",
+        "root": "C:\\BRASILEIRAO\\brasileirao-predictor",
+        "head": "5efb4716d4805e37e0aa09b09dcdc52022cae039",
+        "branch": "publication-validation-architecture-20260911"
+      },
+      {
+        "repository": "stocks",
+        "root": "C:\\STOCKS\\stocks-predictor",
+        "head": "a3d570fd33749ad62bdb4735bbc24b1ecd421e38",
+        "branch": "validation/retest-six-20260911"
+      },
+      {
+        "repository": "core",
+        "root": "C:\\PREDICTORS\\core-predictor",
+        "head": "bff0a548998d7db1dbaad346465771553b0cf4c9",
+        "branch": "validation/retest-six-20260911"
+      },
+      {
+        "repository": "ops",
+        "root": "C:\\PREDICTORS\\predictor-ops",
+        "head": "4392782b231364a9394dae04a57cad2c0bf73ef1",
+        "branch": "validation/retest-six-20260911"
+      }
+    ],
+    "candidate_root": "C:\\CAIN\\work\\supply-final-20260912\\candidate",
+    "changed_files": {
+      ".gitignore": "886469194130068fa0150c8e9430c72da70badf4a73bd0cd40a51bcf57094ebe",
+      "docs/research/SUPPLY_PREVIEW_20260912.md": "003224060bc2396f7fd1be71bd32c56272e19b7be863f367736c1204fc0035fd",
+      "pyproject.toml": "33411a8c55b30c5b063884ca7f44b8622defd73230b6a569b937a7bbda961256",
+      "src/cain/evaluation/data/probes/probes.json": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0",
+      "src/cain/evaluation/data/rubrics/README.md": "d01204827c7b7e6c33da48d9fb02742030b2663f8cf3bc0a5818c9df677d9d55",
+      "src/cain/evaluation/data/scenarios/quality-v03.json": "f113f5b0c06c191e9a17c40c0514c7351f939f80b7ca9f526c70e2b2ef103aeb",
+      "src/cain/evaluation/data/scenarios/scenarios.json": "27137605f238a9aba0d43e66a7831323fb752d59811318c4a9a06eb2188ee7e0",
+      "src/cain/evaluation/functional.py": "fe91828ea5c13d5f39cf136da270ad17cf832993c2e17ae2b96896f90dfafc13",
+      "src/cain/evaluation/harness.py": "2207dd619e2bd7a7914cb99804b69d9709fdb3ab36ce815033e4d87677b28ece",
+      "src/cain/evaluation/quality.py": "d036ff6ea431d11829540f1742492f703b9d20173366edd5c289fcc1c9f1ddd6",
+      "src/cain/evaluation/resources.py": "77c88851feff249f87d1c6ca7af52644110d4aa634919a56a8b61d76df955a06",
+      "src/cain/research/bundles.py": "7746bb3d3d79d18648e746074e709cb20e95e811d516ea3aafd10998b82f642d",
+      "src/cain/research/cli.py": "f6b374e34fbf5e44840e0bf37a38195a8bd7f9194035590d50e2012273b4da5c",
+      "src/cain/research/diagnostics.py": "2e4b8bc98f2341016753d3fbd7294b9a56a9e4705566d3e0fa35404bfe08bb93",
+      "tests/test_packaged_evaluation_resources.py": "b2ae3f0db1bdf05e932851261b5102ef40c5f828c050ef428ea41841df2a2c86",
+      "tests/test_structural_diagnostics.py": "49003ffeba38d03159150aeff6cf28d185c954ff225c949627c8aa85cbbb2aa3"
+    },
+    "overlay_sha256": "187b6cb630b63543260bed4e02669a76fa005dca4fbd710260974e03fe234e47",
+    "patch_sha256": "d246e2cd93d81da1f2152555353503990d772e6de2549435142c780e8e088369",
+    "wheel_sha256": "4fc950531cca6930055636e78485967c647cc5aee2dd326039719ec0af277006",
+    "installed_code_identity": "7da108d0172b7ccc2675404b7dbf0b8a21ad248ee814ea14f199225003d23861",
+    "corpus_bundles": {
+      "brasileirao": "034b293e68854ed238ee2114038f0c10f237da912a913b5cbf82f6263c1d6667",
+      "core": "d23ef34b7229f48abe3fc22939fa95d088f33110567950414ebcff2ec95f02d9",
+      "crypto": "790a9f3eed755010eb7a1d50fe128531b0b9f6e34e19be64e9e6a73f77cca8ce",
+      "ecosystem": "040951306a5909aaac895d82f60bfddc85ebc1d488141a6aa734ed7893b99c05",
+      "ops": "49be153bae46a179ffe916ea5ce7cbd8903a6e35720820aa198322b268b1b723",
+      "stocks": "d385fbe3d7de5f780619083872f42bcabeaede41f845874ab2beca9909d5809d"
+    },
+    "policy_sha256": "e78dae778cf41cbbda3aa3d45b22b5dad9533d4128545cd772ad3ff9d580daf7",
+    "runner_sha256": "f6bf86773da1316360e67c51b30c3f870564510ed89b5846a08dbba29cd4b1ae",
+    "protocol_sha256": "007b284b1a211d51d75c48a92951e5159487db0f244015be54849d4c2bc24087",
+    "old_manifest_preserved": "C:\\CAIN\\work\\bundle-linux-validation-20260912\\CANDIDATE_MANIFEST.json",
+    "overlay_files": {
+      ".gitignore": "886469194130068fa0150c8e9430c72da70badf4a73bd0cd40a51bcf57094ebe",
+      "docs/research/SUPPLY_PREVIEW_20260912.md": "003224060bc2396f7fd1be71bd32c56272e19b7be863f367736c1204fc0035fd",
+      "pyproject.toml": "33411a8c55b30c5b063884ca7f44b8622defd73230b6a569b937a7bbda961256",
+      "src/cain/evaluation/data/probes/probes.json": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0",
+      "src/cain/evaluation/data/rubrics/README.md": "d01204827c7b7e6c33da48d9fb02742030b2663f8cf3bc0a5818c9df677d9d55",
+      "src/cain/evaluation/data/scenarios/quality-v03.json": "f113f5b0c06c191e9a17c40c0514c7351f939f80b7ca9f526c70e2b2ef103aeb",
+      "src/cain/evaluation/data/scenarios/scenarios.json": "27137605f238a9aba0d43e66a7831323fb752d59811318c4a9a06eb2188ee7e0",
+      "src/cain/evaluation/functional.py": "fe91828ea5c13d5f39cf136da270ad17cf832993c2e17ae2b96896f90dfafc13",
+      "src/cain/evaluation/harness.py": "2207dd619e2bd7a7914cb99804b69d9709fdb3ab36ce815033e4d87677b28ece",
+      "src/cain/evaluation/quality.py": "d036ff6ea431d11829540f1742492f703b9d20173366edd5c289fcc1c9f1ddd6",
+      "src/cain/evaluation/resources.py": "77c88851feff249f87d1c6ca7af52644110d4aa634919a56a8b61d76df955a06",
+      "src/cain/research/bundles.py": "7746bb3d3d79d18648e746074e709cb20e95e811d516ea3aafd10998b82f642d",
+      "src/cain/research/cli.py": "f6b374e34fbf5e44840e0bf37a38195a8bd7f9194035590d50e2012273b4da5c",
+      "src/cain/research/diagnostics.py": "2e4b8bc98f2341016753d3fbd7294b9a56a9e4705566d3e0fa35404bfe08bb93",
+      "tests/test_packaged_evaluation_resources.py": "b2ae3f0db1bdf05e932851261b5102ef40c5f828c050ef428ea41841df2a2c86",
+      "tests/test_structural_diagnostics.py": "49003ffeba38d03159150aeff6cf28d185c954ff225c949627c8aa85cbbb2aa3",
+      "src/cain/api.py": "12479a0a109df3bfad67f3d5a591f343595e9fec256ea22b372f5ac7265fa50c",
+      "src/cain/archive.py": "08d0439ba1318e7c9b388182b919d448b008a1a292b373963c167ee5093403eb",
+      "src/cain/cli.py": "ac41c1b5d5d70305c6eab9056d14e32b745c262dab80c73a254b9a5dba88e65a",
+      "src/cain/mcp.py": "4b69f936a71faf524f80125f6e235a562f1cf803a723d29473bd6ee8c99db211",
+      "src/cain/playground.py": "edf5a6a7f06ebb96a185f8a2143deb3d8a2801f86d0e508f667ba81c277f6098",
+      "src/cain/profile_answers.py": "e154bf559772b43ad3de06017b5f08ff154e2f8c1d1ad6ee728a8d1042a3fb55",
+      "src/cain/providers.py": "67a1baf5e90f386b05c54ba3c3e9e77fa40e1c9c765472c9eecfe565e3405e92",
+      "src/cain/runtime.py": "2b17b79279cd05f36d5fd4004912ebd3b1cd5e9ec1226f17a802a97766c1310a",
+      "src/cain/settings.py": "9301e8c29e859f6f1ba1bedcf6d501c7497625750d05cea35a4f66ca372766c4",
+      "src/cain/workspace.py": "2ad3afde78b0d66128d1c3208913dd0a70c7740be8d183249bddd31bc89d3858",
+      "src/cain/__init__.py": "0c8192bbe2ee45a0b07b3426c7583d0e32ce5edcabb6927ceb9782eac907bdbd",
+      "src/cain/__main__.py": "79e82eeb063d6eaf04c9f38a3c885b88d3decdc3db5a8229b5c261d0813cc8de",
+      "src/cain/agents/__init__.py": "8ae57531d6603d8333a54530a4adfdc223794c272e8093146b1d972340154653",
+      "src/cain/common/text.py": "2f90b40232797f5091308b0cf1afdb83c089467b6b9ec798e690129f5bc32eb9",
+      "src/cain/common/__init__.py": "535f1f8601985f0f2732b916b05f2d24f6a60150f7b020c9f8e0e68dc242c806",
+      "src/cain/evaluation/budget.py": "27e9f2cd6545f42cfe06eab094f46e12a45a6f439a833019b0a04202e2316ee4",
+      "src/cain/evaluation/functional_worker.py": "fc61bff5d1aeda136aea77ddb907f79228d727e2161af6bb725e2d0c040c1bfc",
+      "src/cain/evaluation/metrics.py": "7e8377d633a0b586fdd3f068285873283748940a4d908a8c83fef1e6ad8feb9c",
+      "src/cain/evaluation/__init__.py": "baf6aa1336006a260deba0b472e848abbad46e747e6b85c4d9d6c0736701628b",
+      "src/cain/evaluation/__main__.py": "d20e147efc105c9ebb62ff2546bf0277f7ed16fa46335f4ec38786c579a485a2",
+      "src/cain/identity/explicit.py": "1af6771dec64cd6283ddf84e097e5027128521920b239f0d0788edd9b11bdcdd",
+      "src/cain/identity/scopes.py": "3277b878a3ce8d8af94048055a9c49fc212940dd0b57198965ef14c65bfd6d15",
+      "src/cain/identity/__init__.py": "147fa34d3da3c70ba709344260e286569efd2458b19844c116e44cb3563bce80",
+      "src/cain/llm/streaming.py": "635a5c54a34debe0e14e042fec6093f2684095a49c66932533b90c61777f309e",
+      "src/cain/llm/__init__.py": "a862d8bc525299a43a3825c9938e3b741158707602f0dbf14052951d60153e95",
+      "src/cain/orchestrator/routing.py": "d69148776c837a78f38acf5ca03678f33ae0c69b57ef4b9b4fc8d97b4ce63cd0",
+      "src/cain/orchestrator/__init__.py": "fb6e20d9ef6562786dd6841d68af939d398206516933e8b7745501ea663ed7a9",
+      "src/cain/persistence/__init__.py": "8cf4eab72f32d0df1d35721ba3cafdd5629aad535266f7dc5095317d67e166ab",
+      "src/cain/research/agent_api.py": "e75d957529ea2d28ed768a26feb97d90a12f31f066d39f9d89d69e07dfe24846",
+      "src/cain/research/analysis.py": "9214c5fe94e8b3e849b94df4ac8a793cd39374bc6521932a94ad792340b84dd2",
+      "src/cain/research/api.py": "996d2f9ebf9cd41a027669e5d782cb98eacb672c4bd07034a369dc167cd1e558",
+      "src/cain/research/bundle_backup.py": "6dcac0cd58b53d7067c08983a2984bb6a2753bf4e44301b7cf2ecb41570b24de",
+      "src/cain/research/grounding.py": "3db090cfeffefde140c6a387a1968039b00bc752f33b005f8615ebbae760c133",
+      "src/cain/research/historian.py": "dbc0c9355a06f4cb984aa05ded55279be18214ef609d8850bfe821ef2d03e39e",
+      "src/cain/research/inspection.py": "6f0176454e3bfa95d3585908c03503471f50f2ef37954fa9e8f9250693ef2b02",
+      "src/cain/research/objects.py": "b7b578c59631b88c63c44f9b3122c17920d89527056bf4d3d6fc0a70ee8ba12d",
+      "src/cain/research/service.py": "641f9625db8c991f474e3c64fd5e84a2e7008f8a0053208d056b4ab8a411d6de",
+      "src/cain/research/workflows.py": "af8235a464548b1e8e6021ddd9683d019805682232541505a0982aba8c3a989c",
+      "src/cain/research/__init__.py": "db444630c3f3f80dbacf6765bd4cf394634bb39c4c21c4e879cb7d6809c19e04",
+      "src/cain/search/embeddings.py": "52253f3604cd003b29177ac0c175930776eda2fac10aa7a7831c9bf9cc433c00",
+      "src/cain/search/hybrid.py": "a63a7c375efeb375b70bfd05d73104e3fb563b729ae6c883387945e7009a7b88",
+      "src/cain/search/__init__.py": "53f12f525c820a1ac1133a4c778427ab9a714cf5273cc1f6c8e78106f5bf1e5d",
+      "src/cain/web/app.js": "d070a9808772625df073b6b65cd5bc576c791647c6a265dbab4160024807f84b",
+      "src/cain/web/index.html": "0a9e0c68d036a86966fa352cf9be5837adc79aa6e87634ccf4c917e690ac5b2d",
+      "src/cain/web/style.css": "91dd0284bf951335c00c668a7b3b8fcd05293ba2cdccfcb0c59db9cc0df73033",
+      "src/cain/persistence/adapters/lexical.py": "ff8e0cce8c68bf1967d6b6779638fb5d0b4ff7affdca57f30c646848a3331c9e",
+      "src/cain/persistence/adapters/sqlite.py": "87db5217266f3d9d9026830e220ce2c7c47fe89a586efe055b6f819c93dc700a",
+      "src/cain/persistence/adapters/__init__.py": "6de3186b0faba6302c46dbb33ed0f9616ea0c8692e166ab976a934a517bc5468",
+      "evaluation/scenarios/scenarios.json": "27137605f238a9aba0d43e66a7831323fb752d59811318c4a9a06eb2188ee7e0",
+      "evaluation/scenarios/quality-v03.json": "f113f5b0c06c191e9a17c40c0514c7351f939f80b7ca9f526c70e2b2ef103aeb",
+      "evaluation/probes/probes.json": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0",
+      "evaluation/rubrics/README.md": "d01204827c7b7e6c33da48d9fb02742030b2663f8cf3bc0a5818c9df677d9d55"
+    },
+    "dependency_identity": {
+      "research_bundle": {
+        "version": "1.0.0",
+        "files": {
+          "__init__.py": "eadc9bffface70cfe79ba1cd2a0b50a18358f5d1d6dd3d9224bb732df85a2d36",
+          "contract.json": "f72bd112257bc8b472c925ed4c9ab66f955ab013f4cdf5fc4446fdcb260e646d",
+          "export.py": "834c7894dd995330cc8fb46ca594b72aeae449d613ba2a43a40151bcafdce0c5",
+          "files.py": "e428434ccfcdaa62011b9693cdcd3a50dab9ce4cfa03328de58264a495363585"
+        }
+      },
+      "research_snapshot": {
+        "version": "1.0.0",
+        "files": {
+          "__init__.py": "2bb77f102c68dcee95139a0ff92b7ac8339fc16a90c95599da30f27aa8821ecf",
+          "contract.json": "3301062b0b837f5397f3bd609d618f6607f5fb5e3105b078e986c802340af458"
+        }
+      }
+    },
+    "predecessor_candidate": "d99c554b7de27754609d6a7b731afc50f01c224854ab176985440af0e999bb1f",
+    "stocks_test_overlay": {
+      "C:\\STOCKS\\work\\supply-portability-20260912\\tools\\test_cain_bundle_selection.py": "b1b96e37854dd4f3461f78c99fe6ccc41f0169de09c9276594a3700ed4cfd140"
+    }
+  },
+  "identity_algorithm": "SHA256 of UTF-8 json.dumps(identity_payload, sort_keys=True, separators=(comma,colon)); not a Git commit"
+}

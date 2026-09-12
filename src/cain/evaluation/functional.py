@@ -12,6 +12,7 @@ from pathlib import Path
 from urllib.request import urlopen
 
 from .budget import CharacterCounter, RecordingLLM, adapter_options
+from .resources import installed_identity
 from .harness import EvaluationConfig, _append, _json, _model, _prepare, load_design
 from .metrics import delegation_metrics, unavailable
 
@@ -226,7 +227,7 @@ def run_functional(output: Path, config: EvaluationConfig, *, data_root: Path | 
     _json(run_dir / "inputs/functional_corpus.json", FUNCTIONAL_CORPUS)
     metadata = json.loads((run_dir / "config.json").read_text(encoding="utf-8"))
     metadata.update(
-        source_metadata(Path(__file__).resolve().parents[3]),
+        installed_identity(),
         execution_kind="subprocess_per_stage" if llm is None else "injected_test_runtime_restart",
         scientific_claims_allowed=False, context_counter=None, context_budget_applied=False,
         blind_export=None, functional_review="Identified responses for inspection; no blind human ratings collected",

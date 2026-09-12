@@ -499,6 +499,7 @@ class BundleService:
         limit=20,
         offset=0,
         generate=False,
+        _db=None,
     ):
         if (
             type(limit) is not int
@@ -509,7 +510,8 @@ class BundleService:
             raise ValueError("Invalid pagination")
         records, artifacts, relations, coverage = {}, [], [], []
         evidence = []
-        with self.service.connection() as db:
+        from contextlib import nullcontext
+        with (nullcontext(_db) if _db is not None else self.service.connection()) as db:
             archives = self._archives(db, scope, generate)
             descriptors = {
                 (tuple(namespace(b["origin"])), a["artifact_id"], digest(canonical(a)))

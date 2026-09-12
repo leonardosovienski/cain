@@ -1,0 +1,89 @@
+{
+  "status": "FINITE_EXECUTION_COMPLETE",
+  "candidate": "d00bbc6fb910b3c51be6720d21012f4655258468adb7d7335451974929c58752",
+  "remote": "1ab431f4e368b06c7071fa1b3fd44d775d743c8c",
+  "validated_runtime_head": "f0cfb92b20a41e615d28f41e93bae589d680cf84",
+  "gates": {
+    "CANDIDATE_IDENTITY_STATUS": "PASS",
+    "LEGACY_COMPATIBILITY_STATUS": "PASS",
+    "CONTRACT_AND_PROFILE_STATUS": "PASS",
+    "WINDOWS_STATUS": "PASS",
+    "LINUX_STATUS": "PASS",
+    "PYTHON_MATRIX_STATUS": "PASS",
+    "F01_F10_STATUS_BY_PLATFORM": {
+      "Windows": "PASS within executed regression cases; symlink privilege case not executed here",
+      "Linux": "PASS within executed remediations and POSIX probes; required symlink executed; F09 documentation review is platform-neutral"
+    },
+    "INVENTORY_STATUS": "PARTIAL_JUSTIFIED",
+    "POPULATION_STATUS_BY_SOURCE_AND_CLASS": {
+      "brasileirao": "PARTIAL_JUSTIFIED",
+      "core": "PARTIAL_JUSTIFIED",
+      "crypto": "PARTIAL_JUSTIFIED",
+      "ecosystem": "PARTIAL_JUSTIFIED",
+      "ops": "PARTIAL_JUSTIFIED",
+      "stocks": "PARTIAL_JUSTIFIED"
+    },
+    "COVERAGE_STATUS": "PARTIAL_JUSTIFIED",
+    "DETERMINISTIC_QUERY_STATUS": "PASS",
+    "TEMPORAL_AND_LINEAGE_STATUS": "PASS",
+    "MODEL_UTILITY_STATUS": "INCONCLUSIVE",
+    "DERIVED_PIPELINE_STATUS": "PASS",
+    "DERIVED_BENEFIT_STATUS": "INCONCLUSIVE",
+    "SECURITY_AND_REVOCATION_STATUS": "PASS",
+    "BACKUP_RESTORE_OFFLINE_STATUS": "PASS",
+    "WHEEL_INSTALL_STATUS": "PASS",
+    "REMOTE_CI_STATUS": "PASS",
+    "INDEPENDENT_REVIEW_STATUS": "PASS",
+    "SCIENTIFIC_INTEGRITY_STATUS": "PASS",
+    "READY_FOR_FREEZE_REVIEW": "PASS",
+    "USER_PREVIEW_STATUS": "LIMITED_IN_STAGING"
+  },
+  "corpus": {
+    "brasileirao": "034b293e68854ed238ee2114038f0c10f237da912a913b5cbf82f6263c1d6667",
+    "core": "d23ef34b7229f48abe3fc22939fa95d088f33110567950414ebcff2ec95f02d9",
+    "crypto": "790a9f3eed755010eb7a1d50fe128531b0b9f6e34e19be64e9e6a73f77cca8ce",
+    "ecosystem": "040951306a5909aaac895d82f60bfddc85ebc1d488141a6aa734ed7893b99c05",
+    "ops": "49be153bae46a179ffe916ea5ce7cbd8903a6e35720820aa198322b268b1b723",
+    "stocks": "d385fbe3d7de5f780619083872f42bcabeaede41f845874ab2beca9909d5809d"
+  },
+  "completed_cases": [
+    "brasileirao-discover",
+    "brasileirao-lineage",
+    "brasileirao-missing",
+    "core-discover",
+    "core-lineage",
+    "core-missing",
+    "crypto-discover",
+    "crypto-lineage",
+    "crypto-missing",
+    "ecosystem-discover",
+    "ecosystem-lineage",
+    "ecosystem-missing",
+    "ops-discover",
+    "ops-lineage",
+    "ops-missing",
+    "stocks-discover",
+    "stocks-lineage",
+    "stocks-missing"
+  ],
+  "pending": [
+    "Optional personal user feedback and administrative freeze decision; not an unexecuted engineering test",
+    "Broader source admission or semantic-benefit research is outside the completed bounded evaluation"
+  ],
+  "next_safe_action": "Open USER_ACCEPTANCE for manual feedback; human freeze review of the bounded candidate",
+  "consumption": {
+    "runner_bytes": 394303,
+    "model_successes": 3,
+    "model_failures": 1,
+    "peak_ram": "UNKNOWN",
+    "persistent_services": false
+  },
+  "evidence_root": "C:\\CAIN\\work\\supply-final-20260912",
+  "supplemental": {
+    "status": "COMPLETED",
+    "identity": "3f3b34cf116201aea601459668b70480570fa9583575e727228e75fd0c2a8063",
+    "calls": 47,
+    "evidence_root": "C:\\CAIN\\work\\supply-final-20260912\\closure-real-20260912"
+  },
+  "clarification": "Original prompt permits partial justified coverage and non-positive/inconclusive benefit; neither is silently upgraded."
+}

@@ -13,7 +13,6 @@ import json
 from pathlib import Path
 import random
 import re
-import subprocess
 import sys
 from time import perf_counter
 from urllib.request import urlopen
@@ -50,7 +49,8 @@ def _digest(data: bytes) -> str:
 
 
 def load_dataset(path: Path | None = None) -> tuple[dict, Path]:
-    path = Path(path) if path else Path(__file__).resolve().parents[3] / "evaluation/scenarios/quality-v03.json"
+    from .resources import data_root
+    path = Path(path) if path is not None else data_root() / "scenarios/quality-v03.json"
     design = json.loads(path.read_text(encoding="utf-8"))
     cases = design["cases"]
     if not 12 <= len(cases) <= 16 or len({case["id"] for case in cases}) != len(cases):
@@ -227,19 +227,8 @@ def _backend(config: QualityConfig) -> dict:
 
 
 def _code_identity() -> dict:
-    root = Path(__file__).resolve().parents[3]
-    def git(*args):
-        try:
-            result = subprocess.run(["git", "-C", str(root), *args], text=True, capture_output=True,
-                                    encoding="utf-8", timeout=10, check=False)
-            return result.stdout.strip() if result.returncode == 0 else None
-        except (OSError, subprocess.TimeoutExpired):
-            return None
-    hashes = {str(path.relative_to(root)).replace("\\", "/"): _digest(path.read_bytes())
-              for path in sorted((root / "src/cain").rglob("*.py"))}
-    state = git("status", "--porcelain")
-    return {"git_commit": git("rev-parse", "HEAD"), "git_dirty": bool(state) if state is not None else None,
-            "source_sha256": hashes, "source_tree_sha256": _digest(json.dumps(hashes, sort_keys=True).encode())}
+    from .resources import installed_identity
+    return installed_identity()
 
 
 def _summary(records: list[dict], config: QualityConfig, cases: list[dict], run_id: str) -> dict:

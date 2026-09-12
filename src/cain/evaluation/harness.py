@@ -56,7 +56,8 @@ def formal_blockers() -> list[str]:
 
 
 def _data_root(data_root: Path | None) -> Path:
-    return Path(data_root) if data_root else Path(__file__).resolve().parents[3] / "evaluation"
+    from .resources import data_root as packaged_data_root
+    return Path(data_root) if data_root is not None else packaged_data_root()
 
 
 def load_design(data_root: Path | None = None) -> tuple[dict, dict, Path]:

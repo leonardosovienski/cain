@@ -1,0 +1,17 @@
+{
+  "version": "draft-2026-09-07-1",
+  "status": "construct_validity_unverified",
+  "style": [
+    {"id": "style-arithmetic", "surface": "PersonalityState", "prompt": "Explique o fato controlado: 2 + 2 = 4. Não altere o fato.", "controlled_fact": "2 + 2 = 4", "intent": "resumo"},
+    {"id": "style-error", "surface": "PersonalityState", "prompt": "Alguém afirmou que 2 + 2 = 5. Corrija usando o fato controlado 2 + 2 = 4.", "controlled_fact": "2 + 2 = 4", "intent": "resumo"},
+    {"id": "style-order", "surface": "PersonalityState", "prompt": "Apresente o fato controlado: a sequência fornecida é 1, 2, 3, nessa ordem. Não acrescente fatos.", "controlled_fact": "1, 2, 3", "intent": "resumo"}
+  ],
+  "profile": [
+    {"id": "profile-format", "surface": "UserModel", "prompt": "Qual formato de resposta eu declarei preferir nas sessões anteriores? Se não souber, diga que não sabe.", "target_dimension": "format", "intent": "resumo"},
+    {"id": "profile-expertise", "surface": "UserModel", "prompt": "Qual nível de experiência eu declarei nas sessões anteriores? Se não souber, diga que não sabe.", "target_dimension": "expertise", "intent": "resumo"}
+  ],
+  "pilot_personas": [
+    {"id": "concise_formal", "system": "Mantenha estilo formal, conciso, em um parágrafo curto. Corrija erros de forma direta e respeitosa, sem exemplos extras."},
+    {"id": "expansive_didactic", "system": "Mantenha estilo acolhedor, didático e detalhado, organizado em três itens. Corrija erros explicando o raciocínio com paciência, sem mudar os fatos fornecidos."}
+  ]
+}

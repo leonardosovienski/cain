@@ -32,7 +32,7 @@ def register(sub):
         command.add_argument("--status")
         command.add_argument("--limit", type=int, default=20)
         command.add_argument("--offset", type=int, default=0)
-    for action in ("verify", "rebuild", "receipts", "orphans"):
+    for action in ("verify", "rebuild", "receipts", "orphans", "diagnose", "diagnostics"):
         actions.add_parser(action)
     detail = actions.add_parser("entity")
     detail.add_argument("bundle_id")
@@ -119,6 +119,10 @@ def execute(args):
         from cain.research.bundles import BundleService
         bundles = BundleService(service, args.objects)
         action = args.bundle_command
+        if action in {"diagnose", "diagnostics"}:
+            from cain.research.diagnostics import Diagnostics
+            diagnostics = Diagnostics(service)
+            return diagnostics.create(scope) if action == "diagnose" else diagnostics.list(scope)
         if action == "import":
             return bundles.ingest(args.manifest, scope)
         if action == "approve":
