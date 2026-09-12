@@ -26,7 +26,10 @@ def run(command):
                          stdout=result.stdout.decode(), stderr=result.stderr.decode()))
     (area / 'commands.json').write_text(json.dumps(receipts, indent=2))
     assert result.returncode == 0, receipts[-1]
-    return json.loads(result.stdout)
+    try:
+        return json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return result.stdout.decode().strip()
 
 def cli(domain, *args, database='research.db', selected_policy=policy_path):
     return run([receiver, '-m', 'cain', 'research', '--db', area / database,
@@ -75,3 +78,68 @@ for domain, count in counts.items():
 (area / 'evidence.json').write_text(json.dumps(dict(status='PASS', counts=counts,
     sources=hashes, scope='Real committed public Snapshot reports; not scientific DB or Bundle export',
     grants_unchanged=True, offline_restore=True), indent=2))
+
+# Exercise the actual Bundle exporters too, without a scientific database or pipeline.
+bundle_policy = json.loads((Path(__file__).parent / 'existing-bundle-policy.json').read_text())
+for binding in bundle_policy['imports']:
+    binding['root'] = str(area / 'exports' / binding['collection'])
+bp = area / 'bundle-policy.json'
+bp.write_text(json.dumps(bundle_policy))
+bundle_sources = {
+    'crypto': ['charters/scientific_state.json', 'GarimpoInvestimentos/trials.json',
+               'GarimpoInvestimentos/trials.harness_attestation.json',
+               'GarimpoInvestimentos/trials.phase1_harness_attestation.json'],
+    'brasileirao': ['docs/EVIDENCE_REGISTRY.md', 'reports/replay_round_2026_08_22.json'],
+    'stocks': ['docs/engineering/2026-09-11-architecture/evidence/real-v020.json'],
+}
+bundle_receipts = {}
+for domain, names in bundle_sources.items():
+    root = roots[domain]
+    pins = {n: hashlib.sha256((root / n).read_bytes()).hexdigest() for n in names}
+    target = area / 'exports' / domain / 'bundle'
+    command = ([producer, '-m', 'crypto_research_export.bundle'] if domain == 'crypto'
+               else [producer, root / 'tools/export_cain_bundle.py'])
+    command += ['--root', root, '--expected-sha', pins[names[0]], '--destination', target,
+                '--exported-at', '2026-09-12T00:00:00Z']
+    if domain == 'crypto':
+        command += ['--trials-sha', pins[names[1]]]
+        for n in names[2:]:
+            command += ['--attestation-sha', n + '=' + pins[n]]
+    if domain == 'brasileirao':
+        command += ['--replay-sha', pins[names[1]]]
+    run(command)
+    package = json.loads((target / 'bundle.json').read_bytes())
+    cli(domain, 'bundle', 'approve', 'bundle/bundle.json', selected_policy=bp)
+    cli(domain, 'bundle', 'import', 'bundle/bundle.json', selected_policy=bp)
+    q = cli(domain, 'bundle', 'query', '--limit', '50', selected_policy=bp)
+    assert q['total'] == len(package['entities']) > 0
+    assert q['relation_total'] == len(package['relations'])
+    cli(domain, 'bundle', 'verify', selected_policy=bp)
+    bundle_receipts[domain] = dict(entities=q['total'], relations=q['relation_total'],
+                                  bundle_id=package['bundle_id'], pins=pins, received=0)
+run([receiver, '-c', 'from cain.workspace import WorkspaceStore; import sys; WorkspaceStore(sys.argv[1]); print("{}")', area / 'workspace.db'])
+run([receiver, '-m', 'cain', 'archive', 'backup', '--workspace', area / 'workspace.db',
+     '--research', area / 'research.db', '--policy', bp, area / 'bundle-backup'])
+run([receiver, '-m', 'cain', 'archive', 'restore', area / 'bundle-backup', area / 'bundle-restored'])
+for binding in bundle_policy['imports']:
+    binding['root'] = str(area / 'UNAVAILABLE-BUNDLE' / binding['collection'])
+offline_bundle = area / 'offline-bundle-policy.json'
+offline_bundle.write_text(json.dumps(bundle_policy))
+for domain, receipt in bundle_receipts.items():
+    db = 'bundle-restored/research.db'
+    q = cli(domain, 'bundle', 'query', '--limit', '50', database=db, selected_policy=offline_bundle)
+    assert q['total'] == receipt['entities'] and q['relation_total'] == receipt['relations']
+    cli(domain, 'bundle', 'verify', database=db, selected_policy=offline_bundle)
+    for a in q['artifacts']:
+        if a['availability'] != 'received':
+            continue
+        destination = area / ('materialized-' + domain + '-' + str(receipt['received']))
+        cli(domain, 'bundle', 'materialize', a['bundle_id'], a['artifact_id'], destination,
+            database=db, selected_policy=offline_bundle)
+        assert hashlib.sha256(destination.read_bytes()).hexdigest() == a['sha256']
+        receipt['received'] += 1
+    for name, expected in receipt['pins'].items():
+        assert hashlib.sha256((roots[domain] / name).read_bytes()).hexdigest() == expected
+(area / 'bundle-evidence.json').write_text(json.dumps(dict(status='PASS', domains=bundle_receipts,
+    grants_unchanged=True, offline_restore=True, scientific_calls=0,
+    scope='Real charter/trials/existing attestations, retrospective BR report, Stocks catalog metadata; no source database opened'), indent=2))
