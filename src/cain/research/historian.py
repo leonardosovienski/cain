@@ -10,7 +10,7 @@ from cain.research.analysis import fingerprint, guard
 from cain.research.field_review import field_reply, requested_fields, resolve_reply
 from cain.research.grounding import cards
 
-PROMPT_VERSION = "historian-extractive/4"
+PROMPT_VERSION = "historian-extractive/5"
 
 def metadata_context(service, scope, *, bundles=None, **filters):
     """Factual bounded context; never opens objects or calls a model.
@@ -82,7 +82,9 @@ Keep each excerpt short (prefer under 300 characters). Copy the original languag
 Do not infer missing facts, rewrite statistics, transfer results between records, or invent reasons.
 An interval crossing zero does not assert a zero coefficient. Closure is not scientific refutation.
 If the evidence cannot answer, return an empty claims list. Never fill gaps with a paraphrase.
-No tools or execution are available."""
+No tools or execution are available.
+The quote value must match the decoded evidence text exactly. Do not add quotation marks around copied words. JSON string delimiters are syntax, not part of the copied quote.
+"""
 
 
 def _source_contexts(quotes):
