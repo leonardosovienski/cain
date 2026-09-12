@@ -333,6 +333,13 @@ class SummaryAgent:
     def handle(self, message: Message) -> str:
         if message.metadata.get("route_reason") == "preference_confirmation":
             return self._confirm_preferences(message.metadata.get("preferences", {}))
+        explicit = re.search(r'\bresuma(?:\s+(?:o\s+)?texto)?\s*:\s*(.+)\Z',
+                             message.payload, flags=re.I | re.S)
+        preferences = message.metadata.get('preferences', {})
+        if explicit and 0 < len(explicit[1].strip()) <= 240 and preferences.get('language') != 'en':
+            text = explicit[1].strip()
+            prefix = {'bullets': '- ', 'steps': '1. '}.get(preferences.get('format'), '')
+            return 'Texto já conciso; preservado literalmente:\n' + prefix + text
         return self.llm.generate(
             message.payload,
             message.contexto_identidade + "\nEspecialização: resuma o texto fornecido. "

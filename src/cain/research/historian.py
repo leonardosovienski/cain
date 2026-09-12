@@ -10,7 +10,7 @@ from cain.research.analysis import fingerprint, guard
 from cain.research.field_review import field_reply, requested_fields, resolve_reply
 from cain.research.grounding import cards
 
-PROMPT_VERSION = "historian-extractive/3"
+PROMPT_VERSION = "historian-extractive/4"
 
 def metadata_context(service, scope, *, bundles=None, **filters):
     """Factual bounded context; never opens objects or calls a model.
@@ -182,6 +182,23 @@ def _explain(service, scope, question, provider, **filters):
     }
     prompt = canonical(payload).decode()
     input_bytes = len((SNAPSHOT_INSTRUCTION + prompt).encode("utf-8"))
+    sent_texts = {handle: evidence[ref]['text'] for handle, ref in references.items()}
+    coverage = {'selection': 'received_sources_within_budget',
+                'retrieval': {'limit': generation_result['limit'],
+                              'offset': generation_result['offset'],
+                              'has_more': generation_result['has_more']}}
+    if input_bytes > 6000:
+        excerpts, selected_coverage = cards(evidence, question, filters.get('source_id'))
+        coverage.update(selected_coverage)
+        references = {f'e{index}': row['reference'] for index, row in enumerate(excerpts.values(), 1)}
+        sent_texts = {f'e{index}': row['quote'] for index, row in enumerate(excerpts.values(), 1)}
+        payload['evidence'] = [
+            {'reference_id': f'e{index}', 'text': row['quote'],
+             'json_pointer': row.get('json_pointer')}
+            for index, row in enumerate(excerpts.values(), 1)
+        ]
+        prompt = canonical(payload).decode()
+        input_bytes = len((SNAPSHOT_INSTRUCTION + prompt).encode('utf-8'))
     if input_bytes > 6000:
         raise ValueError(
             "O contexto excede 6000 bytes. Filtre pela identidade da fonte ou pelo texto; "
@@ -206,15 +223,18 @@ def _explain(service, scope, question, provider, **filters):
     }
     start = perf_counter()
     try:
-        if not evidence:
+        guard(service, scope, snapshot)
+        if not references:
             return {
                 "facts": result,
                 "explanation": {"claims": [], "synthesis": ""},
                 "status": (
                     "abstained_not_admitted_for_generation"
                     if result["records"] and not generation_result["records"]
+                    else "abstained_insufficient_evidence_budget" if evidence
                     else "abstained_no_received_evidence"
                 ),
+                "coverage": coverage,
                 "generation": {**metadata, "called": False},
             }
         if callable(getattr(provider, "generate_json", None)):
@@ -256,7 +276,7 @@ def _explain(service, scope, question, provider, **filters):
                 type(quote) is not str
                 or not quote.strip()
                 or len(quote) > 1500
-                or quote not in evidence[reference]["text"]
+                or quote not in sent_texts[claim['evidence_id']]
             ):
                 raise ValueError("Claim is not an exact received quote")
             resolved.append(
@@ -266,8 +286,10 @@ def _explain(service, scope, question, provider, **filters):
                     "support": service.evidence(scope, reference),
                 }
             )
+        guard(service, scope, snapshot)
         return {
             "facts": result,
+            "coverage": coverage,
             "explanation": {
                 "source_quotes": resolved,
                 "source_contexts": _source_contexts(resolved),

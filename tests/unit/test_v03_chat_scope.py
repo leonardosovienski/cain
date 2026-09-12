@@ -22,7 +22,9 @@ def test_chat_session_flag_persists_only_in_selected_session(tmp_path, monkeypat
         "chat", "--config", str(config), "--db", str(database), "--provider", "fake",
         "--user", "alice", "--session", "selected", "--preference-scope", "session",
     ]) == 0
-    assert "SIMULAÇÃO FakeLLM" in capsys.readouterr().out
+    output = capsys.readouterr().out
+    assert "preservado literalmente" in output
+    assert "1. A revisão ainda não foi aprovada." in output
 
     # Reopening also proves the overlay was persisted, not just kept in the chat object.
     with build_cain(database, FakeLLM()) as reopened:

@@ -107,7 +107,7 @@ def test_current_user_preference_reaches_first_inference_without_learning_assist
     llm = PreferenceTrapLLM()
     with build_cain(tmp_path / "cain.db", llm) as cain:
         result = cain.run(
-            "alice", "s1", "Prefiro respostas curtas. Resuma: SQLite persiste dados.",
+            "alice", "s1", "Prefiro respostas curtas. Resuma o conteúdo: SQLite persiste dados.",
             run_id="first-preference",
         )
         assert len(result.steps) == 8
@@ -151,7 +151,7 @@ def test_quoted_preferences_do_not_learn_or_trigger_confirmation(tmp_path):
             cain.run("alice", "s1", '"Prefiro respostas curtas"')
         assert cain.identity.get("alice").user_model.preferences == {}
         assert llm.calls == []
-        result = cain.run("alice", "s1", 'Resuma: "Prefiro respostas curtas"')
+        result = cain.run("alice", "s1", 'Resuma a citação: "Prefiro respostas curtas"')
         assert result.selected_agent == "resumo"
         assert len(llm.calls) == 1
         assert cain.identity.get("alice").user_model.preferences == {}

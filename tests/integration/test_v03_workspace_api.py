@@ -120,7 +120,7 @@ def test_feedback_requires_owned_response_and_does_not_update_preferences(api):
     assert preference.status_code == 200, preference.text
     generated = client.post("/run", json={
         "user_id": "alice", "session_id": "feedback-session",
-        "payload": "Resuma: O contrato possui entradas.", "intent": "resumo",
+        "payload": "Resuma o conteúdo: O contrato possui entradas.", "intent": "resumo",
     })
     assert generated.status_code == 200, generated.text
     turn_id = generated.json()["turn_id"]

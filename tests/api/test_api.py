@@ -43,7 +43,7 @@ def test_profile_learns_before_generation_and_can_be_corrected_and_removed(tmp_p
     with TestClient(create_app(database, model)) as client:
         result = client.post("/run", json={
             "user_id": "alice", "session_id": "one",
-            "payload": "Prefiro respostas em passos. Resuma: SQLite armazena dados.",
+            "payload": "Prefiro respostas em passos. Resuma o conteúdo: SQLite armazena dados.",
             "intent": "resumo",
         })
         assert result.status_code == 200, result.text
