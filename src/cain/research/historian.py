@@ -10,7 +10,7 @@ from cain.research.analysis import fingerprint, guard
 from cain.research.field_review import field_reply, requested_fields, resolve_reply
 from cain.research.grounding import cards
 
-PROMPT_VERSION = "historian-extractive/5"
+PROMPT_VERSION = "historian-extractive/6"
 
 def metadata_context(service, scope, *, bundles=None, **filters):
     """Factual bounded context; never opens objects or calls a model.
@@ -167,7 +167,7 @@ def _explain(service, scope, question, provider, **filters):
             guard(service, scope, snapshot)
             return {'status': 'literal_fields', 'facts': result, 'explanation': explanation,
                     'coverage': coverage, 'generation': {'called': False,
-                    'prompt_version': 'historian-literal-fields/1'}, 'model_calls': 0}
+                    'prompt_version': 'historian-literal-fields/2'}, 'model_calls': 0}
     # Compact, request-local handles avoid spending the output budget copying hashes.
     # Public citations are restored to the full admitted reference after validation.
     references = {f"e{index}": ref for index, ref in enumerate(evidence, start=1)}
@@ -247,6 +247,22 @@ def _explain(service, scope, question, provider, **filters):
             schema["properties"]["claims"]["items"]["properties"]["evidence_id"]["enum"] = list(
                 references
             )
+            # A small complete JSON slice can be selected without reserializing
+            # its fields. Do not constrain a partial candidate set or prose.
+            if filters.get('source_id') and not generation_result['has_more']:
+                options, selection = cards(evidence, question, filters['source_id'])
+                choices = list(dict.fromkeys(row['quote'] for row in options.values()))
+                choice_bytes = len(canonical(choices))
+                if (choices and not selection['omitted_excerpts']
+                        and not selection['candidate_search_partial']
+                        and not selection['structured_issues']
+                        and all('json_pointer' in row for row in options.values())
+                        and all(any(quote in sent for sent in sent_texts.values())
+                                for quote in choices)
+                        and input_bytes + choice_bytes <= 6000):
+                    schema['properties']['claims']['items']['properties']['quote']['enum'] = choices
+                    metadata['literal_quote_choices'] = len(choices)
+                    metadata['quote_choice_bytes'] = choice_bytes
             raw = provider.generate_json(prompt, SNAPSHOT_INSTRUCTION, schema)
 
         else:

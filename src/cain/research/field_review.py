@@ -4,7 +4,7 @@ import re
 import unicodedata
 from research_snapshot import digest
 
-VERSION = 'literal-json-field-review/1'
+VERSION = 'literal-json-field-review/2'
 ALIASES = {
     'state': {'estado', 'state', 'status'},
     'trial': {'trial', 'trials', 'ensaio'},
@@ -46,6 +46,14 @@ def requested_fields(question, identity):
     if not identity:
         return []
     query = re.sub(r'(?<!\w)' + re.escape(identity) + r'(?!\w)', '', question, flags=re.I)
+    # A documented decision followed by an explicit field list is still a
+    # lookup. Keep causal, evaluative and open-ended interpretation elsewhere.
+    normalized = normalize(query).strip()
+    compound = re.fullmatch(
+        r'(?:explique|descreva|reconstrua)\s+(?:a\s+)?decisao(?:\s+documentada)?'
+        r'\s+de\s*,?\s*(?:incluindo|com)\s+(.+)', normalized)
+    if compound:
+        query = compound[1]
     words = set(re.findall(r'\w+', normalize(query)))
     fields = [field for field, aliases in ALIASES.items() if words & aliases]
     # Deliberately limited to explicit lookup wording; interpretation stays on its old path.
