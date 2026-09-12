@@ -2,6 +2,32 @@
 
 import json
 import re
+import unicodedata
+from hashlib import sha256
+
+
+def terms_of(text):
+    text = unicodedata.normalize('NFKD', text.casefold())
+    return set(re.findall(r'\w+', ''.join(c for c in text if not unicodedata.combining(c))))
+
+
+def bounded_prose_spans(text, source_id, budget):
+    """Expand sentence windows only inside an oversized paragraph, never mid-clause.
+
+    Adjacent sentences are mandatory context; oversized windows remain omitted.
+    This is a retrieval heuristic, not certification of semantic completeness.
+    """
+    for start, end in prose_spans(text, source_id):
+        if len(text[start:end].encode()) <= budget:
+            yield start, end
+            continue
+        boundaries = [start] + [start + m.end() for m in
+            re.finditer(r'[.!?](?:[ \t]+|\r?\n)(?=[A-ZÀ-Ý])', text[start:end])] + [end]
+        if len(boundaries) == 2:
+            yield start, end
+            continue
+        for index in range(len(boundaries) - 1):
+            yield boundaries[max(0, index - 2)], boundaries[min(len(boundaries) - 1, index + 3)]
 
 
 def matches_identity(relation, source_id):
@@ -43,7 +69,7 @@ def prose_spans(text, source_id):
     return result
 
 
-def structured(evidence, source_id=None):
+def structured(evidence, source_id=None, *, addressable=False):
     relations, recognized, issues = [], 0, []
     seen = set()
     for ref, text in evidence.items():
@@ -86,7 +112,7 @@ def structured(evidence, source_id=None):
                                 obj = value if isinstance(value, str) else raw_value
                                 subject = key if key in quote else raw_key
                                 obj = obj if obj in quote else raw_value
-                                if len(quote) <= 1000 and len(subject) <= 150 and len(obj) <= 150:
+                                if addressable or (len(quote) <= 1000 and len(subject) <= 150 and len(obj) <= 150):
                                     entries.append({"subject": subject, "predicate": "reported_json_value",
                                         "object": obj, "decoded_subject": key, "decoded_object": value,
                                         "json_pointer": pointer, "reference": ref, "quote": quote,
@@ -142,26 +168,35 @@ def structured(evidence, source_id=None):
             if not entries:
                 issues.append({'reference': ref, 'status': 'identity_not_found_in_supported_fields'})
         relations.extend(entries)
-    return {"recognized_sources": recognized, "relations": relations[:32], "has_more": len(relations) > 32,
+    limit = 2048 if addressable else 32
+    return {"recognized_sources": recognized, "relations": relations[:limit], "has_more": len(relations) > limit,
             "issues": issues, "status": "literal" if relations else "ambiguous" if issues else "unsupported"}
 
 
-def cards(evidence, question, source_id=None):
+def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     """Select bounded exact excerpts, retaining source offsets and disclosed coverage."""
     candidates, seen, focused_paths, issues = [], set(), {}, []
-    terms = set(re.findall(r'\w+', question.casefold()))
+    if type(max_bytes) is not int or not 1 <= max_bytes <= 2200 or type(max_cards) is not int or not 1 <= max_cards <= 8:
+        raise ValueError('Invalid evidence budget')
+    terms = terms_of(question)
+    partial, examined, decisions = False, 0, []
     for ref, item in evidence.items():
         text = item['text']
+        if examined >= 100 or len(text.encode()) > 1_000_000:
+            partial = True
+            continue
+        examined += 1
         if text in seen:
             continue
         seen.add(text)
-        literal = structured({ref: text}, source_id)
+        literal = structured({ref: text}, source_id, addressable=True)
+        partial |= literal['has_more']
         issues.extend(literal['issues'])
         if literal['issues']:
             # Ambiguous JSON must not be reinterpreted as unstructured prose.
             continue
         focused = [r for r in literal['relations']
-                   if source_id is not None and matches_identity(r, source_id)]
+                   if source_id is None or matches_identity(r, source_id)]
         if focused:
             # Shared JSON commonly contains every hypothesis. Pass only exact-key
             # values for the selected identity, with paths distinguishing state/trial.
@@ -171,33 +206,61 @@ def cards(evidence, question, source_id=None):
                 if (start, end) in spans:
                     continue
                 spans.add((start, end))
-                candidates.append((100, ref, start, end, relation['quote']))
+                score = len(terms & terms_of(relation['quote'] + ' ' + relation.get('json_pointer', '')))
+                candidates.append((100 + score, ref, start, end, relation['quote']))
                 if 'json_pointer' in relation:
                     focused_paths[(ref, start, end)] = relation['json_pointer']
             continue
-        for start, end in prose_spans(text, source_id):
+        for number, (start, end) in enumerate(bounded_prose_spans(text, source_id, max_bytes)):
+            if number >= 2048:
+                partial = True
+                break
             quote = text[start:end]
             if not quote.strip() or not re.search(r'\w', quote):
                 continue
-            score = len(terms & set(re.findall(r'\w+', quote.casefold())))
-            score += 20 if source_id and source_id.casefold() in quote.casefold() else 0
+            score = len(terms & terms_of(quote))
+            score += 20 if source_id and re.search(r'(?<!\w)' + re.escape(source_id.casefold()) + r'(?!\w)', quote.casefold()) else 0
             if re.match(r'^\s*[-*]\s+\*{0,2}(?:state|status|limitations|estado|limitações)\b', quote, re.I):
                 score += 12
             candidates.append((score, ref, start, end, quote))
     candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
     selected, used = {}, 0
     for _, ref, start, end, quote in candidates:
-        if len(selected) >= 8 or used + len(quote.encode()) > 2200:
+        reason = ('overlapping_selected_context' if any(e['reference'] == ref and start < e['end'] and end > e['start'] for e in selected.values())
+                  else 'card_limit' if len(selected) >= max_cards
+                  else 'byte_budget' if used + len(quote.encode()) > max_bytes else 'selected')
+        decisions.append({'reference': ref, 'start': start, 'end': end, 'decision': reason})
+        if reason != 'selected':
             continue
-        entry = {"reference": ref, "quote": quote, "start": start, "end": end}
+        entry = {"reference": ref, "quote": quote, "start": start, "end": end,
+                 "source_sha256": sha256(evidence[ref]['text'].encode()).hexdigest(),
+                 "offset_unit": "unicode_codepoints"}
         if (ref, start, end) in focused_paths:
             entry['json_pointer'] = focused_paths[(ref, start, end)]
         selected['S' + str(len(selected) + 1)] = entry
         used += len(quote.encode())
+    # Lexical candidate availability is deliberately separate from answer support.
+    parts = [part.strip(' ?.,') for part in re.split(r'[?;]|\s+(?:e|and)\s+', question) if part.strip(' ?.,')]
+    subrequests = []
+    for part in parts:
+        query = terms_of(part) - terms_of(source_id or '') - {'o', 'a', 'os', 'as', 'de', 'do', 'da', 'qual', 'what', 'is', 'the'}
+        located = [c for c in candidates if query & terms_of(c[4] + ' ' + focused_paths.get((c[1], c[2], c[3]), ''))]
+        refs = [key for key, e in selected.items() if query & terms_of(e['quote'] + ' ' + e.get('json_pointer', ''))]
+        subrequests.append({'request': part, 'method': 'lexical_overlap/1',
+                            'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
+                            'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_then_lexical_excerpts/3", "whole_source_read_claim": False,
+                      "selection": "identity_then_lexical_excerpts/4", "whole_source_read_claim": False,
+                      "request": question, "decomposition": "explicit_conjunctions_partial/1", "subrequests": subrequests,
+                      "semantic_support": "not_verified", "budget_bytes": max_bytes,
+                      "used_bytes": used, "token_count": None,
+                      "source_limit": 100, "source_byte_limit": 1_000_000,
+                      "structured_candidate_limit_per_source": 2048,
+                      "examined_sources": examined, "candidate_search_partial": partial,
+                      "decisions": decisions[:256], "decision_log_limit": 256,
+                      "omitted_decision_records": max(0, len(decisions) - 256),
                       "structured_issues": issues,
                       "omitted_excerpts": len(candidates) - len(selected),
                       "limitations": ["Exact identity paths/rows/headings do not infer entity mappings",
-                                      "Whole prose blocks exceeding the budget are omitted, never sliced",
+                                      "Oversized prose uses adjacent sentence windows; semantic completeness is not verified",
                                       "Selected excerpts cannot establish unreceived causes"]}
