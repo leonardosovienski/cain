@@ -2,7 +2,11 @@
 
 ## Estado operacional atual
 
-[Entrega 0.4.7: streaming, visão, busca, extração, debate, workflows e MCP](DELIVERY_047.md).
+[Auditoria ampliada e instalação de 12/09/2026](research/AUDITORIA_OPERACIONAL_20260912.md),
+[correção do Historian](research/HISTORIAN_OPERACIONAL_20260912.md) e
+[continuidade da versão vigente](../CONTINUIDADE.md).
+
+[Entrega 0.4.7 original](DELIVERY_047.md), anterior às correções.
 As entregas abaixo documentam versões anteriores.
 
 [Entrega 0.4.4: três produtores, backup e avaliação](DELIVERY_044.md).

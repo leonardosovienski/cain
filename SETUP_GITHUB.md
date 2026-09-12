@@ -1,13 +1,17 @@
 # Repositório e verificação
 
 O repositório está publicado em [leonardosovienski/cain](https://github.com/leonardosovienski/cain).
-A entrega 0.4.4 está na branch `local/l0-historian`; não presuma que `main` contém
-esta entrega. O checkout desta máquina é `C:\CAIN\projeto`.
-As ampliações 0.4.5/0.4.6 estão em `feature/research-capabilities-20260911`,
-checkout `C:\CAIN\work\research-capabilities-20260911`; este é o código do
-wheel atualmente instalado. O checkout principal contém a arquitetura publicada
-por outro trabalho em `architecture/complete-20260911`, sem integração automática.
-Consulte [CONTINUIDADE.md](CONTINUIDADE.md) para versão instalada e evidências.
+As correções atuais estão na branch `fix/historian-integrity-20260912`,
+checkout `C:/CAIN/work/historian-operational-fix-20260912`. O código instalado
+é `0c8814901d3d365a2eec4b0c7386b59f460d349d`; os commits posteriores de
+Markdown documentam a entrega. Consulte [CONTINUIDADE.md](CONTINUIDADE.md)
+para wheel, testes, recuperação e verificação exata do remoto. Não presuma
+que main ou outra branch contém estas correções.
+
+As branches `local/l0-historian`, `feature/research-capabilities-20260911` e
+`architecture/complete-20260911` registram entregas anteriores. A branch
+`validation/cain-supply-completion-20260912` é outra linha de trabalho;
+a publicação desta correção não promove automaticamente a arquitetura Supply.
 
 O primeiro commit preserva os documentos de entrada. Os seguintes registram
 instrumentos e implementação. Um commit local datado não demonstra, sozinho,

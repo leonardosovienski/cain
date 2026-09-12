@@ -1,12 +1,15 @@
 # Estado atual do Cain — 0.4.7
 
-Entrega atual: [capacidades locais e avaliação 0.4.6](docs/DELIVERY_047.md).
+Entrega atual: [auditoria operacional de 12/09/2026](docs/research/AUDITORIA_OPERACIONAL_20260912.md).
+Código instalado `0c8814901d3d365a2eec4b0c7386b59f460d349d`; 459 testes passaram,
+um skip Windows. Busca documental literal e Historian com contexto preservado.
+Resumos livres ainda apresentam erros e não estão aprovados semanticamente.
 Streaming, visão, busca L0, relações propostas, debate, workflows duráveis e MCP
 estão implementados. Ollama/modelos instalados e inferência real exercitada;
 qualidade das respostas é limitada e saídas inválidas são recusadas.
 Os resultados anteriores abaixo são históricos.
 
-Atualizado em 2026-09-11. O estado operacional, caminhos, validação e limites atuais
+Atualizado em 2026-09-12. O estado operacional, caminhos, validação e limites atuais
 estão em [CONTINUIDADE.md](CONTINUIDADE.md). A instalação principal é `C:\CAIN`,
 com entrada `C:\CAIN\ABRIR_CAIN.cmd`, porta 8877 e dados preservados localmente.
 

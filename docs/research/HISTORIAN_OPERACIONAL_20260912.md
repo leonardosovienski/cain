@@ -28,4 +28,12 @@ A instalação local é executada apenas após os checks acima, com wheel offlin
 
 O diretório guarda cópias SQLite anteriores, configuração e atalhos, o novo wheel e o wheel operacional anterior verificado (SHA ce43f2bed45be8b191da775aa85d643453e6200d94ff0e8a0044b51b3cf18600). Reverter apenas o código com o wheel em rollback, sem restaurar automaticamente bancos que podem conter consultas posteriores.
 
-A publicação remota não faz parte desta rodada. O aplicativo permanece local, com grants e fontes preservados. Consulta de uso gera recibos/histórico; isso não é alteração das hipóteses ou dos payloads recebidos.
+Esta primeira rodada terminou sem publicação remota; a publicação posterior está descrita em [Continuidade](../../CONTINUIDADE.md). O aplicativo permanece local, com grants e fontes preservados. Consulta de uso gera recibos/histórico; isso não é alteração das hipóteses ou dos payloads recebidos.
+
+
+## Atualização posterior
+
+Este reparo foi instalado e validado com H6 na interface principal. Depois,
+[a auditoria ampliada](AUDITORIA_OPERACIONAL_20260912.md) corrigiu também a busca
+documental e instalou o wheel mais recente. O hash e as contagens acima pertencem
+a esta primeira rodada; consulte Continuidade para o estado vigente.

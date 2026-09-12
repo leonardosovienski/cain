@@ -1,11 +1,19 @@
 # Cain 0.4.7 — conversa, memória e pesquisa local L0
 
-Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_047.md).
-Os resultados de versões anteriores abaixo são históricos.
+Estado atual: [auditoria e correções instaladas de 12/09/2026](docs/research/AUDITORIA_OPERACIONAL_20260912.md).
+Código instalado: `0c8814901d3d365a2eec4b0c7386b59f460d349d`, branch
+`fix/historian-integrity-20260912`. A distribuição continua 0.4.7; o hash do
+wheel e os recibos em [Continuidade](CONTINUIDADE.md) identificam a instalação.
 
-Esta branch contém a [validação individual de modelos e relatos de pesquisa](docs/research/TESTES_INDIVIDUAIS_20260911.md)
-e correções isoladas. Os testes não substituíram a instalação principal nem
-estabeleceram confiabilidade da interpretação livre dos modelos.
+A busca documental entrega trechos literais com proveniência, sem síntese do
+modelo; histórico é fallback quando nenhum documento é recuperado. O Historian
+preserva o contexto documental e rejeita síntese livre. Resumos livres ainda
+apresentaram erros: a suíte técnica aprovada não certifica sua precisão.
+
+Validação final: 459 testes passaram, um skip Windows; 17 checks da API real,
+três workflows de seis etapas e verificações de interface, MCP, restauração e
+streaming. Consulte os limites e a distinção entre testes simulados e reais no
+relatório. A [entrega 0.4.7 original](docs/DELIVERY_047.md) é histórica.
 
 Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
 Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.

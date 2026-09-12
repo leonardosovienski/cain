@@ -1,6 +1,43 @@
 # Continuidade do Cain - 0.4.7
 
-## Testes individuais posteriores à instalação
+## Estado vigente — 12/09/2026
+
+Correções do Historian, empacotamento e busca documental: código instalado
+`0c8814901d3d365a2eec4b0c7386b59f460d349d`, antecedido por `6149526`.
+Branch de publicação: `fix/historian-integrity-20260912`, repositório
+[leonardosovienski/cain](https://github.com/leonardosovienski/cain/tree/fix/historian-integrity-20260912).
+Checkout: `C:/CAIN/work/historian-operational-fix-20260912`.
+Commits posteriores somente de Markdown não mudam o código instalado.
+
+Wheel instalado SHA-256:
+`a09b56c744260468702bd4a8ab71e132e8ede354f34e8c0ef491d5783ced2e1b`.
+Runtime `C:/CAIN/.venv`, abrir `C:/CAIN/ABRIR_CAIN.cmd`, porta 8877.
+Distribuição 0.4.7; não identificar o reparo somente pelo número da versão.
+
+Leia [a auditoria ampliada](docs/research/AUDITORIA_OPERACIONAL_20260912.md)
+e [o reparo anterior do Historian](docs/research/HISTORIAN_OPERACIONAL_20260912.md).
+459 testes passaram, um skip Windows e 17 checks da API real passaram.
+Resumos livres tiveram erros semânticos e continuam sem aprovação geral.
+A busca operacional usa trechos literais; não reescreve citações para cumprir
+preferências de estilo. Fontes dos produtores não foram alteradas.
+
+Recibos e recuperação: `C:/CAIN/entregas/full-operational-audit-20260912`,
+com `FINAL_VERIFICATION.json`, `final-wheel-suite.xml`, `real-api-extractive.json`,
+`candidate/`, `rollback/` e `before-data/`. Os bancos e a política mantiveram seus
+hashes durante a auditoria e instalação. Testes mutáveis usaram cópias.
+Para reverter somente o código, usar o wheel em `rollback/`; não sobrescrever
+bancos com cópias antigas após consultas novas. Tentativas e falhas intermediárias
+estão em `C:/CAIN/work/full-operational-audit-20260912`.
+
+Para conferir publicação: comparar `git rev-parse HEAD` com
+`git ls-remote origin refs/heads/fix/historian-integrity-20260912`.
+A aprovação local não afirma aprovação da CI remota. Não publicar bancos,
+políticas locais, payloads ou respostas privadas. Não há merge implícito em main.
+
+## Histórico anterior à auditoria de 12/09/2026
+
+
+### Testes individuais posteriores à instalação anterior
 
 Leia [o relatório dos modelos e relatos individuais](docs/research/TESTES_INDIVIDUAIS_20260911.md).
 Correções e protocolo estão em `C:\CAIN\work\individual-model-tests-20260911`,
