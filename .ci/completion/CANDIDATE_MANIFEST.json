@@ -1,7 +1,7 @@
 {
   "schema": "cain-candidate/1",
-  "candidate_id": "d31b1dfd1b7e87b0e2ef419818d8f2a95c2ab9b90262e92d7c41b160e1418b16",
-  "preview_candidate": "d99c554b7de27754609d6a7b731afc50f01c224854ab176985440af0e999bb1f",
+  "candidate_id": "ef7db4251dfaaf91bf6cbc0e2d3bfad8c8ad19a100d690574da351b9fc51958a",
+  "preview_candidate": "c17d1959e560fe9524c787aa4fd64694a3eee092fd64c96cd510cdffaa992b2f",
   "repositories": [
     {
       "repository": "cain",
@@ -19,11 +19,12 @@
         "src/cain/evaluation/functional.py": "fe91828ea5c13d5f39cf136da270ad17cf832993c2e17ae2b96896f90dfafc13",
         "src/cain/evaluation/harness.py": "2207dd619e2bd7a7914cb99804b69d9709fdb3ab36ce815033e4d87677b28ece",
         "src/cain/evaluation/quality.py": "d036ff6ea431d11829540f1742492f703b9d20173366edd5c289fcc1c9f1ddd6",
-        "src/cain/evaluation/resources.py": "f4000e6f1106ca7ba0ba430e9b00e1ee163283c649c1a6d46e1fb0e66a345fdb",
+        "src/cain/evaluation/resources.py": "77c88851feff249f87d1c6ca7af52644110d4aa634919a56a8b61d76df955a06",
+        "src/cain/research/bundles.py": "7746bb3d3d79d18648e746074e709cb20e95e811d516ea3aafd10998b82f642d",
         "src/cain/research/cli.py": "f6b374e34fbf5e44840e0bf37a38195a8bd7f9194035590d50e2012273b4da5c",
-        "src/cain/research/diagnostics.py": "dba12a87a3c9e95f6cf2c0fb2574a1ec413b88dc84f9bb55b1b14709f5b31c15",
+        "src/cain/research/diagnostics.py": "2e4b8bc98f2341016753d3fbd7294b9a56a9e4705566d3e0fa35404bfe08bb93",
         "tests/test_packaged_evaluation_resources.py": "b2ae3f0db1bdf05e932851261b5102ef40c5f828c050ef428ea41841df2a2c86",
-        "tests/test_structural_diagnostics.py": "d0af72263d25da4acd5cf2c88739fd37eba7863d0522321097bf81f7d66e4792"
+        "tests/test_structural_diagnostics.py": "49003ffeba38d03159150aeff6cf28d185c954ff225c949627c8aa85cbbb2aa3"
       },
       "overlay_files": {
         ".gitignore": "886469194130068fa0150c8e9430c72da70badf4a73bd0cd40a51bcf57094ebe",
@@ -36,11 +37,12 @@
         "src/cain/evaluation/functional.py": "fe91828ea5c13d5f39cf136da270ad17cf832993c2e17ae2b96896f90dfafc13",
         "src/cain/evaluation/harness.py": "2207dd619e2bd7a7914cb99804b69d9709fdb3ab36ce815033e4d87677b28ece",
         "src/cain/evaluation/quality.py": "d036ff6ea431d11829540f1742492f703b9d20173366edd5c289fcc1c9f1ddd6",
-        "src/cain/evaluation/resources.py": "f4000e6f1106ca7ba0ba430e9b00e1ee163283c649c1a6d46e1fb0e66a345fdb",
+        "src/cain/evaluation/resources.py": "77c88851feff249f87d1c6ca7af52644110d4aa634919a56a8b61d76df955a06",
+        "src/cain/research/bundles.py": "7746bb3d3d79d18648e746074e709cb20e95e811d516ea3aafd10998b82f642d",
         "src/cain/research/cli.py": "f6b374e34fbf5e44840e0bf37a38195a8bd7f9194035590d50e2012273b4da5c",
-        "src/cain/research/diagnostics.py": "dba12a87a3c9e95f6cf2c0fb2574a1ec413b88dc84f9bb55b1b14709f5b31c15",
+        "src/cain/research/diagnostics.py": "2e4b8bc98f2341016753d3fbd7294b9a56a9e4705566d3e0fa35404bfe08bb93",
         "tests/test_packaged_evaluation_resources.py": "b2ae3f0db1bdf05e932851261b5102ef40c5f828c050ef428ea41841df2a2c86",
-        "tests/test_structural_diagnostics.py": "d0af72263d25da4acd5cf2c88739fd37eba7863d0522321097bf81f7d66e4792",
+        "tests/test_structural_diagnostics.py": "49003ffeba38d03159150aeff6cf28d185c954ff225c949627c8aa85cbbb2aa3",
         "src/cain/api.py": "12479a0a109df3bfad67f3d5a591f343595e9fec256ea22b372f5ac7265fa50c",
         "src/cain/archive.py": "08d0439ba1318e7c9b388182b919d448b008a1a292b373963c167ee5093403eb",
         "src/cain/cli.py": "ac41c1b5d5d70305c6eab9056d14e32b745c262dab80c73a254b9a5dba88e65a",
@@ -72,7 +74,6 @@
         "src/cain/research/agent_api.py": "e75d957529ea2d28ed768a26feb97d90a12f31f066d39f9d89d69e07dfe24846",
         "src/cain/research/analysis.py": "9214c5fe94e8b3e849b94df4ac8a793cd39374bc6521932a94ad792340b84dd2",
         "src/cain/research/api.py": "996d2f9ebf9cd41a027669e5d782cb98eacb672c4bd07034a369dc167cd1e558",
-        "src/cain/research/bundles.py": "d526424252eeef0ed958a765682a9a8e43f3d539874d0bec5955c10ff5960cc2",
         "src/cain/research/bundle_backup.py": "6dcac0cd58b53d7067c08983a2984bb6a2753bf4e44301b7cf2ecb41570b24de",
         "src/cain/research/grounding.py": "3db090cfeffefde140c6a387a1968039b00bc752f33b005f8615ebbae760c133",
         "src/cain/research/historian.py": "dbc0c9355a06f4cb984aa05ded55279be18214ef609d8850bfe821ef2d03e39e",
@@ -107,7 +108,7 @@
         }
       },
       "capture": {
-        "overlay_sha256": "66cd7b188dade7417d39d4e7f1e0685ccb8e91d1d68f05f0c15edd8e166474e1"
+        "overlay_sha256": "187b6cb630b63543260bed4e02669a76fa005dca4fbd710260974e03fe234e47"
       }
     },
     {
@@ -217,8 +218,12 @@
       "root": "C:\\STOCKS\\stocks-predictor",
       "base_head": "a3d570fd33749ad62bdb4735bbc24b1ecd421e38",
       "branch": "validation/retest-six-20260911",
-      "file_hashes": {},
-      "overlay_files": {},
+      "file_hashes": {
+        "tools/test_cain_bundle_selection.py": "b1b96e37854dd4f3461f78c99fe6ccc41f0169de09c9276594a3700ed4cfd140"
+      },
+      "overlay_files": {
+        "tools/test_cain_bundle_selection.py": "b1b96e37854dd4f3461f78c99fe6ccc41f0169de09c9276594a3700ed4cfd140"
+      },
       "package_metadata": {
         "pyproject.toml": {
           "name": "stocks-predictor",
@@ -231,7 +236,7 @@
         }
       },
       "capture": {
-        "overlay_sha256": "8739c76e681f900923b900c9df0ef75cf421d39cabb54650c4b9ad19b6a76d85"
+        "overlay_sha256": "ca1a6a6c4465bfb101bae1845050bd45d4b70a89c8ac1bb612467007556253ef"
       }
     },
     {
