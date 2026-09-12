@@ -1,5 +1,10 @@
 # Fechamento do mandato CAIN — 2026-09-12
 
+> Histórico do ciclo anterior. Bundle, modelos nomeados, reranker e Hermes foram
+> posteriormente integrados ou executados conforme
+> [a entrega integrada](INTEGRATED_MANDATE_20260912.md). As pendências abaixo
+> descrevem a referência anterior e não o estado do candidato integrado.
+
 ## Entrega utilizável e limites
 
 Nesta rodada, a resposta verificável foi integrada ao botão Historian/Snapshot,
