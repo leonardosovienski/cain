@@ -28,6 +28,8 @@ class IdentityStore(Protocol):
     # Engineering extension: ADR-0009 has no enumeration method. Rebuild requires
     # the authoritative documents, including their stable ids and user ownership.
     def iter_documents(self) -> Iterable[MemoryDocument]: ...
+    def recent_interactions(self, user_id: str, session_id: str, project_id: str | None,
+                            limit: int) -> list[MemoryDocument]: ...
 
 
 @runtime_checkable

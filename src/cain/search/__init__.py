@@ -14,7 +14,7 @@ from time import monotonic
 from typing import Iterable, Protocol, runtime_checkable
 from urllib.parse import quote, urljoin, urlsplit, urlunsplit
 
-from cain.common.text import tokens
+from cain.common.text import tokens, RETRIEVAL_STOP_WORDS
 
 
 class SearchError(RuntimeError):
@@ -39,12 +39,7 @@ class SearchProvider(Protocol):
     def search(self, query: str, k: int = 3) -> list[SearchResult]: ...
 
 
-STOP_WORDS = tokens(
-    "a o as os um uma uns umas e de da do das dos em no na nos nas para por com "
-    "que qual quais como sobre eu voce me ao aos favor busque busca buscar pesquise "
-    "pesquisa pesquisar encontre procurar procure consulte consultar quero gostaria "
-    "pode poderia local corpus fonte fontes documentacao documentos"
-)
+STOP_WORDS = RETRIEVAL_STOP_WORDS
 
 
 class LocalDocumentRetriever:

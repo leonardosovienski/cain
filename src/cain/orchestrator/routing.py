@@ -119,7 +119,8 @@ class RuleRouter:
         subject = {word for word in tokens(body) - generic if len(word) > 2}
         return "busca" if subject else None
 
-    def route(self, payload: str, intent: str | None, registry: AgentRegistry) -> Route:
+    def route(self, payload: str, intent: str | None, registry: AgentRegistry,
+              *, has_session_context: bool = False) -> Route:
         if intent is not None:
             return self._selected(intent, registry, f"explicit_intent:{intent}; prototype_ADR-0008")
         # Match the entire message: a greeting prefix must never hide a task,
@@ -157,6 +158,12 @@ class RuleRouter:
                 "O pedido contém operações diferentes. Escolha busca, código ou resumo "
                 "para esta rodada."
             )
+        if has_session_context and not any(self._command(s) for s in sentences) and re.match(
+            r"^(?:explique melhor|(?:pode )?detalhar|continue|"
+            r"qual (?:deles|delas|das duas|dos dois)|quais (?:deles|delas)|"
+            r"e (?:o|a|os|as|se|quanto))\b", head,
+        ):
+            return self._selected('conversa', registry, 'conversation_rule:followup')
         if operation is not None and (not conflicting or conflicting == {operation}):
             reason = (
                 f"keyword_rule:{operation}:leading_command" if any(self._command(s) for s in sentences)

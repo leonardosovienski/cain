@@ -68,7 +68,7 @@ def test_forget_does_not_resurrect_from_rebuilt_or_legacy_memory(tmp_path):
         context = identity.context_for("alice", "passos IDENTIFICADOR")
         assert "DOCUMENTO_IDENTIFICADOR_ANTIGO" not in context
         assert "LEGACY_IDENTIFICADOR" not in context
-        assert "Chaves ausentes ou removidas" in context
+        assert '"preferences": {}' in context
         assert identity.get("alice").user_model.preferences == {}
         assert len(list(identity.store.iter_documents())) == 4
     finally:

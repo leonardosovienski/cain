@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from cain.agents import AgentRegistry
 from cain.common import CainRunError, DecisionRecord, Message, RunResult, Signal
-from cain.identity import IdentityService
+from cain.identity import IdentityService, is_preference_memory
 from cain.persistence import DecisionLog
 from cain.orchestrator.routing import (
     ClarificationRequired as ClarificationRequired, Route as Route, Router,
@@ -74,8 +74,17 @@ class Cain:
             steps.append("2:user_observed_identity_loaded")
             from cain.profile_answers import profile_answer
             profile_text = profile_answer(payload, observed) if intent is None else None
-            route = Route("resumo", "resumo", "profile_inspection") if profile_text is not None \
-                else self.router.route(payload, intent, self.registry)
+            if profile_text is not None:
+                route = Route("resumo", "resumo", "profile_inspection")
+            elif isinstance(self.router, RuleRouter):
+                recent = self.store.recent_interactions(user_id, session_id, project_id, 12)
+                has_context = any(item.metadata.get('decision_id') != decision_id
+                                  and not is_preference_memory(item.text, item.metadata)
+                                  for item in recent)
+                route = self.router.route(payload, intent, self.registry,
+                                          has_session_context=has_context)
+            else:
+                route = self.router.route(payload, intent, self.registry)
             steps.append("3:agent_selected")
             message = Message(route.intent, context, payload, {
                 "user_id": user_id, "session_id": session_id, "run_id": run_id,
