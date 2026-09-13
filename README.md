@@ -1,6 +1,6 @@
 # CAIN — conversa, memória e pesquisa local
 
-CAIN 0.4.9 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
+CAIN 0.4.10 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
 A branch de trabalho e publicação é **main**. As correções de Historian e os contratos Snapshot/Bundle estão integrados e instalados.
 Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 
@@ -69,3 +69,5 @@ Leia [operação local](docs/LOCAL_INSTALLATION.md) para pastas e recuperação,
 e [histórico documental](docs/historico/README.md) para estados anteriores. Relatórios datados conservam seu escopo original.
 
 A rodada da LLM está em [correções e limites observados](docs/LLM_CORRECOES_20260912.md). O 4B prioriza fidelidade e é lento em CPU com 8 GB de RAM.
+
+Correções atuais de conversa e formato: [testes reais da 0.4.10](docs/LLM_FIX_20260913.md).

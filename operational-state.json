@@ -1,16 +1,16 @@
 {
-  "head": "cba4b5b0d1c0b3dd7dcbbfbaa2a22a1647ad5a20",
+  "head": "dcde48490a15af33048b764cfdb952af7599c3a8",
   "record_type": "dated_operational_verification",
-  "verified_at_utc": "2026-09-13T02:27:29.401296+00:00",
+  "verified_at_utc": "2026-09-13T05:06:18.241031+00:00",
   "branch": "main",
   "primary_checkout": "C:/CAIN/projeto",
   "runtime": "C:/CAIN/.venv",
   "url": "http://127.0.0.1:8877/",
-  "observed_pid": 21136,
+  "observed_pid": 8696,
   "artifacts": [
     {
-      "wheel": "cain_research-0.4.9-py3-none-any.whl",
-      "sha256": "cce177f1e90b54e068dd98b5321299ad2faafce38d244fbb92173842a8b3bc57",
+      "wheel": "cain_research-0.4.10-py3-none-any.whl",
+      "sha256": "71aa88db9a3531e4135342e87cd5626ef8e8795163f6c672e425c6bbb6b9f864",
       "verified_files": 61
     },
     {
@@ -25,7 +25,7 @@
     }
   ],
   "versions": {
-    "cain-research": "0.4.9",
+    "cain-research": "0.4.10",
     "predictor-research-snapshot": "1.0.1",
     "predictor-research-bundle": "1.0.0"
   },
@@ -34,58 +34,55 @@
     "previous_success_is_not_current_evidence": true
   },
   "tests": {
-    "full_before_last_stopwords": {
-      "passed": 629,
+    "full_before_json_refinement": {
+      "passed": 631,
       "skipped": 1,
       "warnings": 2
     },
-    "final_affected_regressions": 64,
+    "final_affected_regressions": 33,
     "ruff": "passed",
     "clean_offline_wheel": "passed",
-    "semantic_generation": "negation_improved; strict_copy_and_generic_followup_failed",
-    "live_retests": "see docs/LLM_CORRECOES_20260912.md",
-    "primary_ui_api_cli": "real_inference_retested_with_remaining_semantic_failures"
+    "primary_ui_api_cli": "real_inference_retested",
+    "conversation_followup": "passed",
+    "verbatim_copy": "passed",
+    "json_only": "passed_after_fix",
+    "english_preference": "failed_unresolved",
+    "missing_field": "partial_extra_unsupported_guidance",
+    "semantic_generation": "not_generally_certified"
   },
   "preservation": {
     "workspace.db": {
       "integrity": "ok",
-      "missing_or_changed_preexisting_rows": {}
+      "changed_preexisting_rows": {}
     },
     "research.db": {
       "integrity": "ok",
-      "missing_or_changed_preexisting_rows": {}
+      "changed_preexisting_rows": {}
     },
-    "configuration": "Only llm.model changed from qwen3.5:0.8b to qwen3.5:4b",
+    "configurations": "all baseline hashes unchanged",
     "package": {
-      "version": "0.4.9",
+      "version": "0.4.10",
       "verified_files": 61,
-      "wheel_sha256": "cce177f1e90b54e068dd98b5321299ad2faafce38d244fbb92173842a8b3bc57"
+      "wheel_sha256": "71aa88db9a3531e4135342e87cd5626ef8e8795163f6c672e425c6bbb6b9f864"
     },
-    "dependencies": {
-      "removed": [
-        "cain-research @ file:///C:/CAIN/work/qa-full-20260912/release/cain_research-0.4.8-py3-none-any.whl#sha256=ae5d6e658b8c8690cacbd5e760938eb9aa0f10b2992b52ef56dd18a89b02542d"
-      ],
-      "added": [
-        "cain-research @ file:///C:/CAIN/work/qa-llm-20260912/release/cain_research-0.4.9-py3-none-any.whl#sha256=cce177f1e90b54e068dd98b5321299ad2faafce38d244fbb92173842a8b3bc57"
-      ]
-    }
+    "dependencies": "only cain-research changed"
   },
-  "receipts": "C:\\CAIN\\work\\qa-llm-20260912",
-  "backup": "C:\\CAIN\\work\\qa-llm-20260912\\promotion-backup",
+  "receipts": "C:\\CAIN\\work\\qa-llm-fix-20260913",
+  "backup": "C:\\CAIN\\work\\qa-llm-fix-20260913\\promotion-backup",
   "scope": "Installed code identity and local tests; later documentation commits do not imply reinstallation",
   "previous_operational_verification": {
-    "head": "92b6428cb26064ed9032b0a93ccae64da7b06c3d",
+    "head": "cba4b5b0d1c0b3dd7dcbbfbaa2a22a1647ad5a20",
     "record_type": "dated_operational_verification",
-    "verified_at_utc": "2026-09-13T01:08:58.399493+00:00",
+    "verified_at_utc": "2026-09-13T02:27:29.401296+00:00",
     "branch": "main",
     "primary_checkout": "C:/CAIN/projeto",
     "runtime": "C:/CAIN/.venv",
     "url": "http://127.0.0.1:8877/",
-    "observed_pid": 24896,
+    "observed_pid": 21136,
     "artifacts": [
       {
-        "wheel": "cain_research-0.4.8-py3-none-any.whl",
-        "sha256": "ae5d6e658b8c8690cacbd5e760938eb9aa0f10b2992b52ef56dd18a89b02542d",
+        "wheel": "cain_research-0.4.9-py3-none-any.whl",
+        "sha256": "cce177f1e90b54e068dd98b5321299ad2faafce38d244fbb92173842a8b3bc57",
         "verified_files": 61
       },
       {
@@ -100,7 +97,7 @@
       }
     ],
     "versions": {
-      "cain-research": "0.4.8",
+      "cain-research": "0.4.9",
       "predictor-research-snapshot": "1.0.1",
       "predictor-research-bundle": "1.0.0"
     },
@@ -109,39 +106,59 @@
       "previous_success_is_not_current_evidence": true
     },
     "tests": {
-      "source_final": {
-        "passed": 624,
+      "full_before_last_stopwords": {
+        "passed": 629,
         "skipped": 1,
         "warnings": 2
       },
-      "intermediate_installed_wheel": {
-        "passed": 623,
-        "skipped": 1,
-        "warnings": 2
-      },
-      "final_focused_regressions": 18,
+      "final_affected_regressions": 64,
       "ruff": "passed",
       "clean_offline_wheel": "passed",
-      "primary_ui_api_cli": "retested",
-      "workflow_full_isolated": "6/6 completed",
-      "semantic_generation": "limitations_observed_not_certified"
+      "semantic_generation": "negation_improved; strict_copy_and_generic_followup_failed",
+      "live_retests": "see docs/LLM_CORRECOES_20260912.md",
+      "primary_ui_api_cli": "real_inference_retested_with_remaining_semantic_failures"
     },
     "preservation": {
-      "integrity": "ok",
-      "preexisting_non_qa_rows": "preserved",
-      "config_hashes": "unchanged",
-      "dependencies": "unchanged_except_cain"
+      "workspace.db": {
+        "integrity": "ok",
+        "missing_or_changed_preexisting_rows": {}
+      },
+      "research.db": {
+        "integrity": "ok",
+        "missing_or_changed_preexisting_rows": {}
+      },
+      "configuration": "Only llm.model changed from qwen3.5:0.8b to qwen3.5:4b",
+      "package": {
+        "version": "0.4.9",
+        "verified_files": 61,
+        "wheel_sha256": "cce177f1e90b54e068dd98b5321299ad2faafce38d244fbb92173842a8b3bc57"
+      },
+      "dependencies": {
+        "removed": [
+          "cain-research @ file:///C:/CAIN/work/qa-full-20260912/release/cain_research-0.4.8-py3-none-any.whl#sha256=ae5d6e658b8c8690cacbd5e760938eb9aa0f10b2992b52ef56dd18a89b02542d"
+        ],
+        "added": [
+          "cain-research @ file:///C:/CAIN/work/qa-llm-20260912/release/cain_research-0.4.9-py3-none-any.whl#sha256=cce177f1e90b54e068dd98b5321299ad2faafce38d244fbb92173842a8b3bc57"
+        ]
+      }
     },
-    "receipts": "C:/CAIN/work/qa-full-20260912",
-    "backup": "C:/CAIN/work/qa-full-20260912/promotion-backup",
+    "receipts": "C:\\CAIN\\work\\qa-llm-20260912",
+    "backup": "C:\\CAIN\\work\\qa-llm-20260912\\promotion-backup",
     "scope": "Installed code identity and local tests; later documentation commits do not imply reinstallation",
     "previous_operational_verification": {
-      "head": "d604a0ed359528acfcf4272d8f2a8ecc11774e65",
+      "head": "92b6428cb26064ed9032b0a93ccae64da7b06c3d",
+      "record_type": "dated_operational_verification",
+      "verified_at_utc": "2026-09-13T01:08:58.399493+00:00",
+      "branch": "main",
+      "primary_checkout": "C:/CAIN/projeto",
+      "runtime": "C:/CAIN/.venv",
+      "url": "http://127.0.0.1:8877/",
+      "observed_pid": 24896,
       "artifacts": [
         {
-          "wheel": "cain_research-0.4.7-py3-none-any.whl",
-          "sha256": "0eb67a0f8229d10144c87c4b3c7d625a04fde4ba404a31c33a8eb8e6b68dd5e7",
-          "verified_files": 60
+          "wheel": "cain_research-0.4.8-py3-none-any.whl",
+          "sha256": "ae5d6e658b8c8690cacbd5e760938eb9aa0f10b2992b52ef56dd18a89b02542d",
+          "verified_files": 61
         },
         {
           "wheel": "predictor_research_snapshot-1.0.1-py3-none-any.whl",
@@ -155,25 +172,82 @@
         }
       ],
       "versions": {
-        "cain-research": "0.4.7",
+        "cain-research": "0.4.8",
         "predictor-research-snapshot": "1.0.1",
         "predictor-research-bundle": "1.0.0"
       },
       "ci": {
-        "id": 34727241470,
-        "sha": "d604a0ed359528acfcf4272d8f2a8ecc11774e65",
-        "conclusion": "success",
-        "url": "https://github.com/leonardosovienski/cain/actions/runs/34727241470"
+        "status": "not_verified_for_this_code",
+        "previous_success_is_not_current_evidence": true
       },
-      "record_type": "dated_operational_verification",
-      "verified_date": "2026-09-12",
-      "branch": "main",
-      "primary_checkout": "C:/CAIN/projeto",
-      "runtime": "C:/CAIN/.venv",
-      "url": "http://127.0.0.1:8877/",
-      "scope": "Installed code identity; later documentation commits do not imply reinstallation",
-      "receipts": "C:/CAIN/work/CAIN-PROMOTION-20260912-210027/final"
-    }
+      "tests": {
+        "source_final": {
+          "passed": 624,
+          "skipped": 1,
+          "warnings": 2
+        },
+        "intermediate_installed_wheel": {
+          "passed": 623,
+          "skipped": 1,
+          "warnings": 2
+        },
+        "final_focused_regressions": 18,
+        "ruff": "passed",
+        "clean_offline_wheel": "passed",
+        "primary_ui_api_cli": "retested",
+        "workflow_full_isolated": "6/6 completed",
+        "semantic_generation": "limitations_observed_not_certified"
+      },
+      "preservation": {
+        "integrity": "ok",
+        "preexisting_non_qa_rows": "preserved",
+        "config_hashes": "unchanged",
+        "dependencies": "unchanged_except_cain"
+      },
+      "receipts": "C:/CAIN/work/qa-full-20260912",
+      "backup": "C:/CAIN/work/qa-full-20260912/promotion-backup",
+      "scope": "Installed code identity and local tests; later documentation commits do not imply reinstallation",
+      "previous_operational_verification": {
+        "head": "d604a0ed359528acfcf4272d8f2a8ecc11774e65",
+        "artifacts": [
+          {
+            "wheel": "cain_research-0.4.7-py3-none-any.whl",
+            "sha256": "0eb67a0f8229d10144c87c4b3c7d625a04fde4ba404a31c33a8eb8e6b68dd5e7",
+            "verified_files": 60
+          },
+          {
+            "wheel": "predictor_research_snapshot-1.0.1-py3-none-any.whl",
+            "sha256": "5e62cdf6ea7790a9e4beb0b3dd874a9a40c54cbd97e69e5a8408e88f8f22ec1a",
+            "verified_files": 3
+          },
+          {
+            "wheel": "predictor_research_bundle-1.0.0-py3-none-any.whl",
+            "sha256": "7c5792e6573d55af92fd9b50cd9a2c357052b7673a61eef8abdaeaeef401ebee",
+            "verified_files": 4
+          }
+        ],
+        "versions": {
+          "cain-research": "0.4.7",
+          "predictor-research-snapshot": "1.0.1",
+          "predictor-research-bundle": "1.0.0"
+        },
+        "ci": {
+          "id": 34727241470,
+          "sha": "d604a0ed359528acfcf4272d8f2a8ecc11774e65",
+          "conclusion": "success",
+          "url": "https://github.com/leonardosovienski/cain/actions/runs/34727241470"
+        },
+        "record_type": "dated_operational_verification",
+        "verified_date": "2026-09-12",
+        "branch": "main",
+        "primary_checkout": "C:/CAIN/projeto",
+        "runtime": "C:/CAIN/.venv",
+        "url": "http://127.0.0.1:8877/",
+        "scope": "Installed code identity; later documentation commits do not imply reinstallation",
+        "receipts": "C:/CAIN/work/CAIN-PROMOTION-20260912-210027/final"
+      }
+    },
+    "model": "qwen3.5:4b"
   },
   "model": "qwen3.5:4b"
 }
