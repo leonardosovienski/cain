@@ -586,6 +586,24 @@ async function inspectResearch(compare = false) {
   }
 }
 $('research-inspect').addEventListener('click', handle(() => inspectResearch()));
+$('research-coverage').addEventListener('click', handle(async () => {
+  const scope = {user_id: state.user, project_id: state.project,
+    collection: $('research-collection').value};
+  const result = await api('/research/coverage', 'POST', scope);
+  if (scope.user_id !== state.user || scope.project_id !== state.project ||
+      scope.collection !== $('research-collection').value) return;
+  const container = $('research-result');
+  container.replaceChildren(node('h3', 'Cobertura do acervo selecionado'),
+    node('p', 'Estes números descrevem as publicações recebidas. Não comprovam acesso ao projeto inteiro nem leitura integral dos arquivos de origem.'),
+    node('p', `Snapshot: ${result.snapshots.publications} publicações, ${result.snapshots.record_revisions} revisões de registros; ${result.snapshots.generation_record_revisions} permitidas para geração.`),
+    node('p', `Bundle: ${result.bundles.publications} pacotes, ${result.bundles.entity_revisions} revisões de entidades; ${result.bundles.generation_entity_revisions} permitidas para geração.`),
+    node('p', `Artefatos de apoio: ${result.bundles.artifact_availability.received ?? 0} recebidos e ${result.bundles.artifact_availability.reference_only ?? 0} somente referenciados.`),
+    node('p', 'Os fluxos de seis etapas consultam evidências Snapshot. Os metadados Bundle têm uma consulta separada.'));
+  const detail = node('details');
+  detail.append(node('summary', 'Arquivos declarados, exclusões e recibo'),
+    node('pre', JSON.stringify(result, null, 2)));
+  container.append(detail);
+}));
 $('research-bundles').addEventListener('click', handle(async () => {
   const scope = {user_id: state.user, project_id: state.project,
     collection: $('research-collection').value};

@@ -105,7 +105,7 @@ def mount(
         filters = request.model_dump(exclude={"user_id", "project_id", "collection", "question"})
         return store, scope, filters
 
-    from cain.research.agent_api import mount as mount_agent_tools
+    from cain.research.agent_api import Context, mount as mount_agent_tools
     mount_agent_tools(app, service, validate_context, provider_factory, generation_lock)
 
     @app.post("/research/bundles/query")
@@ -184,6 +184,13 @@ def mount(
         return inspect(store, store.scope(request.user_id, request.project_id, request.collection),
                        source_id=request.source_id, domain=request.domain,
                        before=request.before, after=request.after)
+
+    @app.post("/research/coverage")
+    def coverage_request(request: Context):
+        from cain.research.coverage import coverage
+        validate_context(request.user_id, request.project_id)
+        store = service()
+        return coverage(store, store.scope(request.user_id, request.project_id, request.collection))
 
     @app.post("/research/explain")
     def explain_request(request: ResearchRequest):

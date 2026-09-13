@@ -219,8 +219,8 @@ def execute(args):
             **filters,
         )
     if cmd == "coverage":
-        result = service.query(scope, limit=1)
-        return {k: result[k] for k in ("coverage", "limitations", "total_record_revisions")}
+        from cain.research.coverage import coverage
+        return coverage(service, scope)
     if cmd == "evidence":
         return service.evidence(scope, args.reference)
     if cmd == "receipts":
