@@ -1,5 +1,18 @@
 # Instalação local em C:/CAIN
 
+Versão **0.4.12**, código `5364c3b1de5d01c1cf6747b9eed52e562e1a63cd`. Serviço http://127.0.0.1:8877/; ambiente não editável `C:/CAIN/.venv`.
+
+Wheel: `C:/CAIN/work/coverage-projects-20260913/release/cain_research-0.4.12-py3-none-any.whl`.
+SHA256: `20bf092380eb9f2a62fee9cf19975dd3586766309b9c99d0c00f60b0edea73f9`. Os 62 arquivos conferem com fonte/wheel/instalação; pip check aprovado. Somente cain-research foi atualizado.
+
+Backup anterior à atualização: `C:/CAIN/work/coverage-projects-20260913/baseline`, com bancos, configuração, política, atalhos e wheel 0.4.11. Não restaurar bancos antigos sobre o uso atual. Dados e configuração continuam nos mesmos caminhos; o inicializador padrão mantém as variáveis da instalação principal.
+
+A política principal continua com os seis acervos anteriores. As importações dos três Bundles adicionais ocorreram somente em `bundle-candidates`, banco de QA. [Cobertura real e limitações](COBERTURA_PROJETOS_20260913.md).
+
+Recibos de instalação, API, CLI, interface e preservação estão no diretório desta rodada. Publicação/CI ficam em `git-publication.json` e `ci-final.json`; eles identificam a referência documental final, separada do código instalado.
+
+## Registro anterior — 0.4.11
+
 Versão instalada: **0.4.11**, código **b8bed8fd103d265f3158d5dde5fd32895ca8f439**. Ambiente não editável `C:/CAIN/.venv`; serviço http://127.0.0.1:8877/; modelo `qwen3.5:4b`, configuração e dependências de terceiros preservados. [Resultados reais](LLM_REAL_20260913.md).
 
 Wheel instalado: `C:/CAIN/work/qa-real-20260913/release/cain_research-0.4.11-py3-none-any.whl`.

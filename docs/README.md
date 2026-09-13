@@ -6,6 +6,8 @@
 - [Estado verificado](../ESTADO_DO_PROJETO.md): código instalado, testes e limites.
 - [Continuidade](../CONTINUIDADE.md): retomar trabalho e localizar evidências.
 - [Instalação local](LOCAL_INSTALLATION.md): mapa de C:/CAIN e atalhos.
+- [Cobertura dos projetos na 0.4.12](COBERTURA_PROJETOS_20260913.md): acervos completos no recorte recebido, importações Bundle isoladas e limites de acesso aos produtores.
+- [Testes reais da 0.4.11](LLM_REAL_20260913.md): idioma, continuidade, cópia, JSON e limites semânticos.
 - [Correções e testes reais da 0.4.10](LLM_FIX_20260913.md): continuação, cópia, JSON e pendência de idioma.
 - [Verificação Git](../SETUP_GITHUB.md): conferência de main local/remota.
 
