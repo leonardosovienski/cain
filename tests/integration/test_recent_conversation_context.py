@@ -81,3 +81,11 @@ def test_output_instructions_do_not_retrieve_unrelated_previous_answers(tmp_path
         context=runtime.identity.context_for(
             'qa','O relatório autoriza o lançamento? Responda em uma frase.',session_id='new')
         assert 'CAIN QA' not in context
+
+
+def test_selected_recent_exchanges_are_presented_in_conversation_order(tmp_path):
+    with build_cain(tmp_path/'chronology.db') as runtime:
+        remember(runtime,'qa','s',None,'OLDER_GREETING','a')
+        remember(runtime,'qa','s',None,'LATEST_PRICES','b')
+        context=runtime.identity.context_for('qa','Explique melhor.',session_id='s')
+        assert context.index('OLDER_GREETING') < context.index('LATEST_PRICES')

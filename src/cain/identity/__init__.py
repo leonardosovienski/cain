@@ -206,7 +206,9 @@ class IdentityService:
                                  "truncated": low < len(hit.text)})
             if len(memories) >= self.memory_top_k:
                 break
-        return header + json.dumps(memories, ensure_ascii=False, sort_keys=True)
+        # Selection favors recent exchanges; presentation puts the latest last,
+        # so an older greeting does not look like the conversation's final turn.
+        return header + json.dumps(list(reversed(memories)), ensure_ascii=False, sort_keys=True)
 
     @staticmethod
     def _metadata_context(metadata: dict) -> dict:
