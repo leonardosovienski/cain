@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from cain.agents import AgentRegistry, CodeAgent, SearchAgent, SummaryAgent
+from cain.agents import AgentRegistry, CodeAgent, ConversationAgent, SearchAgent, SummaryAgent
 from cain.identity import IdentityService
 from cain.llm import FakeLLM, LLM
 from cain.orchestrator import Cain
@@ -71,6 +71,7 @@ def build_cain(
             registry.register(SearchAgent(memory, DEMO_CORPUS if corpus is None else corpus))
         registry.register(CodeAgent(provider))
         registry.register(SummaryAgent(provider))
+        registry.register(ConversationAgent(provider))
         return Cain(IdentityService(store, memory), registry, decision_log, router=router)
     except Exception:
         store.close()

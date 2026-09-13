@@ -49,7 +49,7 @@ class RunRequest(BaseModel):
     user_id: str = Field(min_length=1, max_length=200)
     session_id: str = Field(min_length=1, max_length=200)
     payload: str = Field(min_length=1, max_length=100_000)
-    intent: Literal["busca", "search", "codigo", "código", "code", "resumo", "summary"] | None = None
+    intent: Literal["busca", "search", "codigo", "código", "code", "resumo", "summary", "conversa", "chat"] | None = None
     run_id: str | None = Field(default=None, min_length=1, max_length=200)
     project_id: str | None = Field(default=None, max_length=200)
     preference_scope: Scope | None = None

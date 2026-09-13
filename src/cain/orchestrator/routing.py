@@ -130,6 +130,15 @@ class RuleRouter:
         ):
             return self._selected("resumo", registry, "social_greeting")
         head = strip_preference_scope_marks(instruction_head(payload))
+        # Explicit everyday conversation and arithmetic are not document retrieval.
+        # Match the whole arithmetic request so a prefix cannot swallow another task.
+        if re.fullmatch(r"(?:quanto (?:e|da)|calcule|calcular|what is)\s+"
+                        r"[\d\s.,+*/()%−–-]+[?!.]*", head):
+            return self._selected("conversa", registry, "conversation_rule:arithmetic")
+        if re.match(r"(?:converse|conversar|vamos conversar|chat)\b", head) or re.fullmatch(
+            r"(?:obrigad[oa]|valeu|tudo bem|como vai)[?!.\s]*", head,
+        ):
+            return self._selected("conversa", registry, "conversation_rule:social")
         # A preference declaration may precede the task in a separate sentence.
         # Only sentence-leading commands qualify; embedded words remain content.
         sentences = [sentence.strip() for sentence in re.split(r"[.!?;]\s+", head)]
@@ -212,6 +221,9 @@ class RuleRouter:
             "as fontes configuradas e indicará se faltar evidência. "
             "Pedidos para condensar um texto pertencem a resumo; pedidos para gerar, "
             "corrigir ou analisar código pertencem a codigo. Use clarify quando não "
+            "houver uma tarefa identificável. Conversa cotidiana, cálculos ou explicações "
+            "gerais sem pedido de fontes pertencem a conversa, quando registrada. "
+            "Não use busca para cálculos ou interação social. Use clarify quando não "
             "houver uma tarefa identificável, faltar o próprio assunto do pedido, ou "
             "houver operações distintas a executar. Exemplos: 'Faça algo', 'Como isso "
             "funciona?' sem referente e 'Pesquise um artigo e depois gere um script' "

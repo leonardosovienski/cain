@@ -96,7 +96,7 @@ def main(argv=None) -> int:
     register_archive(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
-    run.add_argument("--intent", choices=["busca", "codigo", "resumo"])
+    run.add_argument("--intent", choices=["busca", "codigo", "resumo", "conversa"])
     run.add_argument("--run-id")
     _generation(run)
     chat = sub.add_parser("chat", help="Conversa interativa com estado persistente")

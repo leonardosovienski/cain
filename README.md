@@ -1,6 +1,6 @@
 # CAIN — conversa, memória e pesquisa local
 
-CAIN 0.4.7 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
+CAIN 0.4.8 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
 A branch de trabalho e publicação é **main**. As correções de Historian e os contratos Snapshot/Bundle estão integrados e instalados.
 Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 
@@ -23,6 +23,7 @@ Isso não afirma inexistência na fonte completa nem estado atual do produtor.
 ## Capacidades e limites
 
 - Conversas, projetos, documentos, histórico, feedback e preferências por usuário, projeto, conversa ou resposta.
+- Conversa cotidiana com o modelo local (`--intent conversa` na CLI; `conversa` ou `chat` na API). Cálculos simples como “Quanto é 2 + 2?” usam aritmética limitada e exata, sem geração; frações são exibidas sem arredondamento.
 - Busca lexical/híbrida, citações, inspeção de fontes e recebimento de Snapshot e Bundle com autorização por operação.
 - Historian: campos literais completos para listas explícitas; citações estruturadas limitadas aos trechos disponíveis quando o conjunto cabe no orçamento.
 - Workflows com checkpoints, cancelamento e retomada; API, CLI, web e MCP locais.
