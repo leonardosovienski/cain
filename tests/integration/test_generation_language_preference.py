@@ -30,6 +30,16 @@ def test_no_preference_preserves_provider_prompt():
     assert _generation_prompt(message) == message.payload
 
 
+@pytest.mark.parametrize('language,expected', [('en', 'Do not merely repeat'), ('pt', 'Não se limite a repetir')])
+def test_followup_requests_additional_reasoning_without_changing_user_input(language, expected):
+    model = Capture()
+    message = Message('conversa', 'Earlier facts', 'Explique melhor.',
+                      {'preferences': {'language': language}, 'route_reason': 'conversation_rule:followup'})
+    assert ConversationAgent(model).handle(message) == 'unchanged provider response'
+    assert expected in model.calls[0][0]
+    assert message.payload == 'Explique melhor.'
+
+
 def test_scoped_language_reaches_model_but_does_not_pollute_saved_request(tmp_path):
     model = Capture()
     with build_cain(tmp_path/'language.db', model) as runtime:

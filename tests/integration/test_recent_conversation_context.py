@@ -94,7 +94,7 @@ def test_selected_recent_exchanges_are_presented_in_conversation_order(tmp_path)
 def test_one_sentence_request_does_not_erase_facts_for_followup(tmp_path):
     class Model:
         def generate(self, prompt, context=''):
-            if prompt == 'Explique melhor.':
+            if prompt.startswith('Explique melhor.'):
                 assert '37 reais' in context and '24 reais' in context
             return 'A diferença é 13 reais.'
 

@@ -339,6 +339,15 @@ class ConversationAgent:
             return answer(message.payload)
         social = tokens(message.payload)
         english = message.metadata.get('preferences', {}).get('language') == 'en'
+        prompt = _generation_prompt(message)
+        if message.metadata.get('route_reason') == 'conversation_rule:followup':
+            prompt += (
+                "\n\nExplain the reasoning behind the previous answer and add a concrete "
+                "detail or relationship from the conversation. Do not merely repeat its conclusion."
+                if english else
+                "\n\nExplique o raciocínio da resposta anterior e acrescente um detalhe "
+                "concreto ou uma relação entre os fatos da conversa. Não se limite a repetir a conclusão."
+            )
         automatic_social = message.metadata.get('route_reason') == 'conversation_rule:social'
         if automatic_social and social in ({'obrigado'}, {'obrigada'}, {'valeu'}):
             return "You're welcome!" if english else 'De nada!'
@@ -346,7 +355,7 @@ class ConversationAgent:
             return "I'm ready to help. How can I help you?" if english else 'Estou pronto para ajudar. Como posso ajudar você?'
         if english:
             return self.llm.generate(
-                _generation_prompt(message),
+                prompt,
                 message.contexto_identidade + "\nContinue the conversation: short requests to "
                 "explain, elaborate or continue refer to its latest topic. Develop that topic "
                 "using the supplied facts; ask for clarification only if no referent exists. "
@@ -356,7 +365,7 @@ class ConversationAgent:
                 "Markdown fences. Write your own prose in English.",
             )
         return self.llm.generate(
-            _generation_prompt(message),
+            prompt,
             message.contexto_identidade + "\nConverse com continuidade: um pedido curto como "
             "explicar, detalhar ou continuar refere-se ao último assunto da conversa. "
             "Desenvolva esse assunto usando os dados fornecidos. Só peça esclarecimento "
