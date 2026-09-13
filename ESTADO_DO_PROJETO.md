@@ -18,3 +18,5 @@ As falhas registradas na [0.4.9](docs/LLM_RETESTE_20260912.md) são históricas.
 Para continuar: [CONTINUIDADE.md](CONTINUIDADE.md). Não substituir bancos atuais por backups antigos.
 
 Pendência nova: preferência ativa de inglês não foi respeitada em uma pergunta portuguesa; tentativas sem melhora foram descartadas. Consulte o relatório antes de considerar idiomas aprovados.
+
+Fechamento documental de 13/09/2026: serviço 8877 respondeu como 0.4.10/qwen3.5:4b; 61 arquivos do pacote, integridade e preservação dos bancos/configurações reconferidos. Não houve nova rodada de inferência nem mudança de código nesse fechamento. A [continuidade](CONTINUIDADE.md#retomada-sem-este-chat--fechamento-de-13092026) contém reprodução da pendência e instruções para retomar sem o chat.

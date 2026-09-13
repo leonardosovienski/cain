@@ -6,8 +6,8 @@
 - [Estado verificado](../ESTADO_DO_PROJETO.md): código instalado, testes e limites.
 - [Continuidade](../CONTINUIDADE.md): retomar trabalho e localizar evidências.
 - [Instalação local](LOCAL_INSTALLATION.md): mapa de C:/CAIN e atalhos.
-- [Teste integral de uso](TESTE_INTEGRAL_20260912.md): correções da 0.4.8, cobertura e limitações observadas.
-- [Publicação](../PUBLICATION_STATUS_20260912.md) e [Git](../SETUP_GITHUB.md).
+- [Correções e testes reais da 0.4.10](LLM_FIX_20260913.md): continuação, cópia, JSON e pendência de idioma.
+- [Verificação Git](../SETUP_GITHUB.md): conferência de main local/remota.
 
 ## Contratos e arquitetura
 
@@ -16,6 +16,11 @@
 - [Índice Supply](supply/README.md): evidência das rodadas de engenharia.
 
 ## Relatórios históricos
+
+- [Teste integral de uso da 0.4.8](TESTE_INTEGRAL_20260912.md).
+- [Comparação de modelos e correções da 0.4.9](LLM_CORRECOES_20260912.md).
+- [Reteste da 0.4.9](LLM_RETESTE_20260912.md).
+- [Publicação de 12/09/2026](../PUBLICATION_STATUS_20260912.md): referência anterior; sua CI não valida a versão atual.
 
 [Índice histórico](historico/README.md): entregas, auditorias, fontes originais e snapshots de documentação.
 Relatórios datados descrevem a referência examinada na ocasião. Seus SHAs, contagens, branches e pendências não substituem o estado operacional atual.

@@ -2,6 +2,10 @@
 
 Versão instalada: **0.4.10**, código **dcde48490a15af33048b764cfdb952af7599c3a8**. Modelo e configurações preservados. [Correções e teste real](LLM_FIX_20260913.md). Wheel final e backup prévio em `C:/CAIN/work/qa-llm-fix-20260913`; a instalação usa `C:/CAIN/.venv` e a porta 8877.
 
+Wheel atual: `C:/CAIN/work/qa-llm-fix-20260913/release/cain_research-0.4.10-py3-none-any.whl`, SHA256 `71aa88db9a3531e4135342e87cd5626ef8e8795163f6c672e425c6bbb6b9f864`.
+Backup prévio: `promotion-backup` no mesmo diretório de trabalho, com bancos, configurações e wheel 0.4.9. O arquivo `intermediate-0.4.10.whl` é intermediário, não o artefato final de reinstalação.
+No fechamento de 13/09/2026, os 61 arquivos instalados coincidiram com fonte e wheel, os bancos estavam íntegros e as configurações preservadas. Serviço principal em 127.0.0.1:8877; nenhuma escuta de teste em 8891 ou 8892.
+
 ## Mapa e registros anteriores
 
 | Caminho | Finalidade |
@@ -30,6 +34,6 @@ O backup anterior permanece em `C:/CAIN/work/CAIN-PROMOTION-20260912-210027/back
 O wheel 0.4.8 está em `C:/CAIN/work/qa-full-20260912/release`; não foi instalado em modo editável.
 O serviço foi reiniciado pelo inicializador padrão, com `CAIN_DB`, `CAIN_RESEARCH_DB` e `CAIN_RESEARCH_POLICY`
 apontando para os mesmos caminhos de dados/configuração. Dependências, modelos e política foram preservados.
-O serviço temporário de teste 8891 usa cópias isoladas e não substitui a principal.
+O serviço temporário da rodada anterior em 8891 usou cópias isoladas e foi encerrado; não substitui a principal.
 Antes de restaurar, verificar a identidade do snapshot e ensaiar em destino novo. Preservar dados posteriores ao backup.
 Leia [estado atual](../ESTADO_DO_PROJETO.md) para a referência instalada e [continuidade](../CONTINUIDADE.md) para os comandos de conferência.
