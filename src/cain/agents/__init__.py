@@ -30,6 +30,68 @@ def _generation_prompt(message: Message) -> str:
     )
 
 
+def _literal_json_schema(payload: str) -> dict | None:
+    """Recognize a bounded, explicit key declaration, never infer a schema.
+
+    Only a leading JSON-output instruction with an unquoted declaration is
+    eligible. Quoted documents/code and ambiguous lists stay on the text path.
+    Values remain the model's job. Explicit JSON assignments may also supply
+    their types, but never become constants in the schema.
+    """
+    declaration = re.match(
+        r'^\s*(?:responda|retorne|gere|return|respond|generate)\b'
+        r'[^"\n:]{0,160}\bjson\b[^"\n:]{0,80}'
+        r'\b(?:com as chaves literais|with (?:the )?literal keys)\s+',
+        payload, flags=re.I,
+    )
+    if declaration is None:
+        return None
+    rest = payload[declaration.end():].lstrip()
+    keys = []
+    decoder = json.JSONDecoder()
+    while len(keys) < 8:
+        try:
+            key, end = decoder.raw_decode(rest)
+        except (ValueError, RecursionError):
+            return None
+        if not isinstance(key, str) or not key or key in keys:
+            return None
+        try:
+            if len(key.encode('utf-8')) > 64:
+                return None
+        except UnicodeError:
+            return None
+        keys.append(key)
+        rest = rest[end:].lstrip(' \t\r')
+        if not rest or rest[0] in '.;:\n':
+            properties = {key: {} for key in keys}
+            for assignment in re.finditer(
+                r'(?:\bo valor de|\be o de|\bthe value of)\s+'
+                r'("(?:[^"\\]|\\.)*")\s+(?:deve ser|must be)\s+', rest, flags=re.I,
+            ):
+                try:
+                    name = json.loads(assignment[1])
+                    value, end = decoder.raw_decode(rest[assignment.end():])
+                except (ValueError, RecursionError):
+                    continue
+                tail = rest[assignment.end() + end:]
+                if tail and not (tail[0].isspace() or tail[0] in '.;,'):
+                    continue
+                if name in properties:
+                    kind = {str: 'string', bool: 'boolean', int: 'integer', float: 'number',
+                            type(None): 'null', list: 'array', dict: 'object'}[type(value)]
+                    if properties[name] and properties[name] != {'type': kind}:
+                        return None
+                    properties[name] = {'type': kind}
+            return {'type': 'object', 'properties': properties,
+                    'required': keys, 'additionalProperties': False}
+        separator = re.match(r'(?:,\s*(?:(?:e|and)\s+)?|(?:e|and)\s+)', rest, flags=re.I)
+        if separator is None:
+            return None
+        rest = rest[separator.end():].lstrip()
+    return None
+
+
 @dataclass(frozen=True)
 class Capabilities:
     name: str
@@ -356,8 +418,14 @@ class ConversationAgent:
             return "You're welcome!" if english else 'De nada!'
         if automatic_social and social in ({'tudo', 'bem'}, {'como', 'vai'}):
             return "I'm ready to help. How can I help you?" if english else 'Estou pronto para ajudar. Como posso ajudar você?'
+        generate = self.llm.generate
+        schema = _literal_json_schema(message.payload)
+        structured = getattr(self.llm, 'generate_json', None)
+        if schema is not None and callable(structured):
+            def generate(prompt, context):
+                return structured(prompt, context, schema)
         if english:
-            return self.llm.generate(
+            return generate(
                 prompt,
                 message.contexto_identidade + "\nContinue the conversation: short requests to "
                 "explain, elaborate or continue refer to its latest topic. Develop that topic "
@@ -367,7 +435,7 @@ class ConversationAgent:
                 "quotes or explanations. For JSON-only requests, return pure JSON without "
                 "Markdown fences. Write your own prose in English.",
             )
-        return self.llm.generate(
+        return generate(
             prompt,
             message.contexto_identidade + "\nConverse com continuidade: um pedido curto como "
             "explicar, detalhar ou continuar refere-se ao último assunto da conversa. "

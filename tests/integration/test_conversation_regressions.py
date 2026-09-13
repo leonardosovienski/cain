@@ -16,8 +16,10 @@ class ConversationModel:
         self.calls.append((prompt, context))
         return '2 + 2 = 4.'
 
-    def generate_json(self, *args):
-        raise AssertionError('Clear arithmetic/social requests do not need LLM routing')
+    def generate_json(self, prompt, context, schema):
+        assert set(schema['properties']) == {'a', 'b'}, 'Unexpected classifier call'
+        self.calls.append((prompt, context))
+        return '{"a": null, "b": null}'
 
 
 @pytest.mark.parametrize('prompt,expected', [('Quanto é 2 + 2?', '2 + 2 = 4.'),
