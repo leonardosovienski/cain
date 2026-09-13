@@ -1,6 +1,6 @@
 # Continuidade do CAIN
 
-Comece pelo [estado verificado](ESTADO_DO_PROJETO.md). O código operacional de referência é d604a0e; a branch atual é main.
+Comece pelo [estado verificado](ESTADO_DO_PROJETO.md). O código operacional de referência é 92b6428 (0.4.8); a branch atual é main.
 O [manifesto operacional](operational-state.json) distingue commit de código, wheel instalado e CI.
 
 ## Onde trabalhar e abrir
@@ -24,7 +24,14 @@ Snapshot/Bundle dos produtores são recebidos conforme grants; não se incorpora
 
 ## Entregas fechadas
 
-As correções de Historian a613050 e a integração de contratos estão na main operacional d604a0e.
+A rodada de [teste integral](docs/TESTE_INTEGRAL_20260912.md) corrigiu conversa cotidiana, aritmética simples
+e citações de histórico irrelevante. Fonte final: 624 testes aprovados, um skip e dois avisos.
+A instalação principal foi atualizada e reiniciada na 8877, com reteste por interface, API e CLI.
+Recibos: `C:/CAIN/work/qa-full-20260912`; backup pré-promoção: `promotion-backup` nesse diretório.
+O perfil `qa-cain-20260912` contém apenas testes sintéticos e foi mantido separado.
+O modelo livre ainda falhou em seguir pedidos de formato/conteúdo no laboratório; não declarar qualidade semântica geral aprovada.
+
+As correções de Historian a613050 e a integração de contratos já estavam na referência anterior d604a0e e permanecem integradas.
 A tarefa real H4 por API e CLI foi executada; não é mais uma pendência de promoção.
 O teste confirma campos do relatório congelado, não a interpretação geral do modelo nem o estado atual do produtor.
 Auditorias completas, testes de modelos e candidatos Supply continuam disponíveis como [histórico](docs/historico/README.md).

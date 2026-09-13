@@ -6,6 +6,7 @@
 - [Estado verificado](../ESTADO_DO_PROJETO.md): código instalado, testes e limites.
 - [Continuidade](../CONTINUIDADE.md): retomar trabalho e localizar evidências.
 - [Instalação local](LOCAL_INSTALLATION.md): mapa de C:/CAIN e atalhos.
+- [Teste integral de uso](TESTE_INTEGRAL_20260912.md): correções da 0.4.8, cobertura e limitações observadas.
 - [Publicação](../PUBLICATION_STATUS_20260912.md) e [Git](../SETUP_GITHUB.md).
 
 ## Contratos e arquitetura

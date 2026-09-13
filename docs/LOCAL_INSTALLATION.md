@@ -20,6 +20,12 @@ O arquivo ignorado `projeto/.cain.local.json` liga o inicializador ao Python loc
 As pastas work/entregas/historico não são lixo: podem conter fontes, backups ou recibos únicos.
 A organização documental não removeu, moveu nem mesclou esses conteúdos. Não usar rotinas de limpeza indiscriminada.
 
-O backup da última promoção está em `C:/CAIN/work/CAIN-PROMOTION-20260912-210027/backup`.
+O backup da promoção 0.4.8 está em `C:/CAIN/work/qa-full-20260912/promotion-backup` (bancos, documentos e pacote anterior).
+As cópias de configuração e o baseline estão em `C:/CAIN/work/qa-full-20260912/backup`.
+O backup anterior permanece em `C:/CAIN/work/CAIN-PROMOTION-20260912-210027/backup`.
+O wheel 0.4.8 está em `C:/CAIN/work/qa-full-20260912/release`; não foi instalado em modo editável.
+O serviço foi reiniciado pelo inicializador padrão, com `CAIN_DB`, `CAIN_RESEARCH_DB` e `CAIN_RESEARCH_POLICY`
+apontando para os mesmos caminhos de dados/configuração. Dependências, modelos e política foram preservados.
+O serviço temporário de teste 8891 usa cópias isoladas e não substitui a principal.
 Antes de restaurar, verificar a identidade do snapshot e ensaiar em destino novo. Preservar dados posteriores ao backup.
 Leia [estado atual](../ESTADO_DO_PROJETO.md) para a referência instalada e [continuidade](../CONTINUIDADE.md) para os comandos de conferência.
