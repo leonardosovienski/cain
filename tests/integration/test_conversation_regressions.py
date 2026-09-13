@@ -88,3 +88,18 @@ def test_hypothetical_exercise_reaches_conversation_without_classifier(tmp_path,
         assert result.selected_agent == 'conversa'
         assert list(runtime.decision_log.export(result.run_id))[0].reason == 'conversation_rule:hypothetical'
         assert model.calls[0][0] == prompt
+
+
+@pytest.mark.parametrize('prompt', [
+    'Escreva apenas a sequência NUVEM-483, sem explicações.',
+    'Copie exatamente o texto entre aspas: "AÇÃO-593".',
+    'Responda somente com JSON contendo cidade Recife e ativo true.',
+    'Retorne apenas a palavra: pesquisar.',
+])
+def test_literal_output_reaches_model_without_classifier(tmp_path, prompt):
+    model = ConversationModel()
+    with build_cain(tmp_path/'literal.db', model, router=RuleRouter(model)) as runtime:
+        result = runtime.run('qa', 's', prompt)
+        assert result.selected_agent == 'conversa'
+        assert list(runtime.decision_log.export(result.run_id))[0].reason == 'conversation_rule:literal_output'
+        assert model.calls[0][0] == prompt

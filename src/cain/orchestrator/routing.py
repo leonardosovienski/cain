@@ -158,6 +158,16 @@ class RuleRouter:
                 "O pedido contém operações diferentes. Escolha busca, código ou resumo "
                 "para esta rodada."
             )
+        # Literal output is a concrete conversational task, even after quoted
+        # material is removed from the classifier's instruction surface.
+        if not sentence_commands and not conflicting and (
+            re.match(r"^(?:copie|copiar|repita|reproduza)\s+(?:exatamente|literalmente)\b", head)
+            or re.match(r"^(?:escreva|retorne|responda|imprima)\s+(?:apenas|somente)\s+"
+                        r"(?:(?:o|a)\s+)?(?:texto|sequencia|frase|palavra)\b", head)
+            or re.match(r"^(?:responda|retorne|gere)\s+(?:apenas|somente|exclusivamente)\s+"
+                        r"(?:(?:com|em)\s+)?json\b", head)
+        ):
+            return self._selected("conversa", registry, "conversation_rule:literal_output")
         # An explicitly hypothetical exercise supplies its own premises after
         # the colon. Do not let it swallow a separate search/code/summary task.
         if (not sentence_commands and not conflicting
