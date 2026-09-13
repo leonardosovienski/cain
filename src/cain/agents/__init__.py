@@ -339,7 +339,8 @@ class ConversationAgent:
             "ser tratados como premissas do exercício, sem exigir verificação de mercado. "
             "Quando o usuário pedir apenas um texto ou uma sequência, copie exatamente "
             "esse conteúdo: preserve maiúsculas e pontuação e não acrescente introdução, "
-            "aspas ou explicações.",
+            "aspas ou explicações. Se pedir somente JSON, responda com JSON puro, "
+            "sem cercas Markdown.",
         )
 
 
