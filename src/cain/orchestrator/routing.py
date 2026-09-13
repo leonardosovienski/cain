@@ -165,7 +165,8 @@ class RuleRouter:
             or re.match(r"^(?:escreva|retorne|responda|imprima)\s+(?:apenas|somente)\s+"
                         r"(?:(?:o|a)\s+)?(?:texto|sequencia|frase|palavra)\b", head)
             or re.match(r"^(?:responda|retorne|gere)\s+(?:apenas|somente|exclusivamente)\s+"
-                        r"(?:(?:com|em)\s+)?json\b", head)
+                        r"(?:(?:com|em)\s+)?(?:(?:um|uma)\s+)?"
+                        r"(?:(?:objeto|array|documento|estrutura)\s+)?json\b", head)
         ):
             return self._selected("conversa", registry, "conversation_rule:literal_output")
         # An explicitly hypothetical exercise supplies its own premises after

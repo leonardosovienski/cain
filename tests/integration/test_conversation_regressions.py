@@ -95,6 +95,8 @@ def test_hypothetical_exercise_reaches_conversation_without_classifier(tmp_path,
     'Copie exatamente o texto entre aspas: "AÇÃO-593".',
     'Responda somente com JSON contendo cidade Recife e ativo true.',
     'Retorne apenas a palavra: pesquisar.',
+    'Responda somente com um objeto JSON com as chaves literais "a" e "b".',
+    'Retorne apenas um array JSON contendo 2 e 3.',
 ])
 def test_literal_output_reaches_model_without_classifier(tmp_path, prompt):
     model = ConversationModel()
