@@ -5,7 +5,7 @@ import pytest
 
 from cain.research.field_review import requested_fields
 from cain.research.historian import explain
-from tests.integration.test_research_l0 import publication, setup as research_setup
+from test_research_l0 import publication, setup as research_setup
 
 
 @pytest.fixture

@@ -1,0 +1,5 @@
+# Stocks integration with canonical main contracts
+
+The operational update uses Stocks main 3066321e599ee15dd0ace4167d2791545ce6eb95 and canonical Ecosystem main 6a998520825292895bcae71e589fa8ac0e02bb85. Snapshot is now pinned to 1.0.1, matching its canonical distribution, and both offline contract wheels come from the successful Ecosystem CI34725922499 rather than historical candidate builds. Package members were compared to the canonical source tree. Exact wheel hashes are in vendor provenance files.
+
+The user authorized completion of the primary CAIN installation after the isolated Stocks chain passed. Local code rollback, consistent database backups and restoration rehearsal are retained in C:/CAIN/entregas/stocks-main-integration-20260912. Installation and operational receipts are external and identify the final immutable revision. Existing data and permissions are preserved; any new Stocks admission is scoped, reference-only and denies generation. Technical checks do not validate profitability or model summaries.
