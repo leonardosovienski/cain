@@ -1,22 +1,19 @@
 # Estado verificado do CAIN
 
-CAIN **0.4.10**, código instalado **dcde48490a15af33048b764cfdb952af7599c3a8**. Checkout C:/CAIN/projeto em main; instalação não editável C:/CAIN/.venv; interface na porta 8877.
+CAIN **0.4.11**, código instalado **b8bed8fd103d265f3158d5dde5fd32895ca8f439**. Checkout em `C:/CAIN/projeto`, branch **main**; instalação não editável em `C:/CAIN/.venv`; interface http://127.0.0.1:8877/.
 
-| Item | Estado |
+| Item | Verificação desta rodada |
 |---|---|
-| Modelo | qwen3.5:4b, parâmetros preservados |
-| Mudança | Instruções de continuação, cópia exata e JSON puro |
-| Engenharia | 631 testes antes do último ajuste; 33 afetados depois; Ruff e wheel offline aprovados |
-| Preservação | Bancos íntegros, linhas anteriores e configurações preservados |
-| Contratos | Snapshot 1.0.1 e Bundle 1.0.0, dependências preservadas |
-| Limites | CPU lenta, elaboração desnecessária em alguns casos; sem certificação semântica geral |
+| Modelo | qwen3.5:4b / Ollama 0.34.0; parâmetros e configuração preservados |
+| Correções | Idioma inglês ativo; roteamento de exercícios, cópia e JSON; preservação dos fatos e instrução de aprofundamento |
+| Engenharia | 673 testes na suíte completa; 174 afetados após a última proteção de entrada; 1 skip Windows na suíte completa, 2 avisos; Ruff aprovado |
+| Wheel | Instalação offline nova, dependências válidas e 61 arquivos iguais à fonte e ao wheel |
+| Inferência | Regressão de conversa, cópia, JSON, idioma por escopo, memória, resumo e código; limites de verbosidade registrados |
+| Projetos/documentos | Criação, deduplicação, isolamento, preferências, idempotência, feedback e citações verificados em banco isolado |
+| Pesquisa/workflows | Snapshot/Historian literal, dois Bundles; inspect/search, checkpoint, conclusão e cancelamento |
+| Preservação | Bancos íntegros, todas as linhas preexistentes e configurações preservadas; só cain-research atualizado |
+| Limites | CPU lenta, orientação extra e extrapolação sobre longo prazo na continuação da interface; aderência semântica parcial, sem certificação geral da LLM |
 
-[Relatório desta rodada](docs/LLM_FIX_20260913.md) contém resultados reais, falhas intermediárias, retestes e limites. [Manifesto operacional](operational-state.json) identifica wheel, código e verificação local. A CI remota não foi verificada para esta referência.
+[Relatório completo](docs/LLM_REAL_20260913.md), [continuidade independente do chat](CONTINUIDADE.md), [instalação e backups](docs/LOCAL_INSTALLATION.md) e [manifesto](operational-state.json).
 
-As falhas registradas na [0.4.9](docs/LLM_RETESTE_20260912.md) são históricas. Testes anteriores de documentos, projetos, pesquisa e workflows permanecem em [teste integral](docs/TESTE_INTEGRAL_20260912.md); esta rodada não repetiu integralmente essas áreas.
-
-Para continuar: [CONTINUIDADE.md](CONTINUIDADE.md). Não substituir bancos atuais por backups antigos.
-
-Pendência nova: preferência ativa de inglês não foi respeitada em uma pergunta portuguesa; tentativas sem melhora foram descartadas. Consulte o relatório antes de considerar idiomas aprovados.
-
-Fechamento documental de 13/09/2026: serviço 8877 respondeu como 0.4.10/qwen3.5:4b; 61 arquivos do pacote, integridade e preservação dos bancos/configurações reconferidos. Não houve nova rodada de inferência nem mudança de código nesse fechamento. A [continuidade](CONTINUIDADE.md#retomada-sem-este-chat--fechamento-de-13092026) contém reprodução da pendência e instruções para retomar sem o chat.
+A falha de idioma da 0.4.10 é histórica e foi corrigida nos casos retestados; isso não prova aderência a qualquer pergunta. A geração completa dos workflows em seis etapas, CI remota desta referência e avaliação humana independente não foram verificadas nesta rodada.

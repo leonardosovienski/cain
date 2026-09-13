@@ -1,10 +1,19 @@
 # Instalação local em C:/CAIN
 
-Versão instalada: **0.4.10**, código **dcde48490a15af33048b764cfdb952af7599c3a8**. Modelo e configurações preservados. [Correções e teste real](LLM_FIX_20260913.md). Wheel final e backup prévio em `C:/CAIN/work/qa-llm-fix-20260913`; a instalação usa `C:/CAIN/.venv` e a porta 8877.
+Versão instalada: **0.4.11**, código **b8bed8fd103d265f3158d5dde5fd32895ca8f439**. Ambiente não editável `C:/CAIN/.venv`; serviço http://127.0.0.1:8877/; modelo `qwen3.5:4b`, configuração e dependências de terceiros preservados. [Resultados reais](LLM_REAL_20260913.md).
 
-Wheel atual: `C:/CAIN/work/qa-llm-fix-20260913/release/cain_research-0.4.10-py3-none-any.whl`, SHA256 `71aa88db9a3531e4135342e87cd5626ef8e8795163f6c672e425c6bbb6b9f864`.
-Backup prévio: `promotion-backup` no mesmo diretório de trabalho, com bancos, configurações e wheel 0.4.9. O arquivo `intermediate-0.4.10.whl` é intermediário, não o artefato final de reinstalação.
-No fechamento de 13/09/2026, os 61 arquivos instalados coincidiram com fonte e wheel, os bancos estavam íntegros e as configurações preservadas. Serviço principal em 127.0.0.1:8877; nenhuma escuta de teste em 8891 ou 8892.
+Wheel instalado: `C:/CAIN/work/qa-real-20260913/release/cain_research-0.4.11-py3-none-any.whl`.
+SHA256: `9bcb2031bff243c7349ba03cb4f5cee8783939e932346d8d085323506812b727`.
+
+Backup inicial em `C:/CAIN/work/qa-real-20260913/promotion-backup`; backup anterior à primeira atualização da rodada em `pre-install-backup`, no mesmo diretório. Incluem bancos via SQLite backup, configurações, atalhos e wheel 0.4.10. O arquivo `intermediate-before-memory-fix.whl` não é o release final.
+
+Os 61 arquivos instalados foram comparados com a fonte e o wheel final. A atualização usou `pip install --no-deps --no-index --force-reinstall`; `pip check` passou. Serviço reiniciado pelo inicializador padrão, mantendo `CAIN_DB`, `CAIN_RESEARCH_DB` e `CAIN_RESEARCH_POLICY` nos caminhos existentes. Apenas `cain-research` mudou na lista de dependências.
+
+Recibos: `primary-health.json`, `installed-api.json`, `installed-delivery-english.json`, `installed-format-retest.json`, `installed-cli.log`, `primary-ui-final.json`, `preservation-0.4.11.json`, `wheel-check.json` e `git-publication.json` no diretório da rodada. Não apagar esse diretório nem restaurar seus bancos sobre o uso atual.
+
+O backup `refinement-backup` preserva também a primeira instalação candidata 0.4.11, anterior ao ajuste de aprofundamento. O arquivo `first-installed-0.4.11.whl` é intermediário; o wheel final é somente o de `release`, com o hash acima. O wheel e o backup da 0.4.10 continuam em `C:/CAIN/work/qa-llm-fix-20260913`; o relatório daquela versão é histórico.
+
+Os backups `literal-backup`, `format-backup`, `language-backup` e `schema-backup` preservam os candidatos posteriores e seus dados. `schema-backup` é o imediatamente anterior à instalação final. Os arquivos `second-installed-0.4.11.whl` até `fifth-installed-0.4.11.whl` são intermediários. O hash do wheel em `release` acima identifica a entrega final.
 
 ## Mapa e registros anteriores
 

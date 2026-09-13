@@ -1,50 +1,41 @@
 # Continuidade do CAIN
 
-Versão local atual: **0.4.10**, código **dcde48490a15af33048b764cfdb952af7599c3a8**, branch **main**. Commits posteriores de documentação não mudam o pacote instalado.
+Versão instalada: **0.4.11**, código **b8bed8fd103d265f3158d5dde5fd32895ca8f439**, branch **main**. Commits posteriores de documentação não alteram o pacote. O SHA final publicado fica no recibo `C:/CAIN/work/qa-real-20260913/git-publication.json`; conferir novamente local/remoto antes de retomar.
 
-Leia [estado atual](ESTADO_DO_PROJETO.md), [correções e testes reais](docs/LLM_FIX_20260913.md) e [mapa da instalação](docs/LOCAL_INSTALLATION.md).
+Leia [estado atual](ESTADO_DO_PROJETO.md), [testes reais e limites desta rodada](docs/LLM_REAL_20260913.md) e [instalação](docs/LOCAL_INSTALLATION.md).
 
-## Instalação e preservação
+## Instalação e dados
 
-- Checkout: C:/CAIN/projeto. Ambiente não editável: C:/CAIN/.venv.
-- Interface: http://127.0.0.1:8877/; atalho C:/CAIN/ABRIR_CAIN.cmd.
-- CLI: C:/CAIN/CAIN.cmd e C:/CAIN/CAIN_RESEARCH.cmd.
-- Bancos de uso: C:/CAIN/dados; política: C:/CAIN/config/research-policy.json.
-- Modelo: qwen3.5:4b. Configuração preservada nesta rodada; inferência em CPU continua lenta.
-- Evidências e backup: C:/CAIN/work/qa-llm-fix-20260913. Manter dados QA separados; não apagar work indiscriminadamente.
+- Checkout canônico: `C:/CAIN/projeto`; ambiente não editável: `C:/CAIN/.venv`.
+- Interface principal: http://127.0.0.1:8877/; atalho `C:/CAIN/ABRIR_CAIN.cmd`.
+- CLI: `C:/CAIN/CAIN.cmd` e `C:/CAIN/CAIN_RESEARCH.cmd`.
+- Dados de uso: `C:/CAIN/dados`; política: `C:/CAIN/config/research-policy.json`.
+- Modelo preservado: `qwen3.5:4b`, Ollama 0.34.0, CPU. Temperatura 0, seed 42, think=false, contexto 8192, geração 768, timeout 240 s.
+- Recibos e scripts: `C:/CAIN/work/qa-real-20260913`.
+- Backups: `promotion-backup` (início da rodada) e `pre-install-backup` (antes da atualização), nesse diretório. Ambos contêm bancos, configuração e wheel 0.4.10. Não restaurar snapshots antigos sobre dados atuais.
+- `refinement-backup`, `literal-backup`, `format-backup`, `language-backup` e `schema-backup` preservam candidatos 0.4.11; `schema-backup` é o imediatamente anterior à instalação final. O wheel final é somente o de `release`, com hash no mapa da instalação.
 
-## Retomar
+## O que mudou
 
-1. Conferir git status, git fetch origin --prune, git rev-parse HEAD e git ls-remote origin refs/heads/main.
-2. Ler o pedido atual e conferir alterações concorrentes antes de agir.
-3. Usar dados isolados em testes mutáveis; não restaurar snapshots sobre bancos em uso.
-4. Distinguir teste de engenharia, inferência real e aderência semântica. Saudação automática não comprova qualidade da LLM.
-5. Após código, construir wheel, registrar backup e atualizar instalação; retestar o funcionamento real. Markdown sozinho não exige reinstalar.
+1. A pendência documentada de `language=en` foi reproduzida e corrigida nos casos retestados. A projeção do perfil e as instruções de conversa usam inglês quando ele está ativo; a entrada derivada da geração recebe um lembrete curto de idioma. O texto original fica no histórico. Não há tradução posterior nem retry automático.
+2. Cabeçalhos de exercícios explicitamente fictícios/hipotéticos passam a selecionar conversa; o classificador recusava a comparação fornecida.
+3. O filtro de memória não descarta mais um episódio só por conter “Responda em uma frase”. Isso eliminava os preços do contexto de “Explique melhor”. Preferências reconhecidas continuam filtradas para não reativar escopos antigos.
+4. Continuações reconhecidas recebem uma instrução derivada para explicar o raciocínio e acrescentar um detalhe concreto, evitando apenas repetir a conclusão. O primeiro pacote candidato ainda repetia; o refinamento foi retestado com diferença de preço e custo por tarefa corretos.
+5. Pedidos claros de cópia literal e JSON selecionam conversa diretamente. A cópia pela interface ainda falhava no classificador, embora a LLM passasse com intenção explícita; o roteamento foi corrigido e retestado sem intenção explícita.
+6. O lembrete de idioma pede preservação de chaves e valores literais. Ele passou em contexto novo, mas não resolveu a tradução de chaves no histórico existente. Declarações explícitas e limitadas de chaves literais JSON agora usam o schema do provedor: as chaves e os tipos explicitamente declarados são restritos, os valores continuam gerados pela LLM. O mesmo histórico foi retestado em cópia isolada e na instalação principal.
 
-As duas regressões anteriores eram continuação genérica e cópia exata. A nova instrução melhorou ambas; a bateria ampliada encontrou também JSON com Markdown, corrigido e retestado. Ainda há elaboração desnecessária em respostas sobre fontes incompletas. Consulte os resultados por camada no relatório; não declarar qualidade geral certificada.
+As correções anteriores de cópia exata e JSON passaram novamente, inclusive com inglês ativo. A memória recuperou o fato de um exercício em outra sessão do mesmo usuário e não o revelou a outro usuário. O relatório distingue os testes com inferência real das rotinas determinísticas e dos testes simulados.
 
-Histórico: [teste integral](docs/TESTE_INTEGRAL_20260912.md), [comparação de modelos](docs/LLM_CORRECOES_20260912.md), [reteste da 0.4.9](docs/LLM_RETESTE_20260912.md). Esses relatórios preservam resultados das versões anteriores.
+## Limites e próxima retomada
 
-Pendência nova: preferência ativa de inglês não foi respeitada em uma pergunta portuguesa; tentativas sem melhora foram descartadas. Consulte o relatório antes de considerar idiomas aprovados.
+- Há verbosidade adicional: convites opcionais e orientações além do pedido. O refinamento de continuação acrescentou cálculos corretos, mas a interface extrapolou uma vantagem “a longo prazo” sem dados para isso. Aprofundamento semântico permanece parcial; não apresentar a continuação como integralmente certificada.
+- Inferência local lenta; tempos desta rodada não são benchmark de desempenho isolado.
+- Workflows verificados em `inspect/search`, checkpoint, leitura posterior, conclusão, cancelamento, trace e isolamento. A geração completa em seis etapas não foi repetida nesta rodada.
+- Consulta Historian de H4 usou campos literais; não é certificação da síntese livre nem do produtor dos dados.
+- CI remota desta referência e avaliação humana independente não verificadas. Não houve treino ou certificação geral da LLM.
 
-## Retomada sem este chat — fechamento de 13/09/2026
+Antes de retomar, executar `git status --short`, `git fetch origin --prune`, `git rev-parse HEAD` e `git ls-remote origin refs/heads/main`; conferir `/health` e o pacote instalado. Usar bancos e perfis QA isolados, preservar as preferências de `leo` e não apagar `work` indiscriminadamente.
 
-O trabalho de código desta rodada está concluído e instalado; o próximo foco é a pendência de idioma, não refazer a instalação nem reabrir como falha os casos de continuação/cópia que passaram. O fechamento documental não executou nova inferência: conferiu serviço, pacote, dados e Git.
+Scripts reprodutíveis e recibos finais estão descritos no relatório. Não reclassificar falhas intermediárias como estado final: `semantic.json` conserva uma falha anterior de continuidade; consultar também `context-retest.json` e `primary-ui-final.json`.
 
-Reprodução observada: em um usuário QA novo, definir `language=en` por `PUT /profile/{user_id}/preferences/language`, com `{"value":"en","scope":"user"}`. Enviar a `/run` a pergunta `Explique em uma frase o que é uma lista de tarefas.`, com `intent=conversa`, `user_id` e uma sessão nova. A resposta saiu em português apesar de `preferences_used.language=en`. Reproduzir primeiro em dados isolados; não usar nem alterar as preferências de leo.
-
-- Evidência instalada: `C:/CAIN/work/qa-llm-fix-20260913/primary-extra.json`.
-- Tentativas descartadas: `language-final.json`, `language-v2.json`, `language-v3.json` e scripts correspondentes no mesmo diretório. Reforçar a instrução interna, trocar o idioma padrão da projeção ou prefixar o pedido não resolveu nos testes. Essas alterações não fazem parte da entrega.
-- Código para investigar: `src/cain/agents/__init__.py` (ConversationAgent), `src/cain/identity/__init__.py` (perfil efetivo/contexto), `src/cain/llm/__init__.py` (Ollama), `src/cain/orchestrator/__init__.py` (metadados e registro).
-- Outras limitações: orientação adicional sem base no trecho ao perguntar pela amostra ausente; latência alta em CPU/8 GB. Não houve treino de pesos ou certificação geral da LLM.
-- Testes já feitos: `expanded-results.json`, `format-final.json`, `primary-ui.json`, `primary-cli.log`. Os recibos completos ficam fora do Git e permanecem em C:/CAIN/work; apagar o chat não os remove.
-
-Prompt para uma nova tarefa:
-
-```text
-Leia C:/CAIN/projeto/CONTINUIDADE.md, ESTADO_DO_PROJETO.md e docs/LOCAL_INSTALLATION.md.
-Confira main e a instalação 0.4.10. Retome a pendência de language=en descrita na continuidade.
-Preserve dados e configurações; teste com usuários/bancos isolados e inferência real.
-Não conte respostas automáticas como qualidade da LLM. Registre aprovações, falhas e limites.
-Se corrigir código, atualize a instalação, reteste, atualize os Markdown e faça commit/push na main.
-```
+Histórico: [0.4.10](docs/LLM_FIX_20260913.md), [0.4.9](docs/LLM_RETESTE_20260912.md), [teste integral anterior](docs/TESTE_INTEGRAL_20260912.md). Os recibos antigos em `C:/CAIN/work/qa-llm-fix-20260913` continuam preservados.
