@@ -158,6 +158,12 @@ class RuleRouter:
                 "O pedido contém operações diferentes. Escolha busca, código ou resumo "
                 "para esta rodada."
             )
+        # An explicitly hypothetical exercise supplies its own premises after
+        # the colon. Do not let it swallow a separate search/code/summary task.
+        if (not sentence_commands and not conflicting
+                and re.match(r"^(?:(?:vamos )?comparar|compare|considere|imagine|suponha)\b", head)
+                and re.search(r"\b(?:fictici[oa]s?|hipotetic[oa]s?)\b", head)):
+            return self._selected("conversa", registry, "conversation_rule:hypothetical")
         if has_session_context and not any(self._command(s) for s in sentences) and re.match(
             r"^(?:explique melhor|(?:pode )?detalhar|continue|"
             r"qual (?:deles|delas|das duas|dos dois)|quais (?:deles|delas)|"

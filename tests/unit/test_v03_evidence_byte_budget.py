@@ -56,6 +56,20 @@ def run_search(llm, results, *, question="Como guardar configurações?", identi
     return message, response
 
 
+def test_active_language_instruction_is_included_in_evidence_budget():
+    llm = BudgetLLM(max_input_bytes=2200)
+    retriever = Retriever([passage('Trecho relevante. ' * 500)])
+    message = Message('busca', 'Perfil', 'Busque o trecho.',
+                      {'user_id': 'qa', 'preferences': {'language': 'en'}})
+    SearchAgent(LexicalMemoryIndex(), retriever=retriever, llm=llm).handle(message)
+    prompt, context = llm.calls[0]
+    assert prompt == message.payload + '\n\nAnswer in English.'
+    assert retriever.calls == [(message.payload, 3)]
+    budget = message.metadata['retrieval_budget']
+    assert budget['total_input_bytes'] == len((prompt + context).encode('utf-8'))
+    assert budget['total_input_bytes'] <= 2200
+
+
 def assert_recorded_budget(llm, message):
     assert len(llm.calls) == 1
     prompt, context = llm.calls[0]

@@ -89,3 +89,22 @@ def test_selected_recent_exchanges_are_presented_in_conversation_order(tmp_path)
         remember(runtime,'qa','s',None,'LATEST_PRICES','b')
         context=runtime.identity.context_for('qa','Explique melhor.',session_id='s')
         assert context.index('OLDER_GREETING') < context.index('LATEST_PRICES')
+
+
+def test_one_sentence_request_does_not_erase_facts_for_followup(tmp_path):
+    class Model:
+        def generate(self, prompt, context=''):
+            if prompt == 'Explique melhor.':
+                assert '37 reais' in context and '24 reais' in context
+            return 'A diferença é 13 reais.'
+
+        def generate_json(self, *args):
+            raise AssertionError('The factual episode must remain available for follow-up')
+
+    model = Model()
+    with build_cain(tmp_path/'one-sentence.db', model, router=RuleRouter(model)) as runtime:
+        runtime.run('qa', 's', 'Vamos comparar planos fictícios: A custa 37 reais e B custa 24 reais. '
+                    'Responda em uma frase.')
+        assert runtime.identity.get('qa').user_model.preferences == {}
+        result = runtime.run('qa', 's', 'Explique melhor.')
+        assert result.selected_agent == 'conversa'

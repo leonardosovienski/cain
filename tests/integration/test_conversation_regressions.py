@@ -74,3 +74,17 @@ def test_arithmetic_exact_without_float_rounding(expression, expected):
 def test_arithmetic_rejects_unbounded_or_executable_input(expression):
     from cain.agents.arithmetic import answer
     assert answer('Calcule '+expression).startswith('Não foi possível')
+
+
+@pytest.mark.parametrize('prompt', [
+    'Vamos comparar dois planos fictícios: Cedro custa 37 e Ipê custa 24. Qual custa menos?',
+    'Considere um cenário hipotético: temos três caixas. Explique como organizar.',
+    'Compare duas propostas fictícias: A inclui busca, B inclui código.',
+])
+def test_hypothetical_exercise_reaches_conversation_without_classifier(tmp_path, prompt):
+    model = ConversationModel()
+    with build_cain(tmp_path/'exercise.db', model, router=RuleRouter(model)) as runtime:
+        result = runtime.run('qa', 'exercise', prompt)
+        assert result.selected_agent == 'conversa'
+        assert list(runtime.decision_log.export(result.run_id))[0].reason == 'conversation_rule:hypothetical'
+        assert model.calls[0][0] == prompt

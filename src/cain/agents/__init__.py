@@ -14,6 +14,19 @@ from cain.persistence import MemoryIndex
 from cain.search import LocalDocumentRetriever, SearchError, SearchProvider, SearchResult, STOP_WORDS
 
 
+def _generation_prompt(message: Message) -> str:
+    """Render the resolved preference at the model's final instruction position.
+
+    The original payload remains the stored user input. This is an instruction
+    to the provider, never translation or repair of its returned response.
+    """
+    language = message.metadata.get("preferences", {}).get("language")
+    label = {"en": "English", "pt": "Portuguese"}.get(language)
+    if label is None:
+        return message.payload
+    return message.payload + f"\n\nAnswer in {label}."
+
+
 @dataclass(frozen=True)
 class Capabilities:
     name: str
@@ -101,8 +114,9 @@ class SearchAgent:
             raise ValueError("Search project_id must be a non-empty string or None for legacy/global")
         message.metadata["retrieval_sources"] = []
         message.metadata["retrieval_budget"] = {}
+        prompt = _generation_prompt(message)
         fixed_context = message.contexto_identidade + self.SYNTHESIS_INSTRUCTIONS
-        fixed_input_bytes = len((message.payload + fixed_context).encode("utf-8"))
+        fixed_input_bytes = len((prompt + fixed_context).encode("utf-8"))
         input_byte_budget = self._input_byte_budget()
         evidence_byte_budget = None if input_byte_budget is None else input_byte_budget - fixed_input_bytes
         if evidence_byte_budget is not None and evidence_byte_budget < 2:
@@ -220,7 +234,7 @@ class SearchAgent:
                 f"[{item['citation']}] {item['text']}" for item in evidence
             ) + "\n\nFontes consultadas:\n" + references
         context = fixed_context + serialized_evidence
-        answer = self.llm.generate(message.payload, context)
+        answer = self.llm.generate(prompt, context)
         if not isinstance(answer, str) or not answer.strip():
             raise SearchError("LLM de busca retornou resposta vazia")
         if self._has_citation_marker(answer):
@@ -330,8 +344,19 @@ class ConversationAgent:
             return "You're welcome!" if english else 'De nada!'
         if automatic_social and social in ({'tudo', 'bem'}, {'como', 'vai'}):
             return "I'm ready to help. How can I help you?" if english else 'Estou pronto para ajudar. Como posso ajudar você?'
+        if english:
+            return self.llm.generate(
+                _generation_prompt(message),
+                message.contexto_identidade + "\nContinue the conversation: short requests to "
+                "explain, elaborate or continue refer to its latest topic. Develop that topic "
+                "using the supplied facts; ask for clarification only if no referent exists. "
+                "Treat fictional examples as the exercise's premises. For exact-copy requests, "
+                "preserve characters, capitalization and punctuation without introductions, "
+                "quotes or explanations. For JSON-only requests, return pure JSON without "
+                "Markdown fences. Write your own prose in English.",
+            )
         return self.llm.generate(
-            message.payload,
+            _generation_prompt(message),
             message.contexto_identidade + "\nConverse com continuidade: um pedido curto como "
             "explicar, detalhar ou continuar refere-se ao último assunto da conversa. "
             "Desenvolva esse assunto usando os dados fornecidos. Só peça esclarecimento "
@@ -353,7 +378,7 @@ class CodeAgent:
 
     def handle(self, message: Message) -> str:
         return self.llm.generate(
-            message.payload,
+            _generation_prompt(message),
             message.contexto_identidade + "\nEspecialização: gere ou analise código. "
             "Não execute comandos. Não afirme ter executado ou testado o resultado. "
             "Respeite idioma, formato e extensão do perfil; se precisar de dados ausentes, "
@@ -384,7 +409,7 @@ class SummaryAgent:
             prefix = {'bullets': '- ', 'steps': '1. '}.get(preferences.get('format'), '')
             return 'Texto já conciso; preservado literalmente:\n' + prefix + text
         return self.llm.generate(
-            message.payload,
+            _generation_prompt(message),
             message.contexto_identidade + "\nEspecialização: resuma o texto fornecido. "
             "Use o idioma, formato e extensão preferidos no perfil; sem preferência, português. "
             "Preserve os fatos, não complete lacunas com suposições. "

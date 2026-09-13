@@ -24,9 +24,13 @@ __all__ = ["ExplicitPreferenceAdaptation", "IdentityService", "PREFERENCE_KEYS",
 
 def is_preference_memory(text: str, metadata: dict) -> bool:
     """Preference declarations stay in source history, not retrieved context."""
+    # A formatting request such as "responda em uma frase" is not necessarily
+    # a supported persistent preference. Do not discard its factual episode
+    # just because it contains "responda em"; use the actual adaptation rules.
+    user_input = metadata.get("user_input", text)
     return bool(metadata.get("preference_keys")) or bool(re.search(
-        r"\b(?:prefiro|preferencias?|quero respostas|gosto de respostas|responda em)\b", _normalize(text)
-    ))
+        r"\b(?:prefiro|preferencias?|quero respostas|gosto de respostas)\b", _normalize(text)
+    )) or (isinstance(user_input, str) and bool(ExplicitPreferenceAdaptation().extract(user_input)))
 
 
 class IdentityService:
@@ -139,6 +143,14 @@ class IdentityService:
             projected["expertise"] = state.user_model.expertise
         if state.user_model.recurring_goals:
             projected["recurring_goals"] = list(state.user_model.recurring_goals)
+        if state.user_model.preferences.get("language") == "en":
+            return (
+                "You are Cain, a helpful assistant. Follow the user's instructions. "
+                "Answer in English. Do not invent facts. Preserve negations and "
+                "state when information is missing. Apply this active profile "
+                "without reproducing it in the answer:\n"
+                + json.dumps(projected, ensure_ascii=False, sort_keys=True)
+            )
         return (
             "Você é Cain, um assistente útil. Siga as instruções do usuário. "
             "Responda em português, salvo preferência contrária. "
