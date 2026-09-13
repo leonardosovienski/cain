@@ -2,14 +2,8 @@
   "package": "predictor-research-bundle",
   "version": "1.0.0",
   "source_repository": "https://github.com/leonardosovienski/ecosystem-predictor",
-  "source_base_commit": "8586bd58303cbce629498e3243bff5cca951ce87",
-  "source_state": "local uncommitted remediation on recorded base; actual file bytes below, not Git newline-normalized blobs; no release",
-  "source_files": {
-    "packages/research-bundle/pyproject.toml": "27e9e457fb3205e2d18d8396fe57db80c2600609eb65726b4ee61a5765c81f0c",
-    "packages/research-bundle/src/research_bundle/contract.json": "f72bd112257bc8b472c925ed4c9ab66f955ab013f4cdf5fc4446fdcb260e646d",
-    "packages/research-bundle/src/research_bundle/export.py": "834c7894dd995330cc8fb46ca594b72aeae449d613ba2a43a40151bcafdce0c5",
-    "packages/research-bundle/src/research_bundle/files.py": "e428434ccfcdaa62011b9693cdcd3a50dab9ce4cfa03328de58264a495363585",
-    "packages/research-bundle/src/research_bundle/__init__.py": "eadc9bffface70cfe79ba1cd2a0b50a18358f5d1d6dd3d9224bb732df85a2d36"
-  },
-  "wheel_sha256": "79fe4d595de0c0f4540c41404406c4974f2d7e656d466b1905ad5614b8138ad5"
+  "source_commit": "6a998520825292895bcae71e589fa8ac0e02bb85",
+  "workflow_run": 34725922499,
+  "wheel_sha256": "7c5792e6573d55af92fd9b50cd9a2c357052b7673a61eef8abdaeaeef401ebee",
+  "source_verification": "All package members match canonical main sources after CRLF/LF normalization"
 }
