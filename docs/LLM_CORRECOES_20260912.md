@@ -65,3 +65,5 @@ Na porta 8877, a interface iniciou com “oi” no perfil isolado `qa-llm-instal
 Não houve restauração de dados antigos sobre dados atuais. Os perfis QA foram mantidos separados. A janela principal foi devolvida ao usuário leo ao encerrar.
 
 Após a reinstalação do wheel final, a API recebeu a continuação 'Qual das duas opções custa menos?' na sessão da interface. HTTP 200, modelo qwen3.5:4b, 84.70 s. Identificou Beta como mais barato, mas acrescentou pedidos de esclarecimento desnecessários: resultado parcialmente satisfatório. Recibo: `primary-final-context.json`.
+
+Reteste solicitado posteriormente: [resultados completos](LLM_RETESTE_20260912.md), com reprodução das duas falhas semânticas.

@@ -1,5 +1,7 @@
 # Estado verificado do CAIN
 
+Reteste posterior: [4/6 inferências aprovadas, 2 falhas reproduzidas](docs/LLM_RETESTE_20260912.md). “Explique melhor” e cópia exata continuam limitados; código e configuração inalterados.
+
 Atualização 0.4.9: código instalado **cba4b5b0d1c0b3dd7dcbbfbaa2a22a1647ad5a20**, modelo padrão **qwen3.5:4b**, porta 8877. Leia [avaliação real da LLM](docs/LLM_CORRECOES_20260912.md). Contexto recente e roteamento de continuações corrigidos; formato estrito e cautela excessiva ainda falham em alguns casos. Backup e recibos em `C:/CAIN/work/qa-llm-20260912`. Somente o modelo mudou nas configurações.
 
 ## Registro anterior da 0.4.8 (histórico)
