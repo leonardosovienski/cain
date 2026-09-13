@@ -24,7 +24,10 @@ def _generation_prompt(message: Message) -> str:
     label = {"en": "English", "pt": "Portuguese"}.get(language)
     if label is None:
         return message.payload
-    return message.payload + f"\n\nAnswer in {label}."
+    return (
+        message.payload + f"\n\nAnswer in {label}. "
+        "Preserve explicitly requested JSON keys and literal values; do not translate them."
+    )
 
 
 @dataclass(frozen=True)

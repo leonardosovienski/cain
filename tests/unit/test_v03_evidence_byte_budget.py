@@ -63,7 +63,8 @@ def test_active_language_instruction_is_included_in_evidence_budget():
                       {'user_id': 'qa', 'preferences': {'language': 'en'}})
     SearchAgent(LexicalMemoryIndex(), retriever=retriever, llm=llm).handle(message)
     prompt, context = llm.calls[0]
-    assert prompt == message.payload + '\n\nAnswer in English.'
+    assert prompt.startswith(message.payload + '\n\nAnswer in English.')
+    assert 'JSON keys and literal values' in prompt
     assert retriever.calls == [(message.payload, 3)]
     budget = message.metadata['retrieval_budget']
     assert budget['total_input_bytes'] == len((prompt + context).encode('utf-8'))
