@@ -332,8 +332,14 @@ class ConversationAgent:
             return "I'm ready to help. How can I help you?" if english else 'Estou pronto para ajudar. Como posso ajudar você?'
         return self.llm.generate(
             message.payload,
-            message.contexto_identidade + "\nResponda apenas ao pedido atual. "
-            "Não alegue consultas ou ações que não realizou.",
+            message.contexto_identidade + "\nConverse com continuidade: um pedido curto como "
+            "explicar, detalhar ou continuar refere-se ao último assunto da conversa. "
+            "Desenvolva esse assunto usando os dados fornecidos. Só peça esclarecimento "
+            "se realmente não houver um referente no histórico. Exemplos fictícios devem "
+            "ser tratados como premissas do exercício, sem exigir verificação de mercado. "
+            "Quando o usuário pedir apenas um texto ou uma sequência, copie exatamente "
+            "esse conteúdo: preserve maiúsculas e pontuação e não acrescente introdução, "
+            "aspas ou explicações.",
         )
 
 
