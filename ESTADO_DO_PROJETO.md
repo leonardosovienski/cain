@@ -1,5 +1,9 @@
 # Estado verificado do CAIN
 
+Atualização 0.4.9: código instalado **cba4b5b0d1c0b3dd7dcbbfbaa2a22a1647ad5a20**, modelo padrão **qwen3.5:4b**, porta 8877. Leia [avaliação real da LLM](docs/LLM_CORRECOES_20260912.md). Contexto recente e roteamento de continuações corrigidos; formato estrito e cautela excessiva ainda falham em alguns casos. Backup e recibos em `C:/CAIN/work/qa-llm-20260912`. Somente o modelo mudou nas configurações.
+
+## Registro anterior da 0.4.8 (histórico)
+
 Referência operacional da rodada de 12/09/2026: **92b6428cb26064ed9032b0a93ccae64da7b06c3d**, CAIN **0.4.8**, instalada e retestada na porta 8877.
 Commits posteriores de documentação não implicam reinstalação do pacote nem novos testes do produto.
 A branch vigente é main; não usar nomes de branches presentes nos relatórios históricos como instruções atuais.

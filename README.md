@@ -1,6 +1,6 @@
 # CAIN — conversa, memória e pesquisa local
 
-CAIN 0.4.8 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
+CAIN 0.4.9 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
 A branch de trabalho e publicação é **main**. As correções de Historian e os contratos Snapshot/Bundle estão integrados e instalados.
 Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 
@@ -46,7 +46,7 @@ python -m venv .venv
 
 O inicializador do checkout usa a porta 8000 por padrão; o atalho da instalação principal usa 8877.
 Para terminal, use `INICIAR_CAIN.cmd`. A configuração vem de `cain.toml` e dos overrides locais.
-O modelo configurado é `qwen3.5:0.8b`; embeddings usam `qwen3-embedding:0.6b` com digest verificado.
+O modelo configurado é `qwen3.5:4b`; embeddings usam `qwen3-embedding:0.6b` com digest verificado.
 Pesos não acompanham o pacote. Inferência requer Ollama disponível; ajuda e consulta determinística não requerem modelo.
 
 ## Desenvolvimento e API
@@ -67,3 +67,5 @@ O perfil por nome é local, não autenticação. O serviço usa loopback e contr
 
 Leia [operação local](docs/LOCAL_INSTALLATION.md) para pastas e recuperação, [Pesquisa L0](docs/RESEARCH_L0.md) para contratos
 e [histórico documental](docs/historico/README.md) para estados anteriores. Relatórios datados conservam seu escopo original.
+
+A rodada da LLM está em [correções e limites observados](docs/LLM_CORRECOES_20260912.md). O 4B prioriza fidelidade e é lento em CPU com 8 GB de RAM.
