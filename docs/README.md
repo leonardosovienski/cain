@@ -1,61 +1,21 @@
-# Índice documental do Cain
+# Documentação do CAIN
 
-## Retomada após o diagnóstico de partida — 12/09/2026
+## Uso e estado atual
 
-Leia primeiro [o diagnóstico, as evidências e o próximo caso](supply/DIAGNOSTICO_PARTIDA_20260912.md). Diagnóstico encerrado; verificação de H4 pela interface ainda não executada. A branch de entrega é `validation/cain-supply-completion-20260912`; a instalação principal permanece separada. Este é o próximo trabalho recomendado; as instruções de execução das rodadas anteriores abaixo são históricas.
+- [README](../README.md): abrir e usar o projeto.
+- [Estado verificado](../ESTADO_DO_PROJETO.md): código instalado, testes e limites.
+- [Continuidade](../CONTINUIDADE.md): retomar trabalho e localizar evidências.
+- [Instalação local](LOCAL_INSTALLATION.md): mapa de C:/CAIN e atalhos.
+- [Publicação](../PUBLICATION_STATUS_20260912.md) e [Git](../SETUP_GITHUB.md).
 
+## Contratos e arquitetura
 
-<!-- SUPPLY-GIT-DELIVERY-20260912 -->
-**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
-<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+- [Pesquisa L0](RESEARCH_L0.md), [inspeção](adr/0014-research-inspection.md) e [Bundle](adr/0020-research-bundles.md).
+- [Registro de decisões](adr/README.md) e [arquitetura](../ARCHITECTURE_IMPLEMENTATION.md).
+- [Índice Supply](supply/README.md): evidência das rodadas de engenharia.
 
+## Relatórios históricos
 
-<!-- DOC-SYNC-20260912 -->
-> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](../PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
-<!-- /DOC-SYNC-20260912 -->
-
-
-[Remediação local CAIN Supply F01–F10, E2E e mini-auditoria](research/BUNDLE_REMEDIATION.md).
-Esta rodada não declara estabilização; a CI Linux anterior não cobre suas alterações.
-
-## Estado operacional atual
-
-[Auditoria ampliada e instalação de 12/09/2026](research/AUDITORIA_OPERACIONAL_20260912.md),
-[correção do Historian](research/HISTORIAN_OPERACIONAL_20260912.md) e
-[continuidade da versão vigente](../CONTINUIDADE.md).
-
-[Entrega 0.4.7 original](DELIVERY_047.md), anterior às correções.
-As entregas abaixo documentam versões anteriores.
-
-[Entrega 0.4.4: três produtores, backup e avaliação](DELIVERY_044.md).
-
-[Publicação e CI 0.4.4](PUBLICATION_044.md): SHAs, wheel e alterações concorrentes.
-
-1. [Continuidade](../CONTINUIDADE.md): caminhos, versão, dados, testes e retomada sem chat.
-2. [README](../README.md): uso e instalação genérica.
-3. [Estado do projeto](../ESTADO_DO_PROJETO.md): estado atual seguido do mestre histórico.
-4. [Pesquisa L0](RESEARCH_L0.md): contrato de uso e configuração da integração.
-5. [Arquitetura 0.4.3](ARCHITECTURE_043.md): resultado durável e perfil sem índice global.
-6. [GitHub](../SETUP_GITHUB.md): repositório e branch da entrega.
-
-## Histórico técnico
-
-[Auditoria de bugs 0.4.2](AUDIT_042.md), [conclusão 0.4.1](RESEARCH_COMPLETION.md),
-[validação L0 inicial](RESEARCH_VALIDATION.md) e relatórios
-[0.1](../RELATORIO_EXECUCAO.md), [0.2](../RELATORIO_V02.md), [0.3](../RELATORIO_V03.md).
-As contagens e caminhos nesses documentos são evidências datadas, não instruções
-para substituir a instalação atual. A auditoria 0.4.2 indica as correções posteriores.
-
-## Pesquisa e decisões
-
-[Registro de ADRs](adr/README.md), [notas de literatura](research/notas/README.md),
-[auditoria das fontes](research/auditoria-fontes.md),
-[posicionamento](research/posicionamento.md) e documentos originais em `historico/importacao`.
-Esses registros preservam hipóteses e limites de pesquisa; aprovação de testes não
-os transforma em validação científica. Versões arquiteturais anteriores em
-`architecture` devem ser lidas com as atualizações L0, 0.4.2 e 0.4.3.
-# Entrega 0.4.5
-
-- [Uso, validação e continuidade](DELIVERY_045.md)
-- [Inventário ampliado de capacidades](research/capability-inventory-20260911.md)
-- [ADR 0014: inspeção determinística](adr/0014-research-inspection.md)
+[Índice histórico](historico/README.md): entregas, auditorias, fontes originais e snapshots de documentação.
+Relatórios datados descrevem a referência examinada na ocasião. Seus SHAs, contagens, branches e pendências não substituem o estado operacional atual.
+Os documentos científicos e de pesquisa preservam hipóteses e limites; testes técnicos não recertificam suas conclusões.

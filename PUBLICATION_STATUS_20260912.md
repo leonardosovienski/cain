@@ -1,32 +1,12 @@
-# Estado de publicação e continuidade — CAIN
+# Publicação do CAIN — referência operacional de 12/09/2026
 
-<!-- SUPPLY-GIT-DELIVERY-20260912 -->
-**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
-<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+O repositório [leonardosovienski/cain](https://github.com/leonardosovienski/cain) usa **main**.
+A referência de código publicada e instalada é d604a0ed359528acfcf4272d8f2a8ecc11774e65, com [CI aprovada](https://github.com/leonardosovienski/cain/actions/runs/34727241470).
+As correções deste chat e a integração Snapshot/Bundle estão incluídas.
 
+Na promoção foram conferidos SHAs local/remoto, ancestralidade e remoção das branches integradas.
+Worktrees históricos foram preservados em HEAD destacado. Não há obrigação de recriar as branches antigas.
+Commits posteriores de documentação avançam main sem mudar automaticamente o código instalado.
 
-Conferência documental de 12/09/2026. Este registro complementa os protocolos científicos e substitui apenas afirmações anteriores de que o candidato ainda não teve commit/push.
-
-- Checkout de trabalho: `C:\CAIN\work\research-bundle-v1`.
-- Branch de trabalho: `feature/research-bundle-v1`. Não presumir que `main` contém esta entrega.
-- HEAD conferido antes desta atualização documental: `8b4401d5c038e76320a4025fd8c5ce8ecaa020db`.
-- O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização.
-- Sem merge, release, instalação operacional ou nova execução científica nesta conferência.
-
-## Validação e pendências
-
-A [CI geral do CAIN](https://github.com/leonardosovienski/cain/actions/runs/34674661122) passou para `7e6105e`.
-O [gate Linux dedicado](https://github.com/leonardosovienski/cain/actions/runs/34674661161) falhou na suíte completa em Python 3.13 e 3.14.
-No artefato 3.13, equivalência do candidato confirmada e 187 testes direcionados passaram sem skips. A suíte completa registrou 547 passes, 13 falhas, 4 erros e 2 skips: faltam arquivos de cenários na instalação isolada do wheel CAIN. Esses resultados não certificam o runtime científico deste projeto.
-As etapas posteriores de E2E instalado, restore offline, testes dos produtores e mini-auditoria não foram alcançadas nessa execução. Próximo gate: corrigir a localização/empacotamento dos cenários, congelar o candidato corrigido, repetir os testes afetados e concluir o Linux antes de discutir estabilização.
-
-## Preservação e retomada
-
-Foram inventariados 86 Markdown versionados antes da atualização, com hashes e verificação de leitura UTF-8. Inventário local: `C:\CAIN\work\documentation-sync-20260912`.
-Inventário não é recertificação semântica de cada relatório histórico nem prova de backup dos arquivos ignorados pelo Git. Relatórios datados, fontes, bancos, manifests e snapshots congelados conservam seus bytes e contexto. Outros worktrees são checkouts de outras branches; não devem receber cópia cega desta branch.
-Leia os documentos de entrada deste checkout e seus protocolos antes de executar trabalho de domínio. Para verificar publicação após novos commits: `git status --short`, `git rev-parse HEAD` e `git ls-remote origin refs/heads/feature/research-bundle-v1`; os dois SHAs devem coincidir e o status deve estar vazio.
-
-
-## Encerramento e retomada da sessão
-
-Registro consolidado: [decisões, acertos, erros, pendências e próximo prompt](docs/research/SESSION_HANDOFF_20260912.md). O gate Linux permanece reprovado. A conferência documental não foi uma revisão semântica integral dos relatórios históricos. Os dois skips conferidos no XML Linux 3.13 são testes exclusivos do launcher Windows; não incluem o teste obrigatório de symlink, que passou.
+Veja [estado do projeto](ESTADO_DO_PROJETO.md), [manifesto operacional](operational-state.json) e [verificação Git](SETUP_GITHUB.md).
+Os estados de publicação anteriores permanecem no histórico Git; seu [índice](docs/historico/README.md) explica como recuperá-los.

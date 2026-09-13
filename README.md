@@ -1,185 +1,68 @@
-> **Consolidação de 12/09/2026:** a branch vigente é `main`. Leia [o estado consolidado](docs/MAIN_CONSOLIDATION_20260912.md). Referências a outras branches e instalações abaixo são registros históricos; não representam o HEAD atual.
+# CAIN — conversa, memória e pesquisa local
 
-# Cain 0.4.7 — conversa, memória e pesquisa local L0
+CAIN 0.4.7 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
+A branch de trabalho e publicação é **main**. As correções de Historian e os contratos Snapshot/Bundle estão integrados e instalados.
+Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 
-## Retomada após o diagnóstico de partida — 12/09/2026
+## Abrir nesta máquina
 
-Leia primeiro [o diagnóstico, as evidências e o próximo caso](docs/supply/DIAGNOSTICO_PARTIDA_20260912.md). Diagnóstico encerrado; verificação de H4 pela interface ainda não executada. A branch de entrega é `validation/cain-supply-completion-20260912`; a instalação principal permanece separada. Este é o próximo trabalho recomendado; as instruções de execução das rodadas anteriores abaixo são históricas.
+Execute `C:\CAIN\ABRIR_CAIN.cmd` ou abra http://127.0.0.1:8877/.
+O projeto atual fica em `C:\CAIN\projeto`; a instalação não editável fica em `C:\CAIN\.venv`.
+Os atalhos na raiz `C:\CAIN` usam os bancos existentes. Previews antigos, incluindo a porta 8884, não são a instalação principal.
 
+```powershell
+C:\CAIN\CAIN.cmd run "oi" --user leo
+C:\CAIN\CAIN_RESEARCH.cmd query --source-id H4
+```
 
-<!-- SUPPLY-GIT-DELIVERY-20260912 -->
-**Continuidade atual desta branch:** [CAIN Supply — entrega e retomada](docs/supply/README.md). Código final materializado na árvore normal; candidato pronto para revisão de congelamento delimitada, sem implantação. As notas anteriores abaixo são históricas e não descrevem o novo checkout.
-<!-- /SUPPLY-GIT-DELIVERY-20260912 -->
+Na interface de Pesquisa, selecione H4 no acervo crypto e consulte:
+“Explique a decisão documentada de H4, incluindo estado, trial, motivo e tamanho da amostra.”
+No relatório congelado validado, estado e trial têm fonte; motivo e amostra são explicitamente não localizados no recorte.
+Isso não afirma inexistência na fonte completa nem estado atual do produtor.
 
+## Capacidades e limites
 
-<!-- DOC-SYNC-20260912 -->
-> **Estado de publicação em 12/09/2026:** leia [a continuidade atual](PUBLICATION_STATUS_20260912.md). Branch `feature/research-bundle-v1`. O código deste projeto foi publicado na branch indicada. O candidato CAIN Supply permanece sem aprovação de estabilização. Afirmações anteriores de “sem push” descrevem a etapa histórica anterior à autorização.
-<!-- /DOC-SYNC-20260912 -->
+- Conversas, projetos, documentos, histórico, feedback e preferências por usuário, projeto, conversa ou resposta.
+- Busca lexical/híbrida, citações, inspeção de fontes e recebimento de Snapshot e Bundle com autorização por operação.
+- Historian: campos literais completos para listas explícitas; citações estruturadas limitadas aos trechos disponíveis quando o conjunto cabe no orçamento.
+- Workflows com checkpoints, cancelamento e retomada; API, CLI, web e MCP locais.
+- Texto e visão com modelos locais quando configurados; resultados de modelo continuam sujeitos a falhas e validação.
 
+A precedência das preferências é resposta → conversa → projeto → usuário. Feedback não altera fatos automaticamente.
+Extração literal não é interpretação causal. Perguntas abertas, comparação semântica e resumos livres não têm confiabilidade geral certificada.
+Testes técnicos não validam lucro, apostas, conclusões científicas ou utilidade humana independente.
 
-**Atualização operacional autorizada:** a revisão foi instalada e publicada na branch
-`review/individual-models-20260911`. Leia [o recibo de instalação](docs/research/INSTALACAO_REVISAO_20260911.md).
-As afirmações de não instalação abaixo descrevem a etapa anterior à autorização.
+## Instalar um checkout separado
 
-Entrega atual: [streaming, visão, busca, relações, debate, workflows e MCP](docs/DELIVERY_047.md).
-Os resultados de versões anteriores abaixo são históricos.
-
-Esta branch contém a [validação individual de modelos e relatos de pesquisa](docs/research/TESTES_INDIVIDUAIS_20260911.md)
-e correções isoladas. Os testes não substituíram a instalação principal nem
-estabeleceram confiabilidade da interpretação livre dos modelos.
-
-A revisão deste chat está em [Revisão independente](docs/research/REVISAO_INDEPENDENTE_20260911.md),
-na branch `review/individual-models-20260911`. Ela separa defeitos herdados,
-regressões da entrega anterior e erros dos modelos. Não houve merge nem instalação
-operacional dessa revisão; os relatórios anteriores permanecem como histórico.
-
-Cain usa um modelo local para resumir, gerar/analisar código e consultar fontes.
-Guarda preferências explícitas em SQLite e mostra quais valores se aplicam à conversa.
-
-O piloto **[L0 Historian](docs/RESEARCH_L0.md)** acrescenta importação de publicações
-admitidas, consulta determinística, cobertura e inspeção de evidências na CLI e na
-interface. Importar e consultar não exige Ollama. A explicação opcional usa o provider
-existente; conversa e feedback não se tornam evidência científica.
-
-## Instalação principal nesta máquina
-
-Use `C:\CAIN\ABRIR_CAIN.cmd` e http://127.0.0.1:8877. Essa instalação contém
-runtime próprio e bancos em `C:\CAIN\dados`. Para retomar sem o chat, leia
-[CONTINUIDADE.md](CONTINUIDADE.md) e o [índice documental](docs/README.md).
-
-## Instalação genérica do repositório
-
-Dê dois cliques em **[ABRIR_CAIN.cmd](ABRIR_CAIN.cmd)**. A interface abre em
-[127.0.0.1:8000](http://127.0.0.1:8000/); o inicializador reutiliza o Python e
-os modelos já instalados e inicia os serviços locais quando necessário.
-[INICIAR_CAIN.cmd](INICIAR_CAIN.cmd) continua disponível para conversar pelo terminal.
-
-1. Crie um projeto pelo botão **+**. Cada projeto tem documentos e conversas próprios.
-2. Em **Documentos**, adicione um `.txt`, `.md` ou `.rst` de até 256 KiB.
-3. Peça: “Busque nos documentos o que está definido sobre…”. Abra os trechos abaixo da resposta para conferir a fonte e a versão.
-4. Declare “Neste projeto, prefiro respostas em passos” ou ajuste **Minha memória**.
-5. Use “Só nesta resposta…” para uma exceção temporária. Nova conversa conserva a preferência do projeto, mas não a da conversa anterior.
-
-O contexto **Geral** consulta os caminhos de `cain.toml`. Projetos consultam apenas
-seus próprios arquivos e histórico. O nome de usuário seleciona um perfil local;
-não é uma conta autenticada. O serviço permanece em execução ao fechar a página.
-
-## O que mudou
-
-- Interface com conversas persistentes, projetos, importação de textos e painel de preferências.
-- Preferências de formato, extensão e idioma por resposta, conversa, projeto ou usuário, com origem, remoção e validade opcional.
-- Busca híbrida por palavras e embeddings locais, com cache por versão do modelo e trechos rastreáveis.
-- Feedback “Foi útil” ou motivo de problema. É registrado para revisão; não altera o perfil automaticamente.
-- Roteamento por JSON com schema quando o LLM é necessário; perguntas diretas sobre o perfil usam o estado armazenado.
-
-A precedência é **resposta → conversa → projeto → padrão geral**. Remover ou expirar
-uma preferência revela o valor do escopo inferior. A auditoria anterior permanece
-no banco; remoção de preferência não apaga conversas. Sem escopo declarado, uma
-preferência explícita vira padrão geral. O seletor do campo de mensagem permite
-escolher o escopo; conflitos com a frase são recusados, sem salvar globalmente.
-
-## Instalar em outro computador
-
-É necessário Python 3.11+. Ollama é necessário para inferência e embeddings, mas não
-para ajuda, importação, consulta L0 ou abertura da interface. Pesos não acompanham o pacote.
+Python 3.11+ é necessário. Os contratos estão em `vendor`; dependências opcionais e pesos de modelos são separados.
+Não execute uma instalação de desenvolvimento sobre o ambiente principal apenas para ler a documentação.
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python -m pip install --find-links vendor -e ".[api]"
-ollama pull qwen2.5:3b
-ollama pull qwen3-embedding:0.6b
+.\.venv\Scripts\python.exe -m pip install --find-links vendor -e ".[api]"
 .\ABRIR_CAIN.cmd
 ```
 
-O `cain.toml` deste checkout seleciona `qwen3.5:0.8b`. O inventário local observado
-em 11/09/2026 também contém `qwen2.5:3b` e `qwen3-embedding:0.6b`; não contém
-`qwen3.5:4b`. A [comparação v0.3](docs/research/inspecao-modelos-v03.md) é histórica
-e não deve ser usada como inventário atual de modelos.
+O inicializador do checkout usa a porta 8000 por padrão; o atalho da instalação principal usa 8877.
+Para terminal, use `INICIAR_CAIN.cmd`. A configuração vem de `cain.toml` e dos overrides locais.
+O modelo configurado é `qwen3.5:0.8b`; embeddings usam `qwen3-embedding:0.6b` com digest verificado.
+Pesos não acompanham o pacote. Inferência requer Ollama disponível; ajuda e consulta determinística não requerem modelo.
 
-`cain.toml` fixa o digest observado do embedding. Se o download da tag retornar
-outros pesos, a busca recusa a divergência: confira `/api/tags` do Ollama e atualize
-o digest conscientemente. Para operar sem embeddings, configure `search.mode =
-"lexical"`. Falhas de inferência não acionam um modelo simulado nem repetição oculta.
+## Desenvolvimento e API
 
-## Configuração e comandos
-
-Os exemplos com `python` pressupõem o ambiente virtual ativo (`.\.venv\Scripts\Activate.ps1`).
-Também é possível substituir `python` pelo caminho `.\.venv\Scripts\python.exe`.
-
-`CAIN_PROVIDER`, `CAIN_MODEL`, `CAIN_DB` e `CAIN_OLLAMA_URL` substituem as opções
-correspondentes. Caminhos no TOML são resolvidos a partir de `cain.toml`;
-`--source` e `--db` fornecidos na CLI são relativos ao diretório atual.
+Em um ambiente de desenvolvimento separado:
 
 ```powershell
-python -m cain doctor
-python -m cain chat --user leo
-python -m cain run "Resuma: contratos definem entradas e saídas." --user leo
-python -m cain profile --user leo
-python -m cain profile --user leo --forget format
-python -m cain run "Busque nos documentos o protocolo" --source docs/research
-```
-
-Use `--project ID` e `--session ID` nos comandos para selecionar o contexto criado
-na interface/API; `--preference-scope session` escolhe onde a declaração vale.
-No comando `profile`, `--scope` seleciona o escopo de remoção. O comando de chat
-`/esquecer format` atua no padrão geral; a interface oferece controle por escopo.
-
-`--source` aceita arquivos/diretórios de texto e pode ser repetido. `--no-web`
-desativa leitura de URLs públicas explícitas. URLs têm limites de conteúdo e tempo;
-Cain não oferece um buscador geral da internet. O agente Código entrega texto e
-não executa os programas gerados.
-
-## API e verificações
-
-```powershell
-powershell -File scripts/start-cain.ps1 -Mode api
-python -m pip install --find-links vendor -e ".[dev]"
+python -m pip install --find-links vendor -e ".[dev,vision]"
 python -m ruff check .
 python -m pytest -q
+python -m cain --help
 ```
 
-O esquema completo está em `http://127.0.0.1:8000/openapi.json`. A interface funciona
-sem bibliotecas externas de navegador. A API local usa somente `127.0.0.1`, verifica
-Host/Origin e não tem autenticação; não deve ser publicada como serviço multiusuário.
+A [CI](.github/workflows/ci.yml) verifica Python 3.11–3.14, lint, testes, build e instalação não editável fora do checkout.
+`/openapi.json` descreve a API. `/run` exige `user_id`, `session_id` e `payload`.
+Em `/research/explain`, `session_id` é opcional; quando informado, deve identificar uma conversa existente no projeto.
+O perfil por nome é local, não autenticação. O serviço usa loopback e controles Host/Origin.
 
-| Operação | Endpoint |
-|---|---|
-| Responder e guardar conversa | `POST /run` |
-| Consultar/ajustar preferências | `GET /profile/{user}`; `PUT/DELETE /profile/{user}/preferences/{key}` |
-| Projetos | `GET/POST /projects/{user}` |
-| Documentos de projeto | `GET/POST /projects/{user}/{project}/documents` |
-| Conversas e histórico | `GET/POST /sessions/{user}`; `GET /sessions/{user}/{session}` |
-| Avaliar uma resposta | `POST /feedback/{turn_id}` |
-
-`/run` recebe `user_id`, `session_id`, `payload`, `project_id` opcional e
-`preference_scope` opcional. Retorna fontes, preferências usadas e o perfil atual.
-O `turn_id` de respostas novas é o `decision_id`, inclusive no histórico.
-Uma falha de geração pode ocorrer depois de uma preferência explícita ser salva;
-a interface atualiza o painel também nesse caso.
-
-Os [scripts de verificação](scripts) incluem execução real da API e da recuperação.
-O [relatório v0.3](RELATORIO_V03.md) distingue os testes de engenharia da inspeção
-de qualidade e documenta as limitações. O painel tem integração WebMCP opcional,
-ativada apenas em navegadores que disponibilizem essa API.
-
-## Pesquisa e entregas anteriores
-
-A pesquisa continua provisória: não houve avaliação humana independente,
-validação de novidade, aceitação automática de ADRs ou coleta formal.
-
-- [Memória por escopo](docs/architecture/memoria-por-escopo-v03.md)
-- [Busca híbrida](docs/architecture/busca-hibrida-v03.md)
-- [Comparação dos geradores](docs/research/comparacao-geradores-v03.md)
-- [Resultado v0.2](RELATORIO_V02.md) e [entrega inicial](RELATORIO_EXECUCAO.md)
-- [Caminho para a UFPR](docs/research/caminho-ufpr.md)
-- [Auditoria bibliográfica](docs/research/auditoria-fontes.md)
-- [ADRs](docs/adr/README.md)
-
-Os cinco anexos originais e os resultados anteriores estão preservados.
-# Ampliação 0.4.5
-
-Consulte [o dossiê de pesquisa e sua validação](docs/DELIVERY_045.md) e
-[o inventário ampliado dos rivais](docs/research/capability-inventory-20260911.md).
-Nova inspeção local de relações, datas, revisões e lacunas, via interface/API/CLI.
-
-Arquitetura integrada: [factories e revogação](ARCHITECTURE_IMPLEMENTATION.md).
+Leia [operação local](docs/LOCAL_INSTALLATION.md) para pastas e recuperação, [Pesquisa L0](docs/RESEARCH_L0.md) para contratos
+e [histórico documental](docs/historico/README.md) para estados anteriores. Relatórios datados conservam seu escopo original.

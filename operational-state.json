@@ -1,0 +1,39 @@
+{
+  "head": "d604a0ed359528acfcf4272d8f2a8ecc11774e65",
+  "artifacts": [
+    {
+      "wheel": "cain_research-0.4.7-py3-none-any.whl",
+      "sha256": "0eb67a0f8229d10144c87c4b3c7d625a04fde4ba404a31c33a8eb8e6b68dd5e7",
+      "verified_files": 60
+    },
+    {
+      "wheel": "predictor_research_snapshot-1.0.1-py3-none-any.whl",
+      "sha256": "5e62cdf6ea7790a9e4beb0b3dd874a9a40c54cbd97e69e5a8408e88f8f22ec1a",
+      "verified_files": 3
+    },
+    {
+      "wheel": "predictor_research_bundle-1.0.0-py3-none-any.whl",
+      "sha256": "7c5792e6573d55af92fd9b50cd9a2c357052b7673a61eef8abdaeaeef401ebee",
+      "verified_files": 4
+    }
+  ],
+  "versions": {
+    "cain-research": "0.4.7",
+    "predictor-research-snapshot": "1.0.1",
+    "predictor-research-bundle": "1.0.0"
+  },
+  "ci": {
+    "id": 34727241470,
+    "sha": "d604a0ed359528acfcf4272d8f2a8ecc11774e65",
+    "conclusion": "success",
+    "url": "https://github.com/leonardosovienski/cain/actions/runs/34727241470"
+  },
+  "record_type": "dated_operational_verification",
+  "verified_date": "2026-09-12",
+  "branch": "main",
+  "primary_checkout": "C:/CAIN/projeto",
+  "runtime": "C:/CAIN/.venv",
+  "url": "http://127.0.0.1:8877/",
+  "scope": "Installed code identity; later documentation commits do not imply reinstallation",
+  "receipts": "C:/CAIN/work/CAIN-PROMOTION-20260912-210027/final"
+}

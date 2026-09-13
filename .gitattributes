@@ -1,4 +1,7 @@
 * text=auto eol=lf
+/docs/historico/estado-antes-da-revisao-20260912.md -text whitespace=cr-at-eol
+/docs/historico/instalacao-antes-da-revisao-20260912.md -text whitespace=cr-at-eol
+/installation/windows/*.cmd -text whitespace=cr-at-eol,-blank-at-eof
 docs/historico/importacao/* -text whitespace=cr-at-eol
 docs/adr/0009-fronteira-da-abstracao-de-persistencia.md -text whitespace=cr-at-eol
 docs/adr/0010-protocolo-e-metricas-de-avaliacao.md -text whitespace=cr-at-eol
