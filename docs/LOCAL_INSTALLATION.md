@@ -73,3 +73,10 @@ apontando para os mesmos caminhos de dados/configuração. Dependências, modelo
 O serviço temporário da rodada anterior em 8891 usou cópias isoladas e foi encerrado; não substitui a principal.
 Antes de restaurar, verificar a identidade do snapshot e ensaiar em destino novo. Preservar dados posteriores ao backup.
 Leia [estado atual](../ESTADO_DO_PROJETO.md) para a referência instalada e [continuidade](../CONTINUIDADE.md) para os comandos de conferência.
+
+
+## Candidata de conversa em QA — 14/09/2026
+
+A principal não recebeu o wheel desta continuação. A instalação não editável de validação fica em `C:/CAIN/work/conversation-v2-20260914/installed-qa-matched`, com bancos/configuração separados. O [relatório da continuação](CONTINUACAO_CONVERSA_20260914.md) identifica execução real, limitações e reversão.
+
+Conferir os artefatos por hash, além das versões. Uma primeira montagem QA selecionou um Bundle histórico também denominado 1.0.0: `pip check` passou, mas a CLI falhou no import de `safe_mkdirs`. Isso não era defeito demonstrado no Core canônico. A nova montagem compara os arquivos instalados com os wheels e com os componentes da principal. Artefatos canônicos de dependência em `C:/CAIN/entregas/stocks-main-integration-20260912`: Bundle SHA-256 `7c5792e6573d55af92fd9b50cd9a2c357052b7673a61eef8abdaeaeef401ebee`; Snapshot SHA-256 `5e62cdf6ea7790a9e4beb0b3dd874a9a40c54cbd97e69e5a8408e88f8f22ec1a`. Identidade congelada, imports da CLI e recibos: `matched-stack-freeze.json`. Não reutilizar uma pasta QA existente para sobrescrever tentativas, nem instalar essa candidata na principal sem nova autorização.

@@ -132,11 +132,40 @@ def test_llm_router_invalid_output_fails_without_retry(answer):
     assert len(llm.calls) == 1
 
 
-def test_llm_router_validates_result_and_sees_no_document_body():
+def test_llm_router_preserves_user_supplied_body_as_classification_data():
     llm = RecordingLLM('{"intent":"resumo","reason":"condensar conteúdo"}')
     result = RuleRouter(llm).route("Faça algo:\nSECRET_DOCUMENT", None, registry())
     assert result.selected_agent == "resumo"
-    assert "SECRET_DOCUMENT" not in llm.calls[0][0]
+    assert json.loads(llm.calls[0][0])["instruction"] == "Faça algo:\nSECRET_DOCUMENT"
+
+
+@pytest.mark.parametrize("payload", [
+    'Texto: "A ação não aconteceu." Extraia o fato.',
+    'Diga algo sem utilizar a palavra "talvez".',
+    'O identificador é VENTO. Guarde-o nesta conversa.',
+    'Dados:\n' + 'informação ' * 120 + '\nAvalie apenas estes dados.',
+])
+def test_classifier_keeps_objects_negation_scope_and_tail(payload):
+    llm = RecordingLLM('{"intent":"resumo","reason":"tarefa textual"}')
+    RuleRouter(llm).route(payload, None, registry())
+    assert json.loads(llm.calls[0][0])["instruction"] == payload
+
+
+def test_elliptical_question_can_be_classified_with_authorized_context():
+    llm = RecordingLLM('{"intent":"resumo","reason":"contexto fornecido"}')
+    RuleRouter(llm).route("Qual é o valor?", None, registry(),
+                          has_session_context=True, session_context="contexto desta sessão")
+    sent = json.loads(llm.calls[0][0])
+    assert sent["instruction"] == "Qual é o valor?"
+    assert sent["session_context"] == "contexto desta sessão"
+
+
+def test_session_context_does_not_override_explicit_document_route():
+    llm = RecordingLLM()
+    route = RuleRouter(llm).route("Busque a política de retenção no manual", None, registry(),
+                                 has_session_context=True, session_context="outro assunto")
+    assert route.selected_agent == "busca"
+    assert llm.calls == []
 
 
 def test_search_synthesis_receives_actual_evidence_and_appends_traceable_sources():

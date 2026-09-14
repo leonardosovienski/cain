@@ -82,7 +82,8 @@ class Cain:
                                   and not is_preference_memory(item.text, item.metadata)
                                   for item in recent)
                 route = self.router.route(payload, intent, self.registry,
-                                          has_session_context=has_context)
+                                          has_session_context=has_context,
+                                          session_context=context if has_context else "")
             else:
                 route = self.router.route(payload, intent, self.registry)
             steps.append("3:agent_selected")

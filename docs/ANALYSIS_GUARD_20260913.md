@@ -16,10 +16,16 @@ Evidências locais preservadas em `C:/CAIN/work/knowledge-integration-20260913`:
 
 Os 54 testes focados de `tests-guard.log` passaram após a proteção. A execução anterior de 681 testes precede essa última alteração. A suíte desta publicação passou com **688 testes, 1 skip e 2 avisos** em `tests-publication.log`. As mudanças posteriores da auditoria de cobertura também passaram nos **7 testes** de `tests/test_project_coverage.py`, executados separadamente porque foram alterados durante a suíte. Ruff passou sobre o checkout atualizado.
 
+## Conclusão posterior da verificação de conhecimento
+
+A rodada `knowledge-integration-20260913` concluiu e reabriu os três workflows finais: Brasileirão e Stocks tiveram três abstenções explícitas cada, com fatos/trechos preservados e zero inferências; Crypto teve três inferências reais e avaliação semântica parcial. O trecho acima que descreve o arquivo incompleto registra uma leitura intermediária, não uma pendência atual. As matrizes, gabaritos, necessidades, limitações e dependências estão no [relatório canônico de cobertura](COBERTURA_PROJETOS_20260913.md#verificação-incremental-de-conhecimento--13092026). Nenhum caso foi certificado como conhecimento completo.
+
+Após as alterações do auditor, a suíte da rodada de conhecimento passou com 690 testes, um skip e dois avisos, e Ruff passou (`tests-final.log` e `ruff-final.log`). `preservation.json` compara os hashes dos casos finais, reabre os checkpoints e registra a instalação concorrente descrita neste documento. Essa rodada não executou instalação na principal nem lhe atribui validação de inferência da API principal.
+
 ## Para retomar sem o chat
 
 1. Ler CONTINUIDADE.md, ESTADO_DO_PROJETO.md e docs/COBERTURA_PROJETOS_20260913.md.
 2. Conferir main local/remota e o ambiente instalado antes de futuras promoções. Esta revisão já foi instalada; publicação Git por si só não atualiza o ambiente.
-3. Completar a avaliação real de Crypto/Stocks com os hashes finais e preservar os resultados anteriores; não chamar abstenção de compreensão científica.
+3. Consultar a avaliação final dos três casos no relatório canônico; Crypto continua parcial e Brasileirão/Stocks se abstêm. O próximo incremento delimitado conserva cabeçalhos/qualificações no contexto, sem chamar abstenção de compreensão científica.
 4. Para ampliar cobertura, exportar conteúdo e cabeçalhos/contexto dos produtores dentro das políticas aplicáveis. Os seis acervos recebidos são recortes; referências não equivalem a conteúdo legível. Os Bundles adicionais continuam restritos ao QA.
 5. Preservar bancos/configurações do usuário e não restaurar backups antigos sobre o estado atual. Nenhum repositório produtor integra este commit.

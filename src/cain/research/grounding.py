@@ -6,9 +6,88 @@ import unicodedata
 from hashlib import sha256
 
 
-def terms_of(text):
+def tokens_of(text):
     text = unicodedata.normalize('NFKD', text.casefold())
-    return set(re.findall(r'\w+', ''.join(c for c in text if not unicodedata.combining(c))))
+    return re.findall(r'\w+', ''.join(c for c in text if not unicodedata.combining(c)))
+
+
+def terms_of(text):
+    return set(tokens_of(text))
+
+
+def table_header_span(text, start, end):
+    """Locate the literal labels, without including intervening data rows."""
+    lines = list(re.finditer(r'[^\r\n]+', text[:end]))
+    position = next((i for i, line in enumerate(lines) if line.start() == start), None)
+    if position is None:
+        return None
+    columns = text[start:end].count('|')
+    for i in range(position - 1, 0, -1):
+        line, following = lines[i], lines[i + 1]
+        if (not line.group().strip().startswith('|') or
+                text[line.end():following.start()].count('\n') > 1):
+            break
+        if re.fullmatch(r'[ \t]*\|(?:[ \t]*:?-{3,}:?[ \t]*\|){2,}[ \t]*', line.group()):
+            header = lines[i - 1]
+            if (header.group().count('|') == columns == line.group().count('|') and
+                    '\\|' not in header.group() and
+                    text[header.end():line.start()].count('\n') == 1):
+                return header.start(), line.end()
+            break
+    return None
+
+
+def markdown_headings(text):
+    """ATX headings outside fenced examples; offsets remain in the source text."""
+    fence = None
+    for line in re.finditer(r'(?m)^[^\r\n]+', text):
+        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line[0])
+        if fence:
+            if (marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1]
+                    and not marker[2].strip()):
+                fence = None
+            continue
+        if marker and not (marker[1][0] == '`' and '`' in marker[2]):
+            fence = (marker[1][0], len(marker[1]))
+            continue
+        heading = re.match(r'^(#{1,6})[ \t]+([^\r\n]+)', line[0])
+        if heading:
+            yield len(heading[1]), line.start(), line.end(), heading[2].rstrip()
+
+
+def heading_spans(text, start):
+    """Retain the actual heading hierarchy, including historical qualifiers."""
+    stack = []
+    for level, begin, end, _ in markdown_headings(text[:start]):
+        while stack and stack[-1][0] >= level:
+            stack.pop()
+        stack.append((level, begin, end))
+    return [(a, b) for _, a, b in stack]
+
+
+def document_contexts(evidence):
+    """Reconstruct heading context only across contiguous same-publication parts.
+
+    Nothing implies that the final part completes the original document. Gaps,
+    overlaps and different publications never authorize joining observations.
+    """
+    groups, result = {}, {}
+    for ref, item in evidence.items():
+        text = item['text']
+        result[ref] = (text, 0, [(0, len(text), ref)])
+        start, end = item.get('start'), item.get('end')
+        if (':' in ref and item.get('source') and item.get('offset_unit') == 'unicode_codepoints'
+                and type(start) is int and type(end) is int and end - start == len(text)):
+            groups.setdefault((ref.split(':')[0], item['source']), []).append((start, end, ref))
+    for parts in groups.values():
+        parts.sort()
+        if (len(parts) < 2 or parts[0][0] != 0 or parts[-1][1] > 1_000_000 or
+                any(a[1] != b[0] for a, b in zip(parts, parts[1:]))):
+            continue
+        text = ''.join(evidence[ref]['text'] for _, _, ref in parts)
+        for start, _, ref in parts:
+            result[ref] = (text, start, parts)
+    return result
 
 
 def bounded_prose_spans(text, source_id, budget):
@@ -40,9 +119,9 @@ def matches_identity(relation, source_id):
 def prose_spans(text, source_id):
     """Whole paragraphs/list items; never cut a wrapped negation from its clause."""
     lines = list(re.finditer(r'[^\r\n]+', text))
-    headings = [(i, re.match(r'^(#{1,6})[ \t]+(.+?)\s*$', line.group()))
-                for i, line in enumerate(lines)]
-    headings = [(i, len(m[1]), m[2]) for i, m in headings if m]
+    line_indices = {line.start(): i for i, line in enumerate(lines)}
+    headings = [(line_indices[start], level, title)
+                for level, start, _, title in markdown_headings(text)]
     ranges = []
     for i, level, title in headings:
         if source_id is not None and title == source_id:
@@ -176,9 +255,29 @@ def structured(evidence, source_id=None, *, addressable=False):
 def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     """Select bounded exact excerpts, retaining source offsets and disclosed coverage."""
     candidates, seen, focused_paths, issues = [], set(), {}, []
+    contexts, owners, exact_targets = {}, {}, set()
+    documents = document_contexts(evidence)
     if type(max_bytes) is not int or not 1 <= max_bytes <= 2200 or type(max_cards) is not int or not 1 <= max_cards <= 8:
         raise ValueError('Invalid evidence budget')
-    terms = terms_of(question)
+    terms = terms_of(question) - set(
+        'o a os as um uma de do da dos das em no na nos nas e ou que qual quais '
+        'sobre para pelo pela por se com como the a an and or of in on to for '
+        'what which is are can does do report relatorio permite concluir '
+        'conclusion conclude forte stronger mais more impede impedem'.split())
+    # Explicit alphanumeric identifiers outrank generic words, regardless of
+    # project/domain. This is lexical retrieval, not an inferred entity mapping.
+    anchors = [token for token in re.findall(r'\w+(?:[-_]\w+)*', question)
+               if any(c.isdigit() for c in token) and any(c.isalpha() for c in token)]
+    def anchor_score(value):
+        return 1000 * sum(bool(re.search(r'(?<![\w-])' + re.escape(token) + r'(?![\w-])',
+                                         value, re.I)) for token in anchors)
+    question_tokens = tokens_of(question)
+    pairs = {pair for pair in zip(question_tokens, question_tokens[1:])
+             if all(token in terms for token in pair)}
+    def relevance(value):
+        tokens = tokens_of(value)
+        return (len(terms & set(tokens)) +
+                5 * len(pairs & set(zip(tokens, tokens[1:]))) + anchor_score(value))
     partial, examined, decisions = False, 0, []
     for ref, item in evidence.items():
         text = item['text']
@@ -203,32 +302,79 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
             spans = set()
             for relation in focused:
                 start, end = relation['start'], relation['end']
+                if relation['quote'].lstrip().startswith('|'):
+                    header = table_header_span(text, start, end)
+                    if header:
+                        a, b = header
+                        contexts[(ref, start, end)] = [dict(kind='table_header', start=a, end=b,
+                                                           quote=text[a:b])]
                 if (start, end) in spans:
                     continue
                 spans.add((start, end))
-                score = len(terms & terms_of(relation['quote'] + ' ' + relation.get('json_pointer', '')))
-                candidates.append((100 + score, ref, start, end, relation['quote']))
+                value = relation['quote'] + ' ' + relation.get('json_pointer', '')
+                score = relevance(value)
+                score += 2000 * sum(matches_identity(relation, token) for token in anchors)
+                if any(matches_identity(relation, token) for token in anchors):
+                    exact_targets.add((ref, start, end))
+                candidates.append((score, ref, start, end, text[start:end]))
                 if 'json_pointer' in relation:
                     focused_paths[(ref, start, end)] = relation['json_pointer']
-            continue
+            if source_id is not None or text.lstrip().startswith(('{', '[')):
+                continue
         for number, (start, end) in enumerate(bounded_prose_spans(text, source_id, max_bytes)):
             if number >= 2048:
                 partial = True
                 break
             quote = text[start:end]
+            # Tables are represented as individual rows plus separate labels.
+            # A prose fallback must not reintroduce all the other identities.
+            if any(line.lstrip().startswith('|') for line in quote.splitlines()):
+                continue
             if not quote.strip() or not re.search(r'\w', quote):
                 continue
-            score = len(terms & terms_of(quote))
+            score = relevance(quote)
             score += 20 if source_id and re.search(r'(?<!\w)' + re.escape(source_id.casefold()) + r'(?!\w)', quote.casefold()) else 0
-            if re.match(r'^\s*[-*]\s+\*{0,2}(?:state|status|limitations|estado|limitações)\b', quote, re.I):
+            if source_id and re.match(r'^\s*[-*]\s+\*{0,2}(?:state|status|limitations|estado|limitações)\b', quote, re.I):
                 score += 12
             candidates.append((score, ref, start, end, quote))
+    for _, ref, start, end, _ in candidates:
+        text, base, parts = documents[ref]
+        quote = evidence[ref]['text'][start:end]
+        boundary = base + (end if quote.lstrip().startswith('#') else start)
+        headings = heading_spans(text, boundary) if not text.lstrip().startswith(('{', '[')) else []
+        def context_part(a, b, kind):
+            containing = next(((lo, r) for lo, hi, r in parts if lo <= a and b <= hi), None)
+            if containing is None:
+                return  # do not pretend a cross-boundary heading is one literal quote
+            lo, context_ref = containing
+            contexts.setdefault((ref, start, end), []).append(dict(
+                kind=kind, reference=context_ref, start=a-lo, end=b-lo, quote=text[a:b]))
+        if quote.lstrip().startswith('|'):
+            header = table_header_span(text, base + start, base + end)
+            if header:
+                contexts[(ref, start, end)] = []
+                context_part(*header, 'table_header')
+        for a, b in headings:
+            title = re.sub(r'^#+\s+', '', text[a:b])
+            token = re.match(r'[A-Za-z][\w-]*', title)
+            if token and any(c.isdigit() for c in token[0]):
+                owners[(ref, start, end)] = token[0]
+        for a, b in headings[-2:]:
+            if (a, b) == (base + start, base + end):
+                continue
+            context_part(a, b, 'section_heading')
     candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
+    anchored_candidates = bool(anchors and any(anchor_score(c[4]) for c in candidates))
     selected, used = {}, 0
     for _, ref, start, end, quote in candidates:
-        reason = ('overlapping_selected_context' if any(e['reference'] == ref and start < e['end'] and end > e['start'] for e in selected.values())
+        context = contexts.get((ref, start, end), [])
+        size = len(quote.encode()) + sum(len(part['quote'].encode()) for part in context)
+        owner = owners.get((ref, start, end))
+        reason = ('different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors}
+                  else 'question_identifier_mismatch' if anchored_candidates and not anchor_score(quote)
+                  else 'overlapping_selected_context' if any(e['reference'] == ref and start < e['end'] and end > e['start'] for e in selected.values())
                   else 'card_limit' if len(selected) >= max_cards
-                  else 'byte_budget' if used + len(quote.encode()) > max_bytes else 'selected')
+                  else 'byte_budget' if used + size > max_bytes else 'selected')
         decisions.append({'reference': ref, 'start': start, 'end': end, 'decision': reason})
         if reason != 'selected':
             continue
@@ -237,8 +383,10 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                  "offset_unit": "unicode_codepoints"}
         if (ref, start, end) in focused_paths:
             entry['json_pointer'] = focused_paths[(ref, start, end)]
+        if context:
+            entry['source_context'] = context
         selected['S' + str(len(selected) + 1)] = entry
-        used += len(quote.encode())
+        used += size
     # Lexical candidate availability is deliberately separate from answer support.
     parts = [part.strip(' ?.,') for part in re.split(r'[?;]|\s+(?:e|and)\s+', question) if part.strip(' ?.,')]
     subrequests = []
@@ -250,7 +398,8 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_then_lexical_excerpts/4", "whole_source_read_claim": False,
+                      "selection": "identity_then_lexical_excerpts/7", "whole_source_read_claim": False,
+                      "question_identifiers": anchors,
                       "request": question, "decomposition": "explicit_conjunctions_partial/1", "subrequests": subrequests,
                       "semantic_support": "not_verified", "budget_bytes": max_bytes,
                       "used_bytes": used, "token_count": None,

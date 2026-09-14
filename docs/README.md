@@ -1,10 +1,14 @@
 # Documentação do CAIN
 
+- [Continuação da conversa v2](CONTINUACAO_CONVERSA_20260914.md): correção parcial, wheel instalado em QA novo, API/CLI/interface, confirmação e falhas preservadas; sem promoção.
+
+
 ## Uso e estado atual
 
 - [README](../README.md): abrir e usar o projeto.
 - [Estado verificado](../ESTADO_DO_PROJETO.md): código instalado, testes e limites.
 - [Continuidade](../CONTINUIDADE.md): retomar trabalho e localizar evidências.
+- [Avaliação de produto v2](EVALUACAO_V2_20260914.md): execução isolada, matriz das 36 famílias, correção candidata e falhas preservadas; não instalada.
 - [Instalação local](LOCAL_INSTALLATION.md): mapa de C:/CAIN e atalhos.
 - [Cobertura dos projetos na 0.4.12](COBERTURA_PROJETOS_20260913.md): acervos completos no recorte recebido, importações Bundle isoladas e limites de acesso aos produtores.
 - [Testes reais da 0.4.11](LLM_REAL_20260913.md): idioma, continuidade, cópia, JSON e limites semânticos.

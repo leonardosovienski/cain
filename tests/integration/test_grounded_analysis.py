@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/6'
+    assert result['generation']['prompt_version'] == 'addressable-review/13'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -138,8 +138,7 @@ def test_review_passes_scientific_clocks_and_slice_boundaries(setup):
         record = payload['reported_records_untrusted'][0]
         assert record['revision'] == 'historical-3'
         assert all(record[k] is None for k in ('event_at', 'recorded_at', 'available_at'))
-        assert payload['evidence_scope']['current_source_verified'] is False
-        assert payload['evidence_scope']['missing_from_slice_is_not_missing_from_producer']
+        assert 'evidence_scope' not in payload
         excerpt = payload['excerpts']['S1']
         assert excerpt['text'] == text
         assert excerpt['source'] == 'report.md'
@@ -195,3 +194,199 @@ def test_workflow_keeps_abstention_visible_and_does_not_mix_protocols(setup):
     with pytest.raises(ValueError, match='protocol changed'):
         workflow.advance(scope, old['id'], model, approve_generation=True)
     assert workflow.get(scope, old['id'])['request']['protocol'] == 'research-workflow/8'
+
+
+def test_review_budgets_provenance_and_keeps_whole_excerpts(setup):
+    service, scope, ingest, _, _ = setup
+    for i in range(8):
+        identity = f'case-{i}-' + 'x' * 160
+        text = json.dumps({'status': f'Case {i}: hypothesis remains unexecuted.'})
+        ingest(cases.publication((identity,), revision='r' * 200, text=text))
+    model = PointerModel()
+    captured = []
+    def capture(prompt, instruction, schema):
+        captured.append(json.loads(prompt))
+        assert len((prompt + instruction).encode()) <= 5000
+        assert set(schema['properties']['citations']['items']['enum']) == set(captured[-1]['excerpts'])
+        return json.dumps({'citations': [next(iter(captured[-1]['excerpts']))],
+                           'analysis': 'Unexecuted as reported.'})
+    model.generate_json = capture
+    result = review(service, scope, 'What status?', model, role='synthesis')
+    assert result['status'] == 'generated'
+    assert result['coverage']['context_budget_omissions']
+    assert result['coverage']['serialized_context_bytes'] <= 5000
+    for entry in captured[0]['excerpts'].values():
+        assert entry['text'].endswith('unexecuted."')
+
+
+def test_question_identifier_outranks_unrelated_structured_notes():
+    evidence = {'a': {'text': json.dumps({'notes': 'report conclusion limitations cause for Z92'})},
+                'b': {'text': 'Z17 has not been executed; no measured improvement.'}}
+    selected, coverage = cards(evidence, 'What report conclusion and limitations for Z17?', max_cards=1)
+    assert selected['S1']['reference'] == 'b'
+    assert coverage['question_identifiers'] == ['Z17']
+
+
+def test_table_header_is_literal_and_does_not_cross_another_table():
+    text = ('| Claim | State |\n|---|---|\n| Z17 | NOT_RUN |\n\n'
+            '| Z18 | Ambiguous row |')
+    selected, _ = cards({'ref': {'text': text}}, 'What state for Z17?', 'Z17')
+    assert selected['S1']['quote'] == '| Z17 | NOT_RUN |'
+    assert selected['S1']['source_context'][0]['quote'] == '| Claim | State |\n|---|---|'
+    assert text[selected['S1']['start']:selected['S1']['end']] == selected['S1']['quote']
+    selected, _ = cards({'ref': {'text': text}}, 'What state for Z18?', 'Z18')
+    assert selected['S1']['quote'] == '| Z18 | Ambiguous row |'
+
+
+def test_mixed_markdown_does_not_hide_relevant_prose_behind_table():
+    text = '| X | State |\n|---|---|\n| Z92 | CLOSED |\n\nZ17 is not executed. No effect measured.'
+    selected, _ = cards({'ref': {'text': text}}, 'What can Z17 establish?', max_cards=1)
+    assert selected['S1']['quote'] == 'Z17 is not executed. No effect measured.'
+
+
+def test_question_phrase_beats_unrelated_historical_state_label():
+    old = '- Estado de dados real: zero linhas em um recorte histórico.'
+    current = '| Uso | Limite |\n|---|---|\n| Operação real | Não apta; custos insuficientes |'
+    selected, _ = cards({'old': {'text': old}, 'current': {'text': current}},
+                         'O que o relatório permite concluir sobre operação real?', max_cards=1)
+    assert selected['S1']['reference'] == 'current'
+    assert selected['S1']['quote'] == current.splitlines()[-1]
+
+
+def test_multiple_unlabelled_rows_do_not_enable_generation(setup):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('X',), text='| X | Unknown |\n| Y | NOT_RUN |'))
+    model = PointerModel()
+    result = review(service, scope, 'What does X establish?', model, role='support')
+    assert result['status'] == 'abstained_unlabelled_table'
+    assert model.calls == 0
+
+
+def test_row_context_excludes_other_subjects_and_resolves_labels(setup):
+    service, scope, ingest, _, _ = setup
+    text = ('# Historical register 2024-02-03\n\n| ID | State |\n|---|---|\n'
+            '| Z91 | Cause missing |\n| Z17 | NOT_RUN |')
+    ingest(cases.publication(('register',), text=text))
+    model = PointerModel()
+    def capture(prompt, instruction, schema):
+        payload = json.loads(prompt)
+        assert 'Z91' not in prompt and 'Cause missing' not in prompt
+        assert 'omitted_excerpts' not in prompt and 'candidate_search_partial' not in prompt
+        entry = payload['excerpts']['S1']
+        assert entry['text'] == '| Z17 | NOT_RUN |'
+        assert any(p['kind'] == 'table_header' and 'State' in p['text'] for p in entry['source_context'])
+        assert any('2024-02-03' in p['text'] for p in entry['source_context'])
+        assert 'maxLength' not in schema['properties']['analysis']
+        return json.dumps({'citations': ['S1'], 'analysis': 'As recorded in 2024, Z17 was not run.'})
+    model.generate_json = capture
+    result = review(service, scope, 'What is reported about Z17?', model, role='support')
+    assert result['status'] == 'generated'
+    quotes = result['explanation']['source_quotes']
+    assert quotes[0]['excerpt_id'] == 'S1'
+    assert any(q.get('context_kind') == 'table_header' for q in quotes)
+    assert all(text[q['start']:q['end']] == q['quote'] for q in quotes)
+
+
+def test_other_hypothesis_section_does_not_override_question_subject():
+    text = ('## Z17\n\nZ17: interrupted, no conclusion.\n\n'
+            '## Z91\n\nZ17 is mentioned for comparison; cause failed, significant negative result.')
+    selected, coverage = cards({'r': {'text': text}}, 'What conclusion for Z17?')
+    assert all('significant negative' not in e['quote'] for e in selected.values())
+    assert any(d['decision'] == 'different_section_identity' for d in coverage['decisions'])
+
+
+def test_section_owner_survives_contiguous_chunks_but_not_another_publication():
+    first = '## Z91\n\n'
+    second = 'Z17 mentioned inside a different hypothesis, not its own result.'
+    def part(text, start):
+        return dict(text=text, start=start, end=start+len(text), source='hypotheses.md',
+                    offset_unit='unicode_codepoints')
+    evidence = {'pub:a': part(first, 0), 'pub:b': part(second, len(first)),
+                'other:c': {'text': '## Z17\n\nZ17 not run.'}}
+    selected, coverage = cards(evidence, 'What is reported about Z17?')
+    assert all(e['reference'] != 'pub:b' for e in selected.values())
+    assert any(d['decision'] == 'different_section_identity' for d in coverage['decisions'])
+    from cain.research.grounding import document_contexts
+    evidence['other:b'] = evidence.pop('pub:b')
+    assert document_contexts(evidence)['other:b'][1] == 0
+
+
+def test_explicit_table_subject_wins_over_group_heading_and_header_can_be_in_previous_part():
+    first = '## Z10-Z20 overview\n\n| ID | State |\n|---|---|\n| Z11 | OTHER |\n'
+    second = '| Z17 | NOT_RUN |'
+    evidence = {'pub:a': dict(text=first, start=0, end=len(first), source='r.md', offset_unit='unicode_codepoints'),
+                'pub:b': dict(text=second, start=len(first), end=len(first+second), source='r.md', offset_unit='unicode_codepoints')}
+    selected, _ = cards(evidence, 'What is reported about Z17?')
+    entry = selected['S1']
+    assert entry['quote'] == second
+    header = next(p for p in entry['source_context'] if p['kind'] == 'table_header')
+    assert header['reference'] == 'pub:a'
+    assert first[header['start']:header['end']] == '| ID | State |\n|---|---|'
+    assert all('OTHER' not in p['quote'] for p in entry['source_context'])
+
+
+@pytest.mark.parametrize('fence', ['```python', '~~~python', '   ````python'])
+def test_code_comment_is_not_a_hypothesis_heading(fence):
+    closing = fence.strip().split('python')[0]
+    text = ('## Z17\n\n' + fence + '\n# Z91 example, not a section\nvalue = 1\n'
+            + closing + '\n\nZ17 collection stopped; no statistical verdict.')
+    selected, _ = cards({'r': {'text': text}}, 'What conclusion for Z17?')
+    assert any(e['quote'] == 'Z17 collection stopped; no statistical verdict.'
+               for e in selected.values())
+    assert not any('Z91' in p['quote'] for e in selected.values()
+                   for p in e.get('source_context', []))
+
+
+def test_previous_proposal_is_whole_or_explicitly_omitted(setup):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('Z17',), text='Z17 remains unconfirmed.'))
+    prior = 'This preliminary observation is provisional. ' * 6 + 'It does NOT confirm Z17.'
+    model = PointerModel()
+    captured = []
+    def capture(prompt, instruction, schema):
+        payload = json.loads(prompt)
+        captured.append(payload)
+        assert payload['prior_proposals_untrusted'] in ([prior], [])
+        return json.dumps({'citations': ['S1'], 'analysis': 'Z17 remains unconfirmed.'})
+    model.generate_json = capture
+    result = review(service, scope, 'What does Z17 establish?', model,
+                    role='synthesis', previous=[prior])
+    assert result['status'] == 'generated'
+    assert captured
+
+
+def test_context_budget_discards_prior_proposals_before_source_evidence(setup):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('Z17',), text='Z17 remains unconfirmed.'))
+    model = PointerModel()
+    captured = []
+    def capture(prompt, instruction, schema):
+        payload = json.loads(prompt)
+        captured.append(payload)
+        assert payload['prior_proposals_untrusted'] == []
+        assert 'Z17 remains unconfirmed.' in prompt
+        return json.dumps({'citations': ['S1'], 'analysis': 'Z17 remains unconfirmed.'})
+    model.generate_json = capture
+    result = review(service, scope, 'What does Z17 establish?', model,
+                    role='synthesis', previous=['Provisional. ' * 900])
+    assert result['status'] == 'generated'
+    assert result['coverage']['prior_proposals_omitted'] == 1
+    assert captured
+
+
+def test_oversized_review_is_rejected_instead_of_accepted_as_a_grammar_cut_fragment(setup):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('Z17',), text='Z17 remains unconfirmed.'))
+    model = PointerModel()
+    full_answer = 'A reported observation is not a confirmed hypothesis. ' * 22
+    assert len(full_answer) > 1000
+    def grammar_capped_provider(prompt, instruction, schema):
+        cap = schema['properties']['analysis'].get('maxLength')
+        answer = full_answer[:cap] if cap is not None else full_answer
+        return json.dumps({'citations': ['S1'], 'analysis': answer})
+    model.generate_json = grammar_capped_provider
+    result = review(service, scope, 'What does Z17 establish?', model, role='synthesis')
+    assert result['status'] == 'generation_failed'
+    assert result['error_code'] == 'INVALID_REVIEW_OUTPUT'
+    assert result['explanation'] is None
+    assert result['facts']['records']
