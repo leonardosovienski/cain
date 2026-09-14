@@ -5,7 +5,62 @@ import operator
 import re
 
 
+def sequence_request(payload: str):
+    """Parse a complete bounded sequence of literal numeric operations, or abstain.
+
+    This grammar never consumes a prefix of an unrelated instruction. Names,
+    external facts, code and an additional task are not arithmetic operands.
+    """
+    if len(payload) > 1200:
+        return None
+    number = r"[+-]?\d{1,15}(?:[.,]\d{1,9})?"
+    start = re.match(r"\s*(?:comece|inicie)\s+com\s+(" + number + r")", payload, re.I)
+    if not start:
+        return None
+    tail = payload[start.end():]
+    only = re.search(
+        r"[.!?]\s*(?:responda|retorne)\s+(?:apenas|somente)\s+"
+        r"(?:com\s+)?o\s+(?:resultado|número|numero)\s*[.!?]?\s*$", tail, re.I,
+    )
+    if only:
+        tail = tail[:only.start()]
+    tail = tail.rstrip(" .!?")
+    operation = re.compile(
+        r"\s*(?:[,;]\s*(?:e\s+)?|e\s+)(some|adicione|subtraia|multiplique\s+por|divida\s+por)"
+        r"\s+(" + number + r")", re.I,
+    )
+    operations = []
+    offset = 0
+    while offset < len(tail):
+        match = operation.match(tail, offset)
+        if not match or len(operations) >= 16:
+            return None
+        operations.append((match[1].lower(), match[2].replace(",", ".")))
+        offset = match.end()
+    return (start[1].replace(",", "."), operations, bool(only)) if operations else None
+
+
 def answer(payload: str) -> str:
+    sequence = sequence_request(payload)
+    if sequence is not None:
+        initial, steps, only = sequence
+        result = Fraction(initial)
+        try:
+            for operation, operand in steps:
+                value = Fraction(operand)
+                if operation in {"some", "adicione"}:
+                    result += value
+                elif operation == "subtraia":
+                    result -= value
+                elif operation.startswith("multiplique"):
+                    result *= value
+                else:
+                    result /= value
+                if max(abs(result.numerator), result.denominator) > 10**18:
+                    raise ValueError("numeric limit")
+            return str(result) if only else f"Resultado: {result}."
+        except (ValueError, ZeroDivisionError):
+            return "Não foi possível calcular: divisão por zero ou limite numérico excedido."
     expression = re.sub(r'^.*?(?:quanto\s+(?:é|e|dá|da)|calcule|calcular|what is)\s+',
                         '', payload.strip(), count=1, flags=re.I)
     expression = expression.rstrip('?! .').replace('−', '-').replace('–', '-').replace(',', '.')

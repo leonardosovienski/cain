@@ -76,3 +76,8 @@ docs/adr/0011-orquestracao-propria-vs-framework-existente.md -text whitespace=cr
 /evaluation/rubrics/README.md -text whitespace=cr-at-eol
 /docs/supply/evidence/* -text whitespace=cr-at-eol
 /.ci/completion/local-delivery-harness.zip -text whitespace=cr-at-eol
+
+# Preserve the exact catalogs used by the partial conversation v2 checkpoint.
+/src/cain/evaluation/data/probes/evaluation-v2-rubrics.json -text whitespace=cr-at-eol
+/src/cain/evaluation/data/scenarios/evaluation-v2.json -text whitespace=cr-at-eol
+/tools/hypothesis_sources.json -text whitespace=cr-at-eol
