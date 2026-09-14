@@ -87,3 +87,41 @@ def test_api_and_cli_include_bundle_coverage(bundle_setup, tmp_path, capsys):
     main(['research', '--policy', str(path), '--db', str(store.service.path),
           '--user', 'test', '--collection', 'a', 'coverage'])
     assert json.loads(capsys.readouterr().out)['bundles']['publications'] == 1
+
+
+def auditor():
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location(
+        'coverage_auditor', Path(__file__).parents[1] / 'tools/verify_project_coverage.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_source_drift_keeps_missing_unknown_and_history_separate(tmp_path):
+    import hashlib
+    module = auditor()
+    source = tmp_path/'state.md'
+    source.write_bytes(b'new state')
+    current = hashlib.sha256(source.read_bytes()).hexdigest()
+    assert module.input_versions(tmp_path, {'state.md': current})[0]['current_checkout'] == 'matches_current_bytes'
+    assert module.input_versions(tmp_path, {'state.md': 'old'})[0]['current_checkout'] == 'differs_from_current_bytes'
+    assert module.input_versions(tmp_path, {'missing.md': 'old'})[0]['current_checkout'] == 'missing_from_current_checkout'
+    assert module.input_versions(None, {'state.md': current})[0]['current_checkout'] == 'checkout_not_supplied'
+    assert module.input_versions(tmp_path, {'../outside.md': current})[0]['current_checkout'] == 'outside_checkout'
+    assert module.input_versions(tmp_path, {'state.md': None})[0]['current_checkout'] == 'present_without_received_hash'
+    assert source.read_bytes() == b'new state'
+
+
+def test_publication_diagnostic_does_not_promote_receipt_time_or_other_scope(tmp_path):
+    module = auditor()
+    p = publication()
+    first = module.publication_version(p, '["test","","old"]', '2026-09-13T01:00:00Z', tmp_path, 'snapshot')
+    second = module.publication_version(p, '["test","","new"]', '2026-09-14T01:00:00Z', tmp_path, 'snapshot')
+    assert first['scope'] != second['scope']
+    assert first['received_at'] != second['received_at']
+    assert first['exported_at'] == p['exported_at']
+    assert first['information_clocks'] == second['information_clocks']
+    assert all(r['event_at'] is None for r in first['information_clocks'])
+    assert first['current_truth'] == 'not_established'

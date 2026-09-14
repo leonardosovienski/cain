@@ -2,6 +2,8 @@
 
 Versão **0.4.12**, código `5364c3b1de5d01c1cf6747b9eed52e562e1a63cd`. Serviço http://127.0.0.1:8877/; ambiente não editável `C:/CAIN/.venv`.
 
+O checkout main recebeu depois a [proteção de análise](ANALYSIS_GUARD_20260913.md), ainda não instalada. A comparação de 62 arquivos abaixo corresponde à fonte do commit instalado acima, não à fonte atual de main.
+
 Wheel: `C:/CAIN/work/coverage-projects-20260913/release/cain_research-0.4.12-py3-none-any.whl`.
 SHA256: `20bf092380eb9f2a62fee9cf19975dd3586766309b9c99d0c00f60b0edea73f9`. Os 62 arquivos conferem com fonte/wheel/instalação; pip check aprovado. Somente cain-research foi atualizado.
 

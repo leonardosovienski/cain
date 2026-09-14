@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/5'
+    assert result['generation']['prompt_version'] == 'addressable-review/6'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -126,3 +126,72 @@ def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup
     excerpts, _ = cards({'ref': {'text': text}}, 'What is reported?', 'CLAIM-BR-001')
     assert len(excerpts) == 1
     assert excerpts['S1']['quote'] == text[:-1]
+
+
+def test_review_passes_scientific_clocks_and_slice_boundaries(setup):
+    service, scope, ingest, _, _ = setup
+    text = 'Q-73: no experiment run; no conclusion on precision.'
+    ingest(cases.publication(('Q-73',), revision='historical-3', text=text))
+    model = PointerModel()
+    def capture(prompt, instruction, schema):
+        payload = json.loads(prompt)
+        record = payload['reported_records_untrusted'][0]
+        assert record['revision'] == 'historical-3'
+        assert all(record[k] is None for k in ('event_at', 'recorded_at', 'available_at'))
+        assert payload['evidence_scope']['current_source_verified'] is False
+        assert payload['evidence_scope']['missing_from_slice_is_not_missing_from_producer']
+        excerpt = payload['excerpts']['S1']
+        assert excerpt['text'] == text
+        assert excerpt['source'] == 'report.md'
+        assert 'table_column_labels' not in excerpt
+        assert 'blocked or unexecuted comparison' in instruction
+        assert 'exclusive explanation' in instruction
+        return json.dumps({'citations': ['S1'], 'analysis': 'No experiment is reported.'})
+    model.generate_json = capture
+    result = review(service, scope, 'What can the report conclude?', model, role='support', source_id='Q-73')
+    assert result['status'] == 'generated'
+    assert result['explanation']['semantic_support'] == 'not_certified'
+    assert result['evidence_scope']['current_source_verified'] is False
+
+
+@pytest.mark.parametrize('role', ['support', 'challenge', 'synthesis'])
+@pytest.mark.parametrize('text', [
+    '| Q-73 | Candidate improves precision | WAITING | No experiment run |',
+    '| Operational readiness | Unknown: costs and observations incomplete |',
+])
+def test_unlabelled_rows_abstain_without_free_generation(setup, role, text):
+    service, scope, ingest, _, _ = setup
+    identity = text.split('|')[1].strip()
+    ingest(cases.publication((identity,), text=text))
+    model = PointerModel()
+    result = review(service, scope, 'What can be concluded?', model, role=role, source_id=identity)
+    assert result['status'] == 'abstained_unlabelled_table'
+    assert model.calls == 0 and result['model_calls'] == 0
+    assert result['facts']['records'][0]['source_id'] == identity
+    explanation = result['explanation']
+    assert explanation['answer_mode'] == 'source_excerpts'
+    assert explanation['semantic_support'] == 'not_certified'
+    assert explanation['verification']['interpretation_verified'] is False
+    assert explanation['source_quotes'][0]['quote'] == text
+
+
+def test_workflow_keeps_abstention_visible_and_does_not_mix_protocols(setup):
+    from cain.research.workflows import Workflows
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('Q-73',), text='| Q-73 | Untested claim | WAIT |'))
+    workflow = Workflows(service)
+    model = PointerModel()
+    job = workflow.create(scope, 'What is supported?', model, source_id='Q-73',
+                          steps=['support', 'challenge', 'synthesis'])
+    for _ in range(3):
+        job = workflow.advance(scope, job['id'], model, approve_generation=True)
+    assert job['status'] == 'completed' and job['model_calls'] == 0
+    assert all(s['result']['status'] == 'abstained_unlabelled_table' for s in job['steps'])
+    old = workflow.create(scope, 'What is supported?', model, source_id='Q-73', steps=['support'])
+    with service.connection() as db:
+        request = {**old['request'], 'protocol': 'research-workflow/8'}
+        db.execute('UPDATE agent_jobs SET request=? WHERE scope=? AND id=?',
+                   (json.dumps(request), scope, old['id']))
+    with pytest.raises(ValueError, match='protocol changed'):
+        workflow.advance(scope, old['id'], model, approve_generation=True)
+    assert workflow.get(scope, old['id'])['request']['protocol'] == 'research-workflow/8'

@@ -191,14 +191,51 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                 'explanation': explanation,
                 'generation': {'called': False}, 'model_calls': 0, 'coverage': coverage,
                 'independent_models': False, 'memory_promoted': False}
+    # The selected table row has no column labels. Valid offsets cannot establish
+    # which value describes a claim, an observed effect or a decision. Retain the
+    # readable facts, but do not ask a model to supply those missing semantics.
+    unlabelled = [key for key, entry in excerpts.items()
+                  if re.fullmatch(r"[ \t]*\|(?:[^|\r\n]*\|){2,}[ \t]*", entry['quote'])]
+    if unlabelled:
+        portuguese = bool(re.search(r"o que|qual|relatório|fonte|motivo|limitação", question.casefold()))
+        message = (
+            "Síntese livre não realizada: faltam os rótulos das colunas no contexto selecionado. "
+            "Os estados e trechos recebidos foram preservados para consulta. Esta abstenção não "
+            "verifica o estado atual nem demonstra ausência de informação na fonte completa."
+            if portuguese else
+            "Free synthesis withheld: column labels are missing from the selected context. "
+            "Received statuses and excerpts remain available. This abstention does not verify "
+            "current state or establish absence of information in the full source.")
+        explanation = resolve_reply(service, scope, excerpts, {
+            'text': message, 'fields': [], 'method': 'unlabelled-table-abstention/1',
+            'selected_ids': list(excerpts)})
+        explanation.update(answer_mode='source_excerpts', semantic_support='not_certified')
+        guard(service, scope, snapshot)
+        return {'role': role, 'status': 'abstained_unlabelled_table', 'facts': facts,
+                'explanation': explanation, 'coverage': coverage,
+                'reason_code': 'COLUMN_LABELS_MISSING_FROM_SELECTED_CONTEXT',
+                'generation': {'called': False}, 'model_calls': 0,
+                'independent_models': False, 'memory_promoted': False}
     payload = {"question": question, "role": roles[role],
                "source_id": source_id,
                "reported_records_untrusted": [
-                   {k: record[k] for k in ('source_id', 'source_status', 'status_axis')}
+                   {k: record[k] for k in ('source_id', 'source_status', 'status_axis', 'kind',
+                                             'revision', 'event_at', 'recorded_at', 'available_at')}
                    for record in admitted['records'] if any(
                        e['reference_id'] in {entry['reference'] for entry in excerpts.values()}
                        for e in record['evidence'])][:10],
+               "evidence_scope": {
+                   "basis": "received_selected_excerpts",
+                   "current_source_verified": False,
+                   "whole_source_read_claim": False,
+                   "omitted_excerpts": coverage['omitted_excerpts'],
+                   "candidate_search_partial": coverage['candidate_search_partial'],
+                   "missing_from_slice_is_not_missing_from_producer": True},
                "excerpts": {key: {"text": entry["quote"],
+                                   "source": evidence[entry['reference']]['source'],
+                                   "locator": evidence[entry['reference']]['locator'],
+                                   **({"table_column_labels": "not_supplied_in_selected_row"}
+                                      if entry['quote'].lstrip().startswith('|') else {}),
                                    **({"json_pointer": entry["json_pointer"]} if "json_pointer" in entry else {})}
                             for key, entry in excerpts.items()},
                "prior_proposals_untrusted": [str(p)[:200] for p in (previous or [])][-2:]}
@@ -208,6 +245,13 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                    "Write a tentative analysis in the question's language, at most 1000 characters. "
                    "Cover the explicit requested facts; identify missing evidence and keep qualifications. "
                    "A quote proves what a report says, not that its conclusion is true. "
+                   "Distinguish a claim/hypothesis being investigated from an observed result. "
+                   "A blocked or unexecuted comparison supports no claim of an observed effect, even preliminary. "
+                   "Do not invent meanings for unlabelled table columns. Preserve explicit non-execution and decisions. "
+                   "Describe status as reported in this received slice, never as verified current producer state. "
+                   "Null scientific clocks are unknown; revision and receipt order are not evidence dates. "
+                   "Missing detail here may exist in other records or the full source. "
+                   "Do not invent a cause, priority or exclusive explanation from a list of limitations. "
                    "Stay with the selected source identity. JSON paths distinguish status from trial names. "
                    "If asked for a literal status, copy its value exactly; do not substitute another field or identity. "
                    "If the source cannot answer the question, explain exactly what is missing, "
@@ -221,7 +265,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
     if len((instruction + prompt).encode()) > 5000:
         raise ValueError("Review context exceeds budget; select a source identity")
     metadata = {"called": True, "model": getattr(provider, "model", None),
-                "prompt_version": "addressable-review/5", "prompt_hash": digest((instruction + prompt).encode())}
+                "prompt_version": "addressable-review/6", "prompt_hash": digest((instruction + prompt).encode())}
     try:
         guard(service, scope, snapshot)
         raw = provider.generate_json(prompt, instruction, schema)
@@ -248,7 +292,8 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                 "facts": facts, "explanation": {"source_quotes": resolved, "proposed_synthesis": result["analysis"],
                                                 "semantic_support": "not_certified"},
                 "generation": {**metadata, "measured": getattr(provider, "last_metadata", {})},
-                "coverage": coverage, "independent_models": False, "memory_promoted": False}
+                "coverage": coverage, "evidence_scope": payload["evidence_scope"],
+                "independent_models": False, "memory_promoted": False}
     except (ValueError, RuntimeError, OSError, TypeError) as exc:
         guard(service, scope, snapshot)
         return {"role": role, "status": "generation_failed", "error": type(exc).__name__,
