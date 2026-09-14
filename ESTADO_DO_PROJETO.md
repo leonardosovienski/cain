@@ -1,8 +1,8 @@
 # Estado verificado do CAIN
 
-CAIN **0.4.12**, código instalado `5364c3b1de5d01c1cf6747b9eed52e562e1a63cd`. Main em `C:/CAIN/projeto`; instalação `C:/CAIN/.venv`; serviço http://127.0.0.1:8877/.
+CAIN **0.4.12**, código instalado `dfabf6dab05df1662e9882ebe1091236daa14724`. Main em `C:/CAIN/projeto`; instalação `C:/CAIN/.venv`; serviço http://127.0.0.1:8877/.
 
-Atualização posterior no checkout: proteção contra interpretação de tabelas sem rótulos, contexto de origem/tempo e protocolo de workflow atualizado. Essa mudança está documentada em [ANALYSIS_GUARD_20260913.md](docs/ANALYSIS_GUARD_20260913.md) e ainda não foi instalada. A tabela abaixo descreve a entrega instalada 0.4.12.
+Proteção contra interpretação de tabelas sem rótulos, contexto de origem/tempo e protocolo de workflow atualizado já instalados. [Relatório](docs/ANALYSIS_GUARD_20260913.md). Recibos em `C:/CAIN/work/install-dfabf6d-20260913`: health OK, 62 arquivos idênticos a fonte/wheel, 20 testes do pacote instalado aprovados, bancos/configurações e dependências de terceiros preservados. A tabela abaixo é o registro da rodada anterior à proteção, não uma nova certificação semântica.
 
 | Item | Resultado |
 |---|---|

@@ -1,6 +1,6 @@
 # Continuidade do CAIN
 
-Instalado **0.4.12**, código `5364c3b1de5d01c1cf6747b9eed52e562e1a63cd`, branch **main**, ambiente não editável `C:/CAIN/.venv`. Checkout: `C:/CAIN/projeto`; interface http://127.0.0.1:8877/; atalho `C:/CAIN/ABRIR_CAIN.cmd`. O checkout contém uma proteção posterior de análise, ainda não instalada no ambiente principal; veja [a entrega posterior](docs/ANALYSIS_GUARD_20260913.md).
+Instalado **0.4.12**, código `dfabf6dab05df1662e9882ebe1091236daa14724`, branch **main**, ambiente não editável `C:/CAIN/.venv`. Checkout: `C:/CAIN/projeto`; interface http://127.0.0.1:8877/; atalho `C:/CAIN/ABRIR_CAIN.cmd`. A proteção posterior de análise está instalada; veja [a entrega posterior](docs/ANALYSIS_GUARD_20260913.md). Recibos, backup e wheel desta instalação: `C:/CAIN/work/install-dfabf6d-20260913`. Health OK, 62 arquivos conferidos, 20 testes do pacote instalado aprovados; dados/configurações preservados. As avaliações semânticas abaixo descrevem a rodada anterior à proteção.
 
 Leia [estado](ESTADO_DO_PROJETO.md), [cobertura dos projetos](docs/COBERTURA_PROJETOS_20260913.md) e [instalação](docs/LOCAL_INSTALLATION.md).
 

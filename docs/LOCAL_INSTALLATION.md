@@ -1,5 +1,17 @@
 # Instalação local em C:/CAIN
 
+## Instalação vigente — revisão dfabf6d
+
+Instalado em 13/09/2026, código `dfabf6dab05df1662e9882ebe1091236daa14724`, versão nominal **0.4.12**, ambiente `C:/CAIN/.venv`, serviço http://127.0.0.1:8877/. Inclui a proteção de análise e o protocolo research-workflow/10. A versão nominal não mudou; o commit e o hash abaixo distinguem este pacote do anterior.
+
+Wheel: `C:/CAIN/work/install-dfabf6d-20260913/release/cain_research-0.4.12-py3-none-any.whl`. SHA256: `d32089be517207ea04f405924b0394391aed68febdd58f71f8ed6788b753a520`.
+
+Health OK; pip check aprovado; 62 arquivos iguais a fonte/wheel/instalação; 20 testes de análise passaram contra o pacote instalado, com 2 avisos. Configurações, dependências de terceiros e todas as linhas preexistentes dos dois bancos preservadas; integridade SQLite OK. Não foi rodada nova certificação semântica com modelo nesta instalação.
+
+Backup consistente dos bancos, configurações e wheel anterior em `C:/CAIN/work/install-dfabf6d-20260913/baseline`. Recibos no diretório pai: `verification.json`, `health.json`, `install.log`, `pip-check.log`, `restart.log`, `tests-installed.log`. Não restaurar bancos antigos sobre dados posteriores. Para recuperação do software, usar o wheel anterior preservado, sem sobrescrever bancos/configurações.
+
+## Registro histórico — primeira instalação 0.4.12
+
 Versão **0.4.12**, código `5364c3b1de5d01c1cf6747b9eed52e562e1a63cd`. Serviço http://127.0.0.1:8877/; ambiente não editável `C:/CAIN/.venv`.
 
 O checkout main recebeu depois a [proteção de análise](ANALYSIS_GUARD_20260913.md), ainda não instalada. A comparação de 62 arquivos abaixo corresponde à fonte do commit instalado acima, não à fonte atual de main.
