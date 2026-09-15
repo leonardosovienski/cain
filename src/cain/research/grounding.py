@@ -457,6 +457,14 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         # paragraphs. Separate sources can contain original and corrected values.
         first = [c for c in ordered if any(' '.join(tokens_of(p)) in ' '.join(tokens_of(c[4])) for p in numeric_phrases)]
         ordered = first + [c for c in result_cards if c not in first] + [c for c in ordered if c not in first and c not in result_cards]
+    # Requested closure reasons need their own literal passage, not only status.
+    if terms & {'motivo', 'razao', 'razoes', 'reason', 'reasons', 'why', 'encerramento', 'closure'}:
+        for anchor in anchors:
+            options = [c for c in candidates if anchor in target_ids(c)
+                       and not c[4].lstrip().startswith('#')
+                       and re.search(r'\b(?:motivo|reason)\b\s*:|\b(?:risco|because)\b|\bdue to\b|\b(?:interrompid|encerrad)\w*.{0,100}\b(?:por|devido)\b', c[4], re.I)]
+            if options and options[0] not in ordered:
+                ordered.append(options[0])
     # A second source about the requested identity must not be displaced by
     # many paragraphs from its first source (e.g. registration vs observation).
     source_round = []
@@ -506,7 +514,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_balanced_excerpts/8", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/9", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "identifier_resolution": resolutions,
                       "identity_coverage": [{'identity': a,
