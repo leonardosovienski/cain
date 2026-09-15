@@ -223,24 +223,26 @@ class SQLiteIdentityStore:
 
     def iter_documents(self) -> Iterable[MemoryDocument]:
         rows = self._connection.execute(
-            "SELECT signal_id, text, metadata_json FROM identity_signals ORDER BY sequence"
+            "SELECT signal_id, text, metadata_json, created_at FROM identity_signals ORDER BY sequence"
         ).fetchall()
         for row in rows:
-            yield MemoryDocument(row["signal_id"], row["text"], json.loads(row["metadata_json"]))
+            yield MemoryDocument(row["signal_id"], row["text"],
+                                 {**json.loads(row["metadata_json"]), '_recorded_at': row['created_at']})
 
     def recent_interactions(self, user_id, session_id, project_id, limit):
         """Newest recorded exchanges in the exact conversation, bounded in SQL."""
         if not 0 <= limit <= 80:
             raise ValueError('Recent interaction limit must be between 0 and 80')
         rows = self._connection.execute(
-            "SELECT signal_id,text,metadata_json FROM identity_signals WHERE user_id=? "
+            "SELECT signal_id,text,metadata_json,created_at FROM identity_signals WHERE user_id=? "
             "AND json_extract(metadata_json,'$.session_id')=? "
             "AND json_extract(metadata_json,'$.project_id') IS ? "
             "AND json_extract(metadata_json,'$.user_input') IS NOT NULL "
             "AND json_extract(metadata_json,'$.preference_observed')=1 "
             "ORDER BY sequence DESC LIMIT ?", (user_id, session_id, project_id, limit),
         ).fetchall()
-        return [MemoryDocument(row['signal_id'], row['text'], json.loads(row['metadata_json']))
+        return [MemoryDocument(row['signal_id'], row['text'],
+                               {**json.loads(row['metadata_json']), '_recorded_at': row['created_at']})
                 for row in rows]
 
     def close(self) -> None:

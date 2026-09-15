@@ -168,6 +168,23 @@ def test_session_context_does_not_override_explicit_document_route():
     assert llm.calls == []
 
 
+@pytest.mark.parametrize('intent,code', [('busca','consulta_documental'),
+                                       ('codigo','codigo_solicitado'),
+                                       ('resumo','resumo_solicitado')])
+def test_structured_classifier_bounds_reason_without_forcing_one_agent(intent, code):
+    class Structured:
+        def generate_json(self, prompt, context, schema):
+            choices = schema['properties']['reason']['enum']
+            assert code in choices and all(len(c) < 30 for c in choices)
+            assert intent in schema['properties']['intent']['enum']
+            assert json.loads(prompt)['session_context'] == 'authorized context'
+            return json.dumps({'intent':intent,'reason':code})
+    result=RuleRouter(Structured())._llm_route('Task with supplied content',registry(),
+                                               session_context='authorized context')
+    assert result.selected_agent == intent
+    assert result.reason == 'llm_classifier:'+code
+
+
 def test_search_synthesis_receives_actual_evidence_and_appends_traceable_sources():
     llm = RecordingLLM()
     agent = SearchAgent(LexicalMemoryIndex(), {"guia.md": "SQLite persiste em disco."}, llm=llm)

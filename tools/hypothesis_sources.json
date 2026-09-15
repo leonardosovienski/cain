@@ -1,6 +1,6 @@
 {
   "version": "cain-hypothesis-source-inventory/1",
-  "reviewed_at": "2026-09-14",
+  "reviewed_at": "2026-09-15",
   "projects": [
     {
       "domain": "brasileirao",
@@ -604,6 +604,13 @@
           "mode": "trial_array",
           "purpose": "Registro literal de tentativas, sem contar variantes como hipóteses novas",
           "identity_key": "trial_id"
+        },
+        {
+          "path": "docs/research/2026-09-07-h17-observations.jsonl",
+          "sha256": "9637f6af1917854fd298a983b41999c87bb9ec3c2a1d238149d44a08070d391b",
+          "mode": "observation_jsonl",
+          "identity_key": "observation_revision",
+          "purpose": "Revisões originais e corrigidas da observação H17; identidade e relógio nativos, sem promover veredicto"
         }
       ]
     }

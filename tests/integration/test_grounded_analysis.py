@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/13'
+    assert result['generation']['prompt_version'] == 'addressable-review/15'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -144,7 +144,8 @@ def test_review_passes_scientific_clocks_and_slice_boundaries(setup):
         assert excerpt['source'] == 'report.md'
         assert 'table_column_labels' not in excerpt
         assert 'blocked or unexecuted comparison' in instruction
-        assert 'exclusive explanation' in instruction
+        assert 'Never invent a cause' in instruction
+        assert 'Keep undefined technical labels verbatim' in instruction
         return json.dumps({'citations': ['S1'], 'analysis': 'No experiment is reported.'})
     model.generate_json = capture
     result = review(service, scope, 'What can the report conclude?', model, role='support', source_id='Q-73')

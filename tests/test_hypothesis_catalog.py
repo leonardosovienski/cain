@@ -8,6 +8,17 @@ from research_snapshot import digest
 
 from cain.research import ResearchService
 
+
+def test_observation_jsonl_keeps_revisions_and_exact_offsets():
+    text='{"observation_revision":1,"status":"initial"}\r\n{"observation_revision":2,"status":"corrected"}\n'
+    source={'mode':'observation_jsonl','identity_key':'observation_revision'}
+    rows=list(catalog.occurrences(text,source))
+    assert [r[0] for r in rows]==['1','2']
+    assert [json.loads(text[a:b])['status'] for _,a,b,_ in rows]==['initial','corrected']
+    with pytest.raises(ValueError):
+        list(catalog.occurrences('{"observation_revision":1,"status":NaN}',source))
+    with pytest.raises(ValueError):
+        list(catalog.occurrences('{"observation_revision":1,"observation_revision":2}',source))
 spec = importlib.util.spec_from_file_location(
     'hypothesis_catalog', Path(__file__).parents[1] / 'tools/prepare_hypothesis_catalog.py')
 catalog = importlib.util.module_from_spec(spec)

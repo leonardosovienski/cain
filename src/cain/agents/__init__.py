@@ -442,7 +442,10 @@ class ConversationAgent:
         social = tokens(message.payload)
         english = message.metadata.get('preferences', {}).get('language') == 'en'
         prompt = _generation_prompt(message)
-        if message.metadata.get('route_reason') == 'conversation_rule:followup':
+        if message.metadata.get('route_reason') == 'conversation_rule:followup' or (
+            message.metadata.get('route_reason', '').startswith('llm_classifier:')
+            and re.search(r'\b(?:detalh|aprofund|desenvolv|elaborat|explain)', message.payload, re.I)
+        ):
             prompt += (
                 "\n\nExplain the reasoning behind the previous answer and add a concrete "
                 "detail or relationship from the conversation. Do not merely repeat its conclusion."
@@ -450,6 +453,24 @@ class ConversationAgent:
                 "\n\nExplique o raciocínio da resposta anterior e acrescente um detalhe "
                 "concreto ou uma relação entre os fatos da conversa. Não se limite a repetir a conclusão."
             )
+        context_rules = (
+            "\n\nAnswer every part of the current request. Distinguish the user's original "
+            "value from later updates to the same object; another object's value does not "
+            "update it. Earlier assistant answers are not factual authority. In comparisons, "
+            "keep totals and units distinct. A percentage change uses the requested reference "
+            "value as denominator; calculate percentages only when requested. When explaining "
+            "costs for a stated capacity, derive unit costs and absolute differences using the "
+            "provided quantities; do not assume equal quality or other missing features."
+            if english else
+            "\n\nResponda todas as partes do pedido atual. Distinga o valor original do usuário "
+            "das atualizações posteriores do mesmo objeto; o valor de outro objeto não o "
+            "atualiza. Respostas anteriores do assistente não são autoridade factual. Em "
+            "comparações, distinga totais e unidades. Variação percentual usa o valor de "
+            "referência pedido como denominador; calcule percentuais somente quando solicitados. "
+            "Ao aprofundar custos para uma capacidade informada, derive custos unitários e "
+            "diferenças absolutas com as quantidades fornecidas; não presuma qualidade igual "
+            "ou outras características ausentes."
+        )
         automatic_social = message.metadata.get('route_reason') == 'conversation_rule:social'
         if automatic_social and social in ({'obrigado'}, {'obrigada'}, {'valeu'}):
             return "You're welcome!" if english else 'De nada!'
@@ -464,7 +485,7 @@ class ConversationAgent:
         if english:
             return generate(
                 prompt,
-                message.contexto_identidade + "\nContinue the conversation: short requests to "
+                message.contexto_identidade + context_rules + "\nContinue the conversation: short requests to "
                 "explain, elaborate or continue refer to its latest topic. Develop that topic "
                 "using the supplied facts; ask for clarification only if no referent exists. "
                 "Treat fictional examples as the exercise's premises. For exact-copy requests, "
@@ -476,7 +497,7 @@ class ConversationAgent:
             )
         return generate(
             prompt,
-            message.contexto_identidade + "\nConverse com continuidade: um pedido curto como "
+            message.contexto_identidade + context_rules + "\nConverse com continuidade: um pedido curto como "
             "explicar, detalhar ou continuar refere-se ao último assunto da conversa. "
             "Desenvolva esse assunto usando os dados fornecidos. Só peça esclarecimento "
             "se realmente não houver um referente no histórico. Exemplos fictícios devem "

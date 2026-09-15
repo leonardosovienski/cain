@@ -15,6 +15,46 @@ def terms_of(text):
     return set(tokens_of(text))
 
 
+def question_identities(question, evidence):
+    """Resolve explicit list shorthand, never infer a cross-domain equivalence."""
+    pattern = r'\w+(?:[-_]\w+)*'
+    anchors = [m[0] for m in re.finditer(pattern, question)
+               if any(c.isdigit() for c in m[0]) and any(c.isalpha() for c in m[0])]
+    resolutions = []
+    for match in re.finditer(r'\b([A-Za-z][\w-]*-)(\d+)\b', question):
+        tail = question[match.end():]
+        for extra in re.finditer(r'\A\s*(?:,|e\b|and\b)\s*(\d+)(?!\w)', tail):
+            # Advance through a strictly contiguous list; do not interpret
+            # unrelated quantities later in the sentence as identity suffixes.
+            while extra:
+                if len(extra[1]) != len(match[2]):
+                    break
+                resolved = match[1] + extra[1]
+                anchors.append(resolved)
+                resolutions.append({'literal': extra[1], 'identity': resolved,
+                                    'rule': 'explicit_contiguous_prefix_list'})
+                tail = tail[extra.end():]
+                extra = re.match(r'\s*(?:,|e\b|and\b)\s*(\d+)(?!\w)', tail)
+    available = set(re.findall(r'\b[A-Za-z][\w]*(?:-[\w]+)+-\d+\b',
+                               '\n'.join(item['text'] for item in evidence.values())))
+    for match in re.finditer(r'\bclaims?\b[^\d\n:;?.]{0,50}(\d{3}(?:(?:\s*,\s*|\s+e\s+|\s+and\s+)\d{3})*)', question, re.I):
+        for suffix in re.findall(r'\d{3}', match[1]):
+            found = sorted(a for a in available if a.casefold().startswith('claim-') and a.endswith('-'+suffix))
+            if len(found) == 1:
+                anchors.append(found[0])
+            resolutions.append({'literal': suffix, 'candidates': found,
+                                'rule': 'unique_received_claim_suffix' if len(found) == 1 else 'unresolved_claim_suffix'})
+    constraint = re.search(r'\b(?:não transfira|do not transfer)\b[^.!?\n]*?\b(?:para|to)\b([^.!?\n]*)', question, re.I)
+    if constraint:
+        outside = question[:constraint.start(1)] + question[constraint.end(1):]
+        excluded = [a for a in anchors if re.search(r'(?<!\w)'+re.escape(a)+r'(?!\w)', constraint[1], re.I)
+                    and not re.search(r'(?<!\w)'+re.escape(a)+r'(?!\w)', outside, re.I)]
+        anchors = [a for a in anchors if a not in excluded]
+        resolutions.extend({'literal': a, 'rule': 'explicit_do_not_transfer_target',
+                            'role': 'constraint_not_requested_subject'} for a in excluded)
+    return list(dict.fromkeys(anchors)), resolutions
+
+
 def table_header_span(text, start, end):
     """Locate the literal labels, without including intervening data rows."""
     lines = list(re.finditer(r'[^\r\n]+', text[:end]))
@@ -266,11 +306,10 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         'conclusion conclude forte stronger mais more impede impedem'.split())
     # Explicit alphanumeric identifiers outrank generic words, regardless of
     # project/domain. This is lexical retrieval, not an inferred entity mapping.
-    anchors = [token for token in re.findall(r'\w+(?:[-_]\w+)*', question)
-               if any(c.isdigit() for c in token) and any(c.isalpha() for c in token)]
+    anchors, resolutions = question_identities(question, evidence)
     def anchor_score(value):
-        return 1000 * sum(bool(re.search(r'(?<![\w-])' + re.escape(token) + r'(?![\w-])',
-                                         value, re.I)) for token in anchors)
+        return 20 * any(re.search(r'(?<![\w-])' + re.escape(token) + r'(?![\w-])',
+                                  value, re.I) for token in anchors)
     question_tokens = tokens_of(question)
     pairs = {pair for pair in zip(question_tokens, question_tokens[1:])
              if all(token in terms for token in pair)}
@@ -313,7 +352,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                 spans.add((start, end))
                 value = relation['quote'] + ' ' + relation.get('json_pointer', '')
                 score = relevance(value)
-                score += 2000 * sum(matches_identity(relation, token) for token in anchors)
+                score += 20 * any(matches_identity(relation, token) for token in anchors)
                 if any(matches_identity(relation, token) for token in anchors):
                     exact_targets.add((ref, start, end))
                 candidates.append((score, ref, start, end, text[start:end]))
@@ -363,15 +402,83 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
             if (a, b) == (base + start, base + end):
                 continue
             context_part(a, b, 'section_heading')
-    candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
-    anchored_candidates = bool(anchors and any(anchor_score(c[4]) for c in candidates))
-    selected, used = {}, 0
+    # Heading identity is part of a passage's relevance, even when the body
+    # says only "status" or "horizon". Keep each requested identity represented
+    # before spending the shared budget on more passages of the first one.
+    def target_ids(candidate):
+        _, ref, start, end, quote = candidate
+        pointer = focused_paths.get((ref, start, end))
+        if pointer:
+            return {a for a in anchors if a in [p.replace('~1','/').replace('~0','~') for p in pointer.split('/')]}
+        if quote.lstrip().startswith('|'):
+            subject = quote.strip().split('|')[1].strip().strip('`')
+            return {a for a in anchors if a.casefold() == subject.casefold()}
+        owner = owners.get((ref, start, end))
+        if owner and owner.casefold() in {a.casefold() for a in anchors}:
+            return {a for a in anchors if a.casefold() == owner.casefold()}
+        value = quote
+        value += ' ' + ' '.join(p['quote'] for p in contexts.get((ref, start, end), []))
+        return {a for a in anchors if re.search(r'(?<![\w-])'+re.escape(a)+r'(?![\w-])', value, re.I)}
+
+    def density(candidate):
+        score, ref, start, end, quote = candidate
+        parts = contexts.get((ref, start, end), [])
+        total = len(quote.encode()) + sum(len(p['quote'].encode()) for p in parts)
+        return (score + relevance(' '.join(p['quote'] for p in parts))) / max(1, total)**0.5
+    candidates.sort(key=lambda c: (-density(c), c[1], c[2]))
+    ordered = []
+    for anchor in anchors:
+        matching = [c for c in candidates if anchor in target_ids(c)
+                    and not c[4].lstrip().startswith('#')]
+        choice = next((c for c in matching if (c[1], c[2], c[3]) in exact_targets),
+                      matching[0] if matching else None)
+        if choice is not None and choice not in ordered:
+            ordered.append(choice)
+    # Explicit numeric phrases (e.g. an exit-code definition) are a separate
+    # requested fact, even without repeating a hypothesis ID in that paragraph.
+    numeric_phrases = re.findall(r'\b[A-Za-zÀ-ÿ]+\s+[A-Za-zÀ-ÿ]+\s+\d+\b', question)
+    for phrase in numeric_phrases:
+        phrase_terms = tokens_of(phrase)
+        choice = next((c for c in candidates if ' '.join(phrase_terms) in ' '.join(tokens_of(c[4]))), None)
+        if choice is not None and choice not in ordered:
+            ordered.insert(0, choice)
+    if terms & {'resultado', 'result', 'veredicto', 'veredito', 'verdict'}:
+        result_sources, result_cards = set(), []
+        for c in candidates:
+            source = evidence[c[1]].get('source', c[1])
+            if (source not in result_sources and (not anchors or target_ids(c))
+                    and not c[4].lstrip().startswith('#')
+                    and re.search(r'\b(?:resultado|result|veredicto|veredito|verdict)\b(?:\s+(?:corrigido|corrected|final|inicial|initial))?\s*(?::|\bé\b|\bis\b)', c[4], re.I)):
+                result_cards.append(c)
+                result_sources.add(source)
+            if len(result_cards) >= 2:
+                break
+        # Preserve explicit reported results before procedural or registration
+        # paragraphs. Separate sources can contain original and corrected values.
+        first = [c for c in ordered if any(' '.join(tokens_of(p)) in ' '.join(tokens_of(c[4])) for p in numeric_phrases)]
+        ordered = first + [c for c in result_cards if c not in first] + [c for c in ordered if c not in first and c not in result_cards]
+    # A second source about the requested identity must not be displaced by
+    # many paragraphs from its first source (e.g. registration vs observation).
+    source_round = []
+    seen_sources = {evidence[c[1]].get('source', c[1]) for c in ordered}
+    for c in candidates:
+        source = evidence[c[1]].get('source', c[1])
+        if (source not in seen_sources and not c[4].lstrip().startswith('#')
+                and (not anchors or target_ids(c))):
+            source_round.append(c)
+            seen_sources.add(source)
+    candidates = ordered + source_round + [c for c in candidates if c not in ordered and c not in source_round]
+    selected, used, used_context = {}, 0, set()
     for _, ref, start, end, quote in candidates:
         context = contexts.get((ref, start, end), [])
-        size = len(quote.encode()) + sum(len(part['quote'].encode()) for part in context)
+        new_context = [p for p in context if (p.get('reference', ref), p['start'], p['end']) not in used_context]
+        size = len(quote.encode()) + sum(len(part['quote'].encode()) for part in new_context)
         owner = owners.get((ref, start, end))
-        reason = ('different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors}
-                  else 'question_identifier_mismatch' if anchored_candidates and not anchor_score(quote)
+        matched = target_ids((0, ref, start, end, quote))
+        numeric_match = any(' '.join(tokens_of(p)) in ' '.join(tokens_of(quote)) for p in numeric_phrases)
+        reason = ('heading_context_only' if quote.lstrip().startswith('#')
+                  else 'different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors}
+                  else 'question_identifier_mismatch' if anchors and not matched and not numeric_match
                   else 'overlapping_selected_context' if any(e['reference'] == ref and start < e['end'] and end > e['start'] for e in selected.values())
                   else 'card_limit' if len(selected) >= max_cards
                   else 'byte_budget' if used + size > max_bytes else 'selected')
@@ -387,6 +494,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
             entry['source_context'] = context
         selected['S' + str(len(selected) + 1)] = entry
         used += size
+        used_context.update((p.get('reference', ref), p['start'], p['end']) for p in context)
     # Lexical candidate availability is deliberately separate from answer support.
     parts = [part.strip(' ?.,') for part in re.split(r'[?;]|\s+(?:e|and)\s+', question) if part.strip(' ?.,')]
     subrequests = []
@@ -398,8 +506,13 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_then_lexical_excerpts/7", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/8", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
+                      "identifier_resolution": resolutions,
+                      "identity_coverage": [{'identity': a,
+                          'accessible': any(a in target_ids(c) for c in candidates),
+                          'selected_ids': [key for key, e in selected.items() if a in target_ids((0,e['reference'],e['start'],e['end'],e['quote']))],
+                          'semantic_support': 'not_verified'} for a in anchors],
                       "request": question, "decomposition": "explicit_conjunctions_partial/1", "subrequests": subrequests,
                       "semantic_support": "not_verified", "budget_bytes": max_bytes,
                       "used_bytes": used, "token_count": None,

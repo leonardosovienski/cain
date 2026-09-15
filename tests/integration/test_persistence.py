@@ -20,7 +20,8 @@ def test_drop_rebuild_preserves_fixed_queries_and_filters_after_sqlite_reopen(tm
         for doc_id, text in docs:
             signal = Signal(text, metadata={"session_id": "s1"}, signal_id=doc_id)
             store.append_signal(user, signal)
-            index.index(doc_id, text, {"user_id": user, "session_id": "s1", "kind": "interaction"})
+            index.index(doc_id, text, {"user_id": user, "session_id": "s1", "kind": "interaction",
+                                      "_recorded_at": signal.created_at})
     fixed = [("Python", 10, None), ("persistência", 3, {"user_id": "alice"}),
              ("resumos", 2, {"user_id": "bob"}), ("memória", 2, {"user_id": "bob"})]
     for i, query in enumerate(fixed):

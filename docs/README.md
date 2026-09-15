@@ -1,4 +1,11 @@
-# Rodada atual: prontidão CAIN — 14/09/2026
+# Continuação corrente — 15/09/2026
+
+Consulte [CONTINUACAO_POS_V4_20260915.md](CONTINUACAO_POS_V4_20260915.md)
+para a candidata V6 congelada em QA, os resultados e as limitações desta continuação.
+Checkpoint local V4 `ad21220`; mudanças posteriores locais, sem publicação ou
+instalação principal. Evidências em `C:/CAIN/work/readiness-continuation-20260915`.
+
+## Histórico preservado da rodada de 14/09/2026
 
 **Candidata V4 local, sem aprovação geral e sem promoção operacional.**
 Branch `fix/readiness-main-20260914`, baseline `origin/main`
