@@ -1,3 +1,12 @@
+# Continuidade CAIN — V8, 15/09/2026
+
+O ponto de retomada é o [handoff de fechamento](docs/HANDOFF_FECHAMENTO_V8_20260915.md). Ele registra código, GitHub, instalação QA, backups, evidências, modelos e pendências. A V8 está integrada no checkout canônico e nesta branch; não foi instalada na principal nem aprovada para uso geral.
+
+O recibo final fica em `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs/ENCERRAMENTO_GIT_20260915/VERIFICACAO_FINAL.json`. O backup local independente fica em `C:/CAIN/backups/continuidade-20260915-v8`.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
 > Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
 
 # Continuação corrente — 15/09/2026
@@ -142,3 +151,5 @@ Recibos principais: `coverage-audit.json`, `bundle-candidates/report.json`, `ful
 Antes de retomar, conferir Git local/remoto e `/health`. Para ampliar acesso aos produtores, definir os novos artefatos/exportações; leitura de um recorte não significa acesso aos bancos ou compreensão de todo o projeto. Não alterar lacres, restrições ou hipóteses para obter aprovação. Para corrigir a redação, usar o caso Brasileirão já registrado como regressão semântica.
 
 Histórico: [0.4.11](docs/LLM_REAL_20260913.md) e [0.4.10](docs/LLM_FIX_20260913.md). Recibos anteriores em `C:/CAIN/work/qa-real-20260913` permanecem preservados. A antiga contagem de “dois Bundles” foi corrigida para duas entidades de um pacote. Testes técnicos não certificam conclusões científicas/econômicas.
+
+</details>

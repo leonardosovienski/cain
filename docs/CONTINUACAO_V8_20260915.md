@@ -1,3 +1,5 @@
+> Relatório histórico do congelamento V8, anterior ao envio ao GitHub. Para o estado corrente, leia o [handoff de fechamento](HANDOFF_FECHAMENTO_V8_20260915.md).
+
 | Capacidade | Causa confirmada | Correção | Evidência na candidata final | Veredicto | Pendência |
 |---|---|---|---|---|---|
 | Memória/retificação | Contexto precisava preservar fatos do usuário e atualizações | Histórico factual e escopo preservados | V8 offline; V7 M02/M03 3/3 cada | V8 não confirmada | Repetir episódios completos e isolamento |

@@ -1,3 +1,12 @@
+# CAIN — checkpoint V8
+
+Código de pesquisa e assistência local. A candidata V8 está integrada nesta branch, com831testes offline aprovados e sem aprovação geral de uso. A instalação principal permanece preservada.
+
+Comece pelo [handoff de fechamento](docs/HANDOFF_FECHAMENTO_V8_20260915.md), pelo [estado atual](ESTADO_DO_PROJETO.md) e pelo [índice documental](docs/README.md).
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
 > Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
 
 # CAIN — conversa, memória e pesquisa local
@@ -75,3 +84,5 @@ A rodada da LLM está em [correções e limites observados](docs/LLM_CORRECOES_2
 Correções de idioma, roteamento de exercícios fictícios e preservação de contexto: [testes reais da 0.4.11](docs/LLM_REAL_20260913.md).
 Cobertura de Crypto, Stocks e Brasileirão: [auditoria das conexões](docs/COBERTURA_PROJETOS_20260913.md). O CAIN recebe recortes publicados, não os projetos inteiros. Use **Cobertura do acervo** na interface ou `research ... coverage` para conferir Snapshot, Bundle e permissões separadamente.
 Histórico de conversa e formato: [testes da 0.4.10](docs/LLM_FIX_20260913.md).
+
+</details>

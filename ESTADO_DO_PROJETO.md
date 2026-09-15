@@ -1,3 +1,20 @@
+# Estado atual — checkpoint V8
+
+| Área | Estado |
+|---|---|
+| Código | V8 integrada na branch fix/readiness-main-20260914 |
+| Engenharia | 831 PASS,1skip; Ruff aprovado;70arquivos de produto conferidos |
+| Cadastro | 64entradas consultadas; zero fontes exigidas ausentes |
+| Geração final V8 | Não executada; pendências científicas preservadas |
+| Aprovação geral | Não concedida |
+| Instalação principal | Preservada, sem V8 |
+| Retomada | [Handoff completo](docs/HANDOFF_FECHAMENTO_V8_20260915.md) |
+
+Commit/ref remoto e hashes constam no recibo de fechamento indicado no handoff.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
 > Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
 
 # Continuação corrente — 15/09/2026
@@ -58,3 +75,5 @@ Proteção contra interpretação de tabelas sem rótulos, contexto de origem/te
 | Publicação e CI | Recibos externos `git-publication.json` e `ci-final.json` na rodada atual |
 
 [Relatório](docs/COBERTURA_PROJETOS_20260913.md), [continuidade](CONTINUIDADE.md), [instalação](docs/LOCAL_INSTALLATION.md). A aprovação de importação, recuperação e citações não certifica a interpretação do modelo.
+
+</details>

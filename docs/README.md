@@ -1,3 +1,16 @@
+# Documentação corrente — V8
+
+- [Handoff para continuar após apagar o chat](HANDOFF_FECHAMENTO_V8_20260915.md)
+- [Estado do projeto](../ESTADO_DO_PROJETO.md)
+- [Continuidade](../CONTINUIDADE.md)
+- [Relatório da entrega V8, anterior à publicação](CONTINUACAO_V8_20260915.md)
+- [Histórico e diagnósticos V5–V7](CONTINUACAO_POS_V4_20260915.md)
+
+O handoff acima é o estado corrente. Afirmações de versão ou publicação nos relatórios anteriores descrevem seus respectivos instantes históricos.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
 # Continuação corrente — 15/09/2026
 
 Consulte [CONTINUACAO_POS_V4_20260915.md](CONTINUACAO_POS_V4_20260915.md)
@@ -67,3 +80,5 @@ contagens e resultados nelas não substituem o estado atual descrito acima.
 [Índice histórico](historico/README.md): entregas, auditorias, fontes originais e snapshots de documentação.
 Relatórios datados descrevem a referência examinada na ocasião. Seus SHAs, contagens, branches e pendências não substituem o estado operacional atual.
 Os documentos científicos e de pesquisa preservam hipóteses e limites; testes técnicos não recertificam suas conclusões.
+
+</details>
