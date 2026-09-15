@@ -10,7 +10,7 @@ import subprocess
 
 from research_snapshot import canonical, confined, digest, seal, timestamp, validate
 
-EXPORTER = 'hypothesis-catalog/2'
+EXPORTER = 'hypothesis-catalog/3'
 
 
 def source_clock(value):
@@ -73,6 +73,25 @@ def occurrences(text, source):
             status = value.get('status')
             yield identity, start, end, (status if isinstance(status, str) and status
                                          else 'NOT_STRUCTURED_IN_SOURCE')
+    elif source['mode'] == 'json_document':
+        # Preserve a whole object so that receiver JSON paths remain meaningful.
+        values = list(array_spans('[' + text + ']'))
+        if len(values) != 1:
+            raise ValueError('Expected one JSON document object')
+        _, start, end = values[0]
+        yield 'document', start - 1, end - 1, 'NOT_EXTRACTED'
+    elif source['mode'] == 'jsonl':
+        # Every line is a complete JSON object. Do not concatenate observations
+        # into invalid JSON or split a revision at an arbitrary character count.
+        offset = 0
+        for number, line in enumerate(text.splitlines(keepends=True), 1):
+            if line.strip():
+                values = list(array_spans('[' + line + ']'))
+                if len(values) != 1:
+                    raise ValueError('Expected one JSON object per line')
+                _, start, end = values[0]
+                yield f'line-{number:04}', offset + start - 1, offset + end - 1, 'NOT_EXTRACTED'
+            offset += len(line)
     elif source['mode'] == 'document':
         # Contiguous, exhaustive slices. Newlines are preserved, not normalized.
         # Retrieval limits remain explicit: one excerpt is not the whole source.
