@@ -1,3 +1,32 @@
+# Rodada atual: prontidão CAIN — 14/09/2026
+
+**Candidata V4 local, sem aprovação geral e sem promoção operacional.**
+Branch `fix/readiness-main-20260914`, baseline `origin/main`
+`8d4297a575ec1231ad7ec909faa8be0ea795e546`. O checkout original
+`C:/CAIN/projeto` permanece no checkpoint `24f784c5dde1fa66c262ad5899f4fd8d02526adf`.
+
+Foram corrigidos precisão decimal, cópia literal delimitada, seleção lexical de
+entidade e transporte de contexto ao classificador. V4: 809 testes aprovados,
+1 ignorado, 2 avisos; wheel não editável com 70 arquivos conferidos em QA.
+SHA do wheel: `fba0a82859d408ea8a5f426e2536a673455cc19039fa422257685d1021aaae1e`.
+
+Persistem falhas de retificação, memória após distrações, follow-up e seleção/
+interpretação científica. São 94 fontes e 247 ocorrências em QA; 64 registros
+derivados tipados não constituem denominador validado de hipóteses. Instalação
+principal, dados/configurações e produtores preservados. Sem push, merge ou release.
+
+Relatório vigente: [READINESS_RESULT_20260914.md](docs/READINESS_RESULT_20260914.md).
+Ele identifica versões realmente ensaiadas, regressões, limites e retomada.
+Recibos e scripts: `C:/CAIN/work/readiness-evidence-20260914`.
+Entrega: `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs`.
+
+## Histórico preservado abaixo
+
+As entradas a seguir pertencem às rodadas anteriores; caminhos, branches,
+contagens e resultados nelas não substituem o estado atual descrito acima.
+
+---
+
 # Continuidade do CAIN
 
 ## Checkpoint local para o próximo chat — 14/09/2026

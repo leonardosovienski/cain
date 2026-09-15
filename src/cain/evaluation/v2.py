@@ -27,7 +27,7 @@ from cain.evaluation.resources import installed_identity
 
 PROTOCOL = "cain-product-evaluation/2.0"
 FAMILIES = [f"{level}{i:02}" for level in "BMA" for i in range(1, 13)]
-INSTRUMENT = "v2-runner/4"
+INSTRUMENT = "v2-runner/5"
 
 
 def local_url(value):
@@ -396,7 +396,8 @@ def origin(result, calls):
     if result.get("selected_agent") == "busca":
         return "retrieval_only"
     if (
-        result.get("route_reason") in {"social_greeting", "conversation_rule:arithmetic"}
+        result.get("route_reason") in {
+            "social_greeting", "conversation_rule:arithmetic", "conversation_rule:literal_copy"}
         and not calls
     ):
         return "deterministic"

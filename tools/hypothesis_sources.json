@@ -1,6 +1,6 @@
 {
   "version": "cain-hypothesis-source-inventory/1",
-  "reviewed_at": "2026-09-13",
+  "reviewed_at": "2026-09-14",
   "projects": [
     {
       "domain": "brasileirao",
@@ -190,6 +190,12 @@
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
+          "path": "docs/CURRENT_RESEARCH_STATE_20260908.md",
+          "sha256": "e0e1d51200de73b53179a2a2121339de4059a1accd00e834536bb43ef1b59f00",
+          "mode": "document",
+          "purpose": "Independent discovery: explicit research state or experimental questions; not unique hypothesis count"
+        },
+        {
           "path": "docs/EVIDENCE_REGISTRY.md",
           "sha256": "269df1a109f3dc432cc6d3cc9cc5852bce3e387d4222ea6998ed63fbc0378e30",
           "mode": "document",
@@ -374,6 +380,12 @@
           "sha256": "7c0d770b01330a15d33afc31a0dfad2cec080e709d6709163d3c625a00fc4476",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
+        },
+        {
+          "path": "docs/open_source_research/OSS-20260911-01/EXPERIMENTS.md",
+          "sha256": "b55ab875072d02ec68d1925ba4db39f73d3d3112207d5cdd8b7f2fa34930011d",
+          "mode": "document",
+          "purpose": "Independent discovery: explicit research state or experimental questions; not unique hypothesis count"
         },
         {
           "path": "docs/open_source_research/OSS-20260911-01/closure/protocol.json",

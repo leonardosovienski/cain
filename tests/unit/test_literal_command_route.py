@@ -26,7 +26,8 @@ def registry():
 def test_explicit_literal_command_routes_without_losing_content(message):
     route = RuleRouter().route(message, None, registry())
     assert route.selected_agent == "conversa"
-    assert route.reason == "conversation_rule:literal_output"
+    # The dedicated trace distinguishes exact copying from generated output.
+    assert route.reason == "conversation_rule:literal_copy"
 
 
 @pytest.mark.parametrize("message", ["Responda apenas:", "Retorne somente:   ", "Responda apenas"])

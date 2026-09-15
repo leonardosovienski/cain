@@ -75,7 +75,12 @@ def answer(payload: str) -> str:
 
         def value(node):
             if isinstance(node, ast.Constant) and type(node.value) in (int, float):
-                result = Fraction(str(node.value))
+                # AST float values have already rounded. Parse the original
+                # decimal token, with a bounded grammar before constructing it.
+                literal = ast.get_source_segment(expression, node)
+                if literal is None or not re.fullmatch(r'(?:\d+(?:\.\d*)?|\.\d+)', literal):
+                    raise ValueError('only decimal literals supported')
+                result = Fraction(literal)
             elif isinstance(node, ast.UnaryOp) and type(node.op) in (ast.UAdd, ast.USub):
                 result = value(node.operand) * (-1 if isinstance(node.op, ast.USub) else 1)
             elif isinstance(node, ast.BinOp) and type(node.op) in operations:
