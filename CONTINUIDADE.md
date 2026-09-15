@@ -50,6 +50,10 @@ contagens e resultados nelas não substituem o estado atual descrito acima.
 
 # Continuidade do CAIN
 
+## Main consolidada — 15/09/2026
+
+[Consolidacao atual](docs/CONSOLIDACAO_MAIN_20260915.md): melhorias V8 e checkpoint de pesquisa integrados, historicos preservados e somente main como branch. As secoes abaixo registram as etapas anteriores, sem substituir este estado de integracao. Instalacao principal e edicoes locais pendentes continuam separadas.
+
 ## Publicacao autorizada — 15/09/2026
 
 Veja [o checkpoint desta publicacao](docs/PUBLICACAO_20260915.md). Todos os arquivos locais devem ser preservados. As alteracoes preexistentes sao publicadas separadamente de main; isso nao promove a candidata para a instalacao principal nem certifica suas hipoteses.
