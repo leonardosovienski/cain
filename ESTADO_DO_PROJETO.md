@@ -3,8 +3,8 @@
 | Área | Estado |
 |---|---|
 | Código | V8 integrada na branch fix/readiness-main-20260914 |
-| Engenharia | 831 PASS,1skip; Ruff aprovado;70arquivos de produto conferidos |
-| Cadastro | 64entradas consultadas; zero fontes exigidas ausentes |
+| Engenharia | 831 PASS, 1 skip; Ruff aprovado;70 arquivos de produto conferidos |
+| Cadastro | 64 entradas consultadas; zero fontes exigidas ausentes |
 | Geração final V8 | Não executada; pendências científicas preservadas |
 | Aprovação geral | Não concedida |
 | Instalação principal | Preservada, sem V8 |

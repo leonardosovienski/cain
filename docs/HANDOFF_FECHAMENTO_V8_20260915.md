@@ -25,20 +25,20 @@ Os arquivos locais de QA, bancos, ambientes, configurações pessoais e transcri
 
 ## Identidade e validação
 
-Wheel nominal `cain-research 0.4.12`, SHA-256 `e684e7ad5ed36b6b27d8889b6fe5e0ac6f48d7b9cf5eab52f13e7a2930cb1216`. Os70arquivos de produto coincidem entre fonte V8, wheel e instalação QA. A integração no checkout canônico preserva esses bytes. Dependências iguais à V7. Testes V8: **831 PASS, um skip de symlink Windows, duas advertências; Ruff aprovado**. Consulta instalada do cadastro:64entradas, zero fontes obrigatórias ausentes; seis controles determinísticos de integridade aprovados. São resultados offline/de recuperação, não confirmação semântica de uso.
+Wheel nominal `cain-research 0.4.12`, SHA-256 `e684e7ad5ed36b6b27d8889b6fe5e0ac6f48d7b9cf5eab52f13e7a2930cb1216`. Os70 arquivos de produto coincidem entre fonte V8, wheel e instalação QA. A integração no checkout canônico preserva esses bytes. Dependências iguais à V7. Testes V8: **831 PASS, um skip de symlink Windows, duas advertências; Ruff aprovado**. Consulta instalada do cadastro:64 entradas, zero fontes obrigatórias ausentes; seis controles determinísticos de integridade aprovados. São resultados offline/de recuperação, não confirmação semântica de uso.
 
-Modelo autorizado: `qwen3.5:4b`, digest `2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd`; embeddings `qwen3-embedding:0.6b`, digest `ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d`. Temperatura0, seed42, contexto8192, geração768, entrada6500bytes, timeout240s, think=false. Modelo e parâmetros não foram trocados.
+Modelo autorizado: `qwen3.5:4b`, digest `2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd`; embeddings `qwen3-embedding:0.6b`, digest `ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d`. Temperatura 0, seed 42, contexto 8192, geração 768, entrada 6500 bytes, timeout 240s, think=false. Modelo e parâmetros não foram trocados.
 
 ## Resultados reais e pendências que não podem desaparecer
 
-- V7 geral:46episódios/85turnos,43PASS e3FAIL B08 (recusa com palavra proibida). M02/M03 e variantes M04 numérica/não numérica passaram em três repetições cada, naquela versão.
-- V7 científica:13episódios previstos;4concluídos,1interrompido e8não executados. Dos4concluídos:3FAIL_SEMANTICS e1PARTIAL_COMPLETENESS. Contrato de tamanho válido não significa resposta correta.
-- H17: persistiu invenção de causa de falha na leitura do ZIP; exit2 informa falha, sem comprovar essa causa. Preservar primeira observação e correção de07/09/2026,51 versus47ausentes em5399, unidades e ausência de P&L executável.
+- V7 geral:46 episódios/85 turnos, 43 PASS e 3 FAIL B08 (recusa com palavra proibida). M02/M03 e variantes M04 numérica/não numérica passaram em três repetições cada, naquela versão.
+- V7 científica:13 episódios previstos;4 concluídos,1 interrompido e8 não executados. Dos4 concluídos:3 FAIL_SEMANTICS e1 PARTIAL_COMPLETENESS. Contrato de tamanho válido não significa resposta correta.
+- H17: persistiu invenção de causa de falha na leitura do ZIP; exit2 informa falha, sem comprovar essa causa. Preservar primeira observação e correção de 07/09/2026,51 versus 47 ausentes em 5399, unidades e ausência de P&L executável.
 - H4/H5: preservar trial literal `v2-dpl-gemini-h7`, H4 n=5, risco de cota e encerramento sem veredicto. V8 corrige seleção do motivo e instrução que confundia ausência de medição com efeito zero. Ainda falta geração final confirmatória.
 - BR001/002/003, abreviações002/003, inversão, identidade ausente, domínios distintos e documento hostil efetivamente recuperado exigem confirmação completa por geração.
-- Cadastro:231arquivos triados (78/47/106),71candidatos,64entradas tipadas,51linhas de ledger são denominadores diferentes.37associações literais verificadas. Fronteira documental não prova independência científica.
-- Recibos:275chamadas de geração,273conclusões comprovadas e2desconhecidas; tags não contam como inferência. Não atribuir timeout a hardware sem comparação mínima/completa controlada.
-- As36famílias V8 permanecem sem confirmação real completa. M07=outro usuário, M08=outro projeto, M12=falha explícita do backend. Controles de preferência/orçamento são suplementares.
+- Cadastro:231 arquivos triados (78/47/106),71 candidatos,64 entradas tipadas,51 linhas de ledger são denominadores diferentes.37 associações literais verificadas. Fronteira documental não prova independência científica.
+- Recibos:275 chamadas de geração,273 conclusões comprovadas e2 desconhecidas; tags não contam como inferência. Não atribuir timeout a hardware sem comparação mínima/completa controlada.
+- As 36 famílias V8 permanecem sem confirmação real completa. M07=outro usuário, M08=outro projeto, M12=falha explícita do backend. Controles de preferência/orçamento são suplementares.
 
 Durante a rodada anterior o ambiente perdeu acesso de escrita/rede e interrompeu a confirmação. A sessão de fechamento voltou a ter acesso; isso não transforma testes não executados em PASS. Esta rodada organiza e publica o checkpoint, sem reiniciar a campanha científica. Estado dos serviços antigos deve ser verificado antes de uma retomada; não reutilizar active.json sem reconciliar o pedido interrompido.
 
@@ -58,3 +58,9 @@ Nenhuma falha, parcial ou NOT_RUN recebe aprovação. Revisão e implementação
 - [Continuação e diagnósticos V5–V7](CONTINUACAO_POS_V4_20260915.md)
 - [Índice documental](README.md)
 - [Continuidade de entrada](../CONTINUIDADE.md)
+
+## Conferência adicional de fechamento
+
+O anexo `CAIN_continuacao_focada_pos_V4_20260915.md` já não estava em Downloads. Seu texto completo (16.790 caracteres) foi recuperado do recibo original de leitura do chat e salvo no backup como `CAIN_continuacao_focada_RECUPERADA_DO_CHAT.md`, com proveniência em `RECUPERACAO_ANEXO.json`. A identidade binária do anexo ausente não é certificada; o texto foi preservado.
+
+A conferência desta sessão não encontrou processos dos antigos serviços QA da rodada nem listeners nas portas 8896, 11435, 11436. O backup inicial verificou 1.450 arquivos de evidência/entrega, total 538.648.575 bytes, além dos bundles e da transcrição privada. Um inventário adicional registra arquivos de fechamento criados depois dessa cópia inicial. Cache, ambientes reproduzíveis e pesos dos modelos permanecem nos caminhos originais e não são enviados ao GitHub.

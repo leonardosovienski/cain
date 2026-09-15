@@ -1,6 +1,6 @@
 # CAIN — checkpoint V8
 
-Código de pesquisa e assistência local. A candidata V8 está integrada nesta branch, com831testes offline aprovados e sem aprovação geral de uso. A instalação principal permanece preservada.
+Código de pesquisa e assistência local. A candidata V8 está integrada nesta branch, com 831 testes offline aprovados e sem aprovação geral de uso. A instalação principal permanece preservada.
 
 Comece pelo [handoff de fechamento](docs/HANDOFF_FECHAMENTO_V8_20260915.md), pelo [estado atual](ESTADO_DO_PROJETO.md) e pelo [índice documental](docs/README.md).
 
