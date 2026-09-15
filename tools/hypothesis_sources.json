@@ -390,25 +390,25 @@
         {
           "path": "docs/open_source_research/OSS-20260911-01/closure/protocol.json",
           "sha256": "4ca4f9098501c6a27b5c00b4169decf7aec3028910c7e7b1f5e3d9a7b42a085a",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/open_source_research/OSS-20260911-01/continuation-v3/X02-protocol.json",
           "sha256": "b7dbe21acf7fa1f82d3b0e052ead7813727d0a145bb4c38546dddae5747fa769",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/open_source_research/OSS-20260911-01/continuation-v3/X04-protocol.json",
           "sha256": "456a85e2f3ed1531b69852d7b4eec2fed2fea7891ffbc3c48a214d8eaaedb320",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-h17-discovery-protocol.json",
           "sha256": "f8334a4e002e3b690800d55d9b39924cda5650704359412cfca30881966ceaaf",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -438,7 +438,7 @@
         {
           "path": "docs/research/2026-09-07-h19-retail-protocol.json",
           "sha256": "d2e7ae20be93b96e0f2553ee8bb1642a71739edc427450260411a505de067599",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -450,37 +450,37 @@
         {
           "path": "docs/research/2026-09-07-prior-hypotheses-review.json",
           "sha256": "3f6fd20369e7a74878966e16fc9df606e7e429cc6d9054a1f133bc590c9787fd",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-profit-validation-protocol.json",
           "sha256": "3c83e6c1e5a8303a6f16a844ca4ff370f9fa21fc52c2c25c33f083f07641c48e",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-real-integration-protocol.json",
           "sha256": "80228ccf3bdd2bf9912e4e642dbee7bd740a6e46252ecfaba7f5b1a1f2c20d5b",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-reorganization-protocol.json",
           "sha256": "c8b62330c52e06842cc91905753980e582d320148c6635936548b97a3c36285b",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-value-discovery-protocol.json",
           "sha256": "e52cd53a3e985976d213470433e04d37ce436a25aeb6e68dd386bdfa4163b019",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-value-repair-protocol.json",
           "sha256": "ce091551c09b5d64e45e125125f10802f410e15ee1183d9613653f3a269befad",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -492,19 +492,19 @@
         {
           "path": "docs/research/2026-09-08-feasibility-protocol.json",
           "sha256": "ada3204d56e1b77ca6d9d0c8d9c7084048f473e7ac5d7fa127835ee39eb92a05",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-08-h20-implementation-protocol.json",
           "sha256": "521a2cf4d3a5210df9e4c4f9336ec3a9e43b5d96ccb35427820fcf75b9a7e04e",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-08-h20-profit-test-protocol.json",
           "sha256": "a914124230bea0e416542e90279d86a24997f475b1da5ebc98bfa718850e5c98",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -516,7 +516,7 @@
         {
           "path": "docs/research/2026-09-08-h20-remediation-protocol.json",
           "sha256": "7febff66da364faf1d2811fa973e788b90880d2fe42b48ef71839b8b7dbf30d3",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -534,25 +534,25 @@
         {
           "path": "docs/research/2026-09-08-source-closure-protocol.json",
           "sha256": "da8b91a7a263d9870822c58af85b4a47f2c051e932ecb3099fea986ba4456c49",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-09-data-completion-r2-protocol.json",
           "sha256": "ffc667e1c5c1e2d06fff87470866607e40c189c0cc1612ce9482c9b7bd0f9c2c",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-09-h21-forward-plan.json",
           "sha256": "9f39f68a5f1887aabd7d2dcba6681374a0bf4d44d5482c91cfb43d6e190a659c",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-09-h21-protocol.json",
           "sha256": "5721d7405af2f398448be3966eeb832deda06f7aa936e5244059ae7ca86797fb",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -564,7 +564,7 @@
         {
           "path": "docs/research/2026-09-09-h21-source-closure-protocol.json",
           "sha256": "6ec703ba840d9badd2e20514d36fe2f63ccedf92a0a7d52cf597bcaae57fb4ef",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -576,7 +576,7 @@
         {
           "path": "docs/research/2026-09-10-profit-validation-r5-protocol.json",
           "sha256": "cd8c8cfbadc2edcba5b5e91502df9df7c570b6f31bf2cd943efd23037cc80ea0",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -588,7 +588,7 @@
         {
           "path": "docs/research/2026-09-10-r6/protocol.json",
           "sha256": "7cb9562be2e4692d0437fc5f579c3268c5ec20a709b929dd038be08fb2265f71",
-          "mode": "document",
+          "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
@@ -610,7 +610,49 @@
           "sha256": "9637f6af1917854fd298a983b41999c87bb9ec3c2a1d238149d44a08070d391b",
           "mode": "observation_jsonl",
           "identity_key": "observation_revision",
-          "purpose": "Revisões originais e corrigidas da observação H17; identidade e relógio nativos, sem promover veredicto"
+          "purpose": "Observações nativas H17, revisões 1 e 2; preservar datas, denominadores, estados e ausência de Proof"
+        },
+        {
+          "path": "research/session-20260907/deliverables/h17-correction-and-integrity.json",
+          "sha256": "11d0f893d3c36171125cef17014dc6872c4e365a0c47952682a96b05d1bd41ad",
+          "mode": "json_document",
+          "purpose": "Relação entre observações H17; quatro células corrigidas e 5395 preservadas"
+        },
+        {
+          "path": "research/session-20260907/deliverables/h17-reproduction-verification.json",
+          "sha256": "4aef8f3b4ae4179b998bfe4ccd5e9043c513e1edb4bcfb8698e47eb48d7a685e",
+          "mode": "json_document",
+          "purpose": "Recibo histórico de reprodução H17; não equivale a reprodução atual ou replicação independente"
+        },
+        {
+          "path": "docs/research/2026-09-07-value-observations.jsonl",
+          "sha256": "7864c687cd5a6cd7d354e30c4eaf22c75ec72f2e94aaf53d985178afe133762a",
+          "mode": "jsonl",
+          "purpose": "Observações e revisões H18/H19 por protocolo; manter configurações e avaliações separadas"
+        },
+        {
+          "path": "docs/research/2026-09-07-reorganization-results.md",
+          "sha256": "c9af1ac0b2044fefcaf29cc3e085bfc965415c774ec760a58b33b46dcb0b254b",
+          "mode": "document",
+          "purpose": "Revisão de H18/H19 com direitos societários; mudança explícita do estimando, sem lucro executável"
+        },
+        {
+          "path": "docs/research/2026-09-07-profit-validation-results.md",
+          "sha256": "9b3a86d879df9ff1afd7aebc47aa2c5fe0c3b8ed74b8bb20ab2b438b9285e044",
+          "mode": "document",
+          "purpose": "Incerteza descritiva H18/H19 e limites da comparação econômica posterior à descoberta"
+        },
+        {
+          "path": "docs/research/2026-09-07-h19-continuous-decision.json",
+          "sha256": "9493d59362a0c32bb2d99f6c1bba66bd11b67c4f97567ac344b6ea4a1dcaa690",
+          "mode": "json_document",
+          "purpose": "Decisão H19: implementação testada, histórico não executado, lucro desconhecido (null, não zero) e bloqueio de evidências"
+        },
+        {
+          "path": "docs/research/2026-09-09-h21-observations.jsonl",
+          "sha256": "aace7cbe34b3fd234ca0dd8d02170969de10ab96b5ebd8e58399492a01f6c84c",
+          "mode": "jsonl",
+          "purpose": "Registro START/COMPLETE H21 com hashes e oito avaliações de capital em um histórico"
         }
       ]
     }

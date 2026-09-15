@@ -10,6 +10,7 @@ from cain.llm.streaming import require_local
 from cain.research.grounding import structured, cards
 from cain.research.inspection import inspect
 from cain.research.field_review import field_reply, resolve_reply
+from cain.research.claim_tables import claim_table_reply
 
 
 def fingerprint(service, scope):
@@ -185,6 +186,23 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
             else 'abstained_no_received_evidence')
         return {"role": role, "status": status, "facts": facts, "coverage": coverage,
                 "generation": {"called": False}, "model_calls": 0, "independent_models": False}
+    table_reply = claim_table_reply(excerpts)
+    if table_reply is not None:
+        explanation = resolve_reply(service, scope, excerpts, table_reply)
+        for key, entry in excerpts.items():
+            for part in entry.get('source_context', []):
+                source = service.evidence(scope, part['reference'])
+                if source['text'][part['start']:part['end']] != part['quote']:
+                    raise ValueError('Claim table context changed')
+                explanation['source_quotes'].append({
+                    'excerpt_id': key, 'evidence_id': part['reference'], 'quote': part['quote'],
+                    'start': part['start'], 'end': part['end'], 'support': source,
+                    'context_for': key, 'context_kind': part['kind']})
+        guard(service, scope, snapshot)
+        return {'role': role, 'status': 'literal_claim_table', 'facts': facts,
+                'explanation': explanation, 'coverage': coverage,
+                'generation': {'called': False, 'prompt_version': 'literal-claim-table/1'},
+                'model_calls': 0, 'independent_models': False, 'memory_promoted': False}
     literal = field_reply(excerpts, question, source_id) if role == 'support' else None
     if literal is not None:
         explanation = resolve_reply(service, scope, excerpts, literal)
@@ -260,10 +278,15 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
         "Each row is about its own subject; the separate header supplies only its column labels. "
         "JSON paths distinguish status from trial names. Preserve their exact identities. "
         "Preserve quantities, signs and negations: a limitation does not turn presence into absence. "
+        "Explicitly label a source hypothesis as a hypothesis, never as an observed result. "
+        "Keep technical terminology: features means model input variables, not resources. "
+        "Unproven feature availability does not establish a resource shortage. "
         "Distinguish hypotheses from observed results. A blocked or unexecuted comparison provides no measurement of an effect; it does not establish a zero effect. "
         "But insufficient evidence or interrupted collection does NOT mean nothing was executed: "
         "say unexecuted only when that source explicitly says so. "
         "Date historical statements using their quoted headings/text; earlier non-execution is not current non-execution. "
+        "When excerpts conflict, report the conflict unless an explicit revision resolves it; do not choose status by file order. "
+        "An exit code belongs to its named command and run; a reproduced block is not a successful experiment. "
         "Describe what the received sources report, not verified current truth. "
         "Unknown clocks and missing detail do not prove absence in the complete source. "
         "Keep undefined technical labels verbatim. Never invent a cause or a data/gate conclusion. "
@@ -335,7 +358,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                   "analysis": {"type": "string"}}}
     prompt = context_text()
     metadata = {"called": True, "model": getattr(provider, "model", None),
-                "prompt_version": "addressable-review/16", "prompt_hash": digest((instruction + prompt).encode())}
+                "prompt_version": "addressable-review/17", "prompt_hash": digest((instruction + prompt).encode())}
     try:
         guard(service, scope, snapshot)
         raw = provider.generate_json(prompt, instruction, schema)

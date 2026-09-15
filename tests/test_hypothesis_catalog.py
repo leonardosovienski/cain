@@ -49,6 +49,20 @@ def test_source_clocks_are_not_guessed():
         assert catalog.source_clock(value) is None
 
 
+def test_jsonl_observations_are_separate_literal_objects():
+    text = ' {"family":"Z17","revision":1,"status":"NOT_RUN"}\r\n\n {"family":"Z17","revision":2,"status":"INCONCLUSIVE"}\n'
+    units = list(catalog.occurrences(text, {'mode': 'jsonl'}))
+    assert [u[0] for u in units] == ['line-0001', 'line-0003']
+    assert [json.loads(text[a:b])['revision'] for _, a, b, _ in units] == [1, 2]
+    assert all(status == 'NOT_EXTRACTED' for _, _, _, status in units)
+
+
+@pytest.mark.parametrize('text', ['{"x":1,"x":2}', '{"x":NaN}', '{} {}', '[]', '{"a":\n1}'])
+def test_jsonl_rejects_ambiguous_and_non_object_lines(text):
+    with pytest.raises(ValueError):
+        list(catalog.occurrences(text, {'mode': 'jsonl'}))
+
+
 def test_roundtrip_duplicate_drift_and_new_revision(tmp_path, monkeypatch):
     root = tmp_path / 'producer'
     root.mkdir()
@@ -91,6 +105,22 @@ def test_roundtrip_duplicate_drift_and_new_revision(tmp_path, monkeypatch):
 def test_rejects_malformed_ledger(text):
     with pytest.raises(ValueError):
         list(catalog.array_spans(text))
+
+
+def test_large_json_document_remains_one_literal_parseable_object():
+    text = '\r\n' + json.dumps({'padding': 'x' * 13000, 'families': [{'id': 'Z17'}]}) + '\r\n'
+    units = list(catalog.occurrences(text, {'mode': 'json_document'}))
+    assert len(units) == 1
+    _, start, end, status = units[0]
+    assert json.loads(text[start:end])['families'][0]['id'] == 'Z17'
+    assert start == 2 and end == len(text) - 2
+    assert status == 'NOT_EXTRACTED'
+
+
+@pytest.mark.parametrize('text', ['{} {}', '[]', '{"x":1,"x":2}', '{"x":NaN}'])
+def test_json_document_rejects_ambiguous_or_non_object_input(text):
+    with pytest.raises(ValueError):
+        list(catalog.occurrences(text, {'mode': 'json_document'}))
 
 
 @pytest.mark.parametrize('text', [
