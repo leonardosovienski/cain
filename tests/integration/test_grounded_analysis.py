@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/15'
+    assert result['generation']['prompt_version'] == 'addressable-review/16'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -391,3 +391,38 @@ def test_oversized_review_is_rejected_instead_of_accepted_as_a_grammar_cut_fragm
     assert result['error_code'] == 'INVALID_REVIEW_OUTPUT'
     assert result['explanation'] is None
     assert result['facts']['records']
+
+
+@pytest.mark.parametrize("wording", ["razão do encerramento", "motivo", "closure reason"])
+def test_multi_identity_closure_reason_survives_short_status_cards(wording):
+    evidence = {
+        'state': {'text': json.dumps({'hypotheses': {'H41': 'INSUFFICIENT', 'H42': 'NO_GO'},
+                                     'hypothesis_trials': {'H41': 'trial-a', 'H42': 'trial-b'}})},
+        'summary': {'text': '# H41\nStatus: INSUFFICIENT.\n\n# H42\nStatus: NO_GO.'},
+        'reason': {'text': '# H41\nEncerramento: coleta interrompida por decisão do responsável, devido ao risco de exceder o limite contratado.'},
+        'other': {'text': '# H42\nResultado: NO_GO; direção oposta na amostra relatada.'},
+    }
+    selected, coverage = cards(evidence, 'Distinga H41 e H42 quanto ao estado e ' + wording + '.')
+    text = ' '.join(c['quote'] for c in selected.values())
+    assert 'limite contratado' in text
+    assert 'H41' in text and 'H42' in text
+    assert 'NO_GO' in text
+    assert coverage['used_bytes'] <= 2200
+    assert len(selected) <= 8
+
+
+@pytest.mark.parametrize('question', ['Distinga o estado de Z17.', 'Diferencie os relatos de Z17.',
+                                     'Reconcilie Z17 com a observação.'])
+def test_portuguese_comparison_request_has_explicit_language_instruction(setup, question):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('Z17',), text='Z17 permanece inconclusivo.'))
+    model = PointerModel()
+    captured = []
+    def capture(prompt, instruction, schema):
+        captured.append(instruction)
+        return json.dumps({'citations': [next(iter(json.loads(prompt)['excerpts']))],
+                           'analysis': 'Z17 permanece inconclusivo.'})
+    model.generate_json = capture
+    result = review(service, scope, question, model, role='synthesis')
+    assert result['status'] == 'generated'
+    assert captured[0].startswith('Answer in Brazilian Portuguese,')

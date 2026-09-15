@@ -1,3 +1,5 @@
+> Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
+
 # CAIN — conversa, memória e pesquisa local
 
 CAIN 0.4.12 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.

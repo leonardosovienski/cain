@@ -245,7 +245,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                                    **({"json_pointer": entry["json_pointer"]} if "json_pointer" in entry else {})}
                             for key, entry in excerpts.items()},
                "prior_proposals_untrusted": (previous or [])[-2:]}
-    language = "Brazilian Portuguese" if re.search(r"o que|qual|evidência|relatório|fonte|motivo|limitação|autoriza", question.casefold()) else "the language of the user's question"
+    language = "Brazilian Portuguese" if re.search(r"o que|qual|evidência|relatório|fonte|motivo|limitação|autoriza|distinga|diferencie|reconcilie|explique|houve|razão|são", question.casefold()) else "the language of the user's question"
     instruction = (
         "Answer in " + language + ", at most 1000 characters, using only explicit facts in the cited excerpts. "
         "Plan a compact answer before writing: one short clause per requested identity or fact. "
@@ -260,7 +260,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
         "Each row is about its own subject; the separate header supplies only its column labels. "
         "JSON paths distinguish status from trial names. Preserve their exact identities. "
         "Preserve quantities, signs and negations: a limitation does not turn presence into absence. "
-        "Distinguish hypotheses from observed results. A blocked or unexecuted comparison supports no observed effect. "
+        "Distinguish hypotheses from observed results. A blocked or unexecuted comparison provides no measurement of an effect; it does not establish a zero effect. "
         "But insufficient evidence or interrupted collection does NOT mean nothing was executed: "
         "say unexecuted only when that source explicitly says so. "
         "Date historical statements using their quoted headings/text; earlier non-execution is not current non-execution. "
@@ -335,7 +335,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                   "analysis": {"type": "string"}}}
     prompt = context_text()
     metadata = {"called": True, "model": getattr(provider, "model", None),
-                "prompt_version": "addressable-review/15", "prompt_hash": digest((instruction + prompt).encode())}
+                "prompt_version": "addressable-review/16", "prompt_hash": digest((instruction + prompt).encode())}
     try:
         guard(service, scope, snapshot)
         raw = provider.generate_json(prompt, instruction, schema)

@@ -1,3 +1,5 @@
+> Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
+
 # Continuação corrente — 15/09/2026
 
 V6 congelada em QA local, confirmação em andamento e sem aprovação geral.
