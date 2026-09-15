@@ -1,6 +1,8 @@
 import json
+import pytest
 
-from cain.common import Signal
+from cain.common import Signal, Message
+from cain.agents import ConversationAgent
 from cain.runtime import build_cain
 from cain.research.grounding import cards
 
@@ -54,6 +56,28 @@ def test_question_metadata_is_not_an_identifier_fact(tmp_path):
         runtime.identity.observe('qa','Qual é o identificador do experimento?',{'session_id':'s','decision_id':'technical-only'})
         context=runtime.identity.context_for('qa','identificador experimento',session_id='s')
         assert 'doc_id' not in context and 'technical-only' not in context
+
+
+@pytest.mark.parametrize('question', ['Explique melhor a escolha.', 'Explicar melhor a escolha.', 'Explain the choice further.'])
+def test_explanation_has_the_actual_previous_answer(tmp_path, question):
+    with build_cain(tmp_path/'qa.db') as runtime:
+        episode(runtime, 'Compare consulta conjunta e separação mensal.',
+                'A escolha depende do objetivo de consulta.')
+        context=runtime.identity.context_for('qa',question,session_id='s')
+        assert 'A escolha depende do objetivo de consulta.' in context
+        assert '"assistant"' in context
+
+
+def test_explicit_calculation_does_not_add_another_task():
+    class Capture:
+        def generate(self, prompt, context):
+            self.prompt=prompt
+            return 'Resposta do provedor.'
+    llm=Capture()
+    request='Aprofunde a comparação: calcule custos por unidade e diferença percentual.'
+    ConversationAgent(llm).handle(Message('conversa','Contexto autorizado.',request,
+        {'route_reason':'llm_classifier:conversa_contextual'}))
+    assert llm.prompt==request
 
 
 def test_shorthand_claims_cover_each_requested_section():

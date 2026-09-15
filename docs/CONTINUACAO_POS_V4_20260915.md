@@ -1,6 +1,14 @@
 # Continuação após V4 — 15/09/2026
 
-## Identidade e escopo
+## Estado corrente: V7 em confirmação
+
+A V6 foi preservada no checkpoint local `3397116293bc37898fccfc49234f4df27222601f`. As mudanças V7 permanecem locais: reconhecer a forma `Explique` ao selecionar a resposta anterior e não acrescentar outra tarefa de elaboração a um pedido que já especifica cálculos. Wheel V7: `dced742a8e16dabd8b7ec906f6a9da99a20fa154c7497beb55a8ff303f914392`; 70 arquivos idênticos entre fonte, wheel e QA não editável. Engenharia: 825 testes aprovados, um pulado, dois avisos; lint e instalação aprovados. Mesmas dependências, modelo e parâmetros.
+
+Confirmação funcional V7 em andamento, sem aprovação geral. Evidências separadas em `readiness-continuation-20260915/qa-v7`; os resultados V6 abaixo são históricos. Os 46 episódios gerais, 13 científicos, controles naturais de escopo e navegador têm critérios separados e lacrados. Nem todo controle é novo: as regressões e os controles conhecidos estão identificados. Nenhuma instalação principal ou publicação ocorreu.
+
+O contador antigo `observed_generation_count` inclui chamadas de disponibilidade `/api/tags`; os recibos brutos são preservados e a contagem de gerações reais deve filtrar `/api/generate` e conclusão `done`, mantendo desconhecidas as conclusões não comprovadas.
+
+## Histórico V6: identidade e escopo
 
 - Checkout: `C:/CAIN/work/readiness-main-20260914`, branch `fix/readiness-main-20260914`.
 - Checkpoint local V4: `ad21220`; base anterior `8d4297a575ec1231ad7ec909faa8be0ea795e546`.

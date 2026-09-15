@@ -442,10 +442,16 @@ class ConversationAgent:
         social = tokens(message.payload)
         english = message.metadata.get('preferences', {}).get('language') == 'en'
         prompt = _generation_prompt(message)
-        if message.metadata.get('route_reason') == 'conversation_rule:followup' or (
+        followup = message.metadata.get('route_reason') == 'conversation_rule:followup' or (
             message.metadata.get('route_reason', '').startswith('llm_classifier:')
             and re.search(r'\b(?:detalh|aprofund|desenvolv|elaborat|explain)', message.payload, re.I)
-        ):
+        )
+        explicit_calculation = re.search(
+            r'\b(?:calcul\w*|cálcul\w*|compute|percent\w*|porcent\w*|quantifi\w*)\b'
+            r'|\b(?:custo|cost)\s+(?:por|per)\b', message.payload, re.I)
+        # A concrete calculation request already defines the elaboration. Adding
+        # another task to invent a detail can introduce unsupported extrapolation.
+        if followup and not explicit_calculation:
             prompt += (
                 "\n\nExplain the reasoning behind the previous answer and add a concrete "
                 "detail or relationship from the conversation. Do not merely repeat its conclusion."

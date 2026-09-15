@@ -214,7 +214,7 @@ class IdentityService:
         # later answer even when that prose is explicitly labelled untrusted.
         use_assistant = bool(re.search(
             r'\b(?:detalh\w*|aprofund\w*|continu\w*|elabor\w*|reescrev\w*|'
-            r'revis\w*|reformul\w*|resposta|answer|wrote|escreveu|explic\w*)\b',
+            r'revis\w*|reformul\w*|resposta|answer|wrote|escreveu|expli[cq]\w*|explain\w*)\b',
             query, re.I))
         memories = []
         selected = []
