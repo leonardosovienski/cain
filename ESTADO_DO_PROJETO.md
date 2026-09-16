@@ -1,5 +1,9 @@
 # Estado CAIN — 16/09/2026
 
+Rodada atual: [campanha Stocks no CAIN](docs/STOCKS_CAMPAIGN_20260916.md).
+Projeto local com 112 documentos, 22 jobs e reproduções históricas H21/H22 conferidas.
+Validação econômica geral e interpretação autônoma continuam limitadas.
+
 Consulte a [prontidão Stocks](docs/STOCKS_STUDY_READINESS_20260915.md) para código,
 acervo, instalação, testes e limites de interpretação. As correções anteriores
 estão integradas pelas [PR #4](https://github.com/leonardosovienski/cain/pull/4) e

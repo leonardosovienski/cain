@@ -1,5 +1,7 @@
 # Documentação corrente
 
+- [Campanha Stocks: documentos, jobs e testes realizados](STOCKS_CAMPAIGN_20260916.md)
+
 - [Prontidão Stocks, acervo e estudos verificáveis](STOCKS_STUDY_READINESS_20260915.md)
 
 - [Integração Stocks com main — PR #3](INTEGRACAO_STOCKS_MAIN_20260915.md)
