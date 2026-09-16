@@ -103,3 +103,41 @@ Suíte local: 868 aprovados, 1 pulado e 1 timeout de 30 segundos no teste
 pressão de recursos. Reexecução do arquivo completo: 10 aprovados. O teste novo
 de seleção integra os oito testes de identidade aninhada aprovados. Ruff e
 `git diff --check` passaram. Logs locais preservam inclusive o timeout.
+
+
+## Fechamento técnico e limite de uso — 16/09/2026
+
+A [PR #5](https://github.com/leonardosovienski/cain/pull/5) foi integrada na main
+`e8eb3c1961c60c98b8d10388daf1599281f2f3c5`. CI de push `35150278288` e de PR
+`35150304553` aprovadas nas quatro versões Python 3.11–3.14, com suíte completa,
+Ruff e verificação do wheel instalado fora do checkout.
+
+`primary-final-verification.json` confirma o runtime instalado, os 71 arquivos,
+88 registros recebidos e trechos recuperáveis para 22/22 identidades H1–H22.
+Não comprova que todo insumo do produtor foi recebido. Workflows antigos sem
+processo vivo foram conciliados como cancelados, sem apagar etapas ou evidências.
+
+### Piloto real encerrado: 3 respostas, 0 aprovações semânticas gerais
+
+O piloto `bounded-pilot-r3` usou qwen3.5:4b, temperatura 0, seed 42, contexto 6144,
+768 tokens máximos e `think=false`. Entradas, respostas brutas, metadados, hashes
+e avaliação manual estão preservados. As três respostas passaram no formato,
+mas a comparação semântica identificou:
+
+| Caso | Limite observado |
+|---|---|
+| H1 | Omitiu `INCONCLUSIVE_METHOD` e não preservou claramente a distinção entre veredicto histórico e confiabilidade |
+| H17 | Contexto final reteve somente a revisão 2; resposta não cobre ambas e amplia a ausência de evidência além dos trechos selecionados |
+| H22 | Preservou 24/22/2 avaliações e 11 pares, mas confundiu incremento negativo com critério de lucro absoluto e validação futura com motivo histórico |
+
+A tentativa anterior com contexto 4096 foi barrada antes da inferência pelo
+limite conservador de entrada (3072 bytes após reservas); não entra como chamada
+real. A tentativa interrompida por concorrência também permanece no denominador
+de tentativas. O servidor próprio foi encerrado ao final; nenhuma automação criada.
+
+**Uso validado nesta entrega:** leitura literal dos campos testados, consulta de
+fontes e registro rastreável. **Ainda não aprovado:** estudo autônomo com conclusões
+livres do modelo, generalização de desempenho econômico ou execução de backtests.
+O próximo incremento precisa balancear revisões no contexto final e validar
+explicações causais; as falhas semânticas acima não são declaradas corrigidas.
+Nenhum resultado científico, banco do produtor, protocolo ou arquivo local foi apagado.

@@ -2,7 +2,10 @@
 
 Consulte a [prontidão Stocks](docs/STOCKS_STUDY_READINESS_20260915.md) para código,
 acervo, instalação, testes e limites de interpretação. As correções anteriores
-estão integradas pela [PR #4](https://github.com/leonardosovienski/cain/pull/4).
+estão integradas pelas [PR #4](https://github.com/leonardosovienski/cain/pull/4) e
+[PR #5](https://github.com/leonardosovienski/cain/pull/5).
+O piloto real encerrou com três respostas e nenhuma aprovação semântica geral;
+os motivos estão no relatório de prontidão.
 
 O acervo principal recebeu 48 fontes e contém 88 registros Stocks: 87 admitidos
 nesta rodada e o registro anterior preservado. A leitura literal de H1, das
