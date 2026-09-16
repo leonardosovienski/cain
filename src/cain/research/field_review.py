@@ -4,7 +4,7 @@ import re
 import unicodedata
 from research_snapshot import digest
 
-VERSION = 'literal-json-field-review/2'
+VERSION = 'literal-json-field-review/3'
 ALIASES = {
     'state': {'estado', 'state', 'status'},
     'trial': {'trial', 'trials', 'ensaio'},
@@ -66,6 +66,9 @@ def requested_fields(question, identity):
 
 
 def field_reply(excerpts, question, identity):
+    native = native_field_reply(excerpts, question, identity)
+    if native:
+        return native
     fields = requested_fields(question, identity)
     if not fields or not any('json_pointer' in row for row in excerpts.values()):
         return None
@@ -105,3 +108,51 @@ def field_reply(excerpts, question, identity):
             lines.append(LABELS[field] + ': não localizado nos trechos selecionados; isso não demonstra inexistência na fonte completa.')
     return {'fields': result, 'text': '\n'.join(lines), 'method': VERSION,
             'selected_ids': list(excerpts), 'decomposition': 'explicit_multi_field_lookup_only'}
+
+
+def native_field_reply(excerpts, question, identity):
+    """Expose named machine fields without converting their values into a verdict.
+
+    Two explicit snake_case names opt into a conservative literal response,
+    including when the question asks for an interpretation. Missing fields are
+    missing from the selected excerpts only. Ordinary prose keeps its own path.
+    """
+    names = list(dict.fromkeys(re.findall(r'\b[a-zA-Z][a-zA-Z0-9]*_[a-zA-Z0-9_]+\b', question)))
+    if len(names) < 2:
+        return None
+    words = set(re.findall(r'\w+', question))
+    found = {name: [] for name in names}
+    for key, row in excerpts.items():
+        pointer = row.get('json_pointer')
+        if pointer is None:
+            continue
+        path = [p.replace('~1', '/').replace('~0', '~') for p in pointer.split('/')[1:]]
+        if not path or (identity and identity not in path):
+            continue
+        name = path[-1]
+        if name not in words:
+            continue
+        try:
+            value = json.loads('{' + row['quote'] + '}')
+        except ValueError:
+            continue
+        if list(value) != [name]:
+            continue
+        found.setdefault(name, []).append({'excerpt_id': key, 'json_pointer': pointer, 'value': value[name]})
+    if not any(found.values()):
+        return None
+    fields, lines = [], ['Leitura literal dos campos selecionados. A interpretação solicitada não foi verificada; estes valores não são convertidos em conclusão sobre execução, sucesso ou resultado.']
+    for name, values in found.items():
+        state = 'reported' if values else 'not_located_in_selected_excerpts'
+        if len({json.dumps(v['value'], sort_keys=True) for v in values}) > 1:
+            state = 'multiple_reported_values'
+        fields.append({'field': name, 'status': state, 'values': values})
+        if values:
+            for value in values:
+                lines.append(value['json_pointer'] + ': ' + json.dumps(value['value'], ensure_ascii=False)
+                             + ' [' + value['excerpt_id'] + '].')
+        else:
+            lines.append(name + ': não localizado nos trechos selecionados; isso não demonstra inexistência na fonte completa.')
+    lines.append('Versões e caminhos são apresentados separadamente; nenhuma versão foi escolhida como atual.')
+    return {'fields': fields, 'text': '\n'.join(lines), 'method': VERSION,
+            'selected_ids': list(excerpts), 'decomposition': 'native_fields_interpretation_abstained'}

@@ -1,5 +1,12 @@
 # Continuidade do CAIN
 
+## Correção Stocks isolada — 15/09/2026
+
+Veja [a remediação de leitura e contexto](docs/STOCKS_REMEDIATION_20260915.md)
+na branch `checkpoint/stocks-remediation-20260915`. Publicação autorizada, com
+preservação integral dos arquivos locais; sem merge ou instalação principal.
+A branch isola as correções Stocks das tarefas concorrentes no checkout original.
+
 ## Checkpoint local para o próximo chat — 14/09/2026
 
 **Ponto de retomada:** branch `checkpoint/conversa-v2-parcial-20260914`, derivada de `main` em `3f88a2535f08c70bce561cd3822e7558cebec326`. O commit de checkpoint preserva a composição acumulada, não é release nem aprovação integral. Obtenha seu SHA com `git rev-parse checkpoint/conversa-v2-parcial-20260914`. Não houve merge, push, instalação ou promoção. A instalação principal não foi atualizada por esta continuação nem por este fechamento. Os relatos anteriores abaixo são históricos e não descrevem a branch atual.

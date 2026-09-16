@@ -65,6 +65,29 @@ def heading_spans(text, start):
     return [(a, b) for _, a, b in stack]
 
 
+def document_preamble_span(text, start):
+    """Keep the leading scope across sibling titles at the document's top level.
+
+    Preserve it literally, without classifying its truth or inferring that one
+    dated statement supersedes another. Oversized context must be omitted with
+    its candidate, not silently stripped from a historical assertion.
+    """
+    headings = list(markdown_headings(text))
+    top = headings[0][0] if headings else 1
+    titles = [(a, b) for level, a, b, _ in headings if level <= top]
+    if len(titles) >= 2 and not text[:titles[0][0]].strip() and start >= titles[1][0]:
+        # A sibling hypothesis is not the scope of another named hypothesis.
+        def identity(a, b):
+            token = re.match(r'#+\s+([A-Za-z][\w-]*)', text[a:b])
+            return token[1].casefold() if token and any(c.isdigit() for c in token[1]) else None
+        first = identity(*titles[0])
+        current = next((identity(a, b) for a, b in reversed(titles) if a <= start), None)
+        if first and current and first != current:
+            return None
+        return 0, titles[1][0]
+    return None
+
+
 def document_contexts(evidence):
     """Reconstruct heading context only across contiguous same-publication parts.
 
@@ -111,8 +134,11 @@ def bounded_prose_spans(text, source_id, budget):
 
 def matches_identity(relation, source_id):
     if 'json_pointer' in relation:
-        return source_id in [part.replace('~1', '/').replace('~0', '~')
+        return (source_id in [part.replace('~1', '/').replace('~0', '~')
                              for part in relation['json_pointer'].split('/')[1:]]
+                or any(part['decoded_subject'] in {'id', 'family', 'hypothesis', 'trial_id', 'name'}
+                       and part['decoded_object'] == source_id
+                       for part in relation.get('record_context', [])))
     return relation['subject'] == source_id
 
 
@@ -183,7 +209,9 @@ def structured(evidence, source_id=None, *, addressable=False):
                             value_start = ws(ws(end) + 1)
                             value, value_end = decoder.raw_decode(text, value_start)
                             pointer = path + '/' + key.replace('~', '~0').replace('/', '~1')
-                            if isinstance(value, (dict, list)):
+                            flat_array = (addressable and isinstance(value, list) and
+                                          all(not isinstance(v, (dict, list)) for v in value))
+                            if isinstance(value, (dict, list)) and not flat_array:
                                 visit(value_start, pointer)
                             else:
                                 quote = text[start:value_end]
@@ -211,6 +239,16 @@ def structured(evidence, source_id=None, *, addressable=False):
                                 pos = ws(pos + 1)
                         return pos + 1
                 visit(ws(0), '')
+                # Scalar metrics from an observation must retain the literal
+                # record identity and revision. No clock ordering or scientific
+                # status is inferred from these field names.
+                labels = {'id', 'family', 'hypothesis', 'trial_id', 'name', 'mode',
+                          'observation_revision', 'revision', 'status', 'protocol_id',
+                          'observed_at_utc', 'recorded_at_utc', 'at_utc'}
+                record_context = [r.copy() for r in entries
+                                  if r['json_pointer'].count('/') == 1 and r['decoded_subject'] in labels]
+                for entry in entries:
+                    entry['record_context'] = record_context
             except (ValueError, RecursionError, IndexError):
                 issues.append({"reference": ref, "status": "ambiguous_or_invalid_json"})
                 continue
@@ -256,14 +294,20 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     """Select bounded exact excerpts, retaining source offsets and disclosed coverage."""
     candidates, seen, focused_paths, issues = [], set(), {}, []
     contexts, owners, exact_targets = {}, {}, set()
+    missing_document_context = set()
     documents = document_contexts(evidence)
+    # A source path explicitly named by the caller is a document filter, not an
+    # inferred hypothesis identity. Keep every revision of that source.
+    named_sources = {item['source'] for item in evidence.values()
+                     if item.get('source') and item['source'] in question}
     if type(max_bytes) is not int or not 1 <= max_bytes <= 2200 or type(max_cards) is not int or not 1 <= max_cards <= 8:
         raise ValueError('Invalid evidence budget')
     terms = terms_of(question) - set(
         'o a os as um uma de do da dos das em no na nos nas e ou que qual quais '
         'sobre para pelo pela por se com como the a an and or of in on to for '
         'what which is are can does do report relatorio permite concluir '
-        'conclusion conclude forte stronger mais more impede impedem'.split())
+        'conclusion conclude forte stronger mais more impede impedem '
+        'permanece permanecem remain remains remained'.split())
     # Explicit alphanumeric identifiers outrank generic words, regardless of
     # project/domain. This is lexical retrieval, not an inferred entity mapping.
     anchors = [token for token in re.findall(r'\w+(?:[-_]\w+)*', question)
@@ -281,6 +325,10 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     partial, examined, decisions = False, 0, []
     for ref, item in evidence.items():
         text = item['text']
+        if named_sources and item.get('source') not in named_sources:
+            decisions.append({'reference': ref, 'start': 0, 'end': len(text),
+                              'decision': 'explicit_source_mismatch'})
+            continue
         if examined >= 100 or len(text.encode()) > 1_000_000:
             partial = True
             continue
@@ -308,10 +356,16 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                         a, b = header
                         contexts[(ref, start, end)] = [dict(kind='table_header', start=a, end=b,
                                                            quote=text[a:b])]
+                for label in relation.get('record_context', []):
+                    if (label['start'], label['end']) != (start, end):
+                        contexts.setdefault((ref, start, end), []).append(dict(
+                            kind='json_record_context', reference=ref, start=label['start'],
+                            end=label['end'], quote=label['quote']))
                 if (start, end) in spans:
                     continue
                 spans.add((start, end))
                 value = relation['quote'] + ' ' + relation.get('json_pointer', '')
+                value += ' ' + ' '.join(p['quote'] for p in relation.get('record_context', []))
                 score = relevance(value)
                 score += 2000 * sum(matches_identity(relation, token) for token in anchors)
                 if any(matches_identity(relation, token) for token in anchors):
@@ -345,10 +399,11 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         def context_part(a, b, kind):
             containing = next(((lo, r) for lo, hi, r in parts if lo <= a and b <= hi), None)
             if containing is None:
-                return  # do not pretend a cross-boundary heading is one literal quote
+                return False  # do not pretend cross-boundary context is one literal quote
             lo, context_ref = containing
             contexts.setdefault((ref, start, end), []).append(dict(
                 kind=kind, reference=context_ref, start=a-lo, end=b-lo, quote=text[a:b]))
+            return True
         if quote.lstrip().startswith('|'):
             header = table_header_span(text, base + start, base + end)
             if header:
@@ -363,15 +418,26 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
             if (a, b) == (base + start, base + end):
                 continue
             context_part(a, b, 'section_heading')
+        preamble = document_preamble_span(text, base + start) if headings else None
+        if preamble and not context_part(*preamble, 'document_preamble'):
+            missing_document_context.add((ref, start, end))
     candidates.sort(key=lambda x: (-x[0], x[1], x[2]))
-    anchored_candidates = bool(anchors and any(anchor_score(c[4]) for c in candidates))
+    # Do not fill spare capacity with a one-word match when a more specific
+    # multi-term passage exists. Explicit identifiers retain their own rules.
+    specific_query_match = (not anchors and source_id is None and len(terms) >= 2 and
+                            any(len(terms & terms_of(c[4])) >= 2 for c in candidates))
+    def candidate_identity(ref, start, end, quote):
+        return anchor_score(quote + ' ' + ' '.join(p['quote'] for p in contexts.get((ref, start, end), [])))
+    anchored_candidates = bool(anchors and any(candidate_identity(c[1], c[2], c[3], c[4]) for c in candidates))
     selected, used = {}, 0
     for _, ref, start, end, quote in candidates:
         context = contexts.get((ref, start, end), [])
         size = len(quote.encode()) + sum(len(part['quote'].encode()) for part in context)
         owner = owners.get((ref, start, end))
-        reason = ('different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors}
-                  else 'question_identifier_mismatch' if anchored_candidates and not anchor_score(quote)
+        reason = ('missing_document_context' if (ref, start, end) in missing_document_context
+                  else 'weak_query_overlap' if specific_query_match and len(terms & terms_of(quote)) < 2
+                  else 'different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors}
+                  else 'question_identifier_mismatch' if anchored_candidates and not candidate_identity(ref, start, end, quote)
                   else 'overlapping_selected_context' if any(e['reference'] == ref and start < e['end'] and end > e['start'] for e in selected.values())
                   else 'card_limit' if len(selected) >= max_cards
                   else 'byte_budget' if used + size > max_bytes else 'selected')
@@ -398,7 +464,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_then_lexical_excerpts/7", "whole_source_read_claim": False,
+                      "selection": "identity_then_lexical_excerpts/8", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "request": question, "decomposition": "explicit_conjunctions_partial/1", "subrequests": subrequests,
                       "semantic_support": "not_verified", "budget_bytes": max_bytes,

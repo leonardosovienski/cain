@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/13'
+    assert result['generation']['prompt_version'] == 'addressable-review/14'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -293,6 +293,77 @@ def test_other_hypothesis_section_does_not_override_question_subject():
     selected, coverage = cards({'r': {'text': text}}, 'What conclusion for Z17?')
     assert all('significant negative' not in e['quote'] for e in selected.values())
     assert any(d['decision'] == 'different_section_identity' for d in coverage['decisions'])
+
+
+@pytest.mark.parametrize('heading', ['#', '##', '###'])
+def test_document_preamble_qualifies_later_top_level_historical_heading(heading):
+    preamble = (heading + ' Historical document\n\n'
+                'Z17 was later observed; the instructions below describe an earlier date.\n\n')
+    text = preamble + heading + ' Original runbook\n\nZ17 has never run.\n# Older root\n\nLegacy appendix.'
+    selected, _ = cards({'r': {'text': text}}, 'Has Z17 run?')
+    old = [entry for entry in selected.values() if entry['quote'] == 'Z17 has never run.']
+    assert old
+    assert any('later observed' in part['quote'] for part in old[0].get('source_context', []))
+    assert all(text[p['start']:p['end']] == p['quote'] for p in old[0]['source_context'])
+
+
+def test_leading_sibling_hypothesis_is_not_another_hypothesis_preamble():
+    text = '## Z91\n\nZ91 failed.\n\n## Z17\n\nZ17 not run.'
+    selected, _ = cards({'r': {'text': text}}, 'What is reported about Z17?')
+    assert selected
+    assert all('Z91' not in p['quote'] for e in selected.values()
+               for p in e.get('source_context', []))
+
+
+def test_specific_question_does_not_fill_budget_with_one_generic_word():
+    evidence = {'current': {'text': 'Real operation remains unavailable; limitations persist.'},
+                'old': {'text': 'A real diagnostic remains in the earlier study.'}}
+    selected, coverage = cards(evidence, 'What remains reported about real operation and limitations?')
+    assert selected and all(e['reference'] == 'current' for e in selected.values())
+    assert any(d['decision'] == 'weak_query_overlap' for d in coverage['decisions'])
+
+
+def test_explicit_document_path_keeps_revisions_and_excludes_other_sources():
+    evidence = {'old': {'text': '{"revision":1,"exit_code":2}', 'source': 'reports/decision.json'},
+                'new': {'text': '{"revision":2,"exit_code":2}', 'source': 'reports/decision.json'},
+                'other': {'text': '{"exit_code":0}', 'source': 'other/decision.json'}}
+    selected, coverage = cards(evidence, 'In reports/decision.json what is exit_code?')
+    assert {e['reference'] for e in selected.values()} == {'old', 'new'}
+    assert any(d['decision'] == 'explicit_source_mismatch' for d in coverage['decisions'])
+
+
+@pytest.mark.parametrize('values', ['[2, 2]', '[]', '[null, false, "UNKNOWN"]'])
+def test_flat_json_array_remains_a_literal_named_value(values):
+    text = '{"exit_codes": ' + values + ', "full_history_executed": false}'
+    selected, _ = cards({'r': {'text': text}}, 'What are exit_codes?')
+    arrays = [e for e in selected.values() if e.get('json_pointer') == '/exit_codes']
+    assert len(arrays) == 1
+    assert arrays[0]['quote'] == '"exit_codes": ' + values
+    assert text[arrays[0]['start']:arrays[0]['end']] == arrays[0]['quote']
+
+
+def test_document_preamble_is_not_silently_dropped_when_over_budget():
+    text = '# Scope\n\n' + ('Temporal qualification. ' * 130) + '\n\n# Old\n\nZ17 has never run.'
+    selected, coverage = cards({'r': {'text': text}}, 'Has Z17 run?')
+    assert all(entry['quote'] != 'Z17 has never run.' for entry in selected.values())
+    assert any(row['decision'] == 'byte_budget' for row in coverage['decisions'])
+
+
+def test_json_observation_fields_keep_root_identity_and_revision():
+    text = '{"family":"Z17","observation_revision":2,"observed_at_utc":"2024-02-03T12:00:00Z","summary":{"complete_months":59}}'
+    selected, _ = cards({'r': {'text': text}}, 'Z17 complete_months', 'Z17')
+    metric = [e for e in selected.values() if '"complete_months":59' == e['quote']]
+    assert metric
+    context = metric[0]['source_context']
+    assert any('"family":"Z17"' == c['quote'] for c in context)
+    assert any('"observation_revision":2' == c['quote'] for c in context)
+    assert all(text[c['start']:c['end']] == c['quote'] for c in context)
+
+
+def test_json_root_identity_does_not_leak_another_record():
+    text = '{"family":"Z91","status":"NOT_RUN"}'
+    selected, _ = cards({'r': {'text': text}}, 'Z17 status', 'Z17')
+    assert selected == {}
 
 
 def test_section_owner_survives_contiguous_chunks_but_not_another_publication():

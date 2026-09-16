@@ -254,6 +254,8 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
         "But insufficient evidence or interrupted collection does NOT mean nothing was executed: "
         "say unexecuted only when that source explicitly says so. "
         "Date historical statements using their quoted headings/text; earlier non-execution is not current non-execution. "
+        "When excerpts conflict, report the conflict unless an explicit revision resolves it; do not choose a current status by file order. "
+        "An exit code belongs to its named command and run; a reproduced block is not a successful experiment. "
         "Describe what the received sources report, not verified current truth. "
         "Unknown clocks and missing detail do not prove absence in the complete source. "
         "Do not invent a cause, priority or exclusive explanation, or add conclusions about data/gates not mentioned. "
@@ -311,7 +313,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                   "analysis": {"type": "string"}}}
     prompt = context_text()
     metadata = {"called": True, "model": getattr(provider, "model", None),
-                "prompt_version": "addressable-review/13", "prompt_hash": digest((instruction + prompt).encode())}
+                "prompt_version": "addressable-review/14", "prompt_hash": digest((instruction + prompt).encode())}
     try:
         guard(service, scope, snapshot)
         raw = provider.generate_json(prompt, instruction, schema)

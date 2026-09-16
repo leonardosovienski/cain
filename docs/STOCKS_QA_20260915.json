@@ -1,0 +1,545 @@
+{
+  "schema": "stocks-remediation-qa/1",
+  "date": "2026-09-15",
+  "branch": "checkpoint/stocks-remediation-20260915",
+  "base": "24f784c5dde1fa66c262ad5899f4fd8d02526adf",
+  "source_selection": {
+    "sources": 47,
+    "occurrences": 86
+  },
+  "final_code_sha256": {
+    "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+    "src/cain/research/grounding.py": "4db88bfb1557ccb3b432c87aebc56249e934a365605eca58c30da3c70601c67a",
+    "src/cain/research/field_review.py": "7726c06cc1a18aea12b53e688f6449892cb45fab34f5c30923e2998514f52064",
+    "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+    "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+  },
+  "parameters": {
+    "model": "qwen3.5:4b",
+    "temperature": 0,
+    "seed": 42,
+    "num_ctx": 8192,
+    "num_predict": 768,
+    "max_input_bytes": 6500,
+    "think": false,
+    "timeout_seconds": 600
+  },
+  "limitations": [
+    "Known regression cases, not independent semantic certification.",
+    "Earlier per-attempt hashes covered four files, not field_review.py.",
+    "Native-field safety response abstains from requested interpretation; it does not repair free model reasoning.",
+    "Generic H19 retrieval and Portuguese language adherence remain unvalidated after the recorded failure.",
+    "No primary database, installation, scientific ledger, protocol or economic verdict changed."
+  ],
+  "attempts": [
+    {
+      "attempt": "a02-r1",
+      "review": "transport_failure",
+      "limitation": "Timeout de 240s; sem aceite semantico.",
+      "result_sha256": "6389a494da5f444615895c8122976c454552489e34de3e6f2283a2bd17005055",
+      "status": "generation_failed",
+      "response": null,
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/13",
+        "prompt_hash": "ab49eb3fec39d117536f624ddff54f366eb6e521906d73d0ef0b0ead9106b774"
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "945f0d816a5ba2fd7c36136dffe566cac25fe8889a7068504ac57e59b270d9dc",
+        "src/cain/research/analysis.py": "86c70b8cccd083d92996fd62c30d29750769ada4cf49bda752d6b4c3d7a68404",
+        "tools/prepare_hypothesis_catalog.py": "188466a7a7cd48eb4c74d54510f7e0d1ae39090276c4741fa50362a3f28e780a",
+        "tools/hypothesis_sources.json": "21e2b5ad921a11cc3580d0c43b8841daa0e3266713153891df09697543c479c2"
+      },
+      "recorded_hashes_stable": null,
+      "input_sha256": "60df4e7a516eab5a64a6f50df8e3557bf95910b147f750f4cca30c5c9d5e0ab1"
+    },
+    {
+      "attempt": "a02-r2",
+      "review": "semantic_failure",
+      "limitation": "Estado historico de H17 apresentado como atual.",
+      "result_sha256": "4039906ffc30966737ad0118181110d133e87f12f3a67c4d68a351012284de4b",
+      "status": "generated",
+      "response": "Os relatórios citados não permitem concluir que a operação real está pronta. O documento S1 (STOCKS_CURRENT_STATE.md) indica que o 'Retorno líquido pessoal e operação real' está marcado como 'Não aptos', devido a custos, eventos, cenário pessoal e observações insuficientes. O relatório S2 (docs/research/2026-09-07-profit-validation-results.md) afirma explicitamente que não há promoção a Proof, nem operação real, e que não há evidência de que o lucro futuro esteja garantido. Além disso, H18 perdeu prioridade por instabilidade e H19 está limitada à reconciliação de caixa. O documento S3 (RESEARCH_FREEZE.md) confirma que nenhum retorno H17–H19 foi observado, nenhum trial científico novo ocorreu e os runners permanecem pausados, com rentabilidade classificada como INCONCLUSIVE_DATA_QUALITY. Portanto, a prontidão para operação real não é suportada pelos dados disponíveis.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "9b7748ebc204f00b08148b3673e6b4357b90a1cf10b390f86a91ad8b057221b7",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1166,
+          "eval_count": 245,
+          "total_duration": 249189720300,
+          "load_duration": 82233800,
+          "eval_duration": 117257178000,
+          "input_bytes": 4413,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "34065e689912d590063425c5fb7ea94bf0e05f97e03cb9b3fbcd6de52c783213",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "188466a7a7cd48eb4c74d54510f7e0d1ae39090276c4741fa50362a3f28e780a",
+        "tools/hypothesis_sources.json": "21e2b5ad921a11cc3580d0c43b8841daa0e3266713153891df09697543c479c2"
+      },
+      "recorded_hashes_stable": null,
+      "input_sha256": "7e4fab6732510ff690fb436060adddd18164911249aa41956ab79be4a28b792c"
+    },
+    {
+      "attempt": "a02-r3",
+      "review": "semantic_failure",
+      "limitation": "Estado historico de H17 apresentado como atual.",
+      "result_sha256": "7ea2d92a45fba9280c9594dead1fee15c8af2def70087bf968508ab0431bb29e",
+      "status": "generated",
+      "response": "Os relatórios citados não permitem concluir que a operação real esteja pronta. O documento S1 (STOCKS_CURRENT_STATE.md) afirma explicitamente que o 'Retorno líquido pessoal e operação real' está em estado de 'Não aptos', devido a custos, eventos, cenário pessoal e observações insuficientes. O relatório S2 (docs/research/2026-09-07-profit-validation-results.md) confirma que não há promoção a Proof, nem evidência de lucro futuro garantido; H18 perdeu prioridade por instabilidade e H19 tem pesquisa limitada apenas à reconciliação de caixa. O documento S3 (RESEARCH_FREEZE.md) reforça que nenhum retorno H17–H19 foi observado, nenhum trial científico novo ocorreu e a rentabilidade permanece INCONCLUSIVE_DATA_QUALITY, com runners pausados. Portanto, as limitações permanentes são: ausência de dados suficientes para operação real, inconclusividade da rentabilidade e status de não aptos.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "9b7748ebc204f00b08148b3673e6b4357b90a1cf10b390f86a91ad8b057221b7",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1166,
+          "eval_count": 246,
+          "total_duration": 237708363300,
+          "load_duration": 30207857800,
+          "eval_duration": 112428138000,
+          "input_bytes": 4413,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "2d794899a83dc0748b8abd0d727c3d2670109b0b12d73534633c68e52c2f0975",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "188466a7a7cd48eb4c74d54510f7e0d1ae39090276c4741fa50362a3f28e780a",
+        "tools/hypothesis_sources.json": "21e2b5ad921a11cc3580d0c43b8841daa0e3266713153891df09697543c479c2"
+      },
+      "recorded_hashes_stable": null,
+      "input_sha256": "f3c36eed650c66195095bbb6e637d80def460aaff7a7b925a341097b46d05d20"
+    },
+    {
+      "attempt": "a02-r4",
+      "review": "partial",
+      "limitation": "Corrige H17; compressao de limitacoes ainda imprecisa.",
+      "result_sha256": "2b464b16020a14067ec4afae873a6bc5868229797672a9afba5a0e186a3582e7",
+      "status": "generated",
+      "response": "O relatório S1 (STOCKS_CURRENT_STATE.md) indica que o 'Estado atual do Stocks Predictor' está em fase de 'Prontidão por uso', mas afirma explicitamente que não há aptidão para operação real devido a custos, eventos, cenário pessoal e observações insuficientes. O relatório S2 (docs/research/2026-09-07-profit-validation-results.md) confirma que estudos H1–H16 foram negativos, H3 não foi executada e H17 permanece inconclusiva sem ganho demonstrado. As configurações H18/H19 receberam validação, mas nenhuma recebeu promoção a 'Proof', operação real ou evidência de lucro futuro garantido. H18 perdeu prioridade por instabilidade, e H19 é limitada à reconciliação de caixa e execução das mesmas seleções. Nenhuma fonte reporta que estudos foram rodados novamente nesta etapa.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "fd8f9e9558d91052a66af8d74a1823d584ef1a3cf533614253ef6cbdae2c724e",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 868,
+          "eval_count": 221,
+          "total_duration": 137042406200,
+          "load_duration": 65893600,
+          "eval_duration": 76290380000,
+          "input_bytes": 3489,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "2d794899a83dc0748b8abd0d727c3d2670109b0b12d73534633c68e52c2f0975",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "188466a7a7cd48eb4c74d54510f7e0d1ae39090276c4741fa50362a3f28e780a",
+        "tools/hypothesis_sources.json": "21e2b5ad921a11cc3580d0c43b8841daa0e3266713153891df09697543c479c2"
+      },
+      "recorded_hashes_stable": null,
+      "input_sha256": "7951fbe5eaa9e874372ad246f188a1b83b7870b9afdec3570b7c56c0dc720ba1"
+    },
+    {
+      "attempt": "v2/a02-final",
+      "review": "interrupted",
+      "limitation": "Interrompido pela troca de ambiente; apenas entrada preservada.",
+      "input_sha256": "0b08af7d489ca7afe96b65b251c209a46e173cda8762f78e7a5adfc80b2d922d"
+    },
+    {
+      "attempt": "v2/a02-final-r2",
+      "review": "semantic_failure",
+      "limitation": "Reconciliacao inventada de H18/H19.",
+      "result_sha256": "0115380efc65ef4775ec14f54a19d0837da406bb4f5dfda1b98bb5096095f3d7",
+      "status": "generated",
+      "response": "Os documentos relatam que a prontidão para operação real não foi alcançada. O S1 afirma explicitamente que 'não há promoção a Proof, operação real ou evidência de que o lucro futuro esteja garantido'. Quanto às limitações, o S2 indica que os retornos líquidos e a operação real são 'Não aptos' devido a custos, eventos, cenário pessoal e observações insuficientes. O S1 destaca que H3 permanece não executada e que H17 continua inconclusiva sem ganho demonstrado. As configurações H18/H19 receberam validação, mas o S1 nota que H18 perdeu prioridade por instabilidade e o S4 confirma que H18/H19 permanecem 'não observadas' em termos de bloqueios mantidos, apesar de terem recebido esta etapa de validação. O S3 relata uma execução específica da família H17 com 479 testes aprovados sob um protocolo descoberta fechado, mas o S4 esclarece que isso não representa 17 famílias independentes e que o denominador adaptativo real permanece desconhecido.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "3082cfb3c52f09c870bf10031d8a5bc15b5656d2bb8792a88e27c131688b4a12",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1366,
+          "eval_count": 274,
+          "total_duration": 395677097000,
+          "load_duration": 93943720300,
+          "eval_duration": 132370168000,
+          "input_bytes": 4963,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "2d794899a83dc0748b8abd0d727c3d2670109b0b12d73534633c68e52c2f0975",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": false,
+      "input_sha256": "faa483a0437722381ffa7f7a3a338c3d76cb887aaf15dd0aa24a12ba4b525923"
+    },
+    {
+      "attempt": "v2/a02-final-r3",
+      "review": "concurrent_code_not_candidate",
+      "limitation": "Checkout concorrente; resposta tambem excedeu as fontes.",
+      "result_sha256": "d6417e8e385fa0e3e2835196fbeefa864e20d0d34e9e13004bd3c8540e5bc0bf",
+      "status": "generated",
+      "response": "Os relatórios citados não permitem concluir que a prontidão para operação real foi estabelecida. O documento S1 afirma explicitamente que 'não há promoção a Proof, operação real ou evidência de que o lucro futuro esteja garantido'. Além disso, ele declara que as configurações H18 e H19 não receberam esta validação completa, sendo que H18 perdeu prioridade por instabilidade e H19 está limitada à reconciliação de caixa. O documento S2 indica que para 'Retorno líquido pessoal e operação real', o estado é 'Não aptos' devido a custos, eventos, cenário pessoal e observações insuficientes. Por fim, o documento S3 confirma que a família H17 já foi observada (com 479 testes aprovados), mas não fornece evidências de prontidão geral para operação real.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/15",
+        "prompt_hash": "3b61eb9399ca25284b59de13a48d5a580ce1517f8b425ce773ad79d5c1833d98",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1246,
+          "eval_count": 213,
+          "total_duration": 201116786300,
+          "load_duration": 280907600,
+          "eval_duration": 103929631000,
+          "input_bytes": 4637,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "a8593dd8adad9b85597208bb2af5578d06ef15f8f02a8ca12d34b377a4f743c7",
+        "src/cain/research/analysis.py": "b986615e48111efbeb6a9ecc19fce6b034b1b4199da8172562aae0651e0adf21",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "8fb2f8bddb4d74ee5a64a14ae9473ef7179c61670d01a6ff6584f3e61269ea8f"
+    },
+    {
+      "attempt": "v2/isolated-a02",
+      "review": "bounded_pass",
+      "limitation": "Prontidao nao apta e limites preservados nos trechos selecionados.",
+      "result_sha256": "412ca90e7eec0e5b311109756612278811a1379390d13369c6b5bb79dc781fec",
+      "status": "generated",
+      "response": "Os relatórios citados não permitem concluir que a operação real seja pronta. O documento S1 afirma explicitamente que 'não há promoção a Proof, operação real ou evidência de que o lucro futuro esteja garantido'. Além disso, ele indica que H3 não foi executada e que as configurações H18/H19 receberam apenas validação, com H18 perdendo prioridade por instabilidade. O documento S2 reforça essa limitação ao classificar o 'Retorno líquido pessoal e operação real' como 'Não aptos', citando custos, eventos, cenário pessoal e observações insuficientes como motivos. Portanto, a prontidão para operação real não é suportada pelas evidências disponíveis.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "acd9af99f14c16fc8d067fd1cfa7a3fb3b0a6949620e0bc8f062dc684d94aa3b",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 868,
+          "eval_count": 177,
+          "total_duration": 171109782100,
+          "load_duration": 1152526300,
+          "eval_duration": 89158061000,
+          "input_bytes": 3489,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "cc0acc3b1f06b2f26e10484657228749baff5064c3b0cb73cc7e5fc30b94565f",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "16e4f9c38b520ebede7e6835dd9903001d15993209db0e61e6a737a0a61871e6"
+    },
+    {
+      "attempt": "v2/isolated-h17",
+      "review": "bounded_pass",
+      "limitation": "Observacao rev2 e estado inconclusivo; nao compara integralmente revisoes.",
+      "result_sha256": "d4f36684e91429f88c1ad7cbff24a225ccef88cb1fddb1316b51d2e5b875b929",
+      "status": "generated",
+      "response": "Os registros S1, S2, S3 e S4 do documento 'docs/research/2026-09-07-h17-observations.jsonl' relatam que a família H17 foi observada em uma revisão específica. O registro S1 confirma explicitamente que o campo 'family' é 'H17'. Os registros S2, S3 e S4 corroboram os detalhes dessa observação: o modo de operação foi 'DISCOVERY', a revisão de observação foi 2 e o horário UTC foi '2026-09-07T05:33:31.134125+00:00'. O protocolo associado foi 'H17-DISCOVERY-PRICE-DIAGNOSTIC-1'. No entanto, todos os registros indicam um status de 'INCONCLUSIVE_DATA_QUALITY', o que significa que a qualidade dos dados foi inconclusiva. Portanto, embora a observação tenha ocorrido e sido registrada, os dados resultantes não permitem conclusões definitivas sobre os resultados do teste ou da avaliação.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "0daf68ef7aab75a9c5c0b345b20d9e1089874c820bc1992dff46039f4f8fde31",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1270,
+          "eval_count": 277,
+          "total_duration": 203397798400,
+          "load_duration": 64868100,
+          "eval_duration": 106427003000,
+          "input_bytes": 4466,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "cc0acc3b1f06b2f26e10484657228749baff5064c3b0cb73cc7e5fc30b94565f",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "6c04227d3960a76886ab3546033a4f786326acb3fa4b40de4e174e9006e64a26"
+    },
+    {
+      "attempt": "v2/isolated-exit",
+      "review": "retrieval_and_language_failure",
+      "limitation": "Consulta generica nao recuperou decisao; respondeu em ingles.",
+      "result_sha256": "fdea59cf704703371755e8447ad0233fef824fdf450a448ccb2e8f982c312ff4",
+      "status": "generated",
+      "response": "The excerpts do not support a conclusion that exit code 2 indicates validated profit or blocked execution. Excerpt S1 defines H19 as a hypothesis predicting price returns based on equity and disclosed capital, but does not report observed results or execution status. Excerpt S2 states that H18/H19 are 'não observadas' (not observed) in the context of H17 observations, and explicitly notes there is no executable P&L or confirmation for H17. The document mentions historical statements about unobserved returns were superseded by this record, but does not provide specific details on exit codes for H19 reproduction. Therefore, the cited reports do not confirm whether exit code 2 signifies validated profit or blocked execution, nor do they indicate if the complete history was calculated.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "63c4085e90c4340b160099774f53630a00e2af62176fd36c37dadcc4e58d3857",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1180,
+          "eval_count": 193,
+          "total_duration": 149299106400,
+          "load_duration": 20073600,
+          "eval_duration": 68869893000,
+          "input_bytes": 4320,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "cc0acc3b1f06b2f26e10484657228749baff5064c3b0cb73cc7e5fc30b94565f",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "f8e768fcfd4a46d50552497c599cd0fe28295f3ea2542bbbc05e342457b93781"
+    },
+    {
+      "attempt": "v2/isolated-exit-scoped",
+      "review": "semantic_failure",
+      "limitation": "Lista omitida do recorte e ausencia indevidamente ampliada para documento.",
+      "result_sha256": "bc7865342a845416e7a152431f7873afbcd62cbbdcebc85713b0adce22a6fe8c",
+      "status": "generated",
+      "response": "O documento docs/research/2026-09-07-h19-continuous-decision.json, registrado em 2026-09-07T22:38:22.893401+00:00 (S6), reporta que a reprodução independente não foi executada completamente (full_history_executed: false) (S2). O status da reprodução é REPRODUCED_EVIDENCE_BLOCK_NO_VALIDATED_PROFIT (S4), indicando um bloqueio de evidência sem lucro validado. Não há dados sobre replay_exit_codes no documento citado. O net_profit_brl está nulo (S3), e o economic_status é INCONCLUSIVE_DATA_QUALITY (S8). A ação proposta é INTEGRATE_AND_VALIDATE_FROZEN_H19_CONTINUOUS_REPLAY (S5), mas isso não altera o status atual de bloqueio.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "9e4a584899fa9dbde8cb8a3e6377c64b993cfed6f2926d0561b9964a91f59a3c",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1465,
+          "eval_count": 237,
+          "total_duration": 254006632200,
+          "load_duration": 22537300,
+          "eval_duration": 151109534000,
+          "input_bytes": 4749,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "3674d2c752ff8ec9f45d191e10ac99c3b2b30d900f97c7e07ce7c74e8bfe15fa",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": false,
+      "input_sha256": "698923b5201b7414440d5e3f28dab9de70aabb7142cf7b8a3f3585c2d93912bb"
+    },
+    {
+      "attempt": "v2/final-exit",
+      "review": "semantic_failure",
+      "limitation": "Mesmo com lista presente, confundiu replay historico nao executado com reproducao do bloqueio nao executada.",
+      "result_sha256": "788cffef5af738d8641e095eefc1fb7a5c744f65845890559e634f01df36bdb6",
+      "status": "generated",
+      "response": "O documento docs/research/2026-09-07-h19-continuous-decision.json reporta que a reprodução independente não foi executada (full_history_executed: false) e o status é REPRODUCED_EVIDENCE_BLOCK_NO_VALIDATED_PROFIT. Os códigos de saída da reprodução são [2, 2], indicando falha. O lucro líquido em BRL está como null. A ausência de execução completa ou lucro validado impede concluir que a reprodução foi bem-sucedida.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "e7b75f7122cf32748ea1f0833fa10dd03f11f43a5b28a4e74c44236ffb455613",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1481,
+          "eval_count": 151,
+          "total_duration": 165459379100,
+          "load_duration": 99201900,
+          "eval_duration": 78042505000,
+          "input_bytes": 4782,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "4db88bfb1557ccb3b432c87aebc56249e934a365605eca58c30da3c70601c67a",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "4400854ddce196adb4ea1e516309cfd8cf549ede9547f818249477c39f1c1ced"
+    },
+    {
+      "attempt": "v2/final-a02",
+      "review": "bounded_pass",
+      "limitation": "Resposta conserva nao aptidao e limites; nao certifica generalizacao.",
+      "result_sha256": "82791f497a99d128ec57614c897f363d0d515685e27ce7326c8e59864a11aa6f",
+      "status": "generated",
+      "response": "Os relatórios citados não permitem concluir que a operação real seja pronta. O documento S1 afirma explicitamente que 'não há promoção a Proof, operação real ou evidência de que o lucro futuro esteja garantido'. Além disso, ele indica que H3 não foi executada e que as configurações H18/H19 receberam apenas validação, com H19 limitada à reconciliação de caixa. O documento S2 reforça essa limitação ao classificar o 'Retorno líquido pessoal e operação real' como 'Não aptos', citando custos, eventos, cenário pessoal e observações insuficientes como motivos. Portanto, a prontidão para operação real não é suportada pelas evidências disponíveis.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "acd9af99f14c16fc8d067fd1cfa7a3fb3b0a6949620e0bc8f062dc684d94aa3b",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 868,
+          "eval_count": 177,
+          "total_duration": 182934960500,
+          "load_duration": 31329300,
+          "eval_duration": 89132977000,
+          "input_bytes": 3489,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "4db88bfb1557ccb3b432c87aebc56249e934a365605eca58c30da3c70601c67a",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "63904f1bf8bb7cb0a755d69736204d34646db495c32b6c4f3bbeded22a8a456d"
+    },
+    {
+      "attempt": "v2/final-h17",
+      "review": "bounded_pass",
+      "limitation": "Confirma observacao rev2 inconclusiva; comparacao integral nao exercitada.",
+      "result_sha256": "f8a3ff3a925da9fed28fe9dcdd9d93dcbe11a683837e223bc14dbccd287ee6af",
+      "status": "generated",
+      "response": "Os registros S1, S2, S3 e S4 do documento 'docs/research/2026-09-07-h17-observations.jsonl' relatam que a família H17 foi observada em uma revisão específica. O registro S1 confirma explicitamente que o campo 'family' é 'H17'. Os registros S2, S3 e S4 corroboram os detalhes dessa observação: o modo de operação foi 'DISCOVERY', a revisão de observação foi 2 e o horário UTC foi '2026-09-07T05:33:31.134125+00:00'. O protocolo associado foi 'H17-DISCOVERY-PRICE-DIAGNOSTIC-1'. No entanto, todos os registros indicam um status de 'INCONCLUSIVE_DATA_QUALITY', o que significa que a qualidade dos dados foi inconclusiva. Portanto, embora a observação tenha ocorrido e sido registrada, os dados resultantes não permitem conclusões definitivas sobre os resultados do teste ou da avaliação.",
+      "generation": {
+        "called": true,
+        "model": "qwen3.5:4b",
+        "prompt_version": "addressable-review/14",
+        "prompt_hash": "0daf68ef7aab75a9c5c0b345b20d9e1089874c820bc1992dff46039f4f8fde31",
+        "measured": {
+          "model": "qwen3.5:4b",
+          "done_reason": "stop",
+          "prompt_eval_count": 1270,
+          "eval_count": 277,
+          "total_duration": 166890977300,
+          "load_duration": 42452600,
+          "eval_duration": 160588421000,
+          "input_bytes": 4466,
+          "num_ctx": 8192,
+          "max_input_bytes": 6500,
+          "effective_input_byte_budget": 6500,
+          "think": false,
+          "structured_output": true
+        }
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "4db88bfb1557ccb3b432c87aebc56249e934a365605eca58c30da3c70601c67a",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true,
+      "input_sha256": "95eeaace581c5344afa239cfcc12213b356aeac05618da27cf91193d263bdaaa"
+    },
+    {
+      "attempt": "v2/final-exit-literal",
+      "review": "literal_safety_pass_not_semantic_interpretation",
+      "limitation": "Mesmo enunciado entrega campos exatos e abstencao explicita; zero chamadas de modelo.",
+      "result_sha256": "5deab81920c60eee41ce63e89447835fc3fdac604d413bcd56e115fa2a7f1140",
+      "status": "literal_fields",
+      "response": "Leitura literal dos campos selecionados. A interpretação solicitada não foi verificada; estes valores não são convertidos em conclusão sobre execução, sucesso ou resultado.\n/independent_reproduction/replay_exit_codes: [2, 2] [S4].\n/full_history_executed: false [S2].\n/net_profit_brl: null [S3].\n/independent_reproduction/status: \"REPRODUCED_EVIDENCE_BLOCK_NO_VALIDATED_PROFIT\" [S5].\nVersões e caminhos são apresentados separadamente; nenhuma versão foi escolhida como atual.",
+      "generation": {
+        "called": false
+      },
+      "recorded_code_hashes": {
+        "src/cain/research/grounding.py": "4db88bfb1557ccb3b432c87aebc56249e934a365605eca58c30da3c70601c67a",
+        "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+        "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+        "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+      },
+      "recorded_hashes_stable": true
+    }
+  ],
+  "tests": {
+    "final_suite_log": "full-tests-final-native.log",
+    "status": "passed",
+    "passed": 794,
+    "skipped": 1,
+    "warnings": 2,
+    "duration_seconds": 113.86,
+    "log_sha256": "e041c3e1c7aee70fc95d72517f4cc2197bc4b81c8c268654146a60a2cdf3e9ef",
+    "ruff": "passed",
+    "warning_scope": "Dependency deprecations: Starlette/httpx and AnyIO portal alias."
+  },
+  "indexed_code_sha256": {
+    "src/cain/research/analysis.py": "ca36d2b0acf5528284d089c21564aab6685282d9180e0726c3b684913eb644a7",
+    "src/cain/research/grounding.py": "4db88bfb1557ccb3b432c87aebc56249e934a365605eca58c30da3c70601c67a",
+    "src/cain/research/field_review.py": "7726c06cc1a18aea12b53e688f6449892cb45fab34f5c30923e2998514f52064",
+    "tools/prepare_hypothesis_catalog.py": "af14ed11c55f6a04e40e2141d1dccafa04d44db068f293f2e1334f7bb8161cc6",
+    "tools/hypothesis_sources.json": "3ed1bb47d1ade059dd9a7a84fdbf8e8dcf192adf0c911bfc89c96f574427f263"
+  },
+  "code_bytes_equal_index": true
+}
