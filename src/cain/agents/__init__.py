@@ -14,6 +14,22 @@ from cain.persistence import MemoryIndex
 from cain.search import LocalDocumentRetriever, SearchError, SearchProvider, SearchResult, STOP_WORDS
 
 
+def literal_copy_request(payload: str) -> str | None:
+    """Bounded explicit colon command: its body is data, including punctuation.
+
+    Whitespace immediately after the colon separates the command from its body;
+    internal and trailing whitespace are preserved. No quoting is added/removed.
+    """
+    if len(payload) > 1200:
+        return None
+    match = re.fullmatch(
+        r'\s*(?:(?:por favor|cain)[,\s]+)?'
+        r'(?:responda|retorne|escreva|imprima)\s+(?:apenas|somente)\s*:\s*'
+        r'(\S[\s\S]*)', payload, flags=re.I,
+    )
+    return match[1] if match else None
+
+
 def _generation_prompt(message: Message) -> str:
     """Render the resolved preference at the model's final instruction position.
 
@@ -191,6 +207,20 @@ class SearchAgent:
                 "pedido e perfil não foram truncados e nenhuma busca ou geração foi iniciada."
             )
         results = self.retriever.search(message.payload, k=3)
+        # In an explicit attribute lookup, a shared attribute (e.g. code) is
+        # insufficient evidence for a different named subject. This conservative
+        # literal anchor does not infer aliases or entity equivalence.
+        subject = re.fullmatch(
+            r'\s*(?:[Qq]ual|[Qq]uais|[Bb]usque|[Pp]esquise|[Cc]onsulte|[Ee]ncontre)'
+            r'\s+[^?\n]{1,100}?\s+(?:de|do|da)\s+'
+            r'(?:(?:projeto|empresa|cidade|produto|procedimento)\s+)?'
+            r'([A-ZÀ-Ý][\w-]*(?:\s+[A-ZÀ-Ý][\w-]*)*)\s*[?.]?\s*',
+            message.payload,
+        )
+        anchor = tokens(subject[1]) if subject else set()
+        if anchor:
+            results = [item for item in results if anchor <= tokens(item.text)]
+        message.metadata['retrieval_subject_anchor'] = sorted(anchor)
         external_count = len(results)
         # Retrieved documents are the authority for this search. Historical
         # conversations are a fallback only; mixing them can displace direct facts.
@@ -198,6 +228,8 @@ class SearchAgent:
             message.payload, 6, {"user_id": user_id, "project_id": project_id},
         )
         for hit in history:
+            if anchor and not anchor <= tokens(hit.text):
+                continue
             # Shared articles/command words alone do not make a past turn evidence.
             if not (tokens(message.payload) - STOP_WORDS) & (tokens(hit.text) - STOP_WORDS):
                 continue
@@ -399,13 +431,27 @@ class ConversationAgent:
                             "Conversa cotidiana, cálculos e explicações gerais sem consulta documental")
 
     def handle(self, message: Message) -> str:
+        if message.metadata.get('route_reason') == 'conversation_rule:literal_copy':
+            literal = literal_copy_request(message.payload)
+            if literal is None:
+                raise ValueError('Literal copy route requires a complete bounded command')
+            return literal
         if message.metadata.get('route_reason') == 'conversation_rule:arithmetic':
             from cain.agents.arithmetic import answer
             return answer(message.payload)
         social = tokens(message.payload)
         english = message.metadata.get('preferences', {}).get('language') == 'en'
         prompt = _generation_prompt(message)
-        if message.metadata.get('route_reason') == 'conversation_rule:followup':
+        followup = message.metadata.get('route_reason') == 'conversation_rule:followup' or (
+            message.metadata.get('route_reason', '').startswith('llm_classifier:')
+            and re.search(r'\b(?:detalh|aprofund|desenvolv|elaborat|explain)', message.payload, re.I)
+        )
+        explicit_calculation = re.search(
+            r'\b(?:calcul\w*|cálcul\w*|compute|percent\w*|porcent\w*|quantifi\w*)\b'
+            r'|\b(?:custo|cost)\s+(?:por|per)\b', message.payload, re.I)
+        # A concrete calculation request already defines the elaboration. Adding
+        # another task to invent a detail can introduce unsupported extrapolation.
+        if followup and not explicit_calculation:
             prompt += (
                 "\n\nExplain the reasoning behind the previous answer and add a concrete "
                 "detail or relationship from the conversation. Do not merely repeat its conclusion."
@@ -413,6 +459,24 @@ class ConversationAgent:
                 "\n\nExplique o raciocínio da resposta anterior e acrescente um detalhe "
                 "concreto ou uma relação entre os fatos da conversa. Não se limite a repetir a conclusão."
             )
+        context_rules = (
+            "\n\nAnswer every part of the current request. Distinguish the user's original "
+            "value from later updates to the same object; another object's value does not "
+            "update it. Earlier assistant answers are not factual authority. In comparisons, "
+            "keep totals and units distinct. A percentage change uses the requested reference "
+            "value as denominator; calculate percentages only when requested. When explaining "
+            "costs for a stated capacity, derive unit costs and absolute differences using the "
+            "provided quantities; do not assume equal quality or other missing features."
+            if english else
+            "\n\nResponda todas as partes do pedido atual. Distinga o valor original do usuário "
+            "das atualizações posteriores do mesmo objeto; o valor de outro objeto não o "
+            "atualiza. Respostas anteriores do assistente não são autoridade factual. Em "
+            "comparações, distinga totais e unidades. Variação percentual usa o valor de "
+            "referência pedido como denominador; calcule percentuais somente quando solicitados. "
+            "Ao aprofundar custos para uma capacidade informada, derive custos unitários e "
+            "diferenças absolutas com as quantidades fornecidas; não presuma qualidade igual "
+            "ou outras características ausentes."
+        )
         automatic_social = message.metadata.get('route_reason') == 'conversation_rule:social'
         if automatic_social and social in ({'obrigado'}, {'obrigada'}, {'valeu'}):
             return "You're welcome!" if english else 'De nada!'
@@ -427,7 +491,7 @@ class ConversationAgent:
         if english:
             return generate(
                 prompt,
-                message.contexto_identidade + "\nContinue the conversation: short requests to "
+                message.contexto_identidade + context_rules + "\nContinue the conversation: short requests to "
                 "explain, elaborate or continue refer to its latest topic. Develop that topic "
                 "using the supplied facts; ask for clarification only if no referent exists. "
                 "Treat fictional examples as the exercise's premises. For exact-copy requests, "
@@ -439,7 +503,7 @@ class ConversationAgent:
             )
         return generate(
             prompt,
-            message.contexto_identidade + "\nConverse com continuidade: um pedido curto como "
+            message.contexto_identidade + context_rules + "\nConverse com continuidade: um pedido curto como "
             "explicar, detalhar ou continuar refere-se ao último assunto da conversa. "
             "Desenvolva esse assunto usando os dados fornecidos. Só peça esclarecimento "
             "se realmente não houver um referente no histórico. Exemplos fictícios devem "

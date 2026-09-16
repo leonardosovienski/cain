@@ -1,3 +1,59 @@
+# Continuidade CAIN — integração Stocks com main
+
+Retomada: [integração da PR #3](docs/INTEGRACAO_STOCKS_MAIN_20260915.md).
+Esta revisão reúne a main `2bdb570` e o checkpoint Stocks `f6c86d3`, com históricos
+e arquivos locais preservados. O estado remoto da entrega está na
+[PR #3](https://github.com/leonardosovienski/cain/pull/3).
+
+O [handoff V8](docs/HANDOFF_FECHAMENTO_V8_20260915.md) e a
+[remediação Stocks](docs/STOCKS_REMEDIATION_20260915.md) documentam suas respectivas
+etapas anteriores. Instalação principal, bancos e configurações não foram atualizados.
+Logs desta conciliação: `C:/CAIN/work/stocks-remediation-20260915/merge-main-tests.log`.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
+> Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
+
+# Continuação corrente — 15/09/2026
+
+V6 congelada em QA local, confirmação em andamento e sem aprovação geral.
+Checkpoint V4 local `ad21220`; mudanças posteriores ainda não commitadas.
+Relatório corrente: [CONTINUACAO_POS_V4_20260915.md](docs/CONTINUACAO_POS_V4_20260915.md).
+Evidências: `C:/CAIN/work/readiness-continuation-20260915`.
+Instalação principal e produtores permanecem fora do escopo de escrita.
+
+## Histórico preservado da rodada V4
+
+# Rodada atual: prontidão CAIN — 14/09/2026
+
+**Candidata V4 local, sem aprovação geral e sem promoção operacional.**
+Branch `fix/readiness-main-20260914`, baseline `origin/main`
+`8d4297a575ec1231ad7ec909faa8be0ea795e546`. O checkout original
+`C:/CAIN/projeto` permanece no checkpoint `24f784c5dde1fa66c262ad5899f4fd8d02526adf`.
+
+Foram corrigidos precisão decimal, cópia literal delimitada, seleção lexical de
+entidade e transporte de contexto ao classificador. V4: 809 testes aprovados,
+1 ignorado, 2 avisos; wheel não editável com 70 arquivos conferidos em QA.
+SHA do wheel: `fba0a82859d408ea8a5f426e2536a673455cc19039fa422257685d1021aaae1e`.
+
+Persistem falhas de retificação, memória após distrações, follow-up e seleção/
+interpretação científica. São 94 fontes e 247 ocorrências em QA; 64 registros
+derivados tipados não constituem denominador validado de hipóteses. Instalação
+principal, dados/configurações e produtores preservados. Sem push, merge ou release.
+
+Relatório vigente: [READINESS_RESULT_20260914.md](docs/READINESS_RESULT_20260914.md).
+Ele identifica versões realmente ensaiadas, regressões, limites e retomada.
+Recibos e scripts: `C:/CAIN/work/readiness-evidence-20260914`.
+Entrega: `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs`.
+
+## Histórico preservado abaixo
+
+As entradas a seguir pertencem às rodadas anteriores; caminhos, branches,
+contagens e resultados nelas não substituem o estado atual descrito acima.
+
+---
+
 # Continuidade do CAIN
 
 ## Correção Stocks isolada — 15/09/2026
@@ -6,6 +62,14 @@ Veja [a remediação de leitura e contexto](docs/STOCKS_REMEDIATION_20260915.md)
 na branch `checkpoint/stocks-remediation-20260915`. Publicação autorizada, com
 preservação integral dos arquivos locais; sem merge ou instalação principal.
 A branch isola as correções Stocks das tarefas concorrentes no checkout original.
+
+## Main consolidada — 15/09/2026
+
+[Consolidacao atual](docs/CONSOLIDACAO_MAIN_20260915.md): melhorias V8 e checkpoint de pesquisa integrados, historicos preservados e somente main como branch. As secoes abaixo registram as etapas anteriores, sem substituir este estado de integracao. Instalacao principal e edicoes locais pendentes continuam separadas.
+
+## Publicacao autorizada — 15/09/2026
+
+Veja [o checkpoint desta publicacao](docs/PUBLICACAO_20260915.md). Todos os arquivos locais devem ser preservados. As alteracoes preexistentes sao publicadas separadamente de main; isso nao promove a candidata para a instalacao principal nem certifica suas hipoteses.
 
 ## Checkpoint local para o próximo chat — 14/09/2026
 
@@ -108,3 +172,5 @@ Recibos principais: `coverage-audit.json`, `bundle-candidates/report.json`, `ful
 Antes de retomar, conferir Git local/remoto e `/health`. Para ampliar acesso aos produtores, definir os novos artefatos/exportações; leitura de um recorte não significa acesso aos bancos ou compreensão de todo o projeto. Não alterar lacres, restrições ou hipóteses para obter aprovação. Para corrigir a redação, usar o caso Brasileirão já registrado como regressão semântica.
 
 Histórico: [0.4.11](docs/LLM_REAL_20260913.md) e [0.4.10](docs/LLM_FIX_20260913.md). Recibos anteriores em `C:/CAIN/work/qa-real-20260913` permanecem preservados. A antiga contagem de “dois Bundles” foi corrigida para duas entidades de um pacote. Testes técnicos não certificam conclusões científicas/econômicas.
+
+</details>

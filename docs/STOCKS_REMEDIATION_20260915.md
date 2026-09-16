@@ -1,5 +1,8 @@
 # Stocks: leitura literal e contexto histórico — 15/09/2026
 
+> Registro histórico desta etapa. A conciliação posterior com main e seus testes
+> estão em [Integração Stocks com main](INTEGRACAO_STOCKS_MAIN_20260915.md).
+
 Documentos JSON eram cortados em blocos inválidos e ledgers JSONL eram tratados
 como um único JSON. O seletor também perdia avisos iniciais de revisão e completava
 o contexto com trechos históricos pouco relacionados à pergunta. Isso contribuiu

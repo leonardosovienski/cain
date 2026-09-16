@@ -1,7 +1,24 @@
+# CAIN — integração V8 e correções de pesquisa
+
+Esta revisão concilia a main consolidada em `2bdb570` com as correções Stocks de
+`f6c86d3`, pela [PR #3](https://github.com/leonardosovienski/cain/pull/3).
+Preserva conversa e memória V8, tabelas literais, cobertura por identidade e
+observações nativas; acrescenta listas JSON literais e abstenção para campos técnicos.
+
+Consulte o [relatório da integração](docs/INTEGRACAO_STOCKS_MAIN_20260915.md), o
+[estado atual](ESTADO_DO_PROJETO.md) e o [índice documental](docs/README.md).
+A instalação principal permanece separada. Testes de software não certificam
+interpretação geral do modelo nem conclusões científicas.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
+> Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
+
 # CAIN — conversa, memória e pesquisa local
 
 CAIN 0.4.12 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
-A branch de trabalho e publicação é **main**. As correções de Historian e os contratos Snapshot/Bundle estão integrados e instalados.
+A referência de publicação é **main**. Este checkout está em `fix/readiness-main-20260914`: a V4 foi preservada no checkpoint local `ad21220`, seguido pelas alterações desta continuação. A candidata V6 está somente em QA não editável; não foi publicada nem instalada como principal. Veja a [continuação e seus limites](docs/CONTINUACAO_POS_V4_20260915.md).
 Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 
 ## Abrir nesta máquina
@@ -73,3 +90,5 @@ A rodada da LLM está em [correções e limites observados](docs/LLM_CORRECOES_2
 Correções de idioma, roteamento de exercícios fictícios e preservação de contexto: [testes reais da 0.4.11](docs/LLM_REAL_20260913.md).
 Cobertura de Crypto, Stocks e Brasileirão: [auditoria das conexões](docs/COBERTURA_PROJETOS_20260913.md). O CAIN recebe recortes publicados, não os projetos inteiros. Use **Cobertura do acervo** na interface ou `research ... coverage` para conferir Snapshot, Bundle e permissões separadamente.
 Histórico de conversa e formato: [testes da 0.4.10](docs/LLM_FIX_20260913.md).
+
+</details>

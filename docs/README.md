@@ -1,3 +1,55 @@
+# Documentação corrente
+
+- [Integração Stocks com main — PR #3](INTEGRACAO_STOCKS_MAIN_20260915.md)
+- [Estado do projeto](../ESTADO_DO_PROJETO.md)
+- [Continuidade](../CONTINUIDADE.md)
+- [Remediação Stocks e limites semânticos](STOCKS_REMEDIATION_20260915.md)
+- [QA histórico da candidata Stocks](STOCKS_QA_20260915.json)
+- [Consolidação anterior da main](CONSOLIDACAO_MAIN_20260915.md)
+- [Handoff V8](HANDOFF_FECHAMENTO_V8_20260915.md)
+
+Os relatórios anteriores preservam resultados das versões identificadas neles;
+não atestam a instalação ou a qualidade semântica da composição atual.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
+# Continuação corrente — 15/09/2026
+
+Consulte [CONTINUACAO_POS_V4_20260915.md](CONTINUACAO_POS_V4_20260915.md)
+para a candidata V6 congelada em QA, os resultados e as limitações desta continuação.
+Checkpoint local V4 `ad21220`; mudanças posteriores locais, sem publicação ou
+instalação principal. Evidências em `C:/CAIN/work/readiness-continuation-20260915`.
+
+## Histórico preservado da rodada de 14/09/2026
+
+**Candidata V4 local, sem aprovação geral e sem promoção operacional.**
+Branch `fix/readiness-main-20260914`, baseline `origin/main`
+`8d4297a575ec1231ad7ec909faa8be0ea795e546`. O checkout original
+`C:/CAIN/projeto` permanece no checkpoint `24f784c5dde1fa66c262ad5899f4fd8d02526adf`.
+
+Foram corrigidos precisão decimal, cópia literal delimitada, seleção lexical de
+entidade e transporte de contexto ao classificador. V4: 809 testes aprovados,
+1 ignorado, 2 avisos; wheel não editável com 70 arquivos conferidos em QA.
+SHA do wheel: `fba0a82859d408ea8a5f426e2536a673455cc19039fa422257685d1021aaae1e`.
+
+Persistem falhas de retificação, memória após distrações, follow-up e seleção/
+interpretação científica. São 94 fontes e 247 ocorrências em QA; 64 registros
+derivados tipados não constituem denominador validado de hipóteses. Instalação
+principal, dados/configurações e produtores preservados. Sem push, merge ou release.
+
+Relatório vigente: [READINESS_RESULT_20260914.md](READINESS_RESULT_20260914.md).
+Ele identifica versões realmente ensaiadas, regressões, limites e retomada.
+Recibos e scripts: `C:/CAIN/work/readiness-evidence-20260914`.
+Entrega: `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs`.
+
+## Histórico preservado abaixo
+
+As entradas a seguir pertencem às rodadas anteriores; caminhos, branches,
+contagens e resultados nelas não substituem o estado atual descrito acima.
+
+---
+
 # Documentação do CAIN
 
 - [Continuação da conversa v2](CONTINUACAO_CONVERSA_20260914.md): correção parcial, wheel instalado em QA novo, API/CLI/interface, confirmação e falhas preservadas; sem promoção.
@@ -31,3 +83,5 @@
 [Índice histórico](historico/README.md): entregas, auditorias, fontes originais e snapshots de documentação.
 Relatórios datados descrevem a referência examinada na ocasião. Seus SHAs, contagens, branches e pendências não substituem o estado operacional atual.
 Os documentos científicos e de pesquisa preservam hipóteses e limites; testes técnicos não recertificam suas conclusões.
+
+</details>

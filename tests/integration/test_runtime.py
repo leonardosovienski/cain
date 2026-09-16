@@ -34,7 +34,7 @@ def test_eight_steps_persistence_across_sessions_and_users(tmp_path):
     with build_cain(path, llm) as reopened:
         assert asdict(reopened.identity.get("alice")) == expected
         reopened.run("alice", "session-2", "Resuma ABACAXI_ALICE", run_id="r2")
-        assert "Usuário: Resuma o projeto ABACAXI_ALICE" in llm.calls[-1][1]
+        assert '"user": "Resuma o projeto ABACAXI_ALICE"' in llm.calls[-1][1]
         reopened.run("bob", "session-1", "Resuma o projeto", run_id="r3")
         assert "ABACAXI_ALICE" not in llm.calls[-1][1]
         assert "bullet points" not in llm.calls[-1][1]

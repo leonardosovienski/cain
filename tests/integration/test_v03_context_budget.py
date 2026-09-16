@@ -46,7 +46,8 @@ def test_three_preferences_and_common_history_fit_default_bytes_without_losing_a
     assert '"verbosity": "detailed"' in context
     assert '"language": "pt"' in context
     assert "persistência SQLite" in context
-    assert '"doc_id"' in context
+    # Technical IDs remain in the audit store, not the model's factual context.
+    assert '"doc_id"' not in context
     assert '"truncated": true' in context
     for audit_key in ("preference_provenance", "signal_id", "AUDIT_EVIDENCE", "private-user-id", "turn-a"):
         assert audit_key not in context

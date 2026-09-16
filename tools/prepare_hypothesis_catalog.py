@@ -10,7 +10,7 @@ import subprocess
 
 from research_snapshot import canonical, confined, digest, seal, timestamp, validate
 
-EXPORTER = 'hypothesis-catalog/3'
+EXPORTER = 'hypothesis-catalog/4'
 
 
 def source_clock(value):
@@ -63,10 +63,23 @@ def array_spans(text):
 
 
 def occurrences(text, source):
-    if source['mode'] == 'trial_array':
+    if source['mode'] in {'trial_array', 'observation_jsonl'}:
+        def jsonl_spans():
+            import re
+            for match in re.finditer(r'[^\r\n]+', text):
+                if not match[0].strip():
+                    continue
+                parsed = list(array_spans('[' + match[0] + ']'))
+                if len(parsed) != 1:
+                    raise ValueError('One observation per line required')
+                value, _, _ = parsed[0]
+                yield value, match.start(), match.end()
         seen = set()
-        for value, start, end in array_spans(text):
+        entries = array_spans(text) if source['mode'] == 'trial_array' else jsonl_spans()
+        for value, start, end in entries:
             identity = value[source['identity_key']]
+            if source['mode'] == 'observation_jsonl' and type(identity) is int:
+                identity = str(identity)
             if not isinstance(identity, str) or not identity or identity in seen:
                 raise ValueError('Missing or duplicate trial identity')
             seen.add(identity)
@@ -128,7 +141,7 @@ def prepare(project, root, output, exported_at):
         evidence, records = [], []
         for identity, start, end, status in units:
             quote = text[start:end]
-            trial = json.loads(quote) if source['mode'] == 'trial_array' else {}
+            trial = json.loads(quote) if source['mode'] in {'trial_array', 'observation_jsonl'} else {}
             eid = digest(canonical([source['path'], identity, source_hash]))
             evidence.append(dict(id=eid, source=source['path'], availability='received',
                                  text=quote, sha256=digest(quote.encode('utf-8')),
@@ -136,12 +149,13 @@ def prepare(project, root, output, exported_at):
                                  start=start, end=end, offset_unit='unicode_codepoints'))
             records.append(dict(source_id=source['path'] + '#' + identity,
                                 revision=digest(canonical([source_hash, EXPORTER])),
-                                kind=('registered_trial' if
-                                source['mode'] == 'trial_array' else 'research_document_excerpt'),
+                                kind=('registered_trial' if source['mode'] == 'trial_array'
+                                      else 'reported_observation' if source['mode'] == 'observation_jsonl'
+                                      else 'research_document_excerpt'),
                                 identity_basis='document_identity', source_status=status,
                                 status_axis=('domain_lifecycle' if trial else 'source_availability'),
                                 mapping=None, reason=None,
-                                event_at=source_clock(trial.get('executed_at')),
+                                event_at=source_clock(trial.get('observed_at_utc') if source['mode'] == 'observation_jsonl' else trial.get('executed_at')),
                                 recorded_at=source_clock(trial.get('registered_at')),
                                 available_at=None,
                                 supersedes=[], evidence_ids=[eid]))

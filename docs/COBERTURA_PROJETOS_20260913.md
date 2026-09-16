@@ -384,3 +384,15 @@ objetos JSON inteiros, contexto histórico, seleção específica e o teste real
 A seleção final mantém 47 fontes e 86 ocorrências. A candidata está na branch
 `checkpoint/stocks-remediation-20260915`, separada das alterações concorrentes
 no checkout compartilhado. Nenhuma instalação principal foi atualizada.
+
+## Conciliação com main — PR #3
+
+A [integração posterior](INTEGRACAO_STOCKS_MAIN_20260915.md) preserva o catálogo
+consolidado de main, incluindo H17 como `observation_jsonl`, com identidade nativa
+`observation_revision`, estado e relógio da fonte. O exportador combinado `/4`
+distingue sua revisão das duas variantes anteriores `/3`. O catálogo consolidado
+contém 48 fontes Stocks e 87 ocorrências verificadas: a main acrescentou
+`docs/open_source_research/OSS-20260911-01/EXPERIMENTS.md` às 47 fontes anteriores.
+Nenhuma nova ingestão no banco principal foi realizada.
+O recibo de inferência anterior permanece histórico, sem atribuir suas respostas
+ao prompt `/17` da composição atual.

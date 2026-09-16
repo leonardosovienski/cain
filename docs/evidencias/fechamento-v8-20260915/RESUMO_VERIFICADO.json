@@ -1,0 +1,300 @@
+{
+  "candidate": "V8",
+  "wheel_sha256": "e684e7ad5ed36b6b27d8889b6fe5e0ac6f48d7b9cf5eab52f13e7a2930cb1216",
+  "product_files": [
+    {
+      "path": "cain/__init__.py",
+      "sha256": "cbf1cd24f4aede015b95251e2de998dce6bfeb85f8ce5ad0471ea10eb26d926d"
+    },
+    {
+      "path": "cain/__main__.py",
+      "sha256": "79e82eeb063d6eaf04c9f38a3c885b88d3decdc3db5a8229b5c261d0813cc8de"
+    },
+    {
+      "path": "cain/agents/__init__.py",
+      "sha256": "dec399383527e2e59ed24129cc0d51eb2431d3f31745c7ef58251acf715378df"
+    },
+    {
+      "path": "cain/agents/arithmetic.py",
+      "sha256": "0822d1ddcd708ac18f7e0bd0fd1e0976c7729ab21d34a6858016c9747f3e10e2"
+    },
+    {
+      "path": "cain/api.py",
+      "sha256": "f42a3c4eadf59cb1a2634fc6b9db94c79de85b7979abc57074329bb6d0912405"
+    },
+    {
+      "path": "cain/archive.py",
+      "sha256": "08d0439ba1318e7c9b388182b919d448b008a1a292b373963c167ee5093403eb"
+    },
+    {
+      "path": "cain/cli.py",
+      "sha256": "75d62194a9bccf4ba3c11cbd08910f4305745d8be066499e849aef4c4994aced"
+    },
+    {
+      "path": "cain/common/__init__.py",
+      "sha256": "535f1f8601985f0f2732b916b05f2d24f6a60150f7b020c9f8e0e68dc242c806"
+    },
+    {
+      "path": "cain/common/text.py",
+      "sha256": "6c1060ca8c856b56099cfbc3b6ebe2b4af2629e7eed8f5f8db567889630bc5d2"
+    },
+    {
+      "path": "cain/evaluation/__init__.py",
+      "sha256": "baf6aa1336006a260deba0b472e848abbad46e747e6b85c4d9d6c0736701628b"
+    },
+    {
+      "path": "cain/evaluation/__main__.py",
+      "sha256": "d20e147efc105c9ebb62ff2546bf0277f7ed16fa46335f4ec38786c579a485a2"
+    },
+    {
+      "path": "cain/evaluation/budget.py",
+      "sha256": "27e9f2cd6545f42cfe06eab094f46e12a45a6f439a833019b0a04202e2316ee4"
+    },
+    {
+      "path": "cain/evaluation/data/probes/evaluation-v2-rubrics.json",
+      "sha256": "a83675db878368cf915098d3d468fb7a87a36b6494f47c21688015d8b01e93ad"
+    },
+    {
+      "path": "cain/evaluation/data/probes/probes.json",
+      "sha256": "6b170b7ac43db1ea85bc0ca6026189cfdabc7739e22b4f82e6302a9510c620e0"
+    },
+    {
+      "path": "cain/evaluation/data/rubrics/README.md",
+      "sha256": "d01204827c7b7e6c33da48d9fb02742030b2663f8cf3bc0a5818c9df677d9d55"
+    },
+    {
+      "path": "cain/evaluation/data/scenarios/evaluation-v2.json",
+      "sha256": "a306ec5dfe4d90bd1bff6a04faf1ea6b34c99690c48492821e14bc3c42e6ec55"
+    },
+    {
+      "path": "cain/evaluation/data/scenarios/quality-v03.json",
+      "sha256": "f113f5b0c06c191e9a17c40c0514c7351f939f80b7ca9f526c70e2b2ef103aeb"
+    },
+    {
+      "path": "cain/evaluation/data/scenarios/scenarios.json",
+      "sha256": "27137605f238a9aba0d43e66a7831323fb752d59811318c4a9a06eb2188ee7e0"
+    },
+    {
+      "path": "cain/evaluation/functional.py",
+      "sha256": "323cbde563dbe748b32bed345e5ba50007950326ec29508e0715fb7dc147921f"
+    },
+    {
+      "path": "cain/evaluation/functional_worker.py",
+      "sha256": "fc61bff5d1aeda136aea77ddb907f79228d727e2161af6bb725e2d0c040c1bfc"
+    },
+    {
+      "path": "cain/evaluation/harness.py",
+      "sha256": "2207dd619e2bd7a7914cb99804b69d9709fdb3ab36ce815033e4d87677b28ece"
+    },
+    {
+      "path": "cain/evaluation/metrics.py",
+      "sha256": "7e8377d633a0b586fdd3f068285873283748940a4d908a8c83fef1e6ad8feb9c"
+    },
+    {
+      "path": "cain/evaluation/quality.py",
+      "sha256": "2beda1efa9e27751b5e68cfb39a28aff79b633a6fbc9ccd8619efeb23313f12f"
+    },
+    {
+      "path": "cain/evaluation/resources.py",
+      "sha256": "77c88851feff249f87d1c6ca7af52644110d4aa634919a56a8b61d76df955a06"
+    },
+    {
+      "path": "cain/evaluation/v2.py",
+      "sha256": "845a15d851acfd85c7fae168b9ac7e8a8b7a023dbdb612d8f03ab47f9ea56ae8"
+    },
+    {
+      "path": "cain/evaluation/v2_controls.py",
+      "sha256": "ca04be8eebac468c04071078d8974c2f53e62e04245a1c66bbbfdf163496db7f"
+    },
+    {
+      "path": "cain/evaluation/v2_integrity.py",
+      "sha256": "d50ccff8fb89d65509461f6e18fa4148454f22a1bc37aabf2f34ebe915d1fcf9"
+    },
+    {
+      "path": "cain/evaluation/v2_replay.py",
+      "sha256": "bcb62898a2bb92dd17b6fb053f4d7c4ae02b87ca314134d0c9e995a7348fbde2"
+    },
+    {
+      "path": "cain/evaluation/v2_research.py",
+      "sha256": "e4d1bb9681ebfaacddaf37d4cf6c695c71301c3ec79013698b72633c9b98aaa4"
+    },
+    {
+      "path": "cain/evaluation/v2_utility.py",
+      "sha256": "4571a685b5b47ade8b19795a41b8b465b5236821941e24b629a9227fea7d3fd6"
+    },
+    {
+      "path": "cain/identity/__init__.py",
+      "sha256": "fc4f2af6c891a6bdf0af709318421eb8d5c20e2e92fee85112785c8746cb72d7"
+    },
+    {
+      "path": "cain/identity/explicit.py",
+      "sha256": "1af6771dec64cd6283ddf84e097e5027128521920b239f0d0788edd9b11bdcdd"
+    },
+    {
+      "path": "cain/identity/scopes.py",
+      "sha256": "3277b878a3ce8d8af94048055a9c49fc212940dd0b57198965ef14c65bfd6d15"
+    },
+    {
+      "path": "cain/llm/__init__.py",
+      "sha256": "a862d8bc525299a43a3825c9938e3b741158707602f0dbf14052951d60153e95"
+    },
+    {
+      "path": "cain/llm/streaming.py",
+      "sha256": "635a5c54a34debe0e14e042fec6093f2684095a49c66932533b90c61777f309e"
+    },
+    {
+      "path": "cain/mcp.py",
+      "sha256": "4b69f936a71faf524f80125f6e235a562f1cf803a723d29473bd6ee8c99db211"
+    },
+    {
+      "path": "cain/orchestrator/__init__.py",
+      "sha256": "64d1462a7633b3d1d9ebe21e299f5563fab2fae6181a8c7f4f7f2910af56ec64"
+    },
+    {
+      "path": "cain/orchestrator/routing.py",
+      "sha256": "441ae5ce37bf5cc65d289bc98f8f16becd8541225d6a9898d3cb01af0b9ada69"
+    },
+    {
+      "path": "cain/persistence/__init__.py",
+      "sha256": "8ee3ebbe82f750f6f9cbbe67cbe5aa04dd7e813ecf3f564a58e79a3467a904a7"
+    },
+    {
+      "path": "cain/persistence/adapters/__init__.py",
+      "sha256": "6de3186b0faba6302c46dbb33ed0f9616ea0c8692e166ab976a934a517bc5468"
+    },
+    {
+      "path": "cain/persistence/adapters/lexical.py",
+      "sha256": "ff8e0cce8c68bf1967d6b6779638fb5d0b4ff7affdca57f30c646848a3331c9e"
+    },
+    {
+      "path": "cain/persistence/adapters/sqlite.py",
+      "sha256": "301fbe7b2da9c61ab41b3ffcb6798167e6635e9af8cf9c27cca4ef00e6f421b9"
+    },
+    {
+      "path": "cain/playground.py",
+      "sha256": "edf5a6a7f06ebb96a185f8a2143deb3d8a2801f86d0e508f667ba81c277f6098"
+    },
+    {
+      "path": "cain/profile_answers.py",
+      "sha256": "e154bf559772b43ad3de06017b5f08ff154e2f8c1d1ad6ee728a8d1042a3fb55"
+    },
+    {
+      "path": "cain/providers.py",
+      "sha256": "67a1baf5e90f386b05c54ba3c3e9e77fa40e1c9c765472c9eecfe565e3405e92"
+    },
+    {
+      "path": "cain/research/__init__.py",
+      "sha256": "db444630c3f3f80dbacf6765bd4cf394634bb39c4c21c4e879cb7d6809c19e04"
+    },
+    {
+      "path": "cain/research/agent_api.py",
+      "sha256": "e75d957529ea2d28ed768a26feb97d90a12f31f066d39f9d89d69e07dfe24846"
+    },
+    {
+      "path": "cain/research/analysis.py",
+      "sha256": "1604fc3db30badb2b725b630cd284e257ce55a4bb702df0ef15ea88763d78125"
+    },
+    {
+      "path": "cain/research/api.py",
+      "sha256": "1039d70c4b8cd62960306f50950704999c06dc89bba7960b42b1d7efbeaae165"
+    },
+    {
+      "path": "cain/research/bundle_backup.py",
+      "sha256": "6dcac0cd58b53d7067c08983a2984bb6a2753bf4e44301b7cf2ecb41570b24de"
+    },
+    {
+      "path": "cain/research/bundles.py",
+      "sha256": "86da460820702119dd1ed2b004329e30916b361863cd7fd57e6a4922bd99499e"
+    },
+    {
+      "path": "cain/research/cli.py",
+      "sha256": "189ec73076b8c94ccbe6ab6da8eb1539fd376a70c8b2d93ce03e2276a5773c95"
+    },
+    {
+      "path": "cain/research/coverage.py",
+      "sha256": "99e9c30e2acf14a27dd34e46482b9b1040286f68a5585b40d0ef7186eaa30400"
+    },
+    {
+      "path": "cain/research/diagnostics.py",
+      "sha256": "2e4b8bc98f2341016753d3fbd7294b9a56a9e4705566d3e0fa35404bfe08bb93"
+    },
+    {
+      "path": "cain/research/field_review.py",
+      "sha256": "c0fddb258249b3d2d460dfe94353ebf52d39d134dc4fa6baa811c9c63e606a53"
+    },
+    {
+      "path": "cain/research/grounding.py",
+      "sha256": "3840cebed16accd18fada57a65f5dbd5fa5eaccd0fa541a3ae2944624ed10b33"
+    },
+    {
+      "path": "cain/research/historian.py",
+      "sha256": "40cdf2465708bc0d4cbc1b9fd8ebedce71587e3e90d9ea32ef12b19191118315"
+    },
+    {
+      "path": "cain/research/inspection.py",
+      "sha256": "6f0176454e3bfa95d3585908c03503471f50f2ef37954fa9e8f9250693ef2b02"
+    },
+    {
+      "path": "cain/research/objects.py",
+      "sha256": "b7b578c59631b88c63c44f9b3122c17920d89527056bf4d3d6fc0a70ee8ba12d"
+    },
+    {
+      "path": "cain/research/service.py",
+      "sha256": "641f9625db8c991f474e3c64fd5e84a2e7008f8a0053208d056b4ab8a411d6de"
+    },
+    {
+      "path": "cain/research/workflows.py",
+      "sha256": "23c7ee8e388d489936cb517c12e0613364c3c3b7db55e0ebd3c0de8e10216bf8"
+    },
+    {
+      "path": "cain/runtime.py",
+      "sha256": "0487a60436fc47c8f1a913356b1a8f2e6ba66feb2a4890ef61a663d700fd1484"
+    },
+    {
+      "path": "cain/search/__init__.py",
+      "sha256": "3f1c28ca7f67f1e2c62267c9dc01a3b20b89636bfa872972a33287724743bb50"
+    },
+    {
+      "path": "cain/search/embeddings.py",
+      "sha256": "52253f3604cd003b29177ac0c175930776eda2fac10aa7a7831c9bf9cc433c00"
+    },
+    {
+      "path": "cain/search/hybrid.py",
+      "sha256": "a63a7c375efeb375b70bfd05d73104e3fb563b729ae6c883387945e7009a7b88"
+    },
+    {
+      "path": "cain/settings.py",
+      "sha256": "9301e8c29e859f6f1ba1bedcf6d501c7497625750d05cea35a4f66ca372766c4"
+    },
+    {
+      "path": "cain/web/app.js",
+      "sha256": "59a3817e9b957ba4ae2412418bfacfe7732220e3e4e08a718a71528f3bf2f224"
+    },
+    {
+      "path": "cain/web/index.html",
+      "sha256": "84c682c8aef48fafba5016693c544fefa94d3ad4b375535d05613590c82f8260"
+    },
+    {
+      "path": "cain/web/style.css",
+      "sha256": "91dd0284bf951335c00c668a7b3b8fcd05293ba2cdccfcb0c59db9cc0df73033"
+    },
+    {
+      "path": "cain/workspace.py",
+      "sha256": "2ad3afde78b0d66128d1c3208913dd0a70c7740be8d183249bddd31bc89d3858"
+    }
+  ],
+  "offline_tests": {
+    "passed": 831,
+    "skipped": 1,
+    "warnings": 2,
+    "ruff": "pass"
+  },
+  "registry_consumer": {
+    "entries": 64,
+    "missing_required_sources": 0,
+    "semantic_generation_certified": false
+  },
+  "real_v8_confirmation": "NOT_RUN",
+  "general_approval": false,
+  "artifact_location": "C:\\Users\\leona\\Documents\\Codex\\2026-09-14\\lei\\outputs\\CAIN_continuacao_V8_20260915"
+}
