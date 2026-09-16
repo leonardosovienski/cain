@@ -176,7 +176,7 @@ def matches_identity(relation, source_id):
     if 'json_pointer' in relation:
         return (source_id in [part.replace('~1', '/').replace('~0', '~')
                              for part in relation['json_pointer'].split('/')[1:]]
-                or any(part['decoded_subject'] in {'id', 'family', 'hypothesis', 'trial_id', 'name'}
+                or any(part['decoded_subject'] in {'id', 'family', 'hypothesis', 'hypothesis_id', 'trial_id', 'name'}
                        and part['decoded_object'] == source_id
                        for part in relation.get('record_context', [])))
     return relation['subject'] == source_id
@@ -282,13 +282,27 @@ def structured(evidence, source_id=None, *, addressable=False):
                 # Scalar metrics from an observation must retain the literal
                 # record identity and revision. No clock ordering or scientific
                 # status is inferred from these field names.
-                labels = {'id', 'family', 'hypothesis', 'trial_id', 'name', 'mode',
+                labels = {'id', 'family', 'hypothesis', 'hypothesis_id', 'trial_id', 'name', 'mode',
                           'observation_revision', 'revision', 'status', 'protocol_id',
                           'observed_at_utc', 'recorded_at_utc', 'at_utc'}
-                record_context = [r.copy() for r in entries
-                                  if r['json_pointer'].count('/') == 1 and r['decoded_subject'] in labels]
+                label_groups = {}
+                for row in entries:
+                    if row['decoded_subject'] in labels:
+                        parent = row['json_pointer'].rsplit('/', 1)[0]
+                        label_groups.setdefault(parent, []).append(row)
                 for entry in entries:
-                    entry['record_context'] = record_context
+                    parent = entry['json_pointer'].rsplit('/', 1)[0]
+                    ancestors = [p for p in label_groups if not p or parent == p or parent.startswith(p + '/')]
+                    # A label belongs to its containing object and descendants,
+                    # never a sibling object or another element of an array.
+                    nearest = {}
+                    identities = {'id', 'family', 'hypothesis', 'hypothesis_id', 'trial_id', 'name'}
+                    for ancestor in sorted(ancestors, key=len):
+                        if any(label['decoded_subject'] in identities for label in label_groups[ancestor]):
+                            nearest = {key: value for key, value in nearest.items() if key not in identities}
+                        for label in label_groups[ancestor]:
+                            nearest[label['decoded_subject']] = label.copy()
+                    entry['record_context'] = list(nearest.values())
             except (ValueError, RecursionError, IndexError):
                 issues.append({"reference": ref, "status": "ambiguous_or_invalid_json"})
                 continue
@@ -333,7 +347,7 @@ def structured(evidence, source_id=None, *, addressable=False):
 def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     """Select bounded exact excerpts, retaining source offsets and disclosed coverage."""
     candidates, seen, focused_paths, issues = [], set(), {}, []
-    contexts, owners, exact_targets = {}, {}, set()
+    contexts, owners, exact_targets, heading_targets = {}, {}, set(), {}
     missing_document_context = set()
     documents = document_contexts(evidence)
     # Explicit source paths filter documents while retaining their revisions.
@@ -349,7 +363,22 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         'permanece permanecem remain remains remained'.split())
     # Explicit alphanumeric identifiers outrank generic words, regardless of
     # project/domain. This is lexical retrieval, not an inferred entity mapping.
-    anchors, resolutions = question_identities(question, evidence)
+    identity_question = question
+    for named_source in sorted(named_sources, key=len, reverse=True):
+        identity_question = identity_question.replace(named_source, ' ')
+    anchors, resolutions = question_identities(identity_question, evidence)
+    # Small, explicit bilingual field vocabulary; this expands retrieval terms,
+    # not scientific meanings or verdicts.
+    field_terms = {
+        'regra': {'rule', 'signal', 'mechanism'}, 'hipotese': {'hypothesis', 'mechanism'},
+        'criterio': {'criterion', 'criteria', 'success', 'acceptance'},
+        'criterios': {'criterion', 'criteria', 'success', 'acceptance'},
+        'resultado': {'result', 'results', 'verdict', 'status'},
+        'motivo': {'reason', 'reasons', 'issues'},
+        'limitacoes': {'limitations', 'issues', 'unknowns'},
+    }
+    for term in tuple(terms):
+        terms.update(field_terms.get(term, set()))
     def anchor_score(value):
         return 20 * any(re.search(r'(?<![\w-])' + re.escape(token) + r'(?![\w-])',
                                   value, re.I) for token in anchors)
@@ -449,6 +478,9 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                 context_part(*header, 'table_header')
         for a, b in headings:
             title = re.sub(r'^#+\s+', '', text[a:b])
+            heading_targets.setdefault((ref, start, end), set()).update(
+                anchor for anchor in anchors
+                if re.search(r'(?<![\w-])' + re.escape(anchor) + r'(?![\w-])', title, re.I))
             token = re.match(r'[A-Za-z][\w-]*', title)
             if token and any(c.isdigit() for c in token[0]):
                 owners[(ref, start, end)] = token[0]
@@ -484,7 +516,8 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         parts = contexts.get((ref, start, end), [])
         total = len(quote.encode()) + sum(len(p['quote'].encode()) for p in parts)
         return (score + relevance(' '.join(p['quote'] for p in parts))) / max(1, total)**0.5
-    candidates.sort(key=lambda c: (-density(c), c[1], c[2]))
+    content_terms = terms - terms_of(' '.join(anchors))
+    candidates.sort(key=lambda c: (-len(content_terms & terms_of(c[4])), -density(c), c[1], c[2]))
     ordered = []
     for anchor in anchors:
         matching = [c for c in candidates if anchor in target_ids(c)
@@ -548,7 +581,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         reason = ('missing_document_context' if (ref, start, end) in missing_document_context
                   else 'weak_query_overlap' if specific_query_match and len(terms & terms_of(quote)) < 2
                   else 'heading_context_only' if quote.lstrip().startswith('#')
-                  else 'different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors}
+                  else 'different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors} and not heading_targets.get((ref, start, end))
                   else 'question_identifier_mismatch' if anchors and not matched and not numeric_match
                   else 'overlapping_selected_context' if any(e['reference'] == ref and start < e['end'] and end > e['start'] for e in selected.values())
                   else 'card_limit' if len(selected) >= max_cards
@@ -577,7 +610,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_balanced_excerpts/10", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/11", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "identifier_resolution": resolutions,
                       "identity_coverage": [{'identity': a,
