@@ -1,5 +1,7 @@
 # Documentação corrente
 
+- [Prontidão Stocks, acervo e estudos verificáveis](STOCKS_STUDY_READINESS_20260915.md)
+
 - [Integração Stocks com main — PR #3](INTEGRACAO_STOCKS_MAIN_20260915.md)
 - [Estado do projeto](../ESTADO_DO_PROJETO.md)
 - [Continuidade](../CONTINUIDADE.md)

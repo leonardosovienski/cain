@@ -1,3 +1,20 @@
+# Estado CAIN — 16/09/2026
+
+Consulte a [prontidão Stocks](docs/STOCKS_STUDY_READINESS_20260915.md) para código,
+acervo, instalação, testes e limites de interpretação. As correções anteriores
+estão integradas pela [PR #4](https://github.com/leonardosovienski/cain/pull/4).
+
+O acervo principal recebeu 48 fontes e contém 88 registros Stocks: 87 admitidos
+nesta rodada e o registro anterior preservado. A leitura literal de H1, das
+duas revisões da H17 e dos critérios da H22 passou em QA e na instalação principal. Isso não certifica
+interpretação livre do modelo nem executa um experimento científico.
+
+Evidências e cópias de recuperação: `C:/CAIN/work/stocks-study-20260915`.
+Nada foi apagado. Consulte os recibos de ativação para o caminho exato do runtime.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
 # Estado do projeto — integração Stocks com main
 
 | Área | Estado desta revisão |
@@ -13,8 +30,7 @@
 Os resultados de 831, 854 e 794 testes abaixo ou em relatórios anteriores pertencem
 a versões diferentes; não são somados nem tratados como teste desta composição.
 
-<details>
-<summary>Histórico preservado — não representa o estado corrente</summary>
+
 
 > Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
 

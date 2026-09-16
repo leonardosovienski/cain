@@ -1,3 +1,20 @@
+# Continuidade CAIN — estudo Stocks
+
+Consulte a [prontidão Stocks](docs/STOCKS_STUDY_READINESS_20260915.md) para código,
+acervo, instalação, testes e limites de interpretação. As correções anteriores
+estão integradas pela [PR #4](https://github.com/leonardosovienski/cain/pull/4).
+
+O acervo principal recebeu 48 fontes e contém 88 registros Stocks: 87 admitidos
+nesta rodada e o registro anterior preservado. A leitura literal de H1, das
+duas revisões da H17 e dos critérios da H22 passou em QA e na instalação principal. Isso não certifica
+interpretação livre do modelo nem executa um experimento científico.
+
+Evidências e cópias de recuperação: `C:/CAIN/work/stocks-study-20260915`.
+Nada foi apagado. Consulte os recibos de ativação para o caminho exato do runtime.
+
+<details>
+<summary>Histórico preservado — não representa o estado corrente</summary>
+
 # Continuidade CAIN — integração Stocks com main
 
 Retomada: [integração da PR #3](docs/INTEGRACAO_STOCKS_MAIN_20260915.md).
@@ -10,8 +27,7 @@ O [handoff V8](docs/HANDOFF_FECHAMENTO_V8_20260915.md) e a
 etapas anteriores. Instalação principal, bancos e configurações não foram atualizados.
 Logs desta conciliação: `C:/CAIN/work/stocks-remediation-20260915/merge-main-tests.log`.
 
-<details>
-<summary>Histórico preservado — não representa o estado corrente</summary>
+
 
 > Estado final desta cópia: V8 em QA isolado no workspace; 831 testes offline, sem confirmação com modelo e sem aprovação geral. Checkout canônico continua V7; instalação principal preservada. Veja [continuação V8](docs/CONTINUACAO_V8_20260915.md). O conteúdo anterior abaixo conserva o histórico.
 
