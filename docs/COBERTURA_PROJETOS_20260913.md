@@ -343,3 +343,34 @@ Reversão: comparar cada arquivo com sua cópia em `C:/CAIN/work/review-full-202
 Preservação: `preservation.json` confirma os três predictors e Ecosystem inalterados, política principal idêntica, módulos instalados preservados, registros/publicações anteriores mantidos e zero publicações do catálogo local na principal. Não existe dependência de mudança nos produtores para estas correções; seus registros e conclusões não foram alterados.
 
 Arquivos desta continuação: `src/cain/research/grounding.py`, `src/cain/research/analysis.py`, `src/cain/research/workflows.py`, `tests/integration/test_grounded_analysis.py`, esta seção e `CONTINUIDADE.md`. Reversão: comparar com `context-isolation-20260913/baseline` e retirar somente os hunks desta continuação, preservando todo o trabalho anterior e posterior. Não restaurar bancos/configurações ou apagar recibos. O pacote instalado não foi alterado.
+
+## Correção local da seleção Stocks — 15/09/2026
+
+Sob autorização para auditoria, correções e testes, sem publicar nem operar,
+`tools/hypothesis_sources.json` passou de 39 para 47 fontes Stocks. A revisão
+acrescenta o ledger das duas observações H17, os recibos de correção e reprodução,
+o ledger H18/H19, os resultados de reorganização e incerteza, a decisão H19
+contínua e o ledger H21. A identidade do produtor permanece
+`3066321e599ee15dd0ace4167d2791545ce6eb95`; o campo global `reviewed_at` continua
+datando a revisão original dos demais projetos, que não foram alterados.
+
+A seleção local contém 85 ocorrências, não 85 hipóteses. Foram conferidos hashes,
+reconstrução literal de cada fonte e a correspondência das duas saídas H17 com o
+ledger. Os 13 testes existentes do preparador passaram em 1,14 s no ambiente de
+desenvolvimento já disponível. A primeira tentativa teve oito testes aprovados
+e cinco erros de preparação por ausência da pasta temporária; o diretório foi
+criado e ambos os logs preservados. Os testes de importação usam somente fixtures
+e bancos temporários de QA; nenhuma fonte Stocks foi exportada ou admitida.
+
+Recibos: `C:/STOCKS/work/audit-completion-20260915/selection-verification.json`,
+`catalog-tests.log` e `catalog-tests-r2.log`. A cópia `hypothesis_sources.before.json`
+preserva a seleção anterior. Reverter somente as oito novas entradas e esta seção,
+conferindo alterações posteriores antes; não restaurar bancos ou o checkout inteiro.
+
+Isso corrige a omissão de fontes na seleção preparada. Não altera o seletor de
+contexto, o prompt, o modelo, permissões nem a instalação principal. Não houve
+inferência nova. A falha semântica A02 continua sem reteste: é proibido inferir que
+o CAIN passou a reconciliar corretamente H17 ou o código de saída 2. O próximo
+aceite exige teste separado do contexto e da resposta sobre as revisões, mantendo
+gabaritos fora do corpus. Os históricos anteriores e resultados negativos ficam
+preservados. Hash e cobertura literal não certificam compreensão ou lucro.

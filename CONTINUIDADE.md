@@ -1,5 +1,9 @@
 # Continuidade do CAIN
 
+## Publicacao autorizada — 15/09/2026
+
+Veja [o checkpoint desta publicacao](docs/PUBLICACAO_20260915.md). Todos os arquivos locais devem ser preservados. As alteracoes preexistentes sao publicadas separadamente de main; isso nao promove a candidata para a instalacao principal nem certifica suas hipoteses.
+
 ## Checkpoint local para o próximo chat — 14/09/2026
 
 **Ponto de retomada:** branch `checkpoint/conversa-v2-parcial-20260914`, derivada de `main` em `3f88a2535f08c70bce561cd3822e7558cebec326`. O commit de checkpoint preserva a composição acumulada, não é release nem aprovação integral. Obtenha seu SHA com `git rev-parse checkpoint/conversa-v2-parcial-20260914`. Não houve merge, push, instalação ou promoção. A instalação principal não foi atualizada por esta continuação nem por este fechamento. Os relatos anteriores abaixo são históricos e não descrevem a branch atual.
