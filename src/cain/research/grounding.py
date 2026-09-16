@@ -355,7 +355,10 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                      if item.get('source') and item['source'] in question}
     if type(max_bytes) is not int or not 1 <= max_bytes <= 2200 or type(max_cards) is not int or not 1 <= max_cards <= 8:
         raise ValueError('Invalid evidence budget')
-    terms = terms_of(question) - set(
+    content_question = question
+    for named_source in sorted(named_sources, key=len, reverse=True):
+        content_question = content_question.replace(named_source, ' ')
+    terms = terms_of(content_question) - set(
         'o a os as um uma de do da dos das em no na nos nas e ou que qual quais '
         'sobre para pelo pela por se com como the a an and or of in on to for '
         'what which is are can does do report relatorio permite concluir '
@@ -363,10 +366,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         'permanece permanecem remain remains remained'.split())
     # Explicit alphanumeric identifiers outrank generic words, regardless of
     # project/domain. This is lexical retrieval, not an inferred entity mapping.
-    identity_question = question
-    for named_source in sorted(named_sources, key=len, reverse=True):
-        identity_question = identity_question.replace(named_source, ' ')
-    anchors, resolutions = question_identities(identity_question, evidence)
+    anchors, resolutions = question_identities(content_question, evidence)
     # Small, explicit bilingual field vocabulary; this expands retrieval terms,
     # not scientific meanings or verdicts.
     field_terms = {
@@ -382,7 +382,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     def anchor_score(value):
         return 20 * any(re.search(r'(?<![\w-])' + re.escape(token) + r'(?![\w-])',
                                   value, re.I) for token in anchors)
-    question_tokens = tokens_of(question)
+    question_tokens = tokens_of(content_question)
     pairs = {pair for pair in zip(question_tokens, question_tokens[1:])
              if all(token in terms for token in pair)}
     def relevance(value):
@@ -610,7 +610,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_balanced_excerpts/11", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/12", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "identifier_resolution": resolutions,
                       "identity_coverage": [{'identity': a,
