@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/17'
+    assert result['generation']['prompt_version'] == 'addressable-review/18'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -497,3 +497,28 @@ def test_portuguese_comparison_request_has_explicit_language_instruction(setup, 
     result = review(service, scope, question, model, role='synthesis')
     assert result['status'] == 'generated'
     assert captured[0].startswith('Answer in Brazilian Portuguese,')
+
+
+def test_final_model_context_preserves_distinct_observation_revisions(setup):
+    service, scope, ingest, _, _ = setup
+    for revision in (1, 2):
+        text = json.dumps({'family': 'Z17', 'observation_revision': revision,
+                           'observed_at_utc': '2026-09-07T05:00:00Z',
+                           'status': 'INCONCLUSIVE_DATA_QUALITY',
+                           'summary': {'status': 'INCONCLUSIVE_DATA_QUALITY', 'count': revision},
+                           'canonical_proof_verdict': None})
+        ingest(cases.publication(('Z17',), revision=str(revision), text=text))
+    model = PointerModel()
+    def capture(prompt, instruction, schema):
+        payload = json.loads(prompt)
+        assert len((prompt + instruction).encode()) <= 5000
+        contexts = [p['text'] for e in payload['excerpts'].values()
+                    for p in e.get('source_context', []) if 'text' in p]
+        assert '\"observation_revision\": 1' in contexts
+        assert '\"observation_revision\": 2' in contexts
+        assert all(p['context_from'] in payload['excerpts'] for e in payload['excerpts'].values()
+                   for p in e.get('source_context', []) if 'context_from' in p)
+        return json.dumps({'citations': list(payload['excerpts'])[:2], 'analysis': 'Synthetic only.'})
+    model.generate_json = capture
+    assert review(service, scope, 'Qual resultado de Z17 nas revisoes?', model,
+                  role='synthesis')['status'] == 'generated'

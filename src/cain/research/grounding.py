@@ -12,7 +12,8 @@ def tokens_of(text):
 
 
 def terms_of(text):
-    return set(tokens_of(text))
+    tokens = tokens_of(text)
+    return set(tokens) | {part for token in tokens for part in token.split('_') if part}
 
 
 def question_identities(question, evidence):
@@ -371,11 +372,17 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     # not scientific meanings or verdicts.
     field_terms = {
         'regra': {'rule', 'signal', 'mechanism'}, 'hipotese': {'hypothesis', 'mechanism'},
-        'criterio': {'criterion', 'criteria', 'success', 'acceptance'},
+        'criterio': {'criterion', 'criteria', 'metric', 'success', 'acceptance'},
         'criterios': {'criterion', 'criteria', 'success', 'acceptance'},
         'resultado': {'result', 'results', 'verdict', 'status'},
         'motivo': {'reason', 'reasons', 'issues'},
         'limitacoes': {'limitations', 'issues', 'unknowns'},
+        'limitacao': {'limitations', 'issues', 'unknowns'},
+        'mecanismo': {'mechanism', 'signal', 'rule'},
+        'cronologia': {'timeline', 'timing', 'known', 'publication'},
+        'confiabilidade': {'reliability'}, 'veredicto': {'verdict'},
+        'periodo': {'test_period', 'test_start', 'warmup_end'},
+        'execucao': {'execution', 'price'},
     }
     for term in tuple(terms):
         terms.update(field_terms.get(term, set()))
@@ -567,7 +574,20 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                 and (not anchors or target_ids(c))):
             source_round.append(c)
             seen_sources.add(source)
-    candidates = ordered + source_round + [c for c in candidates if c not in ordered and c not in source_round]
+    # Represent each literal observation revision before duplicate fields of
+    # another revision. Source names alone collapse JSONL observations.
+    revision_round, seen_revisions = [], set()
+    for c in candidates:
+        parts = contexts.get((c[1], c[2], c[3]), [])
+        revision = tuple(p['quote'] for p in parts if p['kind'] == 'json_record_context'
+                         and re.search(r'"(?:observation_revision|revision)"\s*:', p['quote']))
+        group = (evidence[c[1]].get('source', c[1]), revision)
+        if revision and group not in seen_revisions and (not anchors or target_ids(c)):
+            revision_round.append(c)
+            seen_revisions.add(group)
+    first = revision_round + [c for c in ordered if c not in revision_round]
+    candidates = first + [c for c in source_round if c not in first] + [
+        c for c in candidates if c not in first and c not in source_round]
     specific_query_match = (not anchors and source_id is None and len(terms) >= 2 and
                             any(len(terms & terms_of(c[4])) >= 2 for c in candidates))
     selected, used, used_context = {}, 0, set()
@@ -577,9 +597,11 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         size = len(quote.encode()) + sum(len(part['quote'].encode()) for part in new_context)
         owner = owners.get((ref, start, end))
         matched = target_ids((0, ref, start, end, quote))
+        pointer = focused_paths.get((ref, start, end), '')
+        requested_field = bool(pointer and pointer.rsplit('/', 1)[-1] in tokens_of(content_question))
         numeric_match = any(' '.join(tokens_of(p)) in ' '.join(tokens_of(quote)) for p in numeric_phrases)
         reason = ('missing_document_context' if (ref, start, end) in missing_document_context
-                  else 'weak_query_overlap' if specific_query_match and len(terms & terms_of(quote)) < 2
+                  else 'weak_query_overlap' if specific_query_match and not requested_field and len(terms & terms_of(quote)) < 2
                   else 'heading_context_only' if quote.lstrip().startswith('#')
                   else 'different_section_identity' if anchors and owner and (ref, start, end) not in exact_targets and owner.casefold() not in {a.casefold() for a in anchors} and not heading_targets.get((ref, start, end))
                   else 'question_identifier_mismatch' if anchors and not matched and not numeric_match
@@ -610,7 +632,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_balanced_excerpts/12", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/13", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "identifier_resolution": resolutions,
                       "identity_coverage": [{'identity': a,

@@ -1,5 +1,8 @@
 # CAIN — acervo Stocks e leitura verificável
 
+Nova rodada em QA: [campanha de conversa H1–H22](docs/STOCKS_CONVERSATION_CAMPAIGN_20260916.md).
+Correções de contexto e inferência real são avaliadas separadamente das reproduções históricas.
+
 Rodada atual: [campanha Stocks no CAIN](docs/STOCKS_CAMPAIGN_20260916.md).
 Projeto local com 112 documentos, 22 jobs e reproduções históricas H21/H22 conferidas.
 Validação econômica geral e interpretação autônoma continuam limitadas.
