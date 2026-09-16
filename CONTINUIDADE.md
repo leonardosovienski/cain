@@ -1,5 +1,7 @@
 # Continuidade CAIN — estudo Stocks
 
+**Retomada em outra tarefa:** [handoff após encerramento do chat](docs/STOCKS_CHAT_HANDOFF_20260916.md).
+
 Rodada atual: [campanha Stocks no CAIN](docs/STOCKS_CAMPAIGN_20260916.md).
 Projeto local com 112 documentos, 22 jobs e reproduções históricas H21/H22 conferidas.
 Validação econômica geral e interpretação autônoma continuam limitadas.

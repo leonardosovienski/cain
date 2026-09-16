@@ -1,5 +1,7 @@
 # Documentação corrente
 
+- [Retomada após encerramento do chat Stocks/CAIN](STOCKS_CHAT_HANDOFF_20260916.md)
+
 - [Campanha Stocks: documentos, jobs e testes realizados](STOCKS_CAMPAIGN_20260916.md)
 
 - [Prontidão Stocks, acervo e estudos verificáveis](STOCKS_STUDY_READINESS_20260915.md)
