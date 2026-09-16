@@ -12,6 +12,39 @@ from test_grounded_analysis import PointerModel
 setup = cases.setup
 
 
+def test_native_fields_abstain_from_interpretation_and_preserve_values(setup):
+    service, scope, ingest, _, _ = setup
+    ingest(cases.publication(('T42',), text=json.dumps({'replay_exit_codes': [2, 2],
+        'full_history_executed': False, 'net_profit_brl': None, 'status': 'REPRODUCED_BLOCK'})))
+    model = PointerModel()
+    result = review(service, scope, 'O que replay_exit_codes, status, full_history_executed e net_profit_brl permitem concluir?', model, role='support')
+    assert result['status'] == 'literal_fields' and model.calls == 0
+    fields = {f['field']: f for f in result['explanation']['fields']}
+    assert fields['replay_exit_codes']['values'][0]['value'] == [2, 2]
+    assert fields['full_history_executed']['values'][0]['value'] is False
+    assert fields['net_profit_brl']['values'][0]['value'] is None
+    assert fields['status']['values'][0]['value'] == 'REPRODUCED_BLOCK'
+    assert result['explanation']['verification']['interpretation_verified'] is False
+    assert 'não foi verificada' in result['explanation']['proposed_synthesis']
+
+
+def test_native_fields_preserve_versions_missingness_and_identity():
+    evidence = {'a': {'text': '{"T42":{"run_code":2,"sample_count":null}}'},
+                'b': {'text': '{"T42":{"run_code":0},"T420":{"sample_count":99}}'}}
+    selected, _ = cards(evidence, 'run_code sample_count unknown_field T42', 'T42')
+    result = field_reply(selected, 'run_code sample_count unknown_field T42', 'T42')
+    fields = {f['field']: f for f in result['fields']}
+    assert fields['run_code']['status'] == 'multiple_reported_values'
+    assert [v['value'] for v in fields['sample_count']['values']] == [None]
+    assert fields['unknown_field']['status'] == 'not_located_in_selected_excerpts'
+
+
+def test_native_fields_do_not_intercept_prose_or_unrelated_excerpts():
+    selected, _ = cards({'a': {'text': '{"other_key":2}'}}, 'other_key', None)
+    assert field_reply(selected, 'O que estes resultados permitem concluir?', None) is None
+    assert field_reply(selected, 'run_code sample_count', None) is None
+
+
 @pytest.mark.parametrize('identity', ['T42', 'Ω7'])
 def test_explicit_fields_cover_trial_and_report_missing_fields(setup, identity):
     service, scope, ingest, _, _ = setup

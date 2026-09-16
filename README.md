@@ -1,8 +1,14 @@
-# CAIN — checkpoint V8
+# CAIN — integração V8 e correções de pesquisa
 
-Código de pesquisa e assistência local. A candidata V8 está integrada nesta branch, com 831 testes offline aprovados e sem aprovação geral de uso. A instalação principal permanece preservada.
+Esta revisão concilia a main consolidada em `2bdb570` com as correções Stocks de
+`f6c86d3`, pela [PR #3](https://github.com/leonardosovienski/cain/pull/3).
+Preserva conversa e memória V8, tabelas literais, cobertura por identidade e
+observações nativas; acrescenta listas JSON literais e abstenção para campos técnicos.
 
-Comece pelo [handoff de fechamento](docs/HANDOFF_FECHAMENTO_V8_20260915.md), pelo [estado atual](ESTADO_DO_PROJETO.md) e pelo [índice documental](docs/README.md).
+Consulte o [relatório da integração](docs/INTEGRACAO_STOCKS_MAIN_20260915.md), o
+[estado atual](ESTADO_DO_PROJETO.md) e o [índice documental](docs/README.md).
+A instalação principal permanece separada. Testes de software não certificam
+interpretação geral do modelo nem conclusões científicas.
 
 <details>
 <summary>Histórico preservado — não representa o estado corrente</summary>

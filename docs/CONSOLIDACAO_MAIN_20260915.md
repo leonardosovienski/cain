@@ -1,5 +1,8 @@
 # Consolidacao em main — 15/09/2026
 
+> Registro histórico desta etapa. A conciliação posterior com main e seus testes
+> estão em [Integração Stocks com main](INTEGRACAO_STOCKS_MAIN_20260915.md).
+
 O dono autorizou conferir todas as branches, integrar o conteudo util e manter somente main. Nenhuma pasta de trabalho, banco, configuracao ou modelo deve ser apagado.
 
 ## Revisao das branches

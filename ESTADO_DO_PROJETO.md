@@ -1,16 +1,17 @@
-# Estado atual — checkpoint V8
+# Estado do projeto — integração Stocks com main
 
-| Área | Estado |
+| Área | Estado desta revisão |
 |---|---|
-| Código | V8 integrada na branch fix/readiness-main-20260914 |
-| Engenharia | 831 PASS, 1 skip; Ruff aprovado;70 arquivos de produto conferidos |
-| Cadastro | 64 entradas consultadas; zero fontes exigidas ausentes |
-| Geração final V8 | Não executada; pendências científicas preservadas |
-| Aprovação geral | Não concedida |
-| Instalação principal | Preservada, sem V8 |
-| Retomada | [Handoff completo](docs/HANDOFF_FECHAMENTO_V8_20260915.md) |
+| Código | Main `2bdb570` conciliada com Stocks `f6c86d3` na PR #3 |
+| Pesquisa | Tabelas literais e seleção balanceada preservadas; listas JSON e filtro documental incorporados |
+| Catálogo | Observações H17 tipadas por revisão preservadas; exportador combinado `/4` |
+| Campos técnicos | Valores literais com abstenção explícita de interpretação |
+| Validação | 861 testes aprovados, 1 pulado; Ruff aprovado. [Relatório de integração](docs/INTEGRACAO_STOCKS_MAIN_20260915.md) |
+| Instalação principal | Preservada; integração Git não equivale a instalação |
+| Limites | Sem nova certificação de inferência, hipóteses ou resultado econômico |
 
-Commit/ref remoto e hashes constam no recibo de fechamento indicado no handoff.
+Os resultados de 831, 854 e 794 testes abaixo ou em relatórios anteriores pertencem
+a versões diferentes; não são somados nem tratados como teste desta composição.
 
 <details>
 <summary>Histórico preservado — não representa o estado corrente</summary>

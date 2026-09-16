@@ -1,8 +1,14 @@
-# Continuidade CAIN — V8, 15/09/2026
+# Continuidade CAIN — integração Stocks com main
 
-O ponto de retomada é o [handoff de fechamento](docs/HANDOFF_FECHAMENTO_V8_20260915.md). Ele registra código, GitHub, instalação QA, backups, evidências, modelos e pendências. A V8 está integrada no checkout canônico e nesta branch; não foi instalada na principal nem aprovada para uso geral.
+Retomada: [integração da PR #3](docs/INTEGRACAO_STOCKS_MAIN_20260915.md).
+Esta revisão reúne a main `2bdb570` e o checkpoint Stocks `f6c86d3`, com históricos
+e arquivos locais preservados. O estado remoto da entrega está na
+[PR #3](https://github.com/leonardosovienski/cain/pull/3).
 
-O recibo final fica em `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs/ENCERRAMENTO_GIT_20260915/VERIFICACAO_FINAL.json`. O backup local independente fica em `C:/CAIN/backups/continuidade-20260915-v8`.
+O [handoff V8](docs/HANDOFF_FECHAMENTO_V8_20260915.md) e a
+[remediação Stocks](docs/STOCKS_REMEDIATION_20260915.md) documentam suas respectivas
+etapas anteriores. Instalação principal, bancos e configurações não foram atualizados.
+Logs desta conciliação: `C:/CAIN/work/stocks-remediation-20260915/merge-main-tests.log`.
 
 <details>
 <summary>Histórico preservado — não representa o estado corrente</summary>
@@ -49,6 +55,13 @@ contagens e resultados nelas não substituem o estado atual descrito acima.
 ---
 
 # Continuidade do CAIN
+
+## Correção Stocks isolada — 15/09/2026
+
+Veja [a remediação de leitura e contexto](docs/STOCKS_REMEDIATION_20260915.md)
+na branch `checkpoint/stocks-remediation-20260915`. Publicação autorizada, com
+preservação integral dos arquivos locais; sem merge ou instalação principal.
+A branch isola as correções Stocks das tarefas concorrentes no checkout original.
 
 ## Main consolidada — 15/09/2026
 

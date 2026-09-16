@@ -10,7 +10,7 @@ import subprocess
 
 from research_snapshot import canonical, confined, digest, seal, timestamp, validate
 
-EXPORTER = 'hypothesis-catalog/3'
+EXPORTER = 'hypothesis-catalog/4'
 
 
 def source_clock(value):

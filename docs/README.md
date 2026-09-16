@@ -1,12 +1,15 @@
-# Documentação corrente — V8
+# Documentação corrente
 
-- [Handoff para continuar após apagar o chat](HANDOFF_FECHAMENTO_V8_20260915.md)
+- [Integração Stocks com main — PR #3](INTEGRACAO_STOCKS_MAIN_20260915.md)
 - [Estado do projeto](../ESTADO_DO_PROJETO.md)
 - [Continuidade](../CONTINUIDADE.md)
-- [Relatório da entrega V8, anterior à publicação](CONTINUACAO_V8_20260915.md)
-- [Histórico e diagnósticos V5–V7](CONTINUACAO_POS_V4_20260915.md)
+- [Remediação Stocks e limites semânticos](STOCKS_REMEDIATION_20260915.md)
+- [QA histórico da candidata Stocks](STOCKS_QA_20260915.json)
+- [Consolidação anterior da main](CONSOLIDACAO_MAIN_20260915.md)
+- [Handoff V8](HANDOFF_FECHAMENTO_V8_20260915.md)
 
-O handoff acima é o estado corrente. Afirmações de versão ou publicação nos relatórios anteriores descrevem seus respectivos instantes históricos.
+Os relatórios anteriores preservam resultados das versões identificadas neles;
+não atestam a instalação ou a qualidade semântica da composição atual.
 
 <details>
 <summary>Histórico preservado — não representa o estado corrente</summary>

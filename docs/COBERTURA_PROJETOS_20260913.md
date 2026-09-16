@@ -374,3 +374,25 @@ o CAIN passou a reconciliar corretamente H17 ou o código de saída 2. O próxim
 aceite exige teste separado do contexto e da resposta sobre as revisões, mantendo
 gabaritos fora do corpus. Os históricos anteriores e resultados negativos ficam
 preservados. Hash e cobertura literal não certificam compreensão ou lucro.
+
+## Continuação isolada e publicação autorizada — 15/09/2026
+
+A seção anterior registra a primeira etapa e não descreve a candidata final.
+O usuário autorizou concluir as correções e publicar, mantendo todos os arquivos
+locais. A [continuação Stocks](STOCKS_REMEDIATION_20260915.md) documenta JSONL,
+objetos JSON inteiros, contexto histórico, seleção específica e o teste real.
+A seleção final mantém 47 fontes e 86 ocorrências. A candidata está na branch
+`checkpoint/stocks-remediation-20260915`, separada das alterações concorrentes
+no checkout compartilhado. Nenhuma instalação principal foi atualizada.
+
+## Conciliação com main — PR #3
+
+A [integração posterior](INTEGRACAO_STOCKS_MAIN_20260915.md) preserva o catálogo
+consolidado de main, incluindo H17 como `observation_jsonl`, com identidade nativa
+`observation_revision`, estado e relógio da fonte. O exportador combinado `/4`
+distingue sua revisão das duas variantes anteriores `/3`. O catálogo consolidado
+contém 48 fontes Stocks e 87 ocorrências verificadas: a main acrescentou
+`docs/open_source_research/OSS-20260911-01/EXPERIMENTS.md` às 47 fontes anteriores.
+Nenhuma nova ingestão no banco principal foi realizada.
+O recibo de inferência anterior permanece histórico, sem atribuir suas respostas
+ao prompt `/17` da composição atual.

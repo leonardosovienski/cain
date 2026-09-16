@@ -249,7 +249,9 @@ def structured(evidence, source_id=None, *, addressable=False):
                             value_start = ws(ws(end) + 1)
                             value, value_end = decoder.raw_decode(text, value_start)
                             pointer = path + '/' + key.replace('~', '~0').replace('/', '~1')
-                            if isinstance(value, (dict, list)):
+                            flat_array = (addressable and isinstance(value, list) and
+                                          all(not isinstance(v, (dict, list)) for v in value))
+                            if isinstance(value, (dict, list)) and not flat_array:
                                 visit(value_start, pointer)
                             else:
                                 quote = text[start:value_end]
@@ -334,13 +336,17 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     contexts, owners, exact_targets = {}, {}, set()
     missing_document_context = set()
     documents = document_contexts(evidence)
+    # Explicit source paths filter documents while retaining their revisions.
+    named_sources = {item['source'] for item in evidence.values()
+                     if item.get('source') and item['source'] in question}
     if type(max_bytes) is not int or not 1 <= max_bytes <= 2200 or type(max_cards) is not int or not 1 <= max_cards <= 8:
         raise ValueError('Invalid evidence budget')
     terms = terms_of(question) - set(
         'o a os as um uma de do da dos das em no na nos nas e ou que qual quais '
         'sobre para pelo pela por se com como the a an and or of in on to for '
         'what which is are can does do report relatorio permite concluir '
-        'conclusion conclude forte stronger mais more impede impedem'.split())
+        'conclusion conclude forte stronger mais more impede impedem '
+        'permanece permanecem remain remains remained'.split())
     # Explicit alphanumeric identifiers outrank generic words, regardless of
     # project/domain. This is lexical retrieval, not an inferred entity mapping.
     anchors, resolutions = question_identities(question, evidence)
@@ -357,6 +363,10 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     partial, examined, decisions = False, 0, []
     for ref, item in evidence.items():
         text = item['text']
+        if named_sources and item.get('source') not in named_sources:
+            decisions.append({'reference': ref, 'start': 0, 'end': len(text),
+                              'decision': 'explicit_source_mismatch'})
+            continue
         if examined >= 100 or len(text.encode()) > 1_000_000:
             partial = True
             continue

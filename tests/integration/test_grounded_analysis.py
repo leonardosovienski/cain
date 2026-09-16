@@ -318,10 +318,29 @@ def test_leading_sibling_hypothesis_is_not_another_hypothesis_preamble():
 
 def test_specific_question_does_not_fill_budget_with_one_generic_word():
     evidence = {'current': {'text': 'Real operation remains unavailable; limitations persist.'},
-                'old': {'text': 'A real diagnostic was run in the earlier study.'}}
-    selected, coverage = cards(evidence, 'What is reported about real operation and limitations?')
+                'old': {'text': 'A real diagnostic remains in the earlier study.'}}
+    selected, coverage = cards(evidence, 'What remains reported about real operation and limitations?')
     assert selected and all(e['reference'] == 'current' for e in selected.values())
     assert any(d['decision'] == 'weak_query_overlap' for d in coverage['decisions'])
+
+
+def test_explicit_document_path_keeps_revisions_and_excludes_other_sources():
+    evidence = {'old': {'text': '{"revision":1,"exit_code":2}', 'source': 'reports/decision.json'},
+                'new': {'text': '{"revision":2,"exit_code":2}', 'source': 'reports/decision.json'},
+                'other': {'text': '{"exit_code":0}', 'source': 'other/decision.json'}}
+    selected, coverage = cards(evidence, 'In reports/decision.json what is exit_code?')
+    assert {e['reference'] for e in selected.values()} == {'old', 'new'}
+    assert any(d['decision'] == 'explicit_source_mismatch' for d in coverage['decisions'])
+
+
+@pytest.mark.parametrize('values', ['[2, 2]', '[]', '[null, false, "UNKNOWN"]'])
+def test_flat_json_array_remains_a_literal_named_value(values):
+    text = '{"exit_codes": ' + values + ', "full_history_executed": false}'
+    selected, _ = cards({'r': {'text': text}}, 'What are exit_codes?')
+    arrays = [e for e in selected.values() if e.get('json_pointer') == '/exit_codes']
+    assert len(arrays) == 1
+    assert arrays[0]['quote'] == '"exit_codes": ' + values
+    assert text[arrays[0]['start']:arrays[0]['end']] == arrays[0]['quote']
 
 
 def test_document_preamble_is_not_silently_dropped_when_over_budget():
