@@ -110,7 +110,7 @@ def test_review_payload_retains_exact_key_paths(setup):
     model.generate_json = capture
     result = review(service, scope, 'What status?', model, role='synthesis', source_id='H6')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/18'
+    assert result['generation']['prompt_version'] == 'addressable-review/19'
 
 
 def test_multicolumn_claim_row_is_literal_without_invented_column_meanings(setup):
@@ -516,8 +516,12 @@ def test_final_model_context_preserves_distinct_observation_revisions(setup):
                     for p in e.get('source_context', []) if 'text' in p]
         assert '\"observation_revision\": 1' in contexts
         assert '\"observation_revision\": 2' in contexts
-        assert all(p['context_from'] in payload['excerpts'] for e in payload['excerpts'].values()
-                   for p in e.get('source_context', []) if 'context_from' in p)
+        for entry in payload['excerpts'].values():
+            for part in entry.get('source_context', []):
+                if 'context_from' in part:
+                    owner, index = part['context_from']
+                    literal = payload['excerpts'][owner]['source_context'][index]
+                    assert set(literal) == {'kind', 'text'}
         return json.dumps({'citations': list(payload['excerpts'])[:2], 'analysis': 'Synthetic only.'})
     model.generate_json = capture
     assert review(service, scope, 'Qual resultado de Z17 nas revisoes?', model,

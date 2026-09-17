@@ -32,6 +32,16 @@ def test_natural_question_retrieves_distinct_snake_case_status_axes():
         '/historical_official_verdict_preserved', '/updated_reliability'}
 
 
+def test_next_test_question_keeps_reopening_condition_and_prohibition():
+    text = json.dumps({'hypothesis': 'Z1', 'mechanism': 'example',
+                       'trial_name': 'short', 'automatic_reopening': False,
+                       'material_reopening_basis': 'Only a separate disclosed replication protocol.'})
+    selected, _ = cards({'r': {'text': text}},
+                        'Qual próximo teste válido de Z1? Não reabra automaticamente.', max_cards=2)
+    assert {e['json_pointer'] for e in selected.values()} == {
+        '/material_reopening_basis', '/automatic_reopening'}
+
+
 def test_failed_generation_is_not_fabricated_as_model_answer(setup, tmp_path):
     service, scope, ingest, _, _ = setup
     ingest(cases.publication(('Z17',), text='Z17 remains inconclusive.'))

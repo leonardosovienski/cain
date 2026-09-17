@@ -14,7 +14,12 @@ prospectiva, aritmética, busca documental e conversa comum sem consulta automá
 Avaliação semântica manual compara a resposta com o contexto realmente fornecido;
 JSON válido, citações e testes verdes não constituem aprovação.
 
-**Campanha em andamento; não há aprovação semântica geral.** O relatório final
+**Campanha em andamento; não há aprovação semântica geral.** A rodada 2 parou
+entre casos após oito tentativas, por contradições repetidas do `qwen2.5:3b` mesmo
+com os fatos necessários no contexto. Essa decisão posterior ao início é
+registrada em `campaign2-stop-reason.json`; os 42 casos pendentes não são aprovação
+nem execução. O piloto 4 tenta novamente `qwen3.5:4b` com servidor exclusivo e
+limiar de memória, em três casos antes de decidir a continuação. O relatório final
 deve registrar cada caso, inclusive falhas, interrupções e abstenções. Não somar
 repetições ou versões de modelo como evidência econômica independente.
 
@@ -56,10 +61,22 @@ A primeira campanha foi interrompida após a pré-verificação revelar perda de
 qualificações com as novas fontes; também registrou bloqueios SQLite durante QA
 concorrente. A seguinte usa cópias exclusivas. Nada foi apagado.
 
+CI do commit `d1c0eeb99375ed3fd9daec8c7b7c5e5525ae1d2f` passou nas quatro versões
+Python 3.11–3.14, incluindo lint, testes, wheel e instalação não editável fora do
+checkout. Python 3.11 registrou 875 testes aprovados e 2 ignorados. O candidato
+local instalado separadamente passou `pip check`, CLI externa e igualdade de
+71 arquivos fonte/wheel/instalação; ele ainda não substitui o runtime principal.
+
 Os 31 testes stdlib e as reproduções H21/H22 foram novamente executados em QA:
 H21, 8 cenários/16.400 pontos; H22, 24 avaliações/30.226 pontos, incluindo duas
 inviáveis. São os mesmos resultados históricos, sem evidência independente nova.
-H1–H20 não receberam novos experimentos econômicos por essa repetição.
+H20 também passou a reconciliação de entradas consumidas: 9.732 células,
+18 cenários, 465 médias, 30 caminhos e 54 comparações de intervalos. Tolerância
+numérica 2e-12; diferença observada 2,22e-16. Não certifica o pacote original
+inteiro nem dados/eventos omitidos. H1–H20 não receberam novos experimentos
+econômicos por essa repetição. O ledger local `hypothesis-ledger-source-reviewed.json`
+reúne as 22 definições, protocolos, motivos, próximos testes e 60 hashes de fontes;
+é revisão do avaliador, não resposta atribuída ao modelo.
 H22 conserva rejeição histórica; H21 conserva resultado condicional e janela
 prospectiva até a primeira sessão em/após 10/09/2027.
 
@@ -68,7 +85,8 @@ runtime Stocks no Windows ou alteração dos 12 bancos originais do produtor.
 
 ## Retomada
 
-Verificar `campaign2.log`, `campaign-2/completed.json` e os arquivos por caso antes
+Verificar `pilot4.log`, `pilot-4/completed.json`, `campaign-2/interrupted.json` e
+os arquivos por caso antes
 de executar qualquer nova inferência. Arquivo `STOP` no diretório da rodada
 interrompe o runner entre casos. Não apagar nem reutilizar diretórios de saída.
 O runner recebe caminhos explícitos de cópias de QA; não aponta implicitamente

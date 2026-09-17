@@ -383,6 +383,10 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         'confiabilidade': {'reliability'}, 'veredicto': {'verdict'},
         'periodo': {'test_period', 'test_start', 'warmup_end'},
         'execucao': {'execution', 'price'},
+        'proximo': {'next', 'reopening'}, 'reabra': {'reopening'},
+        'reabertura': {'reopening'}, 'automaticamente': {'automatic'},
+        'numeros': {'numbers', 'counts', 'count', 'metrics'},
+        'denominadores': {'denominator'},
     }
     for term in tuple(terms):
         terms.update(field_terms.get(term, set()))
@@ -632,7 +636,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_balanced_excerpts/13", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/14", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "identifier_resolution": resolutions,
                       "identity_coverage": [{'identity': a,

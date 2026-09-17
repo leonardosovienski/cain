@@ -33,7 +33,7 @@ def test_hypothesis_instruction_reaches_provider_with_literal_evidence(setup):
     result = review(service, scope, 'Qual a interpretação da hipótese QA-BR-1?', model,
                     role='synthesis', source_id='QA-BR-1')
     assert result['status'] == 'generated'
-    assert result['generation']['prompt_version'] == 'addressable-review/18'
+    assert result['generation']['prompt_version'] == 'addressable-review/19'
     assert result['explanation']['semantic_support'] == 'not_certified'
     assert model.calls == 1
 
