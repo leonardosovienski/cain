@@ -371,7 +371,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
     # Small, explicit bilingual field vocabulary; this expands retrieval terms,
     # not scientific meanings or verdicts.
     field_terms = {
-        'regra': {'rule', 'signal', 'mechanism'}, 'hipotese': {'hypothesis', 'mechanism'},
+        'regra': {'rule', 'signal', 'mechanism', 'factor', 'portfolio'}, 'hipotese': {'hypothesis', 'mechanism'},
         'criterio': {'criterion', 'criteria', 'metric', 'success', 'acceptance'},
         'criterios': {'criterion', 'criteria', 'success', 'acceptance'},
         'resultado': {'result', 'results', 'verdict', 'status'},
@@ -380,7 +380,8 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         'limitacao': {'limitations', 'issues', 'unknowns'},
         'mecanismo': {'mechanism', 'signal', 'rule'},
         'cronologia': {'timeline', 'timing', 'known', 'publication'},
-        'confiabilidade': {'reliability'}, 'veredicto': {'verdict'},
+        'confiabilidade': {'reliability'}, 'veredicto': {'verdict', 'veredito'},
+        'veredito': {'verdict', 'veredicto'},
         'periodo': {'test_period', 'test_start', 'warmup_end'},
         'execucao': {'execution', 'price'},
         'proximo': {'next', 'reopening'}, 'reabra': {'reopening'},
@@ -545,13 +546,14 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         choice = next((c for c in candidates if ' '.join(phrase_terms) in ' '.join(tokens_of(c[4]))), None)
         if choice is not None and choice not in ordered:
             ordered.insert(0, choice)
+    result_cards = []
     if terms & {'resultado', 'result', 'veredicto', 'veredito', 'verdict'}:
         result_sources, result_cards = set(), []
         for c in candidates:
             source = evidence[c[1]].get('source', c[1])
             if (source not in result_sources and (not anchors or target_ids(c))
                     and not c[4].lstrip().startswith('#')
-                    and re.search(r'\b(?:resultado|result|veredicto|veredito|verdict)\b(?:\s+(?:corrigido|corrected|final|inicial|initial))?\s*(?::|\bé\b|\bis\b)', c[4], re.I)):
+                    and re.search(r'\b(?:resultado|result|veredicto|veredito|verdict)\b(?:\s+[\w-]+){0,2}\s*(?::|\bé\b|\bis\b)', re.sub(r'[*`]', '', c[4]), re.I)):
                 result_cards.append(c)
                 result_sources.add(source)
             if len(result_cards) >= 2:
@@ -560,6 +562,35 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
         # paragraphs. Separate sources can contain original and corrected values.
         first = [c for c in ordered if any(' '.join(tokens_of(p)) in ' '.join(tokens_of(c[4])) for p in numeric_phrases)]
         ordered = first + [c for c in result_cards if c not in first] + [c for c in ordered if c not in first and c not in result_cards]
+    # A protocol question requests distinct fields. Repeated execution fees
+    # must not consume every card before the rule, test window and criterion.
+    # These are literal field-name matches, never reconstructed protocols.
+    facets = []
+    if terms & {'regra', 'rule'}:
+        facets += [{'rule', 'signal', 'mechanism', 'factor'}, {'quantile'}]
+    if terms & {'periodo', 'period'}:
+        facets += [{'test_period', 'period'}]
+    if terms & {'execucao', 'execution'}:
+        facets += [{'price'}]
+    if terms & {'criterio', 'criterion', 'criteria'}:
+        facets += [{'metric', 'criterion', 'criteria'}]
+    if terms & {'resultado', 'result', 'veredicto', 'veredito', 'verdict'}:
+        facets += [{'verdict'}]
+    if terms & {'confiabilidade', 'reliability'}:
+        facets += [{'reliability'}]
+    if terms & {'proximo', 'next'}:
+        facets += [{'next', 'basis'}]
+    if terms & {'denominadores', 'denominator'}:
+        facets += [{'denominator'}]
+    facet_cards = []
+    for facet in facets:
+        options = [c for c in candidates if (not anchors or target_ids(c))
+                   and (path := focused_paths.get((c[1], c[2], c[3])))
+                   and facet & terms_of(path)]
+        if options and options[0] not in facet_cards:
+            facet_cards.append(options[0])
+    priority = result_cards + [c for c in facet_cards if c not in result_cards]
+    ordered = priority + [c for c in ordered if c not in priority]
     # Requested closure reasons need their own literal passage, not only status.
     if terms & {'motivo', 'razao', 'razoes', 'reason', 'reasons', 'why', 'encerramento', 'closure'}:
         for anchor in anchors:
@@ -636,7 +667,7 @@ def cards(evidence, question, source_id=None, *, max_bytes=2200, max_cards=8):
                             'retrieval': 'evidence_selected' if refs else 'budget_or_overlap_exclusion' if located else 'not_located_in_examined_slice',
                             'selected_ids': refs, 'semantic_support': 'not_verified'})
     return selected, {"available_excerpts": len(candidates), "selected_excerpts": len(selected),
-                      "selection": "identity_balanced_excerpts/14", "whole_source_read_claim": False,
+                      "selection": "identity_balanced_excerpts/15", "whole_source_read_claim": False,
                       "question_identifiers": anchors,
                       "identifier_resolution": resolutions,
                       "identity_coverage": [{'identity': a,

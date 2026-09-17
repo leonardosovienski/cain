@@ -14,6 +14,67 @@ campaign = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(campaign)
 
 
+def test_bold_portuguese_verdict_with_subject_beats_review_limitation():
+    evidence = {'r': {'source': 'report.md', 'text':
+        '# Z1\n- **veredito Z1:** **NOT_SUPPORTED**\n\n'
+        'Limitação: o resultado desta revisão depende de dados incompletos.\n'}}
+    selected, _ = cards(evidence, 'Qual resultado e veredicto de Z1?', max_cards=1)
+    assert 'NOT_SUPPORTED' in next(iter(selected.values()))['quote']
+
+
+def test_protocol_facets_survive_repeated_execution_parameters():
+    text = json.dumps({'name': 'Z1', 'params': {
+        'factor.name': 'sample_signal', 'portfolio.quantile': 'top_quintile',
+        'execution.price': 'next_open', 'execution.fee': 0.01,
+        'execution.other_fee': 0.02, 'execution.additional_fee': 0.03,
+        'execution.another_fee': 0.04},
+        'test_period': ['2020-01-01', '2021-01-01'], 'metric': 'sample_metric'})
+    selected, _ = cards({'r': {'text': text}},
+                        'Qual regra, período, execução e critério de Z1?', max_cards=5)
+    assert {e['json_pointer'] for e in selected.values()} == {
+        '/params/factor.name', '/params/portfolio.quantile',
+        '/params/execution.price', '/test_period', '/metric'}
+
+
+def test_verdict_and_reliability_survive_long_later_issues():
+    evidence = {
+        'report': {'source': 'report.md', 'text': '# Z1\n\n- **veredito Z1:** NOT_SUPPORTED\n'},
+        'review': {'source': 'review.json', 'text': json.dumps({
+            'hypothesis': 'Z1', 'automatic_reopening': False,
+            'historical_official_verdict_preserved': 'NOT_SUPPORTED',
+            'updated_reliability': 'INCONCLUSIVE_METHOD',
+            'issues': ['Later limitations; not the historical result. ' * 20]})}}
+    selected, _ = cards(evidence, 'Qual resultado, veredicto, confiabilidade e limitação de Z1?', max_cards=3)
+    assert {e.get('json_pointer') for e in selected.values()} == {
+        None, '/historical_official_verdict_preserved', '/updated_reliability'}
+    for entry in selected.values():
+        assert evidence[entry['reference']]['text'][entry['start']:entry['end']] == entry['quote']
+
+
+def test_receiver_structure_sentinel_is_not_a_reported_scientific_status(setup):
+    from cain.research.analysis import review
+
+    service, scope, ingest, _, _ = setup
+    publication = cases.publication(('Z1',), text='Z1 has a registered protocol.')
+    publication['records'][0]['source_status'] = 'NOT_STRUCTURED_IN_SOURCE'
+    publication['records'][0]['kind'] = 'registered_trial'
+    ingest(cases.reseal(publication))
+
+    class Capture:
+        base_url = 'http://127.0.0.1:11434'
+
+        def generate_json(self, prompt, instruction, schema):
+            record = json.loads(prompt)['reported_records_untrusted'][0]
+            assert 'source_status' not in record
+            assert 'status_axis' not in record
+            assert record['kind'] == 'registered_trial'
+            return json.dumps({'citations': ['S1'], 'analysis': 'A protocol is registered.'})
+
+    result = review(service, scope, 'What is registered for Z1?', Capture(), role='synthesis')
+    assert result['status'] == 'generated'
+    assert 'NOT_STRUCTURED_IN_SOURCE' in json.dumps(result['facts'])
+
+
 def test_singular_limitation_retrieves_issues_over_short_metadata():
     text = json.dumps({'hypothesis': 'Z1', 'automatic_reopening': False,
                        'trial_name': 'short', 'issues': ['Incorrect historical execution.']})
