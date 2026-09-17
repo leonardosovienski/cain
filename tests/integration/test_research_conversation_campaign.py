@@ -72,7 +72,9 @@ def test_failed_generation_is_not_fabricated_as_model_answer(setup, tmp_path):
 
 def test_arithmetic_is_real_cain_output_without_generation(tmp_path):
     class Never:
-        last_metadata = {}
+        # A preceding model answer must not label deterministic arithmetic as
+        # another generation in the campaign receipt.
+        last_metadata = {'model': 'previous-call', 'eval_count': 100}
 
         def generate(self, *args):
             raise AssertionError('Arithmetic must not invoke a model')
@@ -81,5 +83,7 @@ def test_arithmetic_is_real_cain_output_without_generation(tmp_path):
     project = workspace.create_project('leo', 'Test')['id']
     workspace.ensure_session('leo', 'qa', project)
     result = campaign.perform_case({'question': 'Quanto é 105 * 50?', 'mode': 'run'},
-                                   None, None, workspace, 'leo', project, 'qa', Never())
+                                   None, None, workspace, 'leo', project, 'qa',
+                                   campaign.Recorder(Never(), tmp_path))
     assert '5250' in result['response']
+    assert result['generation'] == {'called': False}

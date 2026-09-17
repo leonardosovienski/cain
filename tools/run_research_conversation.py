@@ -65,12 +65,18 @@ def perform_case(case, service, scope, workspace, user, project, session, provid
     """Persist only outputs actually returned by CAIN, with their origin visible."""
     question = case['question']
     if case.get('mode', 'review') == 'run':
+        before_calls = getattr(provider, 'calls', None)
         corpus = workspace.document_corpus(user, project)
         with build_cain(workspace.path, provider, corpus=corpus, source_paths=[]) as runtime:
             result = runtime.run(user, session, question, intent=case.get('intent'),
                                  project_id=project)
             outcome = asdict(result)
-        output = {**outcome, 'generation': provider.last_metadata,
+        after_calls = getattr(provider, 'calls', None)
+        called = (after_calls > before_calls if isinstance(before_calls, int)
+                  and isinstance(after_calls, int) else None)
+        generation = ({'called': False} if called is False
+                      else {**provider.last_metadata, 'called': called})
+        output = {**outcome, 'generation': generation,
                   'project_id': project, 'session_id': session,
                   'campaign_origin': 'CAIN orchestrator on QA copy'}
     else:

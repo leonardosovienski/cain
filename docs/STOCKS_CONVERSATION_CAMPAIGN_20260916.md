@@ -18,8 +18,11 @@ JSON válido, citações e testes verdes não constituem aprovação.
 entre casos após oito tentativas, por contradições repetidas do `qwen2.5:3b` mesmo
 com os fatos necessários no contexto. Essa decisão posterior ao início é
 registrada em `campaign2-stop-reason.json`; os 42 casos pendentes não são aprovação
-nem execução. O piloto 4 tenta novamente `qwen3.5:4b` com servidor exclusivo e
-limiar de memória, em três casos antes de decidir a continuação. O relatório final
+nem execução. O piloto 4 completou três casos com `qwen3.5:4b`: maior fidelidade,
+mas ainda cobertura parcial e falha no próximo teste de H1. A rodada 3 repete o
+escopo completo de 50 perguntas nesse modelo, com referências exatas de contexto
+e recuperação dos requisitos de replicação; iniciou no código `74c91ec`.
+O relatório final
 deve registrar cada caso, inclusive falhas, interrupções e abstenções. Não somar
 repetições ou versões de modelo como evidência econômica independente.
 
@@ -43,13 +46,19 @@ O projeto de QA contém 128 documentos; não presumir essa população no princi
 - O orçamento final remove duplicatas antes de eliminar uma revisão e se abstém
   quando não consegue preservar as revisões selecionadas.
 - Contextos compartilhados são recalculados após cada exclusão, evitando apontar
-  para um trecho que saiu do prompt.
+  para um trecho que saiu do prompt. Referências indicam o ID do trecho e o índice
+  exato do contexto, sem ambiguidade entre identificação, revisão e data.
 - Busca reconhece palavras internas de chaves `snake_case`, preserva campos
-  explicitamente pedidos e contempla termos como limitação e confiabilidade.
+  explicitamente pedidos e contempla termos como limitação, confiabilidade e
+  próximo teste/reabertura.
 - Até quatro páginas/200 registros são examinados; limites e omissões permanecem
   declarados. O limite de fontes do seletor não é uma alegação de leitura integral.
 - Instruções distinguem veredicto/reliabilidade, lucro/incremento e motivo
   histórico/requisito futuro. Essas instruções não garantem obediência do modelo.
+- O recibo do runner não reutiliza metadados da geração anterior quando um
+  controle determinístico faz zero chamadas. A rodada 3 já estava carregada com
+  o runner anterior; seus contadores de chamadas permanecem válidos, mas os três
+  controles de orquestração precisam de um reteste identificado com essa correção.
 
 ## Tentativas preservadas e limites
 
@@ -85,7 +94,7 @@ runtime Stocks no Windows ou alteração dos 12 bancos originais do produtor.
 
 ## Retomada
 
-Verificar `pilot4.log`, `pilot-4/completed.json`, `campaign-2/interrupted.json` e
+Verificar `campaign3.log`, `campaign-3/completed.json`, `campaign-2/interrupted.json` e
 os arquivos por caso antes
 de executar qualquer nova inferência. Arquivo `STOP` no diretório da rodada
 interrompe o runner entre casos. Não apagar nem reutilizar diretórios de saída.
