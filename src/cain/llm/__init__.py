@@ -74,6 +74,11 @@ class OllamaLLM:
     def __post_init__(self):
         validate_llm_options(vars(self))
 
+    @property
+    def effective_input_byte_budget(self) -> int:
+        """The same conservative transport limit used before generation."""
+        return min(self.max_input_bytes, self.num_ctx - self.num_predict - 256)
+
     def generate(self, prompt: str, context: str = "") -> str:
         return self._generate(prompt, context)
 
@@ -92,7 +97,7 @@ class OllamaLLM:
         input_bytes = len((context + prompt).encode("utf-8"))
         # Conservative transport bound, explicitly not the model's tokenizer.
         # Keep all user instructions/profile intact; oversized input fails visibly.
-        effective_budget = min(self.max_input_bytes, self.num_ctx - self.num_predict - 256)
+        effective_budget = self.effective_input_byte_budget
         if input_bytes > effective_budget:
             raise LLMError(
                 f"Pedido e contexto somam {input_bytes} bytes; limite configurado "
@@ -124,7 +129,23 @@ class OllamaLLM:
             if len(raw) > 4 * 1024 * 1024:
                 raise LLMError("Resposta HTTP do modelo excedeu 4 MiB; sem truncamento")
             result = json.loads(raw.decode("utf-8"))
-        except (HTTPError, URLError, TimeoutError, OSError, ValueError) as exc:
+        except HTTPError as exc:
+            # Keep a bounded JSON error, never an arbitrary HTML response or a retry.
+            server_error = None
+            try:
+                failure_body = exc.read(4097)
+                if len(failure_body) <= 4096:
+                    failure = json.loads(failure_body.decode("utf-8"))
+                    if isinstance(failure, dict) and isinstance(failure.get("error"), str):
+                        server_error = failure["error"][:2048]
+            except (OSError, ValueError):
+                pass
+            finally:
+                exc.close()
+            self.last_metadata = {"http_status": exc.code, "server_error": server_error}
+            detail = f": {server_error}" if server_error else ""
+            raise LLMError(f"Ollama retornou HTTP {exc.code}{detail}; sem retry") from exc
+        except (URLError, TimeoutError, OSError, ValueError) as exc:
             raise LLMError(f"Ollama indisponível ou resposta inválida: {exc}") from exc
         if not isinstance(result, dict) or not isinstance(result.get("response"), str):
             raise LLMError("Ollama não retornou o campo textual response.")
