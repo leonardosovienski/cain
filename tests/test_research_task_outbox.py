@@ -1,4 +1,5 @@
 from copy import deepcopy
+from contextlib import closing
 import sqlite3
 
 import pytest
@@ -73,7 +74,7 @@ def test_same_task_id_with_different_payload_conflicts(tmp_path):
 def test_secret_is_not_persisted(tmp_path):
     path = tmp_path / "outbox.db"
     outbox(path).propose(task())
-    with sqlite3.connect(path) as db:
+    with closing(sqlite3.connect(path)) as db:
         stored = b"".join(
             value if isinstance(value, bytes) else str(value).encode()
             for row in db.execute("SELECT * FROM task_outbox")
