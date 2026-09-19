@@ -148,3 +148,26 @@ def test_arithmetic_is_real_cain_output_without_generation(tmp_path):
                                    campaign.Recorder(Never(), tmp_path))
     assert '5250' in result['response']
     assert result['generation'] == {'called': False}
+
+
+def test_terminal_receipts_distinguish_interruption_from_completion(tmp_path):
+    interrupted = tmp_path / 'interrupted'
+    interrupted.mkdir()
+    terminal = campaign.write_terminal_receipt(
+        interrupted, [{'id': 'case-1', 'status': 'returned'}], 1, ['case-2'])
+    assert terminal == 'interrupted.json'
+    assert not (interrupted / 'completed.json').exists()
+    receipt = json.loads((interrupted / terminal).read_text(encoding='utf-8'))
+    assert receipt['all_cases_attempted'] is False
+    assert receipt['completed_cases'] == 1
+    assert receipt['remaining'] == ['case-2']
+
+    completed = tmp_path / 'completed'
+    completed.mkdir()
+    terminal = campaign.write_terminal_receipt(
+        completed, [{'id': 'case-1', 'status': 'failed'}], 1, [])
+    assert terminal == 'completed.json'
+    assert not (completed / 'interrupted.json').exists()
+    receipt = json.loads((completed / terminal).read_text(encoding='utf-8'))
+    assert receipt['all_cases_attempted'] is True
+    assert receipt['results'][0]['status'] == 'failed'

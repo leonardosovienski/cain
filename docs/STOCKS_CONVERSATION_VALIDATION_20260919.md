@@ -38,3 +38,12 @@ econômica ou semântica.
 
 Os dados volumosos, bancos, textos brutos do provedor e backups permanecem
 locais. Esta documentação não publica nem substitui esses artefatos.
+
+## Auditoria final
+
+A releitura integral identificou uma ambiguidade operacional no executor: um
+`STOP` registrava `interrupted.json`, mas o fluxo ainda terminava criando
+`completed.json`. O executor agora grava exatamente um estado terminal e inclui
+`all_cases_attempted` no recibo. Os artefatos históricos permanecem inalterados;
+a correção impede que campanhas futuras confundam interrupção com conclusão. A
+suíte integral de auditoria passou com 882 testes aprovados e um ignorado.

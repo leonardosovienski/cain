@@ -94,8 +94,11 @@ runtime Stocks no Windows ou alteração dos 12 bancos originais do produtor.
 
 ## Retomada
 
-Verificar `campaign3.log`, `campaign-3/completed.json`, `campaign-2/interrupted.json` e
-os arquivos por caso antes
+Verificar `campaign3.log`, `campaign-3/recovered-results.json` e
+`campaign-2/interrupted.json`. Versões anteriores do executor podiam gravar também
+`completed.json` após um `STOP`; quando os dois recibos históricos coexistirem,
+`interrupted.json` prevalece. O executor atual torna conclusão e interrupção
+mutuamente exclusivas. Verificar os arquivos por caso antes
 de executar qualquer nova inferência. Arquivo `STOP` no diretório da rodada
 interrompe o runner entre casos. Não apagar nem reutilizar diretórios de saída.
 O runner recebe caminhos explícitos de cópias de QA; não aponta implicitamente

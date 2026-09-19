@@ -28,6 +28,23 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def write_terminal_receipt(output, results, provider_calls, remaining):
+    """Write exactly one terminal state, then bind it into the manifest."""
+    common = dict(results=results, provider_calls=provider_calls,
+                  semantic_validation='not_established', new_economic_experiments=0)
+    if remaining:
+        terminal = 'interrupted.json'
+        save(output / terminal, {**common, 'all_cases_attempted': False,
+                                 'completed_cases': len(results), 'remaining': remaining})
+    else:
+        terminal = 'completed.json'
+        save(output / terminal, {**common, 'all_cases_attempted': True})
+    save(output / 'manifest.json', {
+        path.name: sha(path) for path in sorted(output.iterdir()) if path.is_file()
+    })
+    return terminal
+
+
 class Recorder:
     def __init__(self, provider, output):
         self.provider, self.output, self.case, self.calls = provider, output, '', 0
@@ -136,10 +153,10 @@ def main():
     service = ResearchService(args.research, args.policy)
     scope = service.scope(args.user, args.research_project, args.collection)
     results = []
+    remaining = []
     for case in cases:
         if (args.output / 'STOP').exists():
-            save(args.output / 'interrupted.json', dict(
-                completed_cases=len(results), remaining=[c['id'] for c in cases[len(results):]]))
+            remaining = [c['id'] for c in cases[len(results):]]
             break
         provider.case = case['id']
         before = provider.calls
@@ -155,10 +172,7 @@ def main():
             save(args.output / (case['id'] + '-failure.json'), row)
         results.append(row)
         print(json.dumps(row), flush=True)
-    save(args.output / 'completed.json', dict(results=results, provider_calls=provider.calls,
-                                              semantic_validation='not_established',
-                                              new_economic_experiments=0))
-    save(args.output / 'manifest.json', {p.name: sha(p) for p in sorted(args.output.iterdir()) if p.is_file()})
+    write_terminal_receipt(args.output, results, provider.calls, remaining)
 
 
 if __name__ == '__main__':
