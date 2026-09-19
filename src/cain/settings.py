@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 
 
 LLM_FIELDS = {"provider", "model", "base_url", "temperature", "seed", "timeout",
-              "num_ctx", "num_predict", "max_input_bytes", "think"}
+              "num_ctx", "num_predict", "max_input_bytes", "think", "num_batch"}
 
 
 def validate_llm_options(options):
@@ -31,6 +31,10 @@ def validate_llm_options(options):
         raise ValueError("llm.timeout deve ser positivo")
     if options["think"] is not None and type(options["think"]) is not bool:
         raise ValueError("llm.think deve ser booleano")
+    if options.get("num_batch") is not None and (
+        type(options["num_batch"]) is not int or not 1 <= options["num_batch"] <= 512
+    ):
+        raise ValueError("llm.num_batch deve ser inteiro entre 1 e 512")
     url = options["base_url"]
     parts = urlsplit(url)
     if (parts.scheme not in {"http", "https"} or not parts.hostname
@@ -52,6 +56,7 @@ class Settings:
     num_predict: int = 768
     max_input_bytes: int = 6500
     think: bool | None = None
+    num_batch: int | None = None
     db_path: Path = Path("data/cain.db")
     source_paths: list[Path] = field(default_factory=list)
     allow_public_urls: bool = True

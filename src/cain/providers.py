@@ -18,7 +18,8 @@ def configured_llm(settings):
     return make_llm(settings.provider, settings.model, settings.base_url,
                     settings.temperature, settings.seed, timeout=settings.timeout,
                     num_ctx=settings.num_ctx, num_predict=settings.num_predict,
-                    max_input_bytes=settings.max_input_bytes, think=settings.think)
+                    max_input_bytes=settings.max_input_bytes, think=settings.think,
+                    num_batch=settings.num_batch)
 
 
 def configured_embedding(settings):

@@ -1,5 +1,7 @@
 # Documentação corrente
 
+- [Revisão de respostas fundamentadas e memória aprovada](CRYPTO_GROUNDED_REVIEW_20260919.md)
+
 - [Retomada após encerramento do chat Stocks/CAIN](STOCKS_CHAT_HANDOFF_20260916.md)
 
 - [Campanha Stocks: documentos, jobs e testes realizados](STOCKS_CAMPAIGN_20260916.md)

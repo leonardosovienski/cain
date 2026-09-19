@@ -68,6 +68,7 @@ class OllamaLLM:
     num_predict: int = 768
     max_input_bytes: int = 6500
     think: bool | None = None
+    num_batch: int | None = None
     last_metadata: dict = field(default_factory=dict, init=False)
 
     def __post_init__(self):
@@ -105,6 +106,8 @@ class OllamaLLM:
             "options": {"temperature": self.temperature, "seed": self.seed,
                         "num_ctx": self.num_ctx, "num_predict": self.num_predict},
         }
+        if self.num_batch is not None:
+            body["options"]["num_batch"] = self.num_batch
         if schema is not None:
             body["format"] = schema
         if self.think is not None:
@@ -135,6 +138,7 @@ class OllamaLLM:
                                   max_input_bytes=self.max_input_bytes,
                                   effective_input_byte_budget=effective_budget,
                                   think=self.think, structured_output=schema is not None)
+        self.last_metadata["num_batch"] = self.num_batch
         if result.get("done_reason") in {"length", "max_tokens"}:
             raise LLMTruncated("Modelo atingiu o limite de geração; resposta incompleta.",
                                result["response"])
