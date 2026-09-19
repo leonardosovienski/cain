@@ -93,3 +93,22 @@ def test_result_inbox_detects_same_id_different_payload(tmp_path):
     changed["crypto_facts"]["metrics"]["sample_size"] += 1
     with pytest.raises(ResultConflict):
         target.ingest(envelope(changed))
+
+
+def test_cumulative_results_preserve_divergent_experiments_after_restart(tmp_path):
+    target = inbox(tmp_path)
+    first = result()
+    first["result_id"] = "RESULT-A"
+    first["experiment_id"] = "EXPERIMENT-A"
+    first["core_facts"]["scientific_state"] = "REFUTED"
+    second = deepcopy(result())
+    second["result_id"] = "RESULT-C"
+    second["experiment_id"] = "EXPERIMENT-C"
+    second["core_facts"]["scientific_state"] = "SUPPORTED"
+    target.ingest(envelope(first))
+    target.ingest(envelope(second))
+    recovered = inbox(tmp_path).for_task("TASK-001")
+    assert [(row["result_id"], row["core_facts"]["scientific_state"]) for row in recovered] == [
+        ("RESULT-A", "REFUTED"),
+        ("RESULT-C", "SUPPORTED"),
+    ]
