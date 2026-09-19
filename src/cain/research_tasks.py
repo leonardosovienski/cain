@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+from datetime import datetime
 from pathlib import Path
 import sqlite3
 
@@ -108,6 +109,79 @@ class TaskOutbox:
                 (limit,),
             ).fetchall()
         return [loads(row["envelope"]) for row in rows]
+
+    def record_send(self, task_id: str, message_id: str):
+        """Persist an at-least-once delivery attempt before invoking transport."""
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT envelope,message_id,status FROM task_outbox WHERE task_id=?",
+                (task_id,),
+            ).fetchone()
+            if row is None or row["message_id"] != message_id:
+                raise ValueError("ACK_CONFLICT: unknown task/message identity")
+            if row["status"] == "PUBLISHED":
+                return {"status": "already_published", "envelope": loads(row["envelope"])}
+            if row["status"] == "DEAD_LETTER":
+                raise ValueError("DELIVERY_BLOCKED: task is dead-lettered")
+            db.execute(
+                "UPDATE task_outbox SET attempt_count=attempt_count+1,error=NULL WHERE task_id=?",
+                (task_id,),
+            )
+        return {"status": "send_recorded", "envelope": loads(row["envelope"])}
+
+    def acknowledge(self, task_id: str, message_id: str, *, processed_at: str):
+        parsed = datetime.fromisoformat(processed_at.replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError("Invalid acknowledgement time")
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT message_id,status,attempt_count FROM task_outbox WHERE task_id=?", (task_id,)
+            ).fetchone()
+            if row is None or row["message_id"] != message_id:
+                raise ValueError("ACK_CONFLICT: unknown task/message identity")
+            if row["attempt_count"] < 1:
+                raise ValueError("ACK_CONFLICT: task has no recorded send")
+            if row["status"] != "PUBLISHED":
+                db.execute(
+                    "UPDATE task_outbox SET status='PUBLISHED',processed_at=?,error=NULL "
+                    "WHERE task_id=?",
+                    (processed_at, task_id),
+                )
+        return self.state(task_id)
+
+    def fail_delivery(self, task_id: str, message_id: str, error: str, *, max_attempts=3):
+        if type(max_attempts) is not int or max_attempts < 1 or not error:
+            raise ValueError("Invalid delivery failure")
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT message_id,status,attempt_count FROM task_outbox WHERE task_id=?",
+                (task_id,),
+            ).fetchone()
+            if row is None or row["message_id"] != message_id:
+                raise ValueError("ACK_CONFLICT: unknown task/message identity")
+            if row["status"] == "PUBLISHED":
+                raise ValueError("ACK_CONFLICT: published task cannot fail delivery")
+            status = "DEAD_LETTER" if row["attempt_count"] >= max_attempts else "RETRYABLE"
+            db.execute(
+                "UPDATE task_outbox SET status=?,error=? WHERE task_id=?",
+                (status, error[:1000], task_id),
+            )
+        return self.state(task_id)
+
+    def reconcile(self):
+        with self.connection() as db:
+            rows = db.execute(
+                "SELECT status,count(*) AS count FROM task_outbox GROUP BY status"
+            ).fetchall()
+        counts = {row["status"]: row["count"] for row in rows}
+        return {
+            "pending": counts.get("PENDING", 0) + counts.get("RETRYABLE", 0),
+            "published": counts.get("PUBLISHED", 0),
+            "dead_letters": counts.get("DEAD_LETTER", 0),
+        }
 
     def state(self, task_id: str):
         with self.connection() as db:

@@ -81,3 +81,38 @@ def test_secret_is_not_persisted(tmp_path):
             if value is not None
         )
     assert SECRET not in stored
+
+
+def test_delivery_attempt_ack_retry_dead_letter_and_reconciliation_survive_restart(tmp_path):
+    path = tmp_path / "outbox.db"
+    store = outbox(path)
+    envelope = store.propose(task())["envelope"]
+    store.record_send(task()["task_id"], envelope["message_id"])
+    assert outbox(path).state(task()["task_id"])["attempt_count"] == 1
+    retry = outbox(path).fail_delivery(
+        task()["task_id"], envelope["message_id"], "CRIPTO_OFFLINE", max_attempts=2
+    )
+    assert retry["status"] == "RETRYABLE"
+    outbox(path).record_send(task()["task_id"], envelope["message_id"])
+    dead = outbox(path).fail_delivery(
+        task()["task_id"], envelope["message_id"], "CRIPTO_OFFLINE", max_attempts=2
+    )
+    assert dead["status"] == "DEAD_LETTER"
+    assert outbox(path).reconcile() == {"pending": 0, "published": 0, "dead_letters": 1}
+
+
+def test_ack_is_correlated_and_idempotent(tmp_path):
+    path = tmp_path / "outbox.db"
+    store = outbox(path)
+    envelope = store.propose(task())["envelope"]
+    store.record_send(task()["task_id"], envelope["message_id"])
+    with pytest.raises(ValueError, match="ACK_CONFLICT"):
+        store.acknowledge(task()["task_id"], "00" * 32, processed_at=task()["created_at"])
+    first = store.acknowledge(
+        task()["task_id"], envelope["message_id"], processed_at=task()["created_at"]
+    )
+    second = outbox(path).acknowledge(
+        task()["task_id"], envelope["message_id"], processed_at=task()["created_at"]
+    )
+    assert first["status"] == second["status"] == "PUBLISHED"
+    assert outbox(path).reconcile()["published"] == 1
