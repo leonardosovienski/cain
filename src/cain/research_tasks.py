@@ -118,3 +118,17 @@ class TaskOutbox:
             ).fetchone()
         return dict(row) if row else None
 
+    def proposed_context(self, task_id: str):
+        with self.connection() as db:
+            row = db.execute(
+                "SELECT payload_hash,envelope,status FROM task_outbox WHERE task_id=?",
+                (task_id,),
+            ).fetchone()
+        if row is None:
+            raise ValueError("TASK_NOT_FOUND")
+        envelope = loads(row["envelope"])
+        return {
+            "task": envelope["payload"],
+            "task_payload_hash": row["payload_hash"],
+            "outbox_status": row["status"],
+        }
