@@ -315,8 +315,12 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
     # Earlier generated proposals have lower priority than source evidence.
     # Preserve each whole proposal or omit it explicitly: truncation can remove
     # its final negation/date and turn a qualification into an apparent claim.
+    provider_budget = getattr(provider, 'effective_input_byte_budget', 5000)
+    if type(provider_budget) is not int or provider_budget < 1:
+        raise ValueError('Invalid provider input byte budget')
+    context_budget = min(5000, provider_budget)
     coverage['prior_proposals_omitted'] = len(previous or []) - len(payload['prior_proposals_untrusted'])
-    while (len((instruction + context_text()).encode()) > 5000
+    while (len((instruction + context_text()).encode()) > context_budget
            and payload['prior_proposals_untrusted']):
         payload['prior_proposals_untrusted'].pop(0)
         coverage['prior_proposals_omitted'] += 1
@@ -331,7 +335,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
     required_revisions = {revision_group(entry) for entry in excerpts.values()
                           if revision_group(entry)[1]}
     removed = []
-    while len((instruction + context_text()).encode()) > 5000 and excerpts:
+    while len((instruction + context_text()).encode()) > context_budget and excerpts:
         groups = {}
         for excerpt_id, entry in excerpts.items():
             group = (entry['reference'], revision_group(entry))
@@ -357,7 +361,7 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
             if request['retrieval'] == 'evidence_selected' and not request['selected_ids']:
                 request['retrieval'] = 'context_budget_exclusion'
     coverage['serialized_context_bytes'] = len((instruction + context_text()).encode())
-    coverage['serialized_context_budget_bytes'] = 5000
+    coverage['serialized_context_budget_bytes'] = context_budget
     for item in coverage.get('identity_coverage', []):
         item['selected_ids'] = [key for key in item['selected_ids'] if key in excerpts]
         item['context_status'] = ('included' if item['selected_ids'] else
@@ -420,4 +424,5 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
         return {"role": role, "status": "generation_failed", "error": type(exc).__name__,
                 "error_code": "INVALID_REVIEW_OUTPUT" if isinstance(exc, (ValueError, TypeError)) else "PROVIDER_ERROR",
                 "facts": service.query(scope, source_id=source_id, limit=10), "explanation": None,
-                "generation": metadata, "coverage": coverage, "independent_models": False}
+                "generation": {**metadata, "provider_failure": getattr(provider, "last_metadata", {})},
+                "coverage": coverage, "independent_models": False}
