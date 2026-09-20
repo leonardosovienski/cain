@@ -1,9 +1,11 @@
 from copy import deepcopy
+import json
 
 import pytest
 from research_protocol import sign_result
 
 from cain.research_results import ResultConflict, ResultInbox
+from cain.research.service import ResearchService
 
 
 SECRET = bytes.fromhex("33" * 32)
@@ -112,3 +114,81 @@ def test_cumulative_results_preserve_divergent_experiments_after_restart(tmp_pat
         ("RESULT-A", "REFUTED"),
         ("RESULT-C", "SUPPORTED"),
     ]
+
+
+def authorized_inbox(tmp_path):
+    import_root = (tmp_path / "imports").resolve()
+    import_root.mkdir()
+    policy_path = tmp_path / "receiver-policy.json"
+    policy = {
+        "version": 2,
+        "imports": [{"user": "alice", "project": "crypto-project",
+                     "collection": "results", "root": str(import_root)}],
+        "grants": [{
+            "user": "alice", "project": "crypto-project", "collection": "results",
+            "domain": "crypto", "repository": "CRIPTO", "publisher": "crypto-qa",
+            "stream": "research-results", "sources": [], "policies": ["crypto-result-v1"],
+            "generate": True,
+        }],
+    }
+    policy_path.write_text(json.dumps(policy), encoding="utf-8")
+    access = ResearchService(tmp_path / "research.db", policy_path)
+    target = ResultInbox(
+        tmp_path / "inbox.db", task_outbox=Tasks(), publisher_identity="crypto-qa",
+        key_id="crypto-f4-key", secret=SECRET, access_service=access,
+    )
+    scope = access.scope("alice", "crypto-project", "results")
+    return target, access, scope, policy, policy_path
+
+
+def test_raw_canonical_derived_projection_rechecks_scope_and_revocation(tmp_path):
+    target, access, scope, policy, policy_path = authorized_inbox(tmp_path)
+    target.ingest(envelope())
+    projected = target.projection("RESULT-001", research_scope=scope)
+    assert projected["raw_hash"] != projected["canonical_hash"]
+    assert projected["normalizer_version"] == "1"
+    assert projected["derived"]["operational_state"] == "SUCCEEDED"
+    assert projected["derived"]["scientific_state"] == "INCONCLUSIVE"
+    assert projected["derived"]["economic_state"] == "NO_EDGE"
+    with pytest.raises(PermissionError):
+        target.projection(
+            "RESULT-001", research_scope=access.scope("mallory", "crypto-project", "results")
+        )
+    policy["grants"] = []
+    policy_path.write_text(json.dumps(policy), encoding="utf-8")
+    with pytest.raises(PermissionError):
+        target.result("RESULT-001", research_scope=scope)
+
+
+def test_cumulative_authorized_reasoning_is_local_only_and_preserves_contradiction(tmp_path):
+    target, _, scope, _, _ = authorized_inbox(tmp_path)
+    first = result()
+    first["result_id"], first["experiment_id"] = "RESULT-A", "EXPERIMENT-A"
+    first["core_facts"]["scientific_state"] = "REFUTED"
+    second = deepcopy(result())
+    second["result_id"], second["experiment_id"] = "RESULT-C", "EXPERIMENT-C"
+    second["core_facts"]["scientific_state"] = "SUPPORTED"
+    target.ingest(envelope(first))
+    target.ingest(envelope(second))
+
+    class LocalProvider:
+        base_url = "local"
+        payload = None
+
+        def generate(self, payload):
+            self.payload = payload
+            return "A foi refutado; C foi suportado; ambos permanecem no histórico; NO_EDGE."
+
+    provider = LocalProvider()
+    answer = target.reason("H6", "O que mudou?", provider, research_scope=scope)
+    assert answer["sources"] == ["RESULT-A", "RESULT-C"]
+    assert [item["scientific_state"] for item in provider.payload["results"]] == [
+        "REFUTED", "SUPPORTED"
+    ]
+    assert all("artifacts" not in item for item in provider.payload["results"])
+
+    class RemoteProvider(LocalProvider):
+        base_url = "https://provider.invalid"
+
+    with pytest.raises(PermissionError, match="EGRESS_DENIED"):
+        target.reason("H6", "O que mudou?", RemoteProvider(), research_scope=scope)

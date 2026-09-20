@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import sqlite3
 from contextlib import contextmanager
+from datetime import UTC, datetime
 from pathlib import Path
 
-from research_protocol import canonical, loads, verify_result
+from research_protocol import canonical, digest, loads, verify_result
 
 
 class ResultConflict(ValueError):
@@ -23,6 +24,9 @@ class ResultInbox:
         key_id: str,
         secret: bytes,
         scope: str = "crypto.research.result",
+        access_service=None,
+        access_origin: dict | None = None,
+        access_policy: str = "crypto-result-v1",
     ):
         self.path = Path(path)
         self.task_outbox = task_outbox
@@ -30,6 +34,12 @@ class ResultInbox:
         self.key_id = key_id
         self.secret = secret
         self.scope = scope
+        self.access_service = access_service
+        self.access_origin = access_origin or {
+            "domain": "crypto", "repository": "CRIPTO", "publisher": publisher_identity,
+            "stream": "research-results", "inputs": {},
+        }
+        self.access_policy = access_policy
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             db.executescript(
@@ -48,6 +58,19 @@ class ResultInbox:
                   error TEXT
                 );
                 CREATE INDEX IF NOT EXISTS result_inbox_task ON result_inbox(task_id,result_id);
+                CREATE TABLE IF NOT EXISTS result_raw(
+                  result_id TEXT PRIMARY KEY, raw_hash TEXT NOT NULL, raw BLOB NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS result_canonical(
+                  result_id TEXT PRIMARY KEY, raw_hash TEXT NOT NULL,
+                  normalizer_name TEXT NOT NULL, normalizer_version TEXT NOT NULL,
+                  canonical_hash TEXT NOT NULL, payload BLOB NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS result_derived(
+                  result_id TEXT PRIMARY KEY, source_ref TEXT NOT NULL,
+                  derivation_method TEXT NOT NULL, derivation_version TEXT NOT NULL,
+                  created_at TEXT NOT NULL, derived_hash TEXT NOT NULL, payload BLOB NOT NULL
+                );
                 """
             )
 
@@ -84,6 +107,24 @@ class ResultInbox:
         for field in ("research_id", "hypothesis_id"):
             if result[field] != task[field]:
                 raise PermissionError(f"UNAUTHORIZED: result {field} mismatch")
+        raw = canonical(envelope)
+        raw_hash = digest(raw)
+        normalized = canonical(result)
+        canonical_hash = digest(normalized)
+        derived = {
+            "result_id": result["result_id"], "task_id": result["task_id"],
+            "research_id": result["research_id"], "hypothesis_id": result["hypothesis_id"],
+            "experiment_id": result["experiment_id"],
+            "operational_state": result["ops_facts"]["operational_state"],
+            "scientific_state": result["core_facts"]["scientific_state"],
+            "economic_state": result["crypto_facts"]["economic_state"],
+            "sample_size": result["crypto_facts"]["metrics"]["sample_size"],
+            "gross_return_bps": result["crypto_facts"]["metrics"]["gross_return_bps"],
+            "net_return_bps": result["crypto_facts"]["metrics"]["net_return_bps"],
+            "data_cutoff": result["crypto_facts"]["data_cutoff"],
+            "produced_at": result["produced_at"],
+        }
+        derived_bytes = canonical(derived)
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
             previous = db.execute(
@@ -116,9 +157,32 @@ class ResultInbox:
                     None,
                 ),
             )
+            db.execute("INSERT INTO result_raw VALUES(?,?,?)", (result["result_id"], raw_hash, raw))
+            db.execute(
+                "INSERT INTO result_canonical VALUES(?,?,?,?,?,?)",
+                (result["result_id"], raw_hash, "research-protocol-canonical-json", "1",
+                 canonical_hash, normalized),
+            )
+            db.execute(
+                "INSERT INTO result_derived VALUES(?,?,?,?,?,?,?)",
+                (result["result_id"], canonical_hash, "authority-preserving-result-summary", "1",
+                 datetime.now(UTC).isoformat(), digest(derived_bytes), derived_bytes),
+            )
         return {"status": "ingested", "inbox_status": "PROCESSED", "result": result}
 
-    def result(self, result_id):
+    def _authorized(self, research_scope, *, generate=False):
+        if self.access_service is None:
+            return
+        if research_scope is None or not self.access_service.authorized(
+            research_scope,
+            self.access_origin,
+            {"read": True, "generate": generate, "policy": self.access_policy},
+            generate=generate,
+        ):
+            raise PermissionError("UNAUTHORIZED: current identity/scope grant denied")
+
+    def result(self, result_id, *, research_scope=None):
+        self._authorized(research_scope)
         with self.connection() as db:
             row = db.execute(
                 "SELECT envelope FROM result_inbox WHERE result_id=? AND status='PROCESSED'",
@@ -126,7 +190,8 @@ class ResultInbox:
             ).fetchone()
         return loads(row["envelope"])["payload"] if row else None
 
-    def for_task(self, task_id):
+    def for_task(self, task_id, *, research_scope=None):
+        self._authorized(research_scope)
         with self.connection() as db:
             rows = db.execute(
                 "SELECT envelope FROM result_inbox WHERE task_id=? AND status='PROCESSED' "
@@ -134,3 +199,52 @@ class ResultInbox:
                 (task_id,),
             ).fetchall()
         return [loads(row["envelope"])["payload"] for row in rows]
+
+    def projection(self, result_id, *, research_scope=None):
+        self._authorized(research_scope)
+        with self.connection() as db:
+            row = db.execute(
+                "SELECT raw_hash,canonical_hash,normalizer_name,normalizer_version,"
+                "source_ref,derivation_method,derivation_version,created_at,derived_hash,d.payload "
+                "FROM result_canonical c JOIN result_derived d USING(result_id) WHERE result_id=?",
+                (result_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        value = dict(row)
+        value["derived"] = loads(value.pop("payload"))
+        return value
+
+    def history(self, hypothesis_id, *, research_scope=None):
+        self._authorized(research_scope)
+        with self.connection() as db:
+            rows = db.execute(
+                "SELECT d.payload FROM result_derived d JOIN result_inbox i USING(result_id) "
+                "ORDER BY i.processed_at,i.result_id"
+            ).fetchall()
+        values = [loads(row["payload"]) for row in rows]
+        return [value for value in values if value["hypothesis_id"] == hypothesis_id]
+
+    def reason(self, hypothesis_id, question, provider, *, research_scope=None):
+        """Local-only egress boundary over the authorized DERIVED projection."""
+        self._authorized(research_scope, generate=True)
+        base_url = getattr(provider, "base_url", None)
+        if base_url not in (None, "local", "http://127.0.0.1", "http://localhost"):
+            raise PermissionError("EGRESS_DENIED: only explicitly local providers are allowed")
+        history = self.history(hypothesis_id, research_scope=research_scope)
+        if not history:
+            return {"status": "insufficient_evidence", "answer": None, "sources": []}
+        prompt = {
+            "question": question,
+            "constraints": [
+                "operational success does not imply scientific support",
+                "scientific support does not imply economic edge",
+                "preserve contradictions and uncertainty",
+            ],
+            "results": history,
+        }
+        answer = provider.generate(prompt)
+        if not isinstance(answer, str) or not answer.strip():
+            raise ValueError("invalid local provider response")
+        return {"status": "generated_local", "answer": answer,
+                "sources": [item["result_id"] for item in history]}
