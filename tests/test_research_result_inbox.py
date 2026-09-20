@@ -4,6 +4,7 @@ import json
 import pytest
 from research_protocol import sign_result
 
+from cain.research_egress import ResultEgressPolicy
 from cain.research_results import ResultConflict, ResultInbox
 from cain.research.service import ResearchService
 
@@ -172,6 +173,7 @@ def test_cumulative_authorized_reasoning_is_local_only_and_preserves_contradicti
     target.ingest(envelope(second))
 
     class LocalProvider:
+        provider_id = "local"
         base_url = "local"
         payload = None
 
@@ -192,3 +194,80 @@ def test_cumulative_authorized_reasoning_is_local_only_and_preserves_contradicti
 
     with pytest.raises(PermissionError, match="EGRESS_DENIED"):
         target.reason("H6", "O que mudou?", RemoteProvider(), research_scope=scope)
+
+
+def test_egress_policy_enforces_provider_classification_scope_redaction_and_secrets(tmp_path):
+    target, _, scope, _, _ = authorized_inbox(tmp_path)
+    target.ingest(envelope())
+    policy = {
+        "schema_version": "CAINResultEgressPolicyV1",
+        "policy_id": "operator-egress-v1",
+        "policy_version": 1,
+        "owner": "CAIN_OPERATOR",
+        "providers": [{
+            "provider_id": "approved-remote",
+            "base_urls": ["https://approved.invalid"],
+            "classifications": ["PUBLIC"],
+            "scopes": [scope],
+        }],
+        "local_only_classifications": ["INTERNAL_RESEARCH", "RESTRICTED"],
+        "redact_fields": ["artifacts", "raw", "secret", "credentials"],
+        "secret_handling": "DENY",
+        "max_context_bytes": 65536,
+    }
+    path = tmp_path / "egress.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    target.egress_policy = ResultEgressPolicy(path)
+
+    class Provider:
+        provider_id = "approved-remote"
+        base_url = "https://approved.invalid"
+        payload = None
+
+        def generate(self, payload):
+            self.payload = payload
+            return "Resposta pública com incerteza preservada."
+
+    provider = Provider()
+    generated = target.reason(
+        "H6", "Resuma a evidência pública", provider,
+        research_scope=scope, data_classification="PUBLIC",
+    )
+    assert generated["status"] == "generated_remote"
+    assert generated["egress_receipt"]["owner"] == "CAIN_OPERATOR"
+    assert all("artifacts" not in item for item in provider.payload["results"])
+
+    with pytest.raises(PermissionError, match="classification"):
+        target.reason("H6", "restrito", provider, research_scope=scope)
+    with pytest.raises(PermissionError, match="secret-like"):
+        target.reason(
+            "H6", "api_key=sk-1234567890abcdefghijkl", provider,
+            research_scope=scope, data_classification="PUBLIC",
+        )
+
+    provider.provider_id = "not-allowlisted"
+    with pytest.raises(PermissionError, match="provider"):
+        target.reason(
+            "H6", "público", provider, research_scope=scope, data_classification="PUBLIC"
+        )
+
+
+def test_egress_rechecks_revoked_grant_before_provider_call(tmp_path):
+    target, _, scope, policy, policy_path = authorized_inbox(tmp_path)
+    target.ingest(envelope())
+
+    class LocalProvider:
+        provider_id = "local"
+        base_url = "local"
+        called = False
+
+        def generate(self, payload):
+            self.called = True
+            return "não deve executar"
+
+    provider = LocalProvider()
+    policy["grants"] = []
+    policy_path.write_text(json.dumps(policy), encoding="utf-8")
+    with pytest.raises(PermissionError, match="UNAUTHORIZED"):
+        target.reason("H6", "O que mudou?", provider, research_scope=scope)
+    assert provider.called is False

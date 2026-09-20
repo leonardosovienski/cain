@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cain-research"
-version = "0.4.13rc2"
+version = "0.4.13rc3"
 description = "Assistente experimental com identidade persistente e agentes locais"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "predictor-research-snapshot==1.0.2rc1",
   "predictor-research-bundle==1.0.1rc1",
-  "predictor-research-protocol==1.0.1rc1",
+  "predictor-research-protocol==1.0.2rc1",
 ]
 
 [project.optional-dependencies]

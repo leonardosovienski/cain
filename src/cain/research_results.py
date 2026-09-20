@@ -9,6 +9,8 @@ from pathlib import Path
 
 from research_protocol import canonical, digest, loads, verify_result
 
+from cain.research_egress import ResultEgressPolicy
+
 
 class ResultConflict(ValueError):
     pass
@@ -21,18 +23,21 @@ class ResultInbox:
         *,
         task_outbox,
         publisher_identity: str,
-        key_id: str,
-        secret: bytes,
+        key_id: str | None = None,
+        secret: bytes | None = None,
+        key_store=None,
         scope: str = "crypto.research.result",
         access_service=None,
         access_origin: dict | None = None,
         access_policy: str = "crypto-result-v1",
+        egress_policy: ResultEgressPolicy | None = None,
     ):
         self.path = Path(path)
         self.task_outbox = task_outbox
         self.publisher_identity = publisher_identity
         self.key_id = key_id
         self.secret = secret
+        self.key_store = key_store
         self.scope = scope
         self.access_service = access_service
         self.access_origin = access_origin or {
@@ -40,6 +45,9 @@ class ResultInbox:
             "stream": "research-results", "inputs": {},
         }
         self.access_policy = access_policy
+        self.egress_policy = egress_policy or ResultEgressPolicy.local_only()
+        if key_store is None and (key_id is None or secret is None):
+            raise ValueError("fixed key or operator key store required")
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
             db.executescript(
@@ -85,6 +93,8 @@ class ResultInbox:
             db.close()
 
     def _key(self, identity, key_id):
+        if self.key_store is not None:
+            return self.key_store.resolve(identity, key_id, self.scope)
         if (identity, key_id) == (self.publisher_identity, self.key_id):
             return self.secret
         return None
@@ -94,10 +104,11 @@ class ResultInbox:
             envelope.get("producer") != "CRIPTO"
             or envelope.get("consumer") != "CAIN"
             or envelope.get("publisher_identity") != self.publisher_identity
-            or envelope.get("key_id") != self.key_id
             or envelope.get("scope") != self.scope
         ):
             raise PermissionError("UNAUTHORIZED: result publisher or scope denied")
+        if self.key_store is None and envelope.get("key_id") != self.key_id:
+            raise PermissionError("UNAUTHORIZED: result publisher key denied")
         verify_result(envelope, self._key)
         result = envelope["payload"]
         context = self.task_outbox.proposed_context(result["task_id"])
@@ -225,12 +236,17 @@ class ResultInbox:
         values = [loads(row["payload"]) for row in rows]
         return [value for value in values if value["hypothesis_id"] == hypothesis_id]
 
-    def reason(self, hypothesis_id, question, provider, *, research_scope=None):
-        """Local-only egress boundary over the authorized DERIVED projection."""
+    def reason(
+        self,
+        hypothesis_id,
+        question,
+        provider,
+        *,
+        research_scope=None,
+        data_classification="INTERNAL_RESEARCH",
+    ):
+        """Policy-authorized egress boundary over the authorized DERIVED projection."""
         self._authorized(research_scope, generate=True)
-        base_url = getattr(provider, "base_url", None)
-        if base_url not in (None, "local", "http://127.0.0.1", "http://localhost"):
-            raise PermissionError("EGRESS_DENIED: only explicitly local providers are allowed")
         history = self.history(hypothesis_id, research_scope=research_scope)
         if not history:
             return {"status": "insufficient_evidence", "answer": None, "sources": []}
@@ -243,8 +259,17 @@ class ResultInbox:
             ],
             "results": history,
         }
-        answer = provider.generate(prompt)
+        sanitized, egress_receipt = self.egress_policy.prepare(
+            provider, data_classification, research_scope or "UNSCOPED", prompt
+        )
+        answer = provider.generate(sanitized)
         if not isinstance(answer, str) or not answer.strip():
             raise ValueError("invalid local provider response")
-        return {"status": "generated_local", "answer": answer,
-                "sources": [item["result_id"] for item in history]}
+        return {
+            "status": "generated_local" if egress_receipt["base_url"] in {
+                "local", "http://127.0.0.1", "http://localhost"
+            } else "generated_remote",
+            "answer": answer,
+            "sources": [item["result_id"] for item in history],
+            "egress_receipt": egress_receipt,
+        }

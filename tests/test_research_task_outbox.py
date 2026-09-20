@@ -3,6 +3,7 @@ from contextlib import closing
 import sqlite3
 
 import pytest
+from research_protocol import HmacKeyStore
 
 from cain.research_tasks import TaskConflict, TaskOutbox
 
@@ -117,3 +118,21 @@ def test_ack_is_correlated_and_idempotent(tmp_path):
     )
     assert first["status"] == second["status"] == "PUBLISHED"
     assert outbox(path).reconcile()["published"] == 1
+
+
+def test_operator_key_store_rotation_changes_signing_key_without_exposing_secret(tmp_path):
+    keys = HmacKeyStore(tmp_path / "keys")
+    keys.provision("cain-qa", "crypto.research.propose", "cain-key-1", secret=b"a" * 32)
+    keys.rotate(
+        "cain-qa", "crypto.research.propose", "cain-key-2",
+        grace_seconds=3600, secret=b"b" * 32,
+    )
+    store = TaskOutbox(
+        tmp_path / "rotated.db", publisher_identity="cain-qa", key_store=keys,
+    )
+    produced = store.propose(task())
+    assert produced["envelope"]["key_id"] == "cain-key-2"
+    assert b"b" * 32 not in (tmp_path / "rotated.db").read_bytes()
+    keys.revoke("cain-key-2")
+    with pytest.raises(PermissionError, match="no active signing key"):
+        store.propose({**task(), "task_id": "TASK-CAIN-002"})
