@@ -6,6 +6,7 @@ from research_protocol import sign_result
 
 from cain.research_egress import ResultEgressPolicy
 from cain.research_results import ResultConflict, ResultInbox
+from cain.research_tasks import TaskOutbox
 from cain.research.service import ResearchService
 
 
@@ -40,6 +41,7 @@ def result():
                        "scientific_state": "INCONCLUSIVE", "temporal_integrity": "PASS",
                        "statistics_receipt_hash": SHA},
         "ops_facts": {"identity": identity(), "ops_run_ids": ["RUN-001"],
+                      "attempt_ids": ["ATTEMPT-001"],
                       "operational_state": "SUCCEEDED", "started_at": "2026-09-19T23:00:00Z",
                       "finished_at": "2026-09-19T23:02:00Z", "exit_code": 0,
                       "runtime_provenance_hash": SHA},
@@ -56,7 +58,10 @@ def result():
                          "costs": {"fee_bps": 10, "slippage_bps": 5, "total_cost_bps": 15},
                          "economic_state": "NO_EDGE", "artifacts": []},
         "provenance": {"task_payload_hash": SHA, "admission_policy_hash": SHA,
-                       "resolved_references_hash": SHA, "crypto_source_sha": SOURCE},
+                       "resolved_references_hash": SHA, "crypto_source_sha": SOURCE,
+                       "handler_identity": "crypto.handlers.backtest_existing_hypothesis.v1",
+                       "logical_experiment_hash": SHA, "journal_identity": SHA,
+                       "reference_materialization_receipt_hash": SHA},
     }
 
 
@@ -170,7 +175,45 @@ def test_cumulative_authorized_reasoning_is_local_only_and_preserves_contradicti
     second["result_id"], second["experiment_id"] = "RESULT-C", "EXPERIMENT-C"
     second["core_facts"]["scientific_state"] = "SUPPORTED"
     target.ingest(envelope(first))
+    target.open_session("SESSION-A", research_scope=scope)
+    initial = target.search(
+        {"hypothesis_id": "H6", "scientific_state": "REFUTED"},
+        session_id="SESSION-A", research_scope=scope,
+    )
+    assert [item["result_id"] for item in initial["results"]] == ["RESULT-A"]
+    target.close_session("SESSION-A", research_scope=scope)
+
+    target.open_session("SESSION-B", research_scope=scope)
+    prior = target.search(
+        {"hypothesis_id": "H6", "economic_state": "NO_EDGE"},
+        session_id="SESSION-B", research_scope=scope,
+    )
+    receipt_id = prior["retrieval_receipt"]["receipt_id"]
+    task = {
+        "schema_version": "ResearchTaskV1", "task_id": "TASK-B",
+        "research_id": "RESEARCH-001", "parent_task_id": "TASK-001",
+        "hypothesis_id": "H6", "domain": "crypto",
+        "request_type": "BACKTEST_EXISTING_HYPOTHESIS",
+        "protocol_ref": {"kind": "protocol", "name": "safe", "version": "1"},
+        "dataset_constraint_ref": {"kind": "dataset", "name": "pit", "version": "1"},
+        "baseline_refs": [{"kind": "baseline", "name": "base", "version": "1"}],
+        "cost_model_ref": {"kind": "cost_model", "name": "cost", "version": "1"},
+        "evidence_refs": [{"kind": "evidence", "name": "result-a", "version": "1"}],
+        "bounded_parameters": {"symbol": "BTCUSDT", "horizon_days": 1,
+                               "max_observations": 30, "fee_bps": 2, "slippage_bps": 3},
+        "priority_hint": "NORMAL", "created_at": "2026-09-20T12:00:00Z",
+        "expires_at": "2026-09-20T13:00:00Z", "requested_by": "SESSION-B",
+        "provenance": {"cain_source_sha": SOURCE,
+                       "retrieval_receipt_ids": [receipt_id], "proposal_model": None},
+    }
+    proposed = TaskOutbox(
+        tmp_path / "tasks.db", publisher_identity="cain-qa", key_id="key", secret=SECRET,
+    ).propose(task)
+    assert proposed["envelope"]["payload"]["provenance"]["retrieval_receipt_ids"] == [receipt_id]
+    target.close_session("SESSION-B", research_scope=scope)
+
     target.ingest(envelope(second))
+    target.open_session("SESSION-C", research_scope=scope)
 
     class LocalProvider:
         provider_id = "local"
@@ -182,18 +225,42 @@ def test_cumulative_authorized_reasoning_is_local_only_and_preserves_contradicti
             return "A foi refutado; C foi suportado; ambos permanecem no histórico; NO_EDGE."
 
     provider = LocalProvider()
-    answer = target.reason("H6", "O que mudou?", provider, research_scope=scope)
+    answer = target.reason(
+        "H6", "O que mudou?", provider, research_scope=scope, session_id="SESSION-C"
+    )
     assert answer["sources"] == ["RESULT-A", "RESULT-C"]
     assert [item["scientific_state"] for item in provider.payload["results"]] == [
         "REFUTED", "SUPPORTED"
     ]
     assert all("artifacts" not in item for item in provider.payload["results"])
+    assert answer["retrieval_receipt"]["source_refs"] == [
+        {"result_id": "RESULT-A", "derived_hash": target.projection(
+            "RESULT-A", research_scope=scope
+        )["derived_hash"]},
+        {"result_id": "RESULT-C", "derived_hash": target.projection(
+            "RESULT-C", research_scope=scope
+        )["derived_hash"]},
+    ]
+    assert target.result("RESULT-A", research_scope=scope)["core_facts"]["scientific_state"] == "REFUTED"
 
     class RemoteProvider(LocalProvider):
         base_url = "https://provider.invalid"
 
     with pytest.raises(PermissionError, match="EGRESS_DENIED"):
         target.reason("H6", "O que mudou?", RemoteProvider(), research_scope=scope)
+
+
+def test_session_search_denies_cross_identity_scope_and_coincident_ids(tmp_path):
+    target, access, scope, _, _ = authorized_inbox(tmp_path)
+    target.ingest(envelope())
+    target.open_session("SAME-ID", research_scope=scope)
+    other_scope = access.scope("mallory", "crypto-project", "results")
+    with pytest.raises(PermissionError, match="UNAUTHORIZED"):
+        target.search({"hypothesis_id": "H6"}, session_id="SAME-ID", research_scope=other_scope)
+    with pytest.raises(PermissionError, match="active research session"):
+        target.search({"hypothesis_id": "H6"}, session_id="OTHER", research_scope=scope)
+    with pytest.raises(ValueError, match="invalid result search query"):
+        target.search({"derived_hash": SHA}, session_id="SAME-ID", research_scope=scope)
 
 
 def test_egress_policy_enforces_provider_classification_scope_redaction_and_secrets(tmp_path):

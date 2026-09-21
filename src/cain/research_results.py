@@ -6,6 +6,7 @@ import sqlite3
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
+from uuid import uuid4
 
 from research_protocol import canonical, digest, loads, verify_result
 
@@ -78,6 +79,17 @@ class ResultInbox:
                   result_id TEXT PRIMARY KEY, source_ref TEXT NOT NULL,
                   derivation_method TEXT NOT NULL, derivation_version TEXT NOT NULL,
                   created_at TEXT NOT NULL, derived_hash TEXT NOT NULL, payload BLOB NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS result_sessions(
+                  session_id TEXT PRIMARY KEY, research_scope TEXT NOT NULL,
+                  opened_at TEXT NOT NULL, closed_at TEXT
+                );
+                CREATE TABLE IF NOT EXISTS result_retrieval_receipts(
+                  receipt_id TEXT PRIMARY KEY, session_id TEXT NOT NULL,
+                  caller_identity TEXT NOT NULL, research_scope TEXT NOT NULL,
+                  query BLOB NOT NULL, source_refs BLOB NOT NULL,
+                  authorization_result TEXT NOT NULL,
+                  retrieved_at TEXT NOT NULL, projection_version TEXT NOT NULL
                 );
                 """
             )
@@ -192,6 +204,125 @@ class ResultInbox:
         ):
             raise PermissionError("UNAUTHORIZED: current identity/scope grant denied")
 
+    @staticmethod
+    def _scope_identity(research_scope):
+        try:
+            user, project, collection = loads(research_scope.encode())
+        except Exception as exc:
+            raise PermissionError("UNAUTHORIZED: invalid research scope") from exc
+        return canonical({"user": user, "project": project, "collection": collection}).decode()
+
+    def open_session(self, session_id, *, research_scope):
+        self._authorized(research_scope)
+        caller = self._scope_identity(research_scope)
+        now = datetime.now(UTC).isoformat()
+        with self.connection() as db:
+            previous = db.execute(
+                "SELECT research_scope,closed_at FROM result_sessions WHERE session_id=?",
+                (session_id,),
+            ).fetchone()
+            if previous and (previous["research_scope"] != research_scope or previous["closed_at"]):
+                raise ValueError("session identity conflict")
+            db.execute(
+                "INSERT OR IGNORE INTO result_sessions VALUES(?,?,?,NULL)",
+                (session_id, research_scope, now),
+            )
+        return {"session_id": session_id, "caller_identity": caller, "opened_at": now}
+
+    def close_session(self, session_id, *, research_scope):
+        self._authorized(research_scope)
+        with self.connection() as db:
+            changed = db.execute(
+                "UPDATE result_sessions SET closed_at=? WHERE session_id=? "
+                "AND research_scope=? AND closed_at IS NULL",
+                (datetime.now(UTC).isoformat(), session_id, research_scope),
+            ).rowcount
+        if changed != 1:
+            raise ValueError("active session not found")
+
+    def _retrieval_receipt(self, session_id, research_scope, query, refs, decision):
+        receipt_id = "RETRIEVAL-" + uuid4().hex
+        caller = self._scope_identity(research_scope)
+        retrieved_at = datetime.now(UTC).isoformat()
+        with self.connection() as db:
+            db.execute(
+                "INSERT INTO result_retrieval_receipts VALUES(?,?,?,?,?,?,?,?,?)",
+                (receipt_id, session_id, caller, research_scope, canonical(query),
+                 canonical(refs), decision, retrieved_at, "result-derived-v1"),
+            )
+        return {"receipt_id": receipt_id, "session_id": session_id,
+                "caller_identity": caller, "research_scope": research_scope,
+                "query": query, "source_refs": refs,
+                "authorization_result": decision, "retrieved_at": retrieved_at,
+                "projection_version": "result-derived-v1"}
+
+    def search(self, query, *, session_id, research_scope):
+        allowed = {
+            "research_id", "hypothesis_id", "task_id", "experiment_id", "trial_id",
+            "domain", "mechanism", "scientific_state", "economic_state", "source",
+            "produced_from", "produced_to",
+        }
+        if type(query) is not dict or set(query) - allowed or not query:
+            raise ValueError("invalid result search query")
+        try:
+            self._authorized(research_scope)
+            with self.connection() as db:
+                session = db.execute(
+                    "SELECT 1 FROM result_sessions WHERE session_id=? AND research_scope=? "
+                    "AND closed_at IS NULL", (session_id, research_scope),
+                ).fetchone()
+            if session is None:
+                raise PermissionError("UNAUTHORIZED: active research session required")
+        except PermissionError:
+            self._retrieval_receipt(session_id, research_scope, query, [], "DENIED")
+            raise
+        with self.connection() as db:
+            rows = db.execute(
+                "SELECT d.payload FROM result_derived d JOIN result_inbox i USING(result_id) "
+                "WHERE i.status='PROCESSED' ORDER BY i.processed_at,i.result_id"
+            ).fetchall()
+        values = [loads(row["payload"]) for row in rows]
+
+        def matches(value):
+            direct = ("research_id", "hypothesis_id", "task_id", "experiment_id",
+                      "scientific_state", "economic_state")
+            if any(key in query and value.get(key) != query[key] for key in direct):
+                return False
+            if "produced_from" in query and value["produced_at"] < query["produced_from"]:
+                return False
+            if "produced_to" in query and value["produced_at"] > query["produced_to"]:
+                return False
+            full = self.result(value["result_id"], research_scope=research_scope)
+            if "trial_id" in query and query["trial_id"] not in full["core_facts"]["trial_ids"]:
+                return False
+            if "domain" in query and query["domain"] != "crypto":
+                return False
+            if "mechanism" in query and query["mechanism"] != full["provenance"]["handler_identity"]:
+                return False
+            if "source" in query and query["source"] != full["crypto_facts"]["identity"]["source_sha"]:
+                return False
+            return True
+
+        selected = [value for value in values if matches(value)]
+        refs = [{"result_id": value["result_id"], "derived_hash": self.projection(
+            value["result_id"], research_scope=research_scope)["derived_hash"]} for value in selected]
+        receipt = self._retrieval_receipt(session_id, research_scope, query, refs, "AUTHORIZED")
+        return {"results": selected, "retrieval_receipt": receipt}
+
+    def retrieval_receipt(self, receipt_id, *, research_scope):
+        self._authorized(research_scope)
+        with self.connection() as db:
+            row = db.execute(
+                "SELECT * FROM result_retrieval_receipts WHERE receipt_id=? AND research_scope=?",
+                (receipt_id, research_scope),
+            ).fetchone()
+        if row is None:
+            return None
+        value = dict(row)
+        value["query"] = loads(value["query"])
+        value["source_refs"] = loads(value["source_refs"])
+        return value
+
     def result(self, result_id, *, research_scope=None):
         self._authorized(research_scope)
         with self.connection() as db:
@@ -243,11 +374,21 @@ class ResultInbox:
         provider,
         *,
         research_scope=None,
+        session_id=None,
         data_classification="INTERNAL_RESEARCH",
     ):
         """Policy-authorized egress boundary over the authorized DERIVED projection."""
         self._authorized(research_scope, generate=True)
-        history = self.history(hypothesis_id, research_scope=research_scope)
+        if session_id is None:
+            history = self.history(hypothesis_id, research_scope=research_scope)
+            retrieval_receipt = None
+        else:
+            searched = self.search(
+                {"hypothesis_id": hypothesis_id}, session_id=session_id,
+                research_scope=research_scope,
+            )
+            history = searched["results"]
+            retrieval_receipt = searched["retrieval_receipt"]
         if not history:
             return {"status": "insufficient_evidence", "answer": None, "sources": []}
         prompt = {
@@ -272,4 +413,5 @@ class ResultInbox:
             "answer": answer,
             "sources": [item["result_id"] for item in history],
             "egress_receipt": egress_receipt,
+            "retrieval_receipt": retrieval_receipt,
         }
