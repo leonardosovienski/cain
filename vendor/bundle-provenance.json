@@ -1,9 +1,0 @@
-{
-  "package": "predictor-research-bundle",
-  "version": "1.0.0",
-  "source_repository": "https://github.com/leonardosovienski/ecosystem-predictor",
-  "source_commit": "6a998520825292895bcae71e589fa8ac0e02bb85",
-  "workflow_run": 34725922499,
-  "wheel_sha256": "7c5792e6573d55af92fd9b50cd9a2c357052b7673a61eef8abdaeaeef401ebee",
-  "source_verification": "All package members match canonical main sources after CRLF/LF normalization"
-}

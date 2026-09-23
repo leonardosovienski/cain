@@ -1,4 +1,8 @@
-"""Install the wheel in a clean temporary venv and run outside the checkout, offline."""
+"""Install the wheel in a clean temporary venv and run outside the checkout.
+
+Dependencies come only from requirements exported from uv.lock, installed with
+--require-hashes; the wheel itself is installed with --no-deps.
+"""
 
 import argparse
 import json
@@ -9,8 +13,8 @@ import tempfile
 import venv
 
 
-def verify(wheel, vendor):
-    wheel, vendor = Path(wheel).resolve(strict=True), Path(vendor).resolve(strict=True)
+def verify(wheel, requirements):
+    wheel, requirements = Path(wheel).resolve(strict=True), Path(requirements).resolve(strict=True)
     with tempfile.TemporaryDirectory(prefix="cain-wheel-check-") as temporary:
         root = Path(temporary)
         if root.resolve().parent != Path(tempfile.gettempdir()).resolve():
@@ -18,7 +22,9 @@ def verify(wheel, vendor):
         environment = root / "environment"
         venv.EnvBuilder(with_pip=True).create(environment)
         python = environment / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
-        subprocess.run([str(python), "-m", "pip", "install", "--no-index", "--find-links", str(vendor), str(wheel)],
+        subprocess.run([str(python), "-m", "pip", "install", "--require-hashes", "-r", str(requirements)],
+                       cwd=root, check=True, timeout=300)
+        subprocess.run([str(python), "-m", "pip", "install", "--no-deps", "--no-index", str(wheel)],
                        cwd=root, check=True, timeout=120)
         script = r'''
 import importlib.metadata as metadata
@@ -48,12 +54,13 @@ print(json.dumps({"version":cain.__version__, "module":cain.__file__, "isolated"
         subprocess.run([str(python), "-I", "-c", script], cwd=root, check=True, timeout=30)
         subprocess.run([str(python), "-I", "-m", "cain", "--help"], cwd=root, check=True, timeout=30)
         subprocess.run([str(python), "-m", "pip", "check"], cwd=root, check=True, timeout=30)
-    return {"wheel": wheel.name, "verification": "passed", "installation": "offline noneditable clean venv"}
+    return {"wheel": wheel.name, "verification": "passed", "installation": "hashed lock requirements, noneditable clean venv"}
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--wheel", type=Path, required=True)
-    parser.add_argument("--vendor", type=Path, default=Path(__file__).resolve().parents[1] / "vendor")
+    parser.add_argument("--requirements", type=Path, required=True,
+                        help="uv export --locked --no-emit-project output (hashed)")
     args = parser.parse_args()
-    print(json.dumps(verify(args.wheel, args.vendor)))
+    print(json.dumps(verify(args.wheel, args.requirements)))

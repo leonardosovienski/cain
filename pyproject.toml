@@ -24,6 +24,11 @@ cain = "cain.cli:main"
 cain-mcp = "cain.mcp:main"
 cain-stream = "cain.playground:main"
 
+[tool.uv.sources]
+predictor-research-snapshot = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-snapshot-v1.0.2rc1/predictor_research_snapshot-1.0.2rc1-py3-none-any.whl" }
+predictor-research-bundle = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-bundle-v1.0.1rc1/predictor_research_bundle-1.0.1rc1-py3-none-any.whl" }
+predictor-research-protocol = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl" }
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
