@@ -78,14 +78,16 @@ Testes técnicos não validam lucro, apostas, conclusões científicas ou utilid
 
 ## Instalar um checkout separado
 
-Python 3.11+ é necessário. Os contratos estão em `vendor`; dependências opcionais e pesos de modelos são separados.
+Python 3.11+ e [uv](https://docs.astral.sh/uv/) são necessários. As dependências vêm do `uv.lock`
+(pacotes de contrato publicados como releases do `ecosystem-predictor`, travados por hash); pesos de modelos são separados.
 Não execute uma instalação de desenvolvimento sobre o ambiente principal apenas para ler a documentação.
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --find-links vendor -e ".[api]"
+uv sync --locked --extra api
 .\ABRIR_CAIN.cmd
 ```
+
+`uv sync` cria `.venv` no checkout; o inicializador usa esse ambiente e só instala quando ele não existe.
 
 O inicializador do checkout usa a porta 8000 por padrão; o atalho da instalação principal usa 8877.
 Para terminal, use `INICIAR_CAIN.cmd`. A configuração vem de `cain.toml` e dos overrides locais.
@@ -97,10 +99,11 @@ Pesos não acompanham o pacote. Inferência requer Ollama disponível; ajuda e c
 Em um ambiente de desenvolvimento separado:
 
 ```powershell
-python -m pip install --find-links vendor -e ".[dev,vision]"
-python -m ruff check .
-python -m pytest -q
-python -m cain --help
+uv lock --check
+uv sync --locked --extra dev --extra vision
+uv run ruff check .
+uv run pytest -q
+uv run python -m cain --help
 ```
 
 A [CI](.github/workflows/ci.yml) verifica Python 3.11–3.14, lint, testes, build e instalação não editável fora do checkout.
