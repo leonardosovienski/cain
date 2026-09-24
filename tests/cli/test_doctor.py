@@ -25,7 +25,8 @@ class TagsResponse(io.BytesIO):
 def config(tmp_path):
     def make(base_url):
         path = tmp_path / "doctor.toml"
-        path.write_text(f'[llm]\nprovider="ollama"\nmodel="qwen3.5:4b"\nbase_url="{base_url}"\n'
+        # allow_remote: the remote cases test the warning, not the load-time refusal
+        path.write_text(f'[llm]\nprovider="ollama"\nmodel="qwen3.5:4b"\nbase_url="{base_url}"\nallow_remote=true\n'
                         '[search]\npaths=[]\nallow_public_urls=false\n', encoding="utf-8")
         return str(path)
     return make

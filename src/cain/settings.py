@@ -10,7 +10,7 @@ from urllib.parse import urlsplit
 
 
 LLM_FIELDS = {"provider", "model", "base_url", "temperature", "seed", "timeout",
-              "num_ctx", "num_predict", "max_input_bytes", "think", "num_batch"}
+              "num_ctx", "num_predict", "max_input_bytes", "think", "num_batch", "allow_remote"}
 
 
 def is_loopback_url(url) -> bool:
@@ -78,6 +78,7 @@ class Settings:
     max_input_bytes: int = 6500
     think: bool | None = None
     num_batch: int | None = None
+    allow_remote: bool = False
     db_path: Path = Path("data/cain.db")
     source_paths: list[Path] = field(default_factory=list)
     allow_public_urls: bool = True
@@ -90,6 +91,13 @@ class Settings:
         validate_llm_options(vars(self))
         if type(self.provider) is not str or self.provider not in {"fake", "ollama"}:
             raise ValueError("Provedor inválido. Escolha fake ou ollama.")
+        if type(self.allow_remote) is not bool:
+            raise ValueError("llm.allow_remote deve ser booleano")
+        if self.provider == "ollama" and not self.allow_remote and not is_loopback_url(self.base_url):
+            host = urlsplit(self.base_url).hostname or self.base_url
+            raise ValueError(
+                f"llm.base_url fora do loopback ({host}) exige llm.allow_remote = true ou "
+                "CAIN_OLLAMA_ALLOW_REMOTE=1: perfil, histórico e documentos da conversa saem desta máquina")
         return self
 
 
@@ -148,4 +156,7 @@ def load_settings(config_path: Path | None = None) -> Settings:
     settings.provider = os.getenv("CAIN_PROVIDER", settings.provider)
     settings.model = os.getenv("CAIN_MODEL", settings.model)
     settings.base_url = os.getenv("CAIN_OLLAMA_URL", settings.base_url)
+    remote = os.getenv("CAIN_OLLAMA_ALLOW_REMOTE")
+    if remote is not None:
+        settings.allow_remote = remote.strip().lower() in {"1", "true", "yes"}
     return settings.validate()
