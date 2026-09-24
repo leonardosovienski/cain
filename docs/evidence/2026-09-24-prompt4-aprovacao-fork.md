@@ -1,7 +1,8 @@
 # CAIN — Prompt 4: aprovação humana durável e fork de runs (2026-09-24)
 
 Branch `melhorias/p4-aprovacao-fork`, cumulativa sobre o Prompt 3. Tudo local; nenhum segredo. A demo roda com o
-modelo real `qwen3.5:4b` (Ollama 127.0.0.1, CPU i7-12700F, 16 GB, WSL2).
+modelo real `qwen3.5:4b` (Ollama 127.0.0.1 no WSL2, na GPU NVIDIA RTX 2060 6 GB via CUDA, com todas as camadas na
+VRAM; CPU i7-12700F, 16 GB de RAM).
 
 ## Antes de codar: qual motor
 
