@@ -10,5 +10,5 @@ Na promoção foram conferidos SHAs local/remoto, ancestralidade e remoção das
 Worktrees históricos foram preservados em HEAD destacado. Não há obrigação de recriar as branches antigas.
 Commits posteriores de documentação avançam main sem mudar automaticamente o código instalado.
 
-Veja [estado do projeto](ESTADO_DO_PROJETO.md), [manifesto operacional](operational-state.json) e [verificação Git](SETUP_GITHUB.md).
+Veja [estado do projeto](ESTADO_DO_PROJETO.md), [manifesto operacional de 13/09 (0.4.12)](docs/historico/operational-state-20260913-0.4.12.json) e [verificação Git](SETUP_GITHUB.md).
 Os estados de publicação anteriores permanecem no histórico Git; seu [índice](docs/historico/README.md) explica como recuperá-los.

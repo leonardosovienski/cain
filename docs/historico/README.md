@@ -22,6 +22,7 @@ Nessas cópias, links e caminhos conservam o contexto original; use a referênci
 - [Consolidação inicial em main](../MAIN_CONSOLIDATION_20260912.md).
 - [Supply](../supply/README.md) e [handoff da rodada](../supply/FINAL_HANDOFF.md).
 - [Entrega 0.4.7 original](../DELIVERY_047.md).
+- [Manifesto operacional de 13/09/2026](operational-state-20260913-0.4.12.json): fotografia da instalação 0.4.12 no commit `5364c3b`, antes na raiz como `operational-state.json`; bytes preservados.
 - Documentos originais em importacao e documentação conflitante preservada em consolidation-20260912.
 
 Esses registros não são instruções atuais de instalação. Contagens antigas, modelos observados e pendências de uma rodada não devem ser somados ou promovidos a validação atual.
