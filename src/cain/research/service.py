@@ -18,11 +18,26 @@ from cain.research.projection import (
 )
 from cain.research.schema import SCHEMA, connect
 
-__all__ = ["ContentConflict", "ResearchService", "now"]
+__all__ = ["ContentConflict", "ResearchService", "now", "reject_name_aliases"]
 
 
 def now():
     return datetime.now(timezone.utc).isoformat()
+
+
+def reject_name_aliases(relative):
+    """Refuse path components Windows would silently map onto another name.
+
+    NTFS strips trailing dots and spaces ("pub.json." opens "pub.json"), so such a
+    request would import a file under a name that is not the one recorded. Rejecting
+    it on every platform keeps import identity exact and the check portable.
+    """
+    if type(relative) is not str:
+        raise ValueError("CONTRACT_INVALID: unsafe relative path")
+    for part in relative.replace("\\", "/").split("/"):
+        if part and part != part.rstrip(". "):
+            raise ValueError("CONTRACT_INVALID: path component ends with a dot or space (name alias)")
+    return relative
 
 
 class ResearchService:
@@ -71,7 +86,7 @@ class ResearchService:
             if not any([grant[k] for k in ("user", "project", "collection")]
                        == [user, project, collection] for grant in self.policy()["grants"]):
                 raise ValueError("UNAUTHORIZED scope before file access")
-            path = confined(self.import_root(scope), relative)
+            path = confined(self.import_root(scope), reject_name_aliases(relative))
             with path.open("rb") as handle:
                 raw = handle.read(MAX_BYTES + 1)
             package = loads(raw)

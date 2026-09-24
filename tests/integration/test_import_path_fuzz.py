@@ -30,6 +30,7 @@ HOSTILE = {
     "directory": "subdir",
     "windows-trailing-dot": "pub.json.",
     "windows-trailing-space": "pub.json ",
+    "windows-trailing-dot-directory": "subdir./pub.json",
     "overlong": "p" * 300 + ".json",
     "nfd-of-nfc-name": unicodedata.normalize("NFD", "relatório.json"),
 }
@@ -74,3 +75,15 @@ def test_nfc_name_imports_and_nfd_request_does_not_alias_it(guarded_root):
     with pytest.raises(ValueError):
         service.ingest(nfd, scope)
     assert service.query(scope, source_id="N")["total_record_revisions"] == 1
+
+
+@pytest.mark.parametrize("relative", ["pub.json.", "pub.json ", "pub.json. ", "subdir./pub.json", "a\\b./c"])
+def test_windows_name_aliases_are_refused_on_every_platform_before_resolution(guarded_root, relative, monkeypatch):
+    """NTFS maps "pub.json." onto "pub.json"; the request must fail by name, not by lookup."""
+    service, scope, _, opened = guarded_root
+    resolved = []
+    monkeypatch.setattr(Path, "resolve", lambda self, *a, **k: resolved.append(self) or self)
+    with pytest.raises(ValueError, match="Import rejected"):  # ingest wraps the cause in its receipt
+        service.ingest(relative, scope)
+    assert resolved == [] and set(opened) <= {"policy.json"}
+    assert service.receipts(scope)[0]["status"] == "rejected"

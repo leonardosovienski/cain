@@ -30,7 +30,7 @@ from cain.research.bundle_projection import (
 )
 from cain.research.bundle_schema import SCHEMA
 from cain.research.objects import Objects
-from cain.research.service import now
+from cain.research.service import now, reject_name_aliases
 
 __all__ = ["BundleService", "validate_grants"]
 
@@ -90,7 +90,7 @@ class BundleService:
         Approval neither reads objects nor creates a readable membership.
         """
         root = Path(self.service.import_root(scope))
-        with safe_open(root, relative) as source:
+        with safe_open(root, reject_name_aliases(relative)) as source:
             buffer = io.BytesIO()
             transfer(source, buffer, limit=MAX_BYTES)
         raw = buffer.getvalue()
@@ -129,7 +129,7 @@ class BundleService:
         raw_sha = None
         try:
             root = Path(self.service.import_root(scope))
-            with safe_open(root, relative) as source:
+            with safe_open(root, reject_name_aliases(relative)) as source:
                 buffer = io.BytesIO()
                 transfer(source, buffer, limit=MAX_BYTES)
                 raw = buffer.getvalue()
