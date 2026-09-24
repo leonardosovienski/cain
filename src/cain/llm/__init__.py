@@ -6,9 +6,8 @@ import json
 from typing import Protocol, runtime_checkable
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
-from urllib.parse import urlsplit
 
-from cain.settings import validate_llm_options
+from cain.settings import is_loopback_url, validate_llm_options
 
 
 @runtime_checkable
@@ -28,7 +27,7 @@ class _NoRedirect(HTTPRedirectHandler):
 def urlopen(request, timeout):
     url = request.full_url if isinstance(request, Request) else request
     handlers = [_NoRedirect()]
-    if urlsplit(url).hostname in {"127.0.0.1", "localhost", "::1"}:
+    if is_loopback_url(url):  # local endpoints never go through an environment proxy
         handlers.append(ProxyHandler({}))
     return build_opener(*handlers).open(request, timeout=timeout)
 

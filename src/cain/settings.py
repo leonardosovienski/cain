@@ -5,11 +5,32 @@ import math
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
+import ipaddress
 from urllib.parse import urlsplit
 
 
 LLM_FIELDS = {"provider", "model", "base_url", "temperature", "seed", "timeout",
               "num_ctx", "num_predict", "max_input_bytes", "think", "num_batch"}
+
+
+def is_loopback_url(url) -> bool:
+    """True for any 127.0.0.0/8 address, ``::1`` and the name ``localhost``.
+
+    Shared by ``cain doctor``, the Ollama transport (environment-proxy bypass) and the
+    streaming guard, so every local-only decision uses one definition.
+    """
+    try:
+        host = urlsplit(url).hostname
+    except ValueError:
+        return False
+    if not host:
+        return False
+    if host.lower() == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
 
 
 def validate_llm_options(options):
