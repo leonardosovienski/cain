@@ -108,7 +108,7 @@ def test_api_delivers_verified_fields_without_model(setup, tmp_path):
         def generate_json(self, *args):
             raise AssertionError('Field lookup must not invoke inference')
     app = create_app(db_path=tmp_path/'workspace.db', llm=UnusableModel(),
-                     research_db=service.path, research_policy=path)
+                     research_db=service.path, research_policy=path, trusted_hosts=("testserver",))
     with TestClient(app) as client:
         job = client.post('/research/jobs', json={'question':'Qual estado e trial de T42?',
                            'source_id':'T42','steps':['support']}).json()

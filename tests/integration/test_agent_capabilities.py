@@ -188,7 +188,7 @@ def test_mcp_lifecycle_allowlist_and_scope_injection(setup):
 def test_api_tool_and_workflow_shared_services(setup,tmp_path):
     service,scope,ingest,_,path=setup
     ingest(cases.publication(("A",),text="Alice reviewed Report A."))
-    with TestClient(create_app(tmp_path/"workspace.db",llm=FixtureModel(),research_policy=path,research_db=service.path)) as client:
+    with TestClient(create_app(tmp_path/"workspace.db",llm=FixtureModel(),research_policy=path,research_db=service.path, trusted_hosts=("testserver",))) as client:
         assert client.post("/research/search",json={"question":"A?"}).json()["matches"] == 1
         assert client.post("/research/entities",json={"question":"A?"}).json()["status"] == "proposed"
         job=client.post("/research/jobs",json={"question":"A?","steps":["inspect"]}).json()
@@ -270,7 +270,7 @@ def test_api_stream_has_incremental_tokens_and_terminal_event(setup,tmp_path,mon
     import cain.llm.streaming as transport
     service,_,_,_,policy=setup
     monkeypatch.setattr(transport,"urlopen",lambda *a,**k:BytesIO(b'{"response":"one","done":false}\n{"response":" two","done":true}\n'))
-    with TestClient(create_app(tmp_path/"workspace.db",llm=OllamaLLM(),research_policy=policy,research_db=service.path)) as client:
+    with TestClient(create_app(tmp_path/"workspace.db",llm=OllamaLLM(),research_policy=policy,research_db=service.path, trusted_hosts=("testserver",))) as client:
         response=client.post("/assistant/stream",json={"prompt":"Say two words"})
         events=[json.loads(line) for line in response.text.splitlines()]
         assert [e["type"] for e in events] == ["started","token","token","done"]

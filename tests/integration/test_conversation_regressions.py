@@ -54,7 +54,7 @@ def test_search_does_not_cite_history_on_articles_alone(tmp_path):
 def test_api_accepts_explicit_conversation_and_persists_it(tmp_path):
     config = tmp_path/'cain.toml'
     config.write_text('[search]\npaths=[]\n', encoding='utf-8')
-    with TestClient(create_app(tmp_path/'cain.db', ConversationModel(), config)) as client:
+    with TestClient(create_app(tmp_path/'cain.db', ConversationModel(), config, trusted_hosts=("testserver",))) as client:
         response = client.post('/run', json={'user_id':'qa', 'session_id':'math',
                                'payload':'Quanto é 2 + 2?', 'intent':'conversa'})
         assert response.status_code == 200, response.text

@@ -93,7 +93,7 @@ def client(tmp_path):
         '[orchestration]\nllm_routing=false\n[search]\nallow_public_urls=false\npaths=[]\n',
         encoding="utf-8",
     )
-    with TestClient(create_app(tmp_path / "ui.db", FakeLLM(), configuration)) as instance:
+    with TestClient(create_app(tmp_path / "ui.db", FakeLLM(), configuration, trusted_hosts=("testserver",))) as instance:
         yield instance
 
 

@@ -523,7 +523,7 @@ def test_http_and_cli_share_service_without_provider(setup, tmp_path, capsys):
         tmp_path / "legacy.db",
         llm=ExplodingProvider(),
         research_policy=policy,
-        research_db=service.path,
+        research_db=service.path, trusted_hosts=("testserver",),
     )
     with TestClient(app) as client:
         assert client.get("/health").json()["inference"] == "not_exercised"
@@ -561,7 +561,7 @@ def test_http_and_cli_share_service_without_provider(setup, tmp_path, capsys):
 
 
 def test_research_disabled_preserves_legacy(tmp_path):
-    with TestClient(create_app(tmp_path / "legacy.db", llm=FakeLLM())) as client:
+    with TestClient(create_app(tmp_path / "legacy.db", llm=FakeLLM(), trusted_hosts=("testserver",))) as client:
         assert client.get("/research/capabilities").json()["enabled"] is False
         assert client.post("/research/query", json={}).status_code == 503
         assert client.get("/profile/leo").status_code == 200

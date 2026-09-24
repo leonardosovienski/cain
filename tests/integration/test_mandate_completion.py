@@ -12,7 +12,7 @@ def test_historian_route_covers_explicit_fields_without_inference(setup, tmp_pat
     service, scope, ingest, _, path = setup
     ingest(cases.publication(('R17',),text='{"R17":{"state":"WAIT","trial":"beta"}}'))
     with TestClient(create_app(tmp_path/'workspace.db',llm=cases.ExplodingProvider(),
-                              research_db=service.path,research_policy=path)) as client:
+                              research_db=service.path,research_policy=path, trusted_hosts=("testserver",))) as client:
         response=client.post('/research/explain',json={'source_id':'R17','question':'Qual estado e trial de R17? O recorte informa motivo e tamanho da amostra?'})
         assert response.status_code == 200, response.text
         result=response.json()

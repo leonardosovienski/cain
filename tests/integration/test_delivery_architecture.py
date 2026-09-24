@@ -48,14 +48,14 @@ def test_history_failure_reopens_and_replays_without_generation_or_identity_dupl
         raise OSError("history write interrupted")
     with monkeypatch.context() as patch:
         patch.setattr(WorkspaceStore, "record_turn", fail)
-        with TestClient(create_app(path, model)) as client:
+        with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as client:
             response = client.post("/run", json=request())
             assert response.status_code == 200, response.text
             result = response.json()
             assert result["history_status"] == "pending"
             before = counts(path)
             assert before["ui_turns"] == int(after_commit)
-    with TestClient(create_app(path, model)) as reopened:
+    with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as reopened:
         result["history_status"] = "saved"
         assert reopened.get("/runs/leo/stable-request").json() == result
         assert reopened.post("/run", json=request()).json() == result
@@ -74,9 +74,9 @@ def test_conversation_read_recovers_missing_projection(tmp_path, monkeypatch):
     model = CountingLLM()
     with monkeypatch.context() as patch:
         patch.setattr(WorkspaceStore, "record_turn", lambda *a, **k: (_ for _ in ()).throw(OSError("disk")))
-        with TestClient(create_app(path, model)) as client:
+        with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as client:
             assert client.post("/run", json=request()).json()["history_status"] == "pending"
-    with TestClient(create_app(path, model)) as client:
+    with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as client:
         assert len(client.get("/sessions/leo/s").json()) == 1
         assert len(client.get("/sessions/leo/s").json()) == 1
     assert model.calls == 1
@@ -85,7 +85,7 @@ def test_conversation_read_recovers_missing_projection(tmp_path, monkeypatch):
 def test_completion_and_outcome_roll_back_together(tmp_path):
     path = tmp_path / "db.sqlite"
     model = CountingLLM()
-    app = create_app(path, model)
+    app = create_app(path, model, trusted_hosts=("testserver",))
     log = SQLiteDecisionLog(path)
     log.close()
     with sqlite3.connect(path) as db:
@@ -101,7 +101,7 @@ def test_completion_and_outcome_roll_back_together(tmp_path):
         assert events == ["mediated", "failed"]
         db.execute("DROP TRIGGER fail_completion")
     before = counts(path)
-    with TestClient(create_app(path, model)) as reopened:
+    with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as reopened:
         assert reopened.post("/run", json=request()).status_code == 409
         assert reopened.get("/runs/leo/stable-request").status_code == 409
     assert counts(path) == before and model.calls == 1
@@ -113,7 +113,7 @@ def test_abandoned_processing_receipt_is_not_silently_reexecuted(tmp_path):
     store.ensure_session("leo", "s")
     assert store.claim_run(request()) is None
     model = CountingLLM()
-    with TestClient(create_app(path, model)) as client:
+    with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as client:
         assert client.post("/run", json=request()).status_code == 409
     assert model.calls == 0
 
@@ -127,7 +127,7 @@ def test_two_app_instances_cannot_generate_the_same_receipt(tmp_path):
             assert release.wait(10)
             return super().generate(prompt, context)
     model = BlockingLLM()
-    with TestClient(create_app(path, model)) as first, TestClient(create_app(path, model)) as second:
+    with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as first, TestClient(create_app(path, model, trusted_hosts=("testserver",))) as second:
         with ThreadPoolExecutor(max_workers=1) as executor:
             future = executor.submit(first.post, "/run", json=request())
             try:
@@ -148,7 +148,7 @@ def test_profile_controls_and_cli_do_not_read_historical_documents(tmp_path, mon
     def forbidden(*args, **kwargs):
         raise AssertionError("Profile operation scanned historical memory")
     monkeypatch.setattr(SQLiteIdentityStore, "iter_documents", forbidden)
-    with TestClient(create_app(path, CountingLLM())) as client:
+    with TestClient(create_app(path, CountingLLM(), trusted_hosts=("testserver",))) as client:
         assert client.get("/profile/leo").status_code == 200
         changed = client.put("/profile/leo/preferences/format", json={"value": "bullets"})
         assert changed.json()["profile"]["effective_preferences"]["format"] == "bullets"
@@ -181,7 +181,7 @@ else:
             original(self, *args, **kwargs)
         os._exit(73)
     WorkspaceStore.record_turn = interrupted
-with TestClient(create_app(sys.argv[1], Provider())) as client:
+with TestClient(create_app(sys.argv[1], Provider(), trusted_hosts=("testserver",))) as client:
     client.post("/run", json=json.loads(sys.argv[3]))
 '''
     process = subprocess.run([sys.executable, "-c", script, str(path), checkpoint, json.dumps(request())],
@@ -193,7 +193,7 @@ with TestClient(create_app(sys.argv[1], Provider())) as client:
         assert completed == int(checkpoint != "before_completion")
     before = counts(path)
     model = CountingLLM()
-    with TestClient(create_app(path, model)) as client:
+    with TestClient(create_app(path, model, trusted_hosts=("testserver",))) as client:
         response = client.post("/run", json=request())
         if checkpoint == "before_completion":
             assert response.status_code == 409

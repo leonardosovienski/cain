@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 import sqlite3
 from threading import Lock
-from typing import Literal
+from typing import Literal, Sequence
 from urllib.parse import urlsplit
 from uuid import uuid4
 
@@ -21,6 +21,10 @@ from cain.runtime import build_cain, build_retriever, build_profile
 from cain.orchestrator.routing import RuleRouter
 from cain.settings import load_settings
 from cain.workspace import WorkspaceStore
+
+# Production Host allowlist: loopback names only. Test clients opt in explicitly via
+# create_app(trusted_hosts=...); nothing test-specific is trusted by default.
+TRUSTED_HOSTS: tuple[str, ...] = ("127.0.0.1", "localhost", "[::1]")
 
 Scope = Literal["user", "project", "session", "turn"]
 PreferenceKey = Literal["format", "verbosity", "language"]
@@ -92,13 +96,17 @@ class FeedbackRequest(BaseModel):
 
 def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | None = None,
                embedding=None, research_policy: Path | None = None,
-               research_db: Path | None = None) -> FastAPI:
+               research_db: Path | None = None,
+               trusted_hosts: Sequence[str] = TRUSTED_HOSTS) -> FastAPI:
+    if (isinstance(trusted_hosts, str) or not trusted_hosts
+            or any(type(host) is not str or not host.strip() for host in trusted_hosts)):
+        raise ValueError("trusted_hosts deve ser uma sequência de nomes de host não vazios")
     app = FastAPI(title="Cain — memória e projetos", version=__version__, docs_url=None, redoc_url=None)
     settings = load_settings(config_path)
     storage_path = Path(db_path if db_path is not None else settings.db_path)
     workspace = WorkspaceStore(storage_path)
     generation_lock = Lock()
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["127.0.0.1", "localhost", "[::1]", "testserver"])
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(trusted_hosts))
 
     @app.middleware("http")
     async def same_origin(request: Request, call_next):
