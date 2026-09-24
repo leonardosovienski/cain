@@ -6,8 +6,9 @@ secret in any of the formats the policy recognises (PEM private keys, ``api_key`
 sits in the payload; it keeps benign research text flowing; field redaction happens
 before the scan; and policy documents that weaken these guarantees are refused.
 
-Formats the current patterns do not recognise are listed as strict ``xfail`` cases:
-they document the gap without changing behaviour, and fail loudly when it closes.
+Provider-shaped credentials (JWT, AWS, GitHub, Slack, Google, bearer headers, password
+assignments, connection strings with a password, JSON keys named like a credential) are
+denied too, while benign research text that merely resembles them keeps flowing.
 """
 import pytest
 
@@ -45,7 +46,7 @@ DETECTED = {
     "embedded-in-prose": "Use api_key=abc123 when calling the exporter.",
 }
 
-NOT_YET_DETECTED = {
+PROVIDER_SHAPED = {
     "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
     # Provider-shaped samples are assembled at runtime so the source never carries a literal
     # that GitHub push protection would treat as a real credential.
@@ -53,11 +54,16 @@ NOT_YET_DETECTED = {
     "aws-secret-assignment": "aws_secret_access_key=" + "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
     "github-token": "ghp_" + "16C7e42F292c6912E7710c838347Ae178B4a",
     "slack-token": "xoxb-" + "-".join(["123456789012", "1234567890123", "AbCdEfGhIjKlMnOpQrStUvWx"]),
-    "google-api-key": "AIzaSyA-1234567890abcdefghijklmnopqrstuv",
+    "google-api-key": "AIza" + "SyA-1234567890abcdefghijklmnopqrstu",  # 4 + 35 chars, the real shape
     "bearer-header": "Authorization: Bearer abcdef0123456789abcdef0123456789",
     "password-assignment": "password=hunter2",
     "connection-string-with-password": "postgres://user:s3cret@db.internal:5432/research",
     "json-key-named-api_key": {"api_key": "abcdef123456"},
+    "json-key-named-password": {"db": {"password": "hunter2"}},
+    "github-fine-grained": "github_pat_" + "11ABCDEFG0" + "abcdefghijklmnopqrstuvwxyz0123456789",
+    "aws-temporary-key": "ASIA" + "IOSFODNN7EXAMPLE",
+    "refresh-token-assignment": "refresh_token: 1//0abcdefghij-klmnop",
+    "mysql-url-with-password": "mysql://root:pw@db:3306/x",
 }
 
 BENIGN = {
@@ -67,6 +73,16 @@ BENIGN = {
     "short-sk": "sk-short",
     "pem-mention-without-header": "the report mentions a PEM certificate, no key material",
     "sk-inside-word": "risk-adjusted returns (task-based)",
+    "jwt-like-but-short": "eyJhbGciOiJ.eyJzdWIi.sig",
+    "akia-lowercase-tail": "AKIAexampleNotAKey123",
+    "bearer-in-prose": "the bearer of this letter is the holder of the claim",
+    "url-without-password": "https://example.com/data/2026/report.json",
+    "url-with-user-only": "ssh://git@github.com/org/repo.git",
+    "token-count-metric": "token_count: 1200 and tokens: 12 per row",
+    "password-policy-prose": "password policy requires 12 characters and rotation",
+    "json-key-named-token-count": {"token_count": 12, "api_keys_rotated": 3},
+    "ghost-word": "ghp_ prefixes are documented in the GitHub API reference",
+    "slack-mention": "xoxb tokens are described in the Slack docs",
 }
 
 
@@ -89,11 +105,10 @@ def test_benign_research_text_is_allowed(value):
     assert receipt["authorization_result"] == "AUTHORIZED" and receipt["redacted_fields"] == []
 
 
-@pytest.mark.parametrize("value", list(NOT_YET_DETECTED.values()), ids=list(NOT_YET_DETECTED))
-@pytest.mark.xfail(strict=True, reason="known gap: format not covered by _SECRET_PATTERNS; "
-                                       "field redaction remains the primary defence")
-def test_formats_not_yet_recognised(value):
+@pytest.mark.parametrize("value", list(PROVIDER_SHAPED.values()), ids=list(PROVIDER_SHAPED))
+def test_provider_shaped_credentials_are_denied(value):
     deny({"results": [{"summary": value}]})
+    deny({"nested": [{"deeper": value}]})
 
 
 def test_redacted_fields_are_removed_before_the_secret_scan():
