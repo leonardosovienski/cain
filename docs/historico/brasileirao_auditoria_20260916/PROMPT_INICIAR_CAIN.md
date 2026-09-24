@@ -10,7 +10,7 @@ Trabalhe diretamente em:
 
 * CAIN: `C:\CAIN\projeto`
 * Domínio Brasileirão: `C:\BRASILEIRAO\brasileirao-predictor`
-* Materiais históricos: `C:\Users\leona\Documents\Codex\2026-09-15\lea\outputs`
+* Materiais históricos: `C:\Users\<usuario>\Documents\Codex\2026-09-15\lea\outputs`
 
 Leia primeiro as instruções locais e respeite-as quando forem mais específicas que este prompt.
 
