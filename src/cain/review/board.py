@@ -7,10 +7,11 @@ testable with a reason. The closed-hypothesis archive (Prompt 7) adds its own ma
 
 The question map (question → test / evidence / run → status) lives in the bitemporal memory as facts
 of the domain's cube: it survives restarts, every change supersedes (nothing is overwritten), and it
-can be read ``as_of``. Statuses: OPEN, TEST_DEFINED, ANSWERED, NOT_TESTABLE, WAIVED.
+can be read ``as_of``. Statuses: OPEN, TEST_PROPOSED, TEST_DEFINED, ANSWERED, NOT_TESTABLE, WAIVED.
 
-Pre-registration is refused while any mandatory item is OPEN or NOT_TESTABLE: each needs a defined
-test, an answer with evidence, or a waiver recorded by a named human with a reason.
+A test the model proposes is only TEST_PROPOSED: a proposal is not a decision (the first real review
+had tests that did not fit their perspective). A named human accepts it, rewrites it, or waives the
+item. Pre-registration is refused while any mandatory item is not TEST_DEFINED, ANSWERED or WAIVED.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from cain.memory.store import MemoryStore, MemoryStoreError
 
 EXTRACTOR = "cain-review/1"
 RESOLVED = ("TEST_DEFINED", "ANSWERED", "WAIVED")
-STATUSES = ("OPEN", "TEST_DEFINED", "ANSWERED", "NOT_TESTABLE", "WAIVED")
+STATUSES = ("OPEN", "TEST_PROPOSED", "TEST_DEFINED", "ANSWERED", "NOT_TESTABLE", "WAIVED")
 TEST_KINDS = ("backtest", "statistical", "data_check", "prospective", "manual")
 QUESTION_SCHEMA = {
     "type": "object", "additionalProperties": False, "required": ["questions"],
@@ -122,7 +123,7 @@ class ReviewBoard:
                 if question["testable"] and question["test"].strip():
                     test = {"kind": question["test_kind"], "description": question["test"].strip(),
                             "pass_criterion": question["pass_criterion"].strip(), "defined_by": "model:proposed"}
-                status = "TEST_DEFINED" if test else ("NOT_TESTABLE" if not question["testable"] else "OPEN")
+                status = "TEST_PROPOSED" if test else ("NOT_TESTABLE" if not question["testable"] else "OPEN")
                 item = {"item_id": f"{hypothesis_id}:{perspective['id']}:{index}", "hypothesis_id": hypothesis_id,
                         "perspective": perspective["id"], "perspective_name": perspective["name"],
                         "mandatory": bool(perspective.get("mandatory", True)), "question": question["question"],
@@ -173,6 +174,18 @@ class ReviewBoard:
                                                     "criterion and who defines it")
         item = {**self._item(domain, item_id), "status": "TEST_DEFINED",
                 "test": {"kind": kind, "description": description, "pass_criterion": pass_criterion, "defined_by": by}}
+        self._put(domain, item_id, "review_item", item)
+        return item
+
+    def accept(self, domain, item_id, *, by) -> dict:
+        """A named human accepts the test the model proposed for an item."""
+        if not by.strip() or by.startswith(("model:", "cain")):
+            raise MemoryStoreError("ACCEPT_IS_HUMAN", "only a named human accepts a proposed test")
+        item = self._item(domain, item_id)
+        if item["status"] != "TEST_PROPOSED":
+            raise MemoryStoreError("NOT_PROPOSED", f"{item_id} has no proposed test to accept ({item['status']})")
+        item = {**item, "status": "TEST_DEFINED", "test": {**item["test"], "defined_by": f"model:proposed; "
+                                                                                    f"accepted by {by}"}}
         self._put(domain, item_id, "review_item", item)
         return item
 

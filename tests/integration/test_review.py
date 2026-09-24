@@ -57,9 +57,16 @@ def test_preregistration_is_refused_while_the_checklist_is_unresolved(board):
     view = board.question_map("brasileirao", "H11b", as_of=board.memory.now())
     statuses = {q["item_id"]: q["status"] for q in view["questions"]}
     assert statuses["H11b:regime-change:1"] == "NOT_TESTABLE"
-    assert statuses["H11b:overfitting:1"] == "TEST_DEFINED"
+    assert statuses["H11b:overfitting:1"] == "TEST_PROPOSED"  # a model proposal is not a decision
     assert statuses["H11b:closed-archive:1"] == "ANSWERED"  # nothing closed in the archive yet
-    assert view["blocking"] == ["H11b:regime-change:1"] and not view["ready_to_preregister"]
+    proposed = [i for i, s in statuses.items() if s == "TEST_PROPOSED" and "already-priced" not in i]
+    assert sorted(view["blocking"]) == sorted(proposed + ["H11b:regime-change:1"]) and not view["ready_to_preregister"]
+    with pytest.raises(MemoryStoreError, match="CHECKLIST_UNRESOLVED|mandatory items"):
+        board.preregister("brasileirao", "H11b", by="leo")
+    with pytest.raises(MemoryStoreError, match="human"):
+        board.accept("brasileirao", "H11b:overfitting:1", by="model:qwen")
+    for item in proposed:
+        board.accept("brasileirao", item, by="leo")
     with pytest.raises(MemoryStoreError, match="CHECKLIST_UNRESOLVED|mandatory items"):
         board.preregister("brasileirao", "H11b", by="leo")
     with pytest.raises(MemoryStoreError, match="human"):
@@ -85,6 +92,9 @@ def test_closed_hypothesis_item_blocks_until_a_human_decides(board):
     assert "H11b:closed-archive:1" in view["blocking"]
     board.define_test("brasileirao", "H11b:regime-change:1", kind="backtest", by="leo",
                       description="per-season paired RPS difference", pass_criterion="same sign in 3 of 4 seasons")
+    for item in view["questions"]:
+        if item["status"] == "TEST_PROPOSED":
+            board.accept("brasileirao", item["item_id"], by="leo")
     with pytest.raises(MemoryStoreError):
         board.preregister("brasileirao", "H11b", by="leo")
     board.answer("brasileirao", "H11b:closed-archive:1", ref="finding:brasileirao:trial:h11", by="leo",
@@ -122,7 +132,7 @@ def test_question_map_survives_a_restart_and_shows_in_the_web_interface(tmp_path
         assert response.status_code == 200
         shown = response.json()
         assert [q["item_id"] for q in shown["questions"]] == [q["item_id"] for q in before["questions"]]
-        assert shown["blocking"] == ["H11b:regime-change:1"]
+        assert shown["blocking"] == before["blocking"] and "H11b:regime-change:1" in shown["blocking"]
         assert client.get("/review/brasileirao/unknown").status_code == 404
         page = client.get("/review-map")
         assert page.status_code == 200 and "Mapa de perguntas" in page.text
@@ -145,6 +155,9 @@ def test_cli_open_generate_map_waive_and_preregister(tmp_path, capsys, monkeypat
     assert main([*base, "waive", "--domain", "brasileirao", "H11b:regime-change:1", "--by", "leo",
                  "--reason", "reported per season"]) == 0
     capsys.readouterr()
+    proposed = ["H11b:overfitting:1", "H11b:temporal-leakage:1", "H11b:costs-execution:1"]
+    assert main([*base, "accept", "--domain", "brasileirao", *proposed, "--by", "leo"]) == 0
+    assert json.loads(capsys.readouterr().out)["accepted"] == proposed
     assert main([*base, "map", "--domain", "brasileirao", "H11b", "--as-of", "now"]) == 0
     assert json.loads(capsys.readouterr().out)["ready_to_preregister"] is True
     assert main([*base, "preregister", "--domain", "brasileirao", "H11b", "--by", "leo"]) == 0

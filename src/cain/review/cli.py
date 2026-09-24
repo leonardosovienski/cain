@@ -29,6 +29,10 @@ def register(sub):
     test.add_argument("--description", required=True)
     test.add_argument("--pass-criterion", required=True)
     test.add_argument("--by", required=True)
+    accept = commands.add_parser("accept", help="Human accepts the tests the model proposed")
+    accept.add_argument("--domain", required=True)
+    accept.add_argument("item_id", nargs="+")
+    accept.add_argument("--by", required=True)
     answer = commands.add_parser("answer", help="Record the evidence or run that answers an item")
     answer.add_argument("--domain", required=True)
     answer.add_argument("item_id")
@@ -73,6 +77,8 @@ def execute(args):
     if cmd == "define-test":
         return board.define_test(args.domain, args.item_id, kind=args.kind, description=args.description,
                                  pass_criterion=args.pass_criterion, by=args.by)
+    if cmd == "accept":
+        return {"accepted": [board.accept(args.domain, item, by=args.by)["item_id"] for item in args.item_id]}
     if cmd == "answer":
         return board.answer(args.domain, args.item_id, ref=args.ref, by=args.by, note=args.note)
     if cmd == "waive":
