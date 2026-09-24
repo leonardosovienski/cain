@@ -1,11 +1,11 @@
 {
   "version": "cain-hypothesis-source-inventory/1",
-  "reviewed_at": "2026-09-15",
+  "reviewed_at": "2026-09-24",
   "projects": [
     {
       "domain": "brasileirao",
       "repository": "https://github.com/leonardosovienski/brasileirao-predictor",
-      "reviewed_commit": "f87806900d2aa3c5e267259a67f27ce56e18dc03",
+      "reviewed_commit": "e540f97a47fc09d3d6e17f0e0e536634e06d4739",
       "excluded": [
         "Operational databases and protected cohorts",
         "Credentials and personal configuration",
@@ -14,14 +14,14 @@
       "sources": [
         {
           "path": "data/trials.json",
-          "sha256": "e5af7c0ffd79298a66a446b02973b0be9827c0fe987e94185b0b9a035f4e1199",
+          "sha256": "a11dc59e0d8dc32759fafd45d8e9a4f826d3c9d59505d25ae43a22e042051a29",
           "mode": "trial_array",
           "purpose": "Registro literal de tentativas, sem contar variantes como hipóteses novas",
           "identity_key": "name"
         },
         {
           "path": "data/trials.v2.json",
-          "sha256": "fbad9c0cf5af78016b5480ab2384db0bb356f4b07c79a08628aba23ba10e7d90",
+          "sha256": "659fb75aeda5e844d7dbd7be49982c30c1a00e197a7fa97143002da24c7944ed",
           "mode": "trial_array",
           "purpose": "Registro literal de tentativas, sem contar variantes como hipóteses novas",
           "identity_key": "trial_id"
@@ -151,7 +151,7 @@
     {
       "domain": "crypto",
       "repository": "https://github.com/leonardosovienski/cripto-predictor",
-      "reviewed_commit": "4eb96e141389b8390536716af3c4a0cb46edab23",
+      "reviewed_commit": "174573df4884b5455f9b38ecc933bf48c67ff4df",
       "excluded": [
         "Operational databases and protected cohorts",
         "Credentials and personal configuration",
@@ -160,26 +160,26 @@
       "sources": [
         {
           "path": "CR_FREEZE_INDEX.md",
-          "sha256": "04a52ead87e036f6adb7c65e38a9e3f7d753a5f68ade23e73c3ef4dc79543044",
+          "sha256": "7068eb5bfb184d99866ac9342d240de319ceaeee3a297af9b6feedc66413505b",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "CR_RESEARCH_FREEZE.md",
-          "sha256": "9c6caa77251a659a0fbac54433f2026930d98e6d49d7c5a85d0ffc1afa28ec37",
+          "sha256": "db934d3dcf23e25426e6d2bd80218f7788d8e3414a9b484fe4daae3b35a15eec",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "GarimpoInvestimentos/trials.json",
-          "sha256": "7193b15df347b8243a65ab92449503dd64f90a9777207aadc8c80da2e0ac844b",
+          "sha256": "b43661d5fec21da0c9d0b9d1f2847555688b7bfb1ac436deee12d8fe923f1ece",
           "mode": "trial_array",
           "purpose": "Registro literal de tentativas, sem contar variantes como hipóteses novas",
           "identity_key": "name"
         },
         {
           "path": "charters/scientific_state.json",
-          "sha256": "f9d20abdef2fa77df98784a90f5d4c2e1a45907e6438ffa9d8235e5a9e063c75",
+          "sha256": "4d2a7d7bbfcc0264ac1d0f30b76ecd20fd883b8a2cb6732c00fc502499793636",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -191,19 +191,19 @@
         },
         {
           "path": "docs/CURRENT_RESEARCH_STATE_20260908.md",
-          "sha256": "e0e1d51200de73b53179a2a2121339de4059a1accd00e834536bb43ef1b59f00",
+          "sha256": "2ebf36a904062f61c4686db46a7d9d14e9620dcaad4660d58edcf1033b2ee02f",
           "mode": "document",
           "purpose": "Independent discovery: explicit research state or experimental questions; not unique hypothesis count"
         },
         {
           "path": "docs/EVIDENCE_REGISTRY.md",
-          "sha256": "269df1a109f3dc432cc6d3cc9cc5852bce3e387d4222ea6998ed63fbc0378e30",
+          "sha256": "bbdae4549bc1bed519cbda1ca7fe99e31dbb3ff078fdd528865cad33ec2e1072",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/HYPOTHESES.md",
-          "sha256": "64c5a7caced80c75be9cf14ed75111f401fa1161f9931743081bfc57bf722754",
+          "sha256": "cc50f3825f80999980b514ce00f88b838337fe9c8dcdb61b61f15f31c8a20697",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -221,7 +221,7 @@
         },
         {
           "path": "docs/evidence/absolute_research_20260908/trials.json",
-          "sha256": "c7b89e603c0db400840ea5c673521c6fd56f5867dd15293a5b8c7e63263ffaed",
+          "sha256": "52c19a4f332b0eea54c42b57e9e391687bb891ffcbd615c362573516ae06f8a3",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -233,7 +233,7 @@
         },
         {
           "path": "docs/evidence/altcoin_forward_20260907/protocol.json",
-          "sha256": "e7a9253c1feac547accd84a9e06b00302004e54e94a56e71a6b3733dcf5b5d09",
+          "sha256": "7b37ca82bf3c454e48736fc761d0e3476b94f34779297dbebe8fbf2dee8f1172",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -245,7 +245,7 @@
         },
         {
           "path": "docs/evidence/altcoin_profit_20260907/protocol.json",
-          "sha256": "f708725abc533404a1236dab4e0d2939d62c8471ab71888a99c10cc40cc7321b",
+          "sha256": "c16b89ee14f7dc0df365b0dcc84cb934e3fcdedeb0512363206e0d4ab6ec7ceb",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -269,7 +269,7 @@
         },
         {
           "path": "docs/evidence/basis_research_20260908/trials.json",
-          "sha256": "d1fd0e1abed92f0d85c3bce8dd7f00fe787379fda4776f3b346d8284859b15e2",
+          "sha256": "a1565f53a9f5c89f5c24cd6f05a893181c9c60116db22f9cf0e59496ccb9e77f",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -293,7 +293,7 @@
         },
         {
           "path": "docs/evidence/funding_carry_screen_20260907/protocol.json",
-          "sha256": "7d9afe4430ba8d1b822e91bb1a8ebce35fb1ff2a46c7b286effcc5166f3d58cc",
+          "sha256": "87f5289c52f22d003d99c6f170ea0baf36b613588ce12b84b69d90d23eadec4a",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -305,7 +305,7 @@
         },
         {
           "path": "docs/evidence/project_review_20260907/protocol.json",
-          "sha256": "f1ff7d12be314581cb48f1344f0f095713cd1067d75d1c6278550ec5a4ec0ba8",
+          "sha256": "c0ce7534061d3586b4f8546bfca37e72a0e5ec019abf56740949fd8d9154da48",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -356,7 +356,7 @@
     {
       "domain": "stocks",
       "repository": "https://github.com/leonardosovienski/stocks-predictor",
-      "reviewed_commit": "3066321e599ee15dd0ace4167d2791545ce6eb95",
+      "reviewed_commit": "36081a66004a464d5e9c5ea4bc6e208d0fcb582e",
       "excluded": [
         "Operational databases and protected cohorts",
         "Credentials and personal configuration",
@@ -371,7 +371,7 @@
         },
         {
           "path": "STOCKS_CURRENT_STATE.md",
-          "sha256": "b8055affd7eaf66fa25cf12733d69d7d05ce2a5edd859b9dddde851f5efd64fd",
+          "sha256": "b42affea0a0fbe9b9e6f8774401c16b83b8a2212a48e1caea83acc990207352b",
           "mode": "document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -383,7 +383,7 @@
         },
         {
           "path": "docs/open_source_research/OSS-20260911-01/EXPERIMENTS.md",
-          "sha256": "b55ab875072d02ec68d1925ba4db39f73d3d3112207d5cdd8b7f2fa34930011d",
+          "sha256": "ea02679c2f4d9e0930f767bef47ee58e514faff583bd4254f56aa6a39ad98e10",
           "mode": "document",
           "purpose": "Independent discovery: explicit research state or experimental questions; not unique hypothesis count"
         },
@@ -395,19 +395,19 @@
         },
         {
           "path": "docs/open_source_research/OSS-20260911-01/continuation-v3/X02-protocol.json",
-          "sha256": "b7dbe21acf7fa1f82d3b0e052ead7813727d0a145bb4c38546dddae5747fa769",
+          "sha256": "e17a983f9458b7abe9a544698aa2c339384ced9320f41f40568bf64e3adf85de",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/open_source_research/OSS-20260911-01/continuation-v3/X04-protocol.json",
-          "sha256": "456a85e2f3ed1531b69852d7b4eec2fed2fea7891ffbc3c48a214d8eaaedb320",
+          "sha256": "39991c5d0f55d52c95409a8b3d4f8baddc6bb93809c2f23ebb2f0771286c5191",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-h17-discovery-protocol.json",
-          "sha256": "f8334a4e002e3b690800d55d9b39924cda5650704359412cfca30881966ceaaf",
+          "sha256": "1752bea8e304a287a5ac04daf6fc3ee4225527895b003eaf7a3692d1929bd562",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -437,7 +437,7 @@
         },
         {
           "path": "docs/research/2026-09-07-h19-retail-protocol.json",
-          "sha256": "d2e7ae20be93b96e0f2553ee8bb1642a71739edc427450260411a505de067599",
+          "sha256": "721f1ce6f8d5f0dcaa89e75aa5226f2cad9de9d9774e1902d675ba8d6002d115",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -449,13 +449,13 @@
         },
         {
           "path": "docs/research/2026-09-07-prior-hypotheses-review.json",
-          "sha256": "3f6fd20369e7a74878966e16fc9df606e7e429cc6d9054a1f133bc590c9787fd",
+          "sha256": "410e930930c1732bbc237147bd0cf18a731b7bf347fa40fff19ffaa5a339471e",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-profit-validation-protocol.json",
-          "sha256": "3c83e6c1e5a8303a6f16a844ca4ff370f9fa21fc52c2c25c33f083f07641c48e",
+          "sha256": "127ce6ab03d4d2e55cb5710670a314865c5f7ce98eef6e85530c2dcff4f48d78",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -467,19 +467,19 @@
         },
         {
           "path": "docs/research/2026-09-07-reorganization-protocol.json",
-          "sha256": "c8b62330c52e06842cc91905753980e582d320148c6635936548b97a3c36285b",
+          "sha256": "2934021b823cb2299e923bbbef846df9ae60f97d951b612fb39954f23a36cf06",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-value-discovery-protocol.json",
-          "sha256": "e52cd53a3e985976d213470433e04d37ce436a25aeb6e68dd386bdfa4163b019",
+          "sha256": "92fb5805110c23690b0be61ca17021cc121a9431c5d313855b08042edf5b75ee",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
         {
           "path": "docs/research/2026-09-07-value-repair-protocol.json",
-          "sha256": "ce091551c09b5d64e45e125125f10802f410e15ee1183d9613653f3a269befad",
+          "sha256": "4070f6ee43b1fa6267319e82a33b3d20c93a99557f9b6a6f03290fe857047053",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -539,7 +539,7 @@
         },
         {
           "path": "docs/research/2026-09-09-data-completion-r2-protocol.json",
-          "sha256": "ffc667e1c5c1e2d06fff87470866607e40c189c0cc1612ce9482c9b7bd0f9c2c",
+          "sha256": "4aa66e971eaba62459e9a978ef3f325e3c8d63750ef337b28bea75d9acfb8766",
           "mode": "json_document",
           "purpose": "Definições, protocolos e qualificações documentais; propostas e registros históricos preservados como tais"
         },
@@ -593,21 +593,21 @@
         },
         {
           "path": "trials.json",
-          "sha256": "3364bd10e5103ea5e1f41830e2ff00932e77c9af21555b26cf88bb038123ba41",
+          "sha256": "98401a82b961bcf89809e8c69acf44f3cedaec8ad3323f48196433f6768df316",
           "mode": "trial_array",
           "purpose": "Registro literal de tentativas, sem contar variantes como hipóteses novas",
           "identity_key": "name"
         },
         {
           "path": "trials_v2.json",
-          "sha256": "3874a0d68f0edbb2c80a01e5c4629d816f969d078bed4f19dcb6f561a494229c",
+          "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208",
           "mode": "trial_array",
           "purpose": "Registro literal de tentativas, sem contar variantes como hipóteses novas",
           "identity_key": "trial_id"
         },
         {
           "path": "docs/research/2026-09-07-h17-observations.jsonl",
-          "sha256": "9637f6af1917854fd298a983b41999c87bb9ec3c2a1d238149d44a08070d391b",
+          "sha256": "03c8f22dcaf36b750bb043880f2fdddb14be4334082b6835a4c459f8e328c59a",
           "mode": "observation_jsonl",
           "identity_key": "observation_revision",
           "purpose": "Observações nativas H17, revisões 1 e 2; preservar datas, denominadores, estados e ausência de Proof"
@@ -626,7 +626,7 @@
         },
         {
           "path": "docs/research/2026-09-07-value-observations.jsonl",
-          "sha256": "7864c687cd5a6cd7d354e30c4eaf22c75ec72f2e94aaf53d985178afe133762a",
+          "sha256": "93f88fbaa56cfd5dbc47ccd383af4ad4882fe6671e6a69f6f39f46ad5dd4bddb",
           "mode": "jsonl",
           "purpose": "Observações e revisões H18/H19 por protocolo; manter configurações e avaliações separadas"
         },
@@ -644,13 +644,13 @@
         },
         {
           "path": "docs/research/2026-09-07-h19-continuous-decision.json",
-          "sha256": "9493d59362a0c32bb2d99f6c1bba66bd11b67c4f97567ac344b6ea4a1dcaa690",
+          "sha256": "1c89a2065dfeef8d2ff2aafb632124864e1bb84ef9373c3c529cd14b5b61d4b5",
           "mode": "json_document",
           "purpose": "Decisão H19: implementação testada, histórico não executado, lucro desconhecido (null, não zero) e bloqueio de evidências"
         },
         {
           "path": "docs/research/2026-09-09-h21-observations.jsonl",
-          "sha256": "aace7cbe34b3fd234ca0dd8d02170969de10ab96b5ebd8e58399492a01f6c84c",
+          "sha256": "f0955d58f76b3c4040d3eaf9c13c9fe9a1b16f44b7cb280740e9ce3ef137e459",
           "mode": "jsonl",
           "purpose": "Registro START/COMPLETE H21 com hashes e oito avaliações de capital em um histórico"
         }
