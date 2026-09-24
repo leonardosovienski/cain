@@ -1,0 +1,72 @@
+## repeat 20x qwen3.5:4b
+[1/20] 1 distinct so far
+[2/20] 1 distinct so far
+[3/20] 1 distinct so far
+[4/20] 1 distinct so far
+[5/20] 1 distinct so far
+[6/20] 1 distinct so far
+[7/20] 1 distinct so far
+[8/20] 1 distinct so far
+[9/20] 1 distinct so far
+[10/20] 1 distinct so far
+[11/20] 1 distinct so far
+[12/20] 1 distinct so far
+[13/20] 1 distinct so far
+[14/20] 1 distinct so far
+[15/20] 1 distinct so far
+[16/20] 1 distinct so far
+[17/20] 1 distinct so far
+[18/20] 1 distinct so far
+[19/20] 1 distinct so far
+[20/20] 1 distinct so far
+[exit 0]
+[replay exit 0]
+[offline replay exit 0]
+## repeat 20x granite4:micro
+[1/20] 1 distinct so far
+[2/20] 1 distinct so far
+[3/20] 1 distinct so far
+[4/20] 1 distinct so far
+[5/20] 1 distinct so far
+[6/20] 1 distinct so far
+[7/20] 1 distinct so far
+[8/20] 1 distinct so far
+[9/20] 1 distinct so far
+[10/20] 1 distinct so far
+[11/20] 1 distinct so far
+[12/20] 1 distinct so far
+[13/20] 1 distinct so far
+[14/20] 1 distinct so far
+[15/20] 1 distinct so far
+[16/20] 1 distinct so far
+[17/20] 1 distinct so far
+[18/20] 1 distinct so far
+[19/20] 1 distinct so far
+[20/20] 1 distinct so far
+[exit 0]
+[replay exit 0]
+[offline replay exit 0]
+## repeat 20x phi4-mini:latest
+[1/20] 1 distinct so far
+[2/20] 1 distinct so far
+[3/20] 1 distinct so far
+[4/20] 1 distinct so far
+[5/20] 1 distinct so far
+[6/20] 1 distinct so far
+[7/20] 1 distinct so far
+[8/20] 1 distinct so far
+[9/20] 1 distinct so far
+[10/20] 1 distinct so far
+[11/20] 1 distinct so far
+[12/20] 1 distinct so far
+[13/20] 1 distinct so far
+[14/20] 1 distinct so far
+[15/20] 1 distinct so far
+[16/20] 1 distinct so far
+[17/20] 1 distinct so far
+[18/20] 1 distinct so far
+[19/20] 1 distinct so far
+[20/20] 1 distinct so far
+[exit 0]
+[replay exit 0]
+[offline replay exit 0]

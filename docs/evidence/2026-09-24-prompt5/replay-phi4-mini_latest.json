@@ -1,0 +1,11 @@
+{
+  "store": "/home/superleo13/predictors/runtime/cain-p5/run/state/inference.db",
+  "model": "phi4-mini:latest",
+  "cache_hit": true,
+  "cache_key": "49d5086ae9f0033515608b306ed9b58c8a3b7a45977215b189d46169319501f2",
+  "runtime_verified": true,
+  "text_sha256": "a043088ecd2d4d4240f45ecedf95889636f509e42b67d6db807c2821252cbe8a",
+  "first_recorded_text_sha256": "a043088ecd2d4d4240f45ecedf95889636f509e42b67d6db807c2821252cbe8a",
+  "identical_to_first_recording": true,
+  "text": "The Riverside library opened in 1987 and holds about 42,000 books."
+}

@@ -1,0 +1,11 @@
+{
+  "store": "/home/superleo13/predictors/runtime/cain-p5/run/state/inference.db",
+  "model": "granite4:micro",
+  "calls": 20,
+  "cache_keys": 1,
+  "cache_key": "3caef960e06b1c921a18a3e820407cce5c5c58ebc880e211a8027772a60398e5",
+  "distinct_outputs": 1,
+  "distinct_text_sha256_recorded": 1,
+  "manifests_recorded": 20,
+  "sample": "The Riverside library opened in 1987 and holds approximately 42,000 books."
+}
