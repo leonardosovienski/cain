@@ -55,6 +55,8 @@ jobs:
           $doctorRan = ($output -match '"model_available"') -or ($output -match 'Cain: <urlopen error')
           if (-not $doctorRan) { throw "cain doctor did not run (exit $code)" }
           if ($code -ne 0 -and -not ($output -match 'Cain: <urlopen error')) { throw "doctor failed for another reason (exit $code)" }
+          # The checks above decide the outcome; GitHub's pwsh wrapper would otherwise re-raise doctor's exit 1.
+          exit 0
       - name: Installed package answers --help
         shell: pwsh
         run: |
