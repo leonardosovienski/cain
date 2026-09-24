@@ -28,7 +28,7 @@ def api(tmp_path):
     )
     database = tmp_path / "workspace.db"
     model = CaptureModel()
-    with TestClient(create_app(database, model, config)) as client:
+    with TestClient(create_app(database, model, config, trusted_hosts=("testserver",))) as client:
         yield client, model, database, config
 
 
@@ -57,7 +57,7 @@ def test_project_documents_persist_deduplicate_and_do_not_use_supplied_path(api)
     assert duplicate.json()["id"] == document["id"]
     assert len(list(path.parent.iterdir())) == 1
 
-    with TestClient(create_app(database, model, config)) as reopened:
+    with TestClient(create_app(database, model, config, trusted_hosts=("testserver",))) as reopened:
         assert reopened.get("/projects/alice").json()[0]["name"] == "Atlas"
         assert reopened.get(endpoint).json()[0]["id"] == document["id"]
         assert reopened.get("/projects/bob").json() == []

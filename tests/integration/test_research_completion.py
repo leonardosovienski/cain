@@ -39,7 +39,7 @@ def test_api_history_reopens_in_existing_workspace_session(setup, tmp_path):
             tmp_path / "legacy.db",
             llm=cases.ExplodingProvider(),
             research_policy=path,
-            research_db=service.path,
+            research_db=service.path, trusted_hosts=("testserver",),
         )
 
     with TestClient(application()) as client:

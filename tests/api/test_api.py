@@ -5,7 +5,7 @@ from cain.llm import FakeLLM
 
 
 def test_api_request_scoped_persistence(tmp_path):
-    with TestClient(create_app(tmp_path / "api.db", FakeLLM())) as client:
+    with TestClient(create_app(tmp_path / "api.db", FakeLLM(), trusted_hosts=("testserver",))) as client:
         assert client.get("/health").status_code == 200
         for session in ("s1", "s2"):
             result = client.post("/run", json={
@@ -21,7 +21,7 @@ def test_api_request_scoped_persistence(tmp_path):
 
 
 def test_unknown_intent_is_client_error_not_provider_outage(tmp_path):
-    with TestClient(create_app(tmp_path / "api.db", FakeLLM())) as client:
+    with TestClient(create_app(tmp_path / "api.db", FakeLLM(), trusted_hosts=("testserver",))) as client:
         response = client.post("/run", json={
             "user_id": "leo", "session_id": "s1", "payload": "teste",
             "intent": "inexistente",
@@ -40,7 +40,7 @@ def test_profile_learns_before_generation_and_can_be_corrected_and_removed(tmp_p
 
     model = CaptureLLM()
     database = tmp_path / "profile.db"
-    with TestClient(create_app(database, model)) as client:
+    with TestClient(create_app(database, model, trusted_hosts=("testserver",))) as client:
         result = client.post("/run", json={
             "user_id": "alice", "session_id": "one",
             "payload": "Prefiro respostas em passos. Resuma o conteúdo: SQLite armazena dados.",
@@ -49,7 +49,7 @@ def test_profile_learns_before_generation_and_can_be_corrected_and_removed(tmp_p
         assert result.status_code == 200, result.text
         assert result.json()["profile"]["user_model"]["preferences"]["format"] == "steps"
         assert "steps" in model.contexts[-1]
-    with TestClient(create_app(database, model)) as client:
+    with TestClient(create_app(database, model, trusted_hosts=("testserver",))) as client:
         profile = client.get("/profile/alice").json()
         assert profile["user_model"]["preferences"]["format"] == "steps"
         assert client.get("/profile/bob").json()["user_model"]["preferences"] == {}
@@ -70,7 +70,7 @@ def test_profile_learns_before_generation_and_can_be_corrected_and_removed(tmp_p
 def test_profile_controls_survive_missing_search_source(tmp_path):
     config = tmp_path / "cain.toml"
     config.write_text('[search]\npaths=["deleted-source"]\n', encoding="utf-8")
-    with TestClient(create_app(tmp_path / "state.db", FakeLLM(), config)) as client:
+    with TestClient(create_app(tmp_path / "state.db", FakeLLM(), config, trusted_hosts=("testserver",))) as client:
         assert client.get("/profile/alice").status_code == 200
         assert client.delete("/profile/alice/preferences/format").status_code == 200
         assert client.delete("/profile/alice/preferences").status_code == 200

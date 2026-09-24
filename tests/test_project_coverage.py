@@ -80,7 +80,7 @@ def test_api_and_cli_include_bundle_coverage(bundle_setup, tmp_path, capsys):
     config = tmp_path/'cain.toml'
     config.write_text('[search]\npaths=[]\n', encoding='utf-8')
     with TestClient(create_app(tmp_path/'workspace.db', FakeLLM(), config,
-                    research_db=store.service.path, research_policy=path)) as client:
+                    research_db=store.service.path, research_policy=path, trusted_hosts=("testserver",))) as client:
         result = client.post('/research/coverage', json={'user_id':'test', 'collection':'a'})
         assert result.status_code == 200
         assert result.json()['bundles']['publications'] == 1

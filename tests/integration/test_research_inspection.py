@@ -85,7 +85,7 @@ def test_api_and_cli_offline(setup, tmp_path, capsys):
     for file in (path.parent / "inbox").iterdir():
         file.unlink()
     with TestClient(create_app(tmp_path / "workspace.db", llm=cases.ExplodingProvider(),
-                              research_policy=path, research_db=service.path)) as client:
+                              research_policy=path, research_db=service.path, trusted_hosts=("testserver",))) as client:
         response = client.post("/research/inspect", json={"source_id": "PT-EN"})
         assert response.status_code == 200
         assert response.json()["diagnostics"]["model_calls"] == 0

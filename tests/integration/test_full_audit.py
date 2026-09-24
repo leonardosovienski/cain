@@ -38,7 +38,7 @@ def test_code_and_profile_do_not_initialize_unrelated_embedding(tmp_path, monkey
         calls.append(True)
         raise RuntimeError("Embedding offline")
     monkeypatch.setattr("cain.api.configured_embedding", unavailable)
-    with TestClient(create_app(tmp_path / "db.sqlite", config_path=config)) as client:
+    with TestClient(create_app(tmp_path / "db.sqlite", config_path=config, trusted_hosts=("testserver",))) as client:
         assert client.get("/profile/leo").status_code == 200
         response = client.post("/run", json={"user_id": "leo", "session_id": "s",
             "payload": "Escreva código Python para somar", "intent": "codigo"})

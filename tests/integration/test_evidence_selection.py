@@ -79,7 +79,7 @@ def test_review_api_uses_relevant_late_field(setup, tmp_path):
         assert 'amostra insuficiente' in json.loads(prompt)['excerpts']['S1']['text']
         return json.dumps({'citations': ['S1'], 'analysis': 'amostra insuficiente'})
     model.generate_json = capture
-    app = create_app(db_path=tmp_path/'workspace.db', llm=model, research_db=tmp_path/'research.db', research_policy=path)
+    app = create_app(db_path=tmp_path/'workspace.db', llm=model, research_db=tmp_path/'research.db', research_policy=path, trusted_hosts=("testserver",))
     with TestClient(app) as client:
         response = client.post('/research/jobs', json={'question': 'qual motivo?', 'source_id': 'T42', 'steps': ['support']})
         assert response.status_code == 200, response.text
