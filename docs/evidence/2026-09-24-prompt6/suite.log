@@ -1,0 +1,30 @@
+# branch melhorias/p6-loop-pesquisa head 2e2705f7d3ba87fe271c437e1e35260ab5cecc24
+$ ruff check src tests loops
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain
+src/cain/loop/__init__.py                       0      0   100%
+src/cain/loop/cli.py                           71     20    72%
+src/cain/loop/engine.py                       202     20    90%
+src/cain/loop/evaluator.py                     51      9    82%
+src/cain/loop/ledger.py                        82      3    96%
+src/cain/loop/proposers.py                     59      4    93%
+src/cain/loop/world.py                        119     22    82%
+TOTAL                                       10628   1413    87%
+1245 passed, 2 skipped, 63 warnings in 72.77s (0:01:12)
+# testcases in junit: 1247
+$ pytest tests/integration/test_research_loop.py -v
+tests/integration/test_research_loop.py::test_proposal_outside_the_editable_surface_is_blocked_and_recorded PASSED [  7%]
+tests/integration/test_research_loop.py::test_stagnation_and_budget_stop_the_loop PASSED [ 15%]
+tests/integration/test_research_loop.py::test_crash_and_timeout_are_in_the_ledger_and_in_the_attempt_count PASSED [ 23%]
+tests/integration/test_research_loop.py::test_redundant_candidate_is_discarded_before_any_backtest PASSED [ 30%]
+tests/integration/test_research_loop.py::test_evaluator_change_stops_the_loop PASSED [ 38%]
+tests/integration/test_research_loop.py::test_holdout_only_after_a_recorded_human_approval PASSED [ 46%]
+tests/integration/test_research_loop.py::test_new_hypothesis_gate_and_variants PASSED [ 53%]
+tests/integration/test_research_loop.py::test_world_file_is_validated_and_ledger_is_append_only PASSED [ 61%]
+tests/integration/test_research_loop.py::test_cli_run_and_status PASSED  [ 69%]
+tests/integration/test_research_loop.py::test_repeated_proposal_is_a_duplicate_and_never_reaches_the_evaluator PASSED [ 76%]
+tests/integration/test_research_loop.py::test_redundancy_measure_for_parameter_variants PASSED [ 84%]
+tests/integration/test_research_loop.py::test_local_model_proposer_sees_attempts_and_its_proposals_go_through_the_guard PASSED [ 92%]
+tests/integration/test_research_loop.py::test_cli_decide_holdout_and_verify PASSED [100%]
+============================== 13 passed in 7.07s ==============================

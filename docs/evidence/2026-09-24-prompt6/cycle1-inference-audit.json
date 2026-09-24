@@ -1,0 +1,11 @@
+{
+  "store": "/home/superleo13/predictors/runtime/cain-p6/run/state/inference.db",
+  "calls": 5,
+  "by_status": {
+    "called": {
+      "calls": 5,
+      "complete": 5
+    }
+  },
+  "missing": {}
+}
