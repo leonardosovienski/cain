@@ -59,8 +59,9 @@ def test_run_waiting_for_approval_survives_a_killed_process(setup):
                                env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
     line = process.stdout.readline().split()
     assert line == ["awaiting_generation_approval", "0"]
-    process.send_signal(signal.SIGKILL)  # the process dies while the run waits for a human
-    assert process.wait(timeout=10) == -signal.SIGKILL
+    # The process dies while the run waits for a human: SIGKILL on POSIX, TerminateProcess on Windows.
+    process.kill()
+    assert process.wait(timeout=10) == (-signal.SIGKILL if hasattr(signal, "SIGKILL") else 1)
     # "Restart": a new process-level object reads only what was persisted.
     restarted, model = Workflows(ResearchService(service.path, policy)), FixtureModel()
     job = restarted.get(scope, "durable")
