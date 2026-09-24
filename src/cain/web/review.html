@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cain — mapa de perguntas</title>
+  <!-- No inline style or script: the local API sends a strict CSP (script-src/style-src 'self'). -->
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/review.css">
+</head>
+<body>
+  <main>
+    <h1>Mapa de perguntas da revisão adversarial</h1>
+    <form id="pick">
+      <label>Domínio <input name="domain" required></label>
+      <label>Hipótese <input name="hypothesis" required></label>
+      <button>Abrir</button>
+    </form>
+    <p id="summary"></p>
+    <table>
+      <thead><tr><th>Perspectiva</th><th>Pergunta</th><th>Status</th><th>Teste / evidência / dispensa</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </main>
+  <script src="/assets/review.js"></script>
+</body>
+</html>

@@ -367,6 +367,9 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
     def feedback(turn_id: str, body: FeedbackRequest):
         return workspace.feedback(body.user_id, turn_id, body.reason, body.note)
 
+    from cain.review.api import mount as mount_review
+    mount_review(app, os.getenv("CAIN_MEMORY_DB") or storage_path.with_name("memory.db"))
+
     web_root = Path(__file__).with_name("web")
     if web_root.is_dir():
         app.mount("/assets", StaticFiles(directory=web_root), name="assets")

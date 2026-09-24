@@ -1,0 +1,20 @@
+# branch melhorias/p8-revisao-adversarial head 567f76eb19573cdc609ce227dd9596934d0c1275
+$ ruff check src tests loops
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain
+src/cain/memory/store.py                      451     36    92%
+src/cain/review/__init__.py                     0      0   100%
+src/cain/review/api.py                         18      0   100%
+src/cain/review/board.py                      132     10    92%
+src/cain/review/cli.py                         76      4    95%
+TOTAL                                       11187   1462    87%
+1259 passed, 2 skipped, 63 warnings in 76.82s (0:01:16)
+# testcases in junit: 1261
+$ pytest tests/integration/test_review.py -v
+tests/integration/test_review.py::test_preregistration_is_refused_while_the_checklist_is_unresolved PASSED [ 20%]
+tests/integration/test_review.py::test_closed_hypothesis_item_blocks_until_a_human_decides PASSED [ 40%]
+tests/integration/test_review.py::test_declared_lineage_is_checked_against_the_closed_archive PASSED [ 60%]
+tests/integration/test_review.py::test_question_map_survives_a_restart_and_shows_in_the_web_interface PASSED [ 80%]
+tests/integration/test_review.py::test_cli_open_generate_map_waive_and_preregister PASSED [100%]
+======================== 5 passed, 2 warnings in 0.82s =========================

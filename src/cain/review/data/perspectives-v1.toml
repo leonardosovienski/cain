@@ -1,0 +1,42 @@
+# Adversarial perspectives applied to a hypothesis before it is frozen (pre-registered).
+# Each perspective asks questions; each question becomes a checklist item with a test, or is marked
+# not testable with a reason. Mandatory items block the pre-registration until each has a defined
+# test, an answer with evidence, or a recorded human waiver. Versioned: changing this file changes
+# its sha256, which every review records.
+
+version = 1
+
+[[perspective]]
+id = "overfitting"
+name = "Overfitting skeptic"
+mandatory = true
+domains = ["*"]
+focus = "How many variants were tried on this data before, is the gain larger than what multiple testing alone would produce, and does it survive a sample the author has not seen?"
+
+[[perspective]]
+id = "temporal-leakage"
+name = "Temporal leakage"
+mandatory = true
+domains = ["*"]
+focus = "Could any input (features, odds, labels, fitted parameters, data revisions) be known only after the decision time? Where exactly is the cutoff enforced?"
+
+[[perspective]]
+id = "costs-execution"
+name = "Costs and execution"
+mandatory = true
+domains = ["*"]
+focus = "Would the effect survive realistic costs, limits, slippage, latency and the price actually available at decision time?"
+
+[[perspective]]
+id = "regime-change"
+name = "Regime change"
+mandatory = true
+domains = ["*"]
+focus = "Is the effect stable across seasons, periods or regimes, or does it come from one period that may not repeat?"
+
+[[perspective]]
+id = "already-priced"
+name = "Is the market already pricing it?"
+mandatory = false
+domains = ["brasileirao", "crypto", "stocks"]
+focus = "If the effect were real, would the closing odds or prices already reflect it? What is the comparison with the market baseline, not only with a naive baseline?"
