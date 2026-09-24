@@ -107,7 +107,11 @@ identificador com dígitos conta como número. Mantive o linter estrito (a opç�
 num relatório, identificadores com dígitos precisam ser citados, por exemplo como `[run:ID@sha256]`, ou ficar fora
 da frase com números. A demo final escreve o relatório sem o identificador.
 
-### Extração com o modelo local (qwen3.5:4b no Ollama 127.0.0.1, CPU)
+### Extração com o modelo local (qwen3.5:4b no Ollama 127.0.0.1, GPU)
+
+Correção feita depois da primeira versão deste relatório: o Ollama roda na **GPU** desta máquina (NVIDIA RTX 2060
+6 GB, CUDA no WSL2), com todas as camadas do qwen3.5:4b na VRAM. Os verificadores (torch CPU) rodaram na CPU, como
+descrito acima. A versão anterior deste trecho dizia CPU, e estava errada.
 
 Segunda etapa da mesma demo: `cain claims extract` sobre o relatório, com `qwen3.5:4b`
 (digest `2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd`), temperatura 0, seed 42, `think=false`,
