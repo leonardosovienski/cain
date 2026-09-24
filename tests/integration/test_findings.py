@@ -168,9 +168,15 @@ def test_scientific_state_and_loop_outcomes_are_ingested(tmp_path, archive):
     raw = json.dumps(state).encode()
     out = ingest_scientific_state(archive, "crypto", raw, {**source(), "sha256": sha256(raw).hexdigest()},
                                   [{"name": "v3-hmm", "params": {"k": 3}, "notes": "regime model"}])
-    assert out["counts"] == {"recorded:negative": 1, "recorded:informative": 1}
-    closed = archive.closed("crypto", as_of=archive.memory.now())
-    assert closed[0]["identity"]["trial_id"] == "v3-hmm" and closed[0]["verdict"] == "NO_GO"
+    assert out["counts"] == {"recorded:negative": 2, "recorded:informative": 1}
+    closed = {f["finding_id"]: f for f in archive.closed("crypto", as_of=archive.memory.now())}
+    assert closed["crypto:hypothesis:H1"]["identity"]["trial_id"] == "v3-hmm"
+    assert closed["crypto:hypothesis:H1"]["verdict"] == "NO_GO"
+    # Found on the real crypto state: the frozen family is its own finding, not a label on every hypothesis
+    # (otherwise a family check matched the unrelated LLM hypotheses too).
+    family = archive.equivalent_closed("crypto", "unrelated wording", as_of=archive.memory.now(),
+                                       identity={"hypothesis_family": "funding_oi_hmm_v3"})
+    assert [m["finding_id"] for m in family] == ["crypto:frozen-family:funding_oi_hmm_v3"]
     world, _ = write_world(tmp_path, attempts=10)
     ledger = LoopLedger(tmp_path / "ledger.db")
     ResearchLoop(world, ledger, NeighborProposer()).run(loop_id="loop:gate")

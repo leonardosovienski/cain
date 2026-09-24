@@ -96,10 +96,18 @@ def ingest_scientific_state(archive: FindingsArchive, domain: str, raw: bytes, s
         outcome = archive.record(
             domain, f"{domain}:hypothesis:{hypothesis}", kind=kind, verdict=verdict, statement=statement,
             source={**source, "key": f"hypotheses.{hypothesis}"},
-            identity={"hypothesis_id": hypothesis, "trial_id": trial,
-                      "frozen_families": state.get("frozen_families") or None},
+            identity={"hypothesis_id": hypothesis, "trial_id": trial},
             details={"state": value, "as_of_commit": state.get("as_of_commit"), "notes": state.get("notes")})
         key = f"{outcome['status']}:{kind}"
+        counts[key] = counts.get(key, 0) + 1
+    # A frozen family is a domain-level rule (not a property of each hypothesis): one finding per family.
+    for family in state.get("frozen_families") or []:
+        outcome = archive.record(
+            domain, f"{domain}:frozen-family:{family}", kind="negative", verdict="FROZEN_FAMILY",
+            statement=f"frozen family {family}: cannot be reopened or reparameterized silently",
+            source={**source, "key": "frozen_families"}, identity={"hypothesis_family": family},
+            details={"as_of_commit": state.get("as_of_commit"), "notes": state.get("notes")})
+        key = f"{outcome['status']}:negative"
         counts[key] = counts.get(key, 0) + 1
     return {"domain": domain, "source": source, "hypotheses": len(state.get("hypotheses", {})), "counts": counts}
 
