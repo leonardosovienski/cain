@@ -133,6 +133,13 @@ def main(argv=None) -> int:
                 warnings.append(f"llm.base_url não é loopback ({host}): perfil, histórico e "
                                 "documentos da conversa saem desta máquina")
                 print(f"Cain: aviso: {warnings[-1]}", file=sys.stderr)  # visible even if the probe fails
+            if settings.provider == "fake":
+                # No model to probe: report the deterministic setup instead of a connection error.
+                warnings.append("provider fake: sem inferência real; respostas do modelo são simuladas")
+                _write({"provider": "fake", "model": None, "model_available": False, "available_models": [],
+                        "database": str(settings.db_path), "sources": list(map(str, settings.source_paths)),
+                        "warnings": warnings})
+                return 0
             with urlopen(settings.base_url.rstrip("/") + "/api/tags", timeout=5) as response:
                 tags = json.load(response)
             available = [m["name"] for m in tags.get("models", [])]
