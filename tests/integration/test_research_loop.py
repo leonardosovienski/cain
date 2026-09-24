@@ -86,9 +86,9 @@ human = {gates}
 stages = {stages}
 
 [evaluator]
-python = "{sys.executable}"
-entrypoint = "{script}"
-files = [{{path = "{script}", sha256 = "{file_sha256(script)}"}}]
+python = '{sys.executable}'
+entrypoint = '{script}'
+files = [{{path = '{script}', sha256 = "{file_sha256(script)}"}}]
 {extra}
 ''', encoding="utf-8")
     return load_world(world), script
