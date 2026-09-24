@@ -4,19 +4,19 @@
 
 O código da candidata V8 e seu histórico foram integrados ao checkout `C:/CAIN/work/readiness-main-20260914`, na branch `fix/readiness-main-20260914`. Esta rodada autoriza commit e envio dessa branch ao GitHub. O checkpoint é de engenharia e continuidade: **não há aprovação geral, merge em main nem instalação principal da V8**.
 
-O recibo final de publicação e conferência fica em `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs/ENCERRAMENTO_GIT_20260915/VERIFICACAO_FINAL.json`: contém commit exato, ref remoto, hashes e resultado das verificações. Conferir esse recibo para o SHA de encerramento, que não pode ser embutido no próprio commit sem circularidade.
+O recibo final de publicação e conferência fica em `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/outputs/ENCERRAMENTO_GIT_20260915/VERIFICACAO_FINAL.json`: contém commit exato, ref remoto, hashes e resultado das verificações. Conferir esse recibo para o SHA de encerramento, que não pode ser embutido no próprio commit sem circularidade.
 
 ## Onde cada coisa está
 
 | Conteúdo | Local e condição |
 |---|---|
 | Código, testes e Markdown | GitHub, branch `fix/readiness-main-20260914`; checkout canônico acima |
-| V8 originalmente congelada | Cópia `C:/Users/leona/Documents/Codex/2026-09-14/lei/work/cain-v8`, commit `44a3f988955eb50ddded07b60dfba8977accc023`; preservada |
-| Instalação QA V8 | `C:/Users/leona/Documents/Codex/2026-09-14/lei/work/evidence-v8/installed-qa-v8`; não editável |
-| Entrega V8 verificável | `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs/CAIN_continuacao_V8_20260915` |
+| V8 originalmente congelada | Cópia `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/work/cain-v8`, commit `44a3f988955eb50ddded07b60dfba8977accc023`; preservada |
+| Instalação QA V8 | `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/work/evidence-v8/installed-qa-v8`; não editável |
+| Entrega V8 verificável | `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/outputs/CAIN_continuacao_V8_20260915` |
 | Evidências V4 | `C:/CAIN/work/readiness-evidence-20260914` |
 | Evidências V5/V6/V7 | `C:/CAIN/work/readiness-continuation-20260915` |
-| Evidências V8 e scripts de fechamento | `C:/Users/leona/Documents/Codex/2026-09-14/lei/work` |
+| Evidências V8 e scripts de fechamento | `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/work` |
 | Backup independente desta tarefa | `C:/CAIN/backups/continuidade-20260915-v8`; inventário com hashes, bundles Git, evidências e entregas |
 | Cópia privada do chat | No backup, `CHAT_PRIVADO_ATE_BACKUP.jsonl`; prefixo completo até o instante da cópia, mais este handoff de encerramento |
 | Instalação de uso preservada | `C:/CAIN/.venv`; checkout original `C:/CAIN/projeto` em `24f784c5dde1fa66c262ad5899f4fd8d02526adf` |

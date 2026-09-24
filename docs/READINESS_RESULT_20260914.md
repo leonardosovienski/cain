@@ -17,7 +17,7 @@ Sem commit remoto, push, merge, release ou mudança da instalação de uso.
 Recibos completos e scripts de reprodução:
 `C:/CAIN/work/readiness-evidence-20260914`. A pasta inclui tentativas anteriores,
 falhas, instrumentos, catálogos e rubricas, sem substituir resultados desfavoráveis.
-Exportação de entrega: `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs`.
+Exportação de entrega: `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/outputs`.
 
 ## Alterações e causa demonstrada
 

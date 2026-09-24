@@ -70,7 +70,7 @@ principal, dados/configurações e produtores preservados. Sem push, merge ou re
 Relatório vigente: [READINESS_RESULT_20260914.md](docs/READINESS_RESULT_20260914.md).
 Ele identifica versões realmente ensaiadas, regressões, limites e retomada.
 Recibos e scripts: `C:/CAIN/work/readiness-evidence-20260914`.
-Entrega: `C:/Users/leona/Documents/Codex/2026-09-14/lei/outputs`.
+Entrega: `C:/Users/<usuario>/Documents/Codex/2026-09-14/lei/outputs`.
 
 ## Histórico preservado abaixo
 
