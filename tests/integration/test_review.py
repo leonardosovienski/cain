@@ -136,6 +136,11 @@ def test_question_map_survives_a_restart_and_shows_in_the_web_interface(tmp_path
         assert client.get("/review/brasileirao/unknown").status_code == 404
         page = client.get("/review-map")
         assert page.status_code == 200 and "Mapa de perguntas" in page.text
+        # Found in the browser: the API's CSP blocks inline script/style, so the page must not have any.
+        assert "<style" not in page.text and "<script>" not in page.text
+        assert '<script src="/assets/review.js">' in page.text
+        assert client.get("/assets/review.js").status_code == 200
+        assert client.get("/assets/review.css").status_code == 200
 
 
 def test_cli_open_generate_map_waive_and_preregister(tmp_path, capsys, monkeypatch):

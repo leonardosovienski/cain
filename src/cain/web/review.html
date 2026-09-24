@@ -4,13 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cain — mapa de perguntas</title>
+  <!-- No inline style or script: the local API sends a strict CSP (script-src/style-src 'self'). -->
   <link rel="stylesheet" href="/assets/style.css">
-  <style>
-    table { border-collapse: collapse; width: 100%; }
-    th, td { border-bottom: 1px solid #ccc; padding: .4rem; text-align: left; vertical-align: top; }
-    .blocking { font-weight: bold; }
-    .status { white-space: nowrap; }
-  </style>
+  <link rel="stylesheet" href="/assets/review.css">
 </head>
 <body>
   <main>
@@ -26,38 +22,6 @@
       <tbody id="rows"></tbody>
     </table>
   </main>
-  <script>
-    const form = document.getElementById('pick');
-    const params = new URLSearchParams(location.search);
-    form.domain.value = params.get('domain') || '';
-    form.hypothesis.value = params.get('hypothesis') || '';
-    function cell(text) { const td = document.createElement('td'); td.textContent = text; return td; }
-    async function load(domain, hypothesis) {
-      const response = await fetch(`/review/${encodeURIComponent(domain)}/${encodeURIComponent(hypothesis)}`);
-      const summary = document.getElementById('summary');
-      const rows = document.getElementById('rows');
-      rows.replaceChildren();
-      if (!response.ok) { summary.textContent = `Não encontrado (${response.status}).`; return; }
-      const map = await response.json();
-      summary.textContent = `${map.hypothesis_id} (${map.state}): ${map.blocking.length} item(ns) obrigatório(s) bloqueando; ` +
-        (map.ready_to_preregister ? 'pronto para pré-registro.' : 'pré-registro recusado até resolver.');
-      for (const q of map.questions) {
-        const row = document.createElement('tr');
-        if (map.blocking.includes(q.item_id)) row.className = 'blocking';
-        const detail = q.waiver ? `dispensa: ${q.waiver.by} — ${q.waiver.reason}`
-          : q.answered_by ? `respondida: ${q.answered_by.ref}`
-          : q.test ? `${q.test.kind}: ${q.test.description} (critério: ${q.test.pass_criterion})`
-          : q.not_testable_reason ? `não testável: ${q.not_testable_reason}` : '';
-        row.append(cell(q.perspective_name + (q.mandatory ? ' *' : '')), cell(q.question), cell(q.status), cell(detail));
-        rows.append(row);
-      }
-    }
-    form.addEventListener('submit', event => {
-      event.preventDefault();
-      history.replaceState(null, '', `?domain=${encodeURIComponent(form.domain.value)}&hypothesis=${encodeURIComponent(form.hypothesis.value)}`);
-      load(form.domain.value, form.hypothesis.value);
-    });
-    if (form.domain.value && form.hypothesis.value) load(form.domain.value, form.hypothesis.value);
-  </script>
+  <script src="/assets/review.js"></script>
 </body>
 </html>
