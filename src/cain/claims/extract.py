@@ -12,6 +12,7 @@ from __future__ import annotations
 from hashlib import sha256
 import json
 
+from cain.memory.ingest import model_digest
 from cain.memory.store import MemoryStore, MemoryStoreError
 
 EXTRACTOR_VERSION = "claimify-lite/1"
@@ -49,6 +50,7 @@ def extract_claims(memory: MemoryStore, provider, *, cube: str, document_id: str
         raise MemoryStoreError("INVALID_FIELD", "report larger than 12000 characters; split it first")
     prompt = "Report:\n" + text
     prompt_hash = sha256((INSTRUCTION + "\n" + prompt).encode("utf-8")).hexdigest()
+    digest = model_digest(provider)
     raw = provider.generate_json(prompt, INSTRUCTION, SCHEMA)
     try:
         proposals = json.loads(raw)["claims"]
@@ -57,7 +59,7 @@ def extract_claims(memory: MemoryStore, provider, *, cube: str, document_id: str
     except (ValueError, KeyError, TypeError) as exc:
         raise MemoryStoreError("EXTRACTION_INVALID", "model output is not the requested JSON") from exc
     extractor = {"model": getattr(provider, "model", type(provider).__name__),
-                 "model_digest": getattr(provider, "model_digest", None), "prompt_hash": prompt_hash,
+                 "model_digest": digest, "prompt_hash": prompt_hash,
                  "version": EXTRACTOR_VERSION, "generation": getattr(provider, "last_metadata", None)}
     created, rejected = [], []
     for item in proposals:
