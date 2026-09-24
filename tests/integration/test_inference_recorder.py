@@ -318,3 +318,32 @@ def test_harness_is_frozen_and_scores_citations_literally(ollama, tmp_path):
     replayed = run_model(llm, store, mode="replay", limit=4)
     assert ollama.generate_calls == hits
     assert [r["correct"] for r in replayed["rows"]] == [r["correct"] for r in result["rows"]]
+
+
+def test_cli_repeat_replay_audit_and_harness(ollama, tmp_path, capsys):
+    from cain.cli import main
+
+    config = tmp_path / "cain.toml"
+    config.write_text(f'[llm]\nprovider = "ollama"\nmodel = "fixture:1"\nbase_url = "{ollama.url}"\nthink = false\n'
+                      '[storage]\npath = "state/cain.db"\n', encoding="utf-8")
+    base = ["inference", "--config", str(config)]
+
+    def run(*args):
+        assert main([*base, *args]) == 0
+        return json.loads(capsys.readouterr().out)
+
+    repeated = run("repeat", "--n", "5", "--prompt", "same question")
+    assert repeated["calls"] == 5 and repeated["cache_keys"] == 1 and repeated["distinct_outputs"] == 1
+    assert repeated["store"] == str(tmp_path / "state" / "inference.db")
+    replayed = run("replay", "--prompt", "same question")
+    assert replayed["cache_hit"] is True and replayed["identical_to_first_recording"] is True
+    calls = run("calls", "--limit", "2")["calls"]
+    shown = run("show", calls[0]["id"])
+    assert json.loads(shown["request"])["prompt"] == "same question"
+    audit = run("audit")
+    assert audit["calls"] == 6 and audit["missing"] == {}
+    summary = run("--db", str(tmp_path / "harness.db"), "harness", "--model", "fixture:1", "--limit", "3",
+                  "--output", str(tmp_path / "harness.json"))
+    assert summary["models"][0]["tasks_run"] == 3
+    assert json.loads((tmp_path / "harness.json").read_text())["results"][0]["rows"][0]["call_ids"]
+    assert main([*base, "show", "inference:missing"]) == 1
