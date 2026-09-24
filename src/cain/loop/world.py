@@ -91,6 +91,9 @@ def load_world(path: str | Path) -> dict:
     stages = world["cascade"].get("stages")
     if not isinstance(stages, list) or stages != [s for s in STAGES if s in stages] or stages[:1] != ["sanity"]:
         raise WorldError(f"cascade.stages must start at sanity and follow the order {STAGES}")
+    redundancy = world.get("redundancy", {})
+    if redundancy.get("measure", "correlation") not in ("correlation", "max_abs_diff"):
+        raise WorldError("redundancy.measure must be correlation or max_abs_diff")
     evaluator = world["evaluator"]
     _require(evaluator, "python", str, "evaluator")
     _require(evaluator, "entrypoint", str, "evaluator")

@@ -20,6 +20,7 @@ only runs through ``run_holdout`` after an approval recorded in the ledger. Noth
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import json
 import time
 from uuid import uuid4
 
@@ -46,7 +47,28 @@ class LoopState:
     baseline_metric: float | None = None
     hypotheses: list = field(default_factory=list)
     signals: list = field(default_factory=list)
+    tried: dict = field(default_factory=dict)
     turn: int = 0
+
+
+def _redundant(world: dict, signal: list, earlier: list) -> tuple[bool, dict]:
+    """Redundancy of a candidate's signal against an earlier one, by the measure the world names.
+
+    ``correlation`` (default; RD-Agent's rule for new factors): |corr| >= threshold (0.99).
+    ``max_abs_diff`` (for parameter variants of one model, whose predictions are always highly
+    correlated): the largest absolute difference of the predictions is <= threshold.
+    """
+    rule = world.get("redundancy", {})
+    measure = rule.get("measure", "correlation")
+    if measure == "max_abs_diff":
+        if len(signal) != len(earlier):
+            return False, {}
+        diff = max((abs(a - b) for a, b in zip(signal, earlier)), default=0.0)
+        return diff <= rule.get("threshold", 0.0), {"measure": measure, "max_abs_diff": round(diff, 9)}
+    corr = correlation(signal, earlier)
+    threshold = rule.get("threshold", REDUNDANCY_THRESHOLD)
+    return corr is not None and abs(corr) >= threshold, {"measure": "correlation",
+                                                          "correlation": None if corr is None else round(corr, 6)}
 
 
 def _better(world: dict, value: float, reference: float | None) -> bool:
@@ -150,6 +172,13 @@ class ResearchLoop:
             self._event(state, "experiment.blocked", {"attempt": attempt, "reason": "OUTSIDE_EDITABLE_SURFACE",
                                                       "violations": violations})
             return None
+        key = json.dumps(params, sort_keys=True)
+        if key in state.tried:
+            state.since_improvement += 1
+            self._event(state, "experiment.discarded", {"attempt": attempt, "reason": "DUPLICATE",
+                                                        "duplicate_of_attempt": state.tried[key]})
+            return None
+        state.tried[key] = attempt
         if kind != "baseline":
             hypothesis, new = self._hypothesis_for(state, proposal.get("description", ""))
             if new:
@@ -195,12 +224,11 @@ class ResearchLoop:
                 return None
             if stage == "sanity" and result.get("signal") is not None:
                 for earlier in state.signals:
-                    corr = correlation(result["signal"], earlier["signal"])
-                    if corr is not None and abs(corr) >= world.get("redundancy", {}).get("threshold",
-                                                                                         REDUNDANCY_THRESHOLD):
+                    redundant, measure = _redundant(world, result["signal"], earlier["signal"])
+                    if redundant:
                         state.since_improvement += 1
                         self._event(state, "experiment.discarded", {
-                            "attempt": attempt, "reason": "REDUNDANT", "correlation": round(corr, 6),
+                            "attempt": attempt, "reason": "REDUNDANT", **measure,
                             "redundant_with_attempt": earlier["attempt"], "hypothesis_id": hypothesis_id})
                         return None
                 state.signals.append({"attempt": attempt, "signal": result["signal"]})

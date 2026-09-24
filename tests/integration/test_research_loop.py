@@ -251,3 +251,43 @@ def test_cli_run_and_status(tmp_path, capsys):
     assert json.loads(capsys.readouterr().out)["events"] == run["events"]
     assert main(["loop", "--db", db, "run", "--predictor", "other", "--world", world["_path"]]) == 1
     assert Path(db).exists()
+
+
+def test_repeated_proposal_is_a_duplicate_and_never_reaches_the_evaluator(tmp_path):
+    # Found by the real cycle: at temperature 0 the local model proposed the same change three times.
+    world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=3)
+    ledger = LoopLedger(tmp_path / "ledger.db")
+    calls = []
+
+    def counting(world, stage, params, *, timeout):
+        from cain.loop.evaluator import run_stage
+
+        calls.append(stage)
+        return run_stage(world, stage, params, timeout=timeout)
+
+    same = {"params": {"window": 10}, "description": "features: tune window"}
+    ResearchLoop(world, ledger, Scripted([same, dict(same)]), runner=counting).run(loop_id="loop:dup")
+    discarded = [e["body"] for e in ledger.events("loop:dup") if e["kind"] == "experiment.discarded"]
+    assert discarded == [{"attempt": 3, "reason": "DUPLICATE", "duplicate_of_attempt": 2}]
+    assert len(calls) == 6  # baseline and the first proposal only
+    log = ledger.status("loop:dup")["attempt_log"]
+    assert [(a["attempt"], a["outcome"], a["reason"]) for a in log] == [
+        (1, "finished", None), (2, "finished", None), (3, "discarded", "DUPLICATE")]
+
+
+def test_redundancy_measure_for_parameter_variants(tmp_path):
+    extra = '\n[redundancy]\nmeasure = "max_abs_diff"\nthreshold = 0.001\n'
+    world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=3, extra=extra)
+    ledger = LoopLedger(tmp_path / "ledger.db")
+    # l2 leaves the signal identical (max diff 0) → redundant; window 5 changes it → evaluated.
+    proposer = Scripted([{"params": {"l2": 0.5}, "description": "model: tune l2"},
+                         {"params": {"window": 5}, "description": "features: tune window"}])
+    ResearchLoop(world, ledger, proposer).run(loop_id="loop:measure")
+    events = ledger.events("loop:measure")
+    discarded = [e["body"] for e in events if e["kind"] == "experiment.discarded"]
+    assert discarded[0]["reason"] == "REDUNDANT" and discarded[0]["measure"] == "max_abs_diff"
+    assert discarded[0]["max_abs_diff"] == 0
+    assert [e["body"]["attempt"] for e in events if e["kind"] == "experiment.finished"] == [1, 3]
+    bad = '\n[redundancy]\nmeasure = "vibes"\n'
+    with pytest.raises(WorldError, match="redundancy.measure"):
+        write_world(tmp_path, extra=bad)

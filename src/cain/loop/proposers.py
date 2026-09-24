@@ -80,14 +80,19 @@ class LocalModelProposer:
                                  "hypothesis": {"type": "string", "minLength": 3, "maxLength": 200},
                                  "rationale": {"type": "string", "minLength": 3, "maxLength": 400}}}
         current = (best or {}).get("params") or baseline(world)
-        tried = [{"params": e.get("params"), "value": e.get("value")} for e in status.get("finished", [])][-8:]
+        # Every earlier attempt with its outcome (finished, discarded, blocked, crashed), so that the
+        # model does not repeat itself: at temperature 0 it would propose the same change again.
+        tried = [{k: e.get(k) for k in ("changes", "outcome", "reason", "value")}
+                 for e in status.get("attempt_log", [])][-12:]
         prompt = json.dumps({
             "task": world["world"]["description"], "metric": world["metric"],
             "step_kind": kind, "current_best_params": current, "best_value": (best or {}).get("value"),
-            "editable_parameters": {n: spec[n] for n in names}, "recent_results": tried,
+            "editable_parameters": {n: spec[n] for n in names}, "attempts_so_far": tried,
             "instruction": ("Propose ONE change to ONE of the editable parameters, inside its range, that "
-                            "you expect to improve the metric. Return the parameter name, the new value as "
-                            "text, a one-line hypothesis (the idea, not the number) and a short rationale."),
+                            "you expect to improve the metric. Never repeat a change listed in attempts_so_far; "
+                            "a change discarded as REDUNDANT or DUPLICATE had no effect, so move further or "
+                            "try another parameter. Return the parameter name, the new value as text, a "
+                            "one-line hypothesis (the idea, not the number) and a short rationale."),
         }, ensure_ascii=False)
         system = ("You are a careful quantitative researcher. Use only the information given. "
                   "Answer with the JSON object requested and nothing else.")

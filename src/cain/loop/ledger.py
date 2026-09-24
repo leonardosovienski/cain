@@ -114,10 +114,19 @@ class LoopLedger:
             if event["kind"] == "experiment.finished" and event["body"].get("improved"):
                 best = event["body"]
         stopped = next((e["body"] for e in events if e["kind"] == "loop.stopped"), None)
+        log: dict[int, dict] = {}
+        for event in events:
+            body = event["body"]
+            if event["kind"] == "experiment.proposed":
+                log[body["attempt"]] = {"attempt": body["attempt"], "step_kind": body["step_kind"],
+                                        "changes": body["changes"], "params": body["params"], "outcome": None}
+            elif event["kind"] in ATTEMPT_OUTCOMES and body.get("attempt") in log:
+                log[body["attempt"]].update(outcome=event["kind"].split(".", 1)[1], reason=body.get("reason"),
+                                            value=body.get("value"))
         return {"loop_id": loop_id, "started": events[0]["body"], "attempts": sum(outcomes.values()),
                 "outcomes": outcomes,
                 "hypotheses": [e["body"] for e in events if e["kind"] == "hypothesis.registered"],
                 "best": best, "gates": [e["body"] for e in events if e["kind"] == "gate.requested"],
                 "finished": [{k: e["body"].get(k) for k in ("attempt", "step_kind", "params", "value", "improved")}
                              for e in events if e["kind"] == "experiment.finished"],
-                "stopped": stopped, "events": len(events)}
+                "attempt_log": list(log.values()), "stopped": stopped, "events": len(events)}
