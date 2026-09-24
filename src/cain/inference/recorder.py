@@ -34,6 +34,7 @@ import re
 import sqlite3
 import subprocess
 import threading
+import time
 from urllib.parse import urlsplit
 from urllib.request import Request
 from uuid import uuid4
@@ -333,6 +334,7 @@ class Recorder:
         self._facts: dict = {}
         self._cain = None
         self.last_call_id: str | None = None
+        self.last_manifest: dict | None = None
 
     # -------------------------------------------------------------- facts
     def _get_json(self, url: str, body: dict | None = None):
@@ -412,6 +414,40 @@ class Recorder:
         parts = urlsplit(url)
         if parts.path not in GENERATION_PATHS or not isinstance(request, Request) or request.data is None:
             return self.base(request, timeout=timeout)
+        started = time.time_ns()
+        self.last_manifest = None
+        try:
+            response = self._generation(request, timeout, parts)
+        except Exception as exc:
+            self._span(started, error=f"{type(exc).__name__}: {exc}")
+            raise
+        self._span(started)
+        return response
+
+    def _span(self, started: int, error: str | None = None) -> None:
+        """OpenTelemetry span with gen_ai.* attributes from the manifest (no-op when tracing is off)."""
+        from cain.observability import semconv as sc
+        from cain.observability.tracing import record_span
+
+        manifest = self.last_manifest
+        if manifest is None:
+            return
+        requested = (manifest.get("parameters") or {}).get("requested") or {}
+        model = (manifest.get("model") or {}).get("name") or (manifest.get("model") or {}).get("model_path")
+        output = manifest.get("output") or {}
+        operation = sc.OPERATION_CHAT if manifest["input"]["endpoint"] == "/api/chat" else sc.OPERATION_TEXT_COMPLETION
+        record_span(f"{operation} {model}", started, {
+            sc.OPERATION_NAME: operation, sc.PROVIDER_NAME: (manifest.get("runtime") or {}).get("name"),
+            sc.REQUEST_MODEL: model, sc.REQUEST_TEMPERATURE: requested.get("temperature"),
+            sc.REQUEST_SEED: requested.get("seed"),
+            sc.REQUEST_MAX_TOKENS: requested.get("num_predict", requested.get("n_predict")),
+            sc.RESPONSE_FINISH_REASONS: [output["done_reason"]] if output.get("done_reason") else None,
+            sc.USAGE_INPUT_TOKENS: output.get("prompt_tokens"), sc.USAGE_OUTPUT_TOKENS: output.get("output_tokens"),
+            sc.CAIN_CALL_ID: manifest["call_id"], sc.CAIN_CACHE_KEY: manifest["cache"]["key"],
+            sc.CAIN_CACHE_HIT: manifest["cache"]["hit"], sc.CAIN_INFERENCE_MODE: manifest["mode"],
+            sc.CAIN_MODEL_SHA256: (manifest.get("model") or {}).get("gguf_sha256")}, error=error)
+
+    def _generation(self, request, timeout, parts):
         body_bytes = bytes(request.data)
         body = json.loads(body_bytes.decode("utf-8"))
         base_url = f"{parts.scheme}://{parts.netloc}"
@@ -445,12 +481,12 @@ class Recorder:
                 # The runtime could not be asked; the identity is the one recorded with the answer.
                 original = self.store.call(recorded_call)["manifest"]
                 facts = {**{k: original.get(k) for k in ("model", "runtime", "hardware")}, "error": facts["error"]}
-            call["manifest"] = self._manifest(call, facts, body, cached)
+            call["manifest"] = self.last_manifest = self._manifest(call, facts, body, cached)
             self.store.save(call, cache=False)
             return _Response(cached)
         if self.mode == "replay":
             call.update(status="replay_miss")
-            call["manifest"] = self._manifest(call, facts, body, None)
+            call["manifest"] = self.last_manifest = self._manifest(call, facts, body, None)
             self.store.save(call, cache=False)
             raise ReplayMiss(f"no recorded answer for cache key {key}; the model was not called")
         serialize = self.mode in ("record", "cache")
@@ -464,13 +500,13 @@ class Recorder:
                     raw = response.read(MAX_BODY)
             except Exception as exc:
                 call.update(status=f"error:{type(exc).__name__}")
-                call["manifest"] = self._manifest(call, facts, body, None)
+                call["manifest"] = self.last_manifest = self._manifest(call, facts, body, None)
                 self.store.save(call, cache=False)
                 raise
             if parts.path != "/completion":
                 call["backend"] = self._backend(base_url, body.get("model"))
             call.update(status="called", response=raw, response_sha256=_hash(raw))
-            call["manifest"] = self._manifest(call, facts, body, raw)
+            call["manifest"] = self.last_manifest = self._manifest(call, facts, body, raw)
             self.store.save(call, cache=serialize)
         finally:
             if serialize:

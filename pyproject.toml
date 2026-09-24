@@ -20,6 +20,8 @@ dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.9,<1", "httpx>=0.27,<1", "f
 vision = ["Pillow>=11,<13"]
 # Local claim verifiers (HHEM-2.1-Open, MiniCheck-Flan-T5-Large); CPU-only torch wheels on Linux/Windows.
 verify = ["torch>=2.6,<3", "transformers>=4.46,<6", "huggingface-hub>=0.25,<2"]
+# OpenTelemetry spans (gen_ai.*) for model and tool calls, exported over OTLP/HTTP (e.g. to a local MLflow).
+observability = ["opentelemetry-sdk>=1.30,<2", "opentelemetry-exporter-otlp-proto-http>=1.30,<2"]
 
 [project.scripts]
 cain = "cain.cli:main"
