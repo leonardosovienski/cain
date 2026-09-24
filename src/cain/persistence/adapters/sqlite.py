@@ -2,6 +2,7 @@
 
 from collections.abc import Iterable
 from dataclasses import asdict
+from hashlib import sha256
 import json
 from pathlib import Path
 import sqlite3
@@ -250,7 +251,18 @@ class SQLiteIdentityStore:
 
 
 class SQLiteDecisionLog:
-    """SQL triggers reject updates/deletes; direct file tampering is outside this guarantee."""
+    """Append-only decision evidence.
+
+    SQL triggers stop the application from updating, deleting or replacing rows. Against
+    whoever edits the file directly, every row carries ``previous_hash`` and ``entry_hash``
+    (SHA-256 over the predecessor's hash, decision_id, run_id and record_json), so
+    ``verify_chain`` detects edited, deleted, reordered or inserted rows. Rows written
+    before the chain existed keep NULL hashes and are folded into the chain
+    deterministically from the genesis constant. Truncating the tail is the one edit the
+    chain alone cannot see; record ``verify_chain()["head"]`` elsewhere to cover it.
+    """
+
+    GENESIS = "cain-decision-log/1"
 
     def __init__(self, path: str | Path):
         self._connection = _connect(path)
@@ -277,13 +289,70 @@ class SQLiteDecisionLog:
                 SELECT RAISE(ABORT, 'DecisionLog is append-only');
             END;
         """)
+        columns = {row[1] for row in self._connection.execute("PRAGMA table_info(decisions)")}
+        if "entry_hash" not in columns:
+            # Databases created before the chain: add the columns; old rows keep NULL.
+            with self._connection:
+                self._connection.execute("ALTER TABLE decisions ADD COLUMN previous_hash TEXT")
+                self._connection.execute("ALTER TABLE decisions ADD COLUMN entry_hash TEXT")
+
+    @classmethod
+    def _entry_hash(cls, previous: str, decision_id: str, run_id: str, record_json: str) -> str:
+        return sha256("\n".join((previous, decision_id, run_id, record_json)).encode("utf-8")).hexdigest()
+
+    def _tail_hash(self) -> str:
+        """Hash the next entry must chain to: the last stored hash, or the folded legacy tail."""
+        last = self._connection.execute(
+            "SELECT entry_hash FROM decisions ORDER BY sequence DESC LIMIT 1"
+        ).fetchone()
+        if last is None:
+            return self.GENESIS
+        if last["entry_hash"]:
+            return last["entry_hash"]
+        expected = self.GENESIS
+        for row in self._connection.execute(
+            "SELECT decision_id, run_id, record_json FROM decisions WHERE entry_hash IS NULL ORDER BY sequence"
+        ):
+            expected = self._entry_hash(expected, row["decision_id"], row["run_id"], row["record_json"])
+        return expected
+
+    def _insert(self, record: DecisionRecord) -> None:
+        """Caller holds a write transaction, so the tail cannot move between read and insert."""
+        previous = self._tail_hash()
+        record_json = _serialize(asdict(record))
+        entry = self._entry_hash(previous, record.decision_id, record.run_id, record_json)
+        self._connection.execute(
+            "INSERT INTO decisions(decision_id, run_id, record_json, previous_hash, entry_hash) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (record.decision_id, record.run_id, record_json, previous, entry),
+        )
 
     def append(self, record: DecisionRecord) -> None:
         with self._connection:
-            self._connection.execute(
-                "INSERT INTO decisions(decision_id, run_id, record_json) VALUES (?, ?, ?)",
-                (record.decision_id, record.run_id, _serialize(asdict(record))),
-            )
+            self._connection.execute("BEGIN IMMEDIATE")
+            self._insert(record)
+
+    def verify_chain(self) -> dict:
+        """Recompute the chain from genesis; report the first sequence that does not fit."""
+        expected, entries, hashed, broken_at = self.GENESIS, 0, 0, None
+        for row in self._connection.execute(
+            "SELECT sequence, decision_id, run_id, record_json, previous_hash, entry_hash "
+            "FROM decisions ORDER BY sequence"
+        ):
+            entries += 1
+            recomputed = self._entry_hash(expected, row["decision_id"], row["run_id"], row["record_json"])
+            if row["entry_hash"] is None:
+                if hashed and broken_at is None:
+                    broken_at = row["sequence"]  # an unhashed row after hashed ones was inserted later
+                expected = recomputed
+                continue
+            hashed += 1
+            if broken_at is None and (row["previous_hash"] != expected or row["entry_hash"] != recomputed):
+                broken_at = row["sequence"]
+            expected = row["entry_hash"]
+        return {"entries": entries, "hashed_entries": hashed,
+                "status": "intact" if broken_at is None else "broken",
+                "broken_at": broken_at, "head": expected}
 
     def append_with_outcome(self, record: DecisionRecord, output: dict) -> None:
         """API completion and recoverable response share one SQLite commit."""
@@ -298,10 +367,7 @@ class SQLiteDecisionLog:
             )
             if updated.rowcount != 1:
                 raise ValueError("Request receipt is not processing")
-            self._connection.execute(
-                "INSERT INTO decisions(decision_id, run_id, record_json) VALUES (?, ?, ?)",
-                (record.decision_id, record.run_id, _serialize(asdict(record))),
-            )
+            self._insert(record)
 
     def export(self, run_id: str) -> Iterable[DecisionRecord]:
         rows = self._connection.execute(
