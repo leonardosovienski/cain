@@ -43,7 +43,7 @@ interpretação geral do modelo nem conclusões científicas.
 
 # CAIN — conversa, memória e pesquisa local
 
-CAIN 0.4.12 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
+CAIN 0.4.13rc4 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
 A referência de publicação é **main**. Este checkout está em `fix/readiness-main-20260914`: a V4 foi preservada no checkpoint local `ad21220`, seguido pelas alterações desta continuação. A candidata V6 está somente em QA não editável; não foi publicada nem instalada como principal. Veja a [continuação e seus limites](docs/CONTINUACAO_POS_V4_20260915.md).
 Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 
