@@ -91,6 +91,8 @@ uv sync --locked --extra api
 
 O inicializador do checkout usa a porta 8000 por padrão; o atalho da instalação principal usa 8877.
 Para terminal, use `INICIAR_CAIN.cmd`. A configuração vem de `cain.toml` e dos overrides locais.
+Caminhos relativos em `storage.path` e `search.paths` são resolvidos a partir da pasta do próprio `cain.toml`,
+não do diretório de onde o comando foi executado; `--config` em outra pasta muda a base.
 O modelo configurado é `qwen3.5:4b`; embeddings usam `qwen3-embedding:0.6b` com digest verificado.
 `llm.base_url` fora do loopback é recusado ao carregar a configuração, a menos que `llm.allow_remote = true`
 (ou `CAIN_OLLAMA_ALLOW_REMOTE=1`) declare que perfil, histórico e documentos podem sair desta máquina; `cain doctor` avisa.
