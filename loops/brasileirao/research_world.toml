@@ -4,7 +4,7 @@
 
 [world]
 id = "brasileirao-elo-1x2-dev2022"
-version = 1
+version = 2
 predictor = "brasileirao"
 hypothesis = "CAIN-LOOP:BR-ELO-TUNING-DEV2022"
 description = "Retuning the Elo feature horizon and the goal-model calibration window lowers the 1X2 RPS against climatology on the 2022 development season"
@@ -80,7 +80,11 @@ stages = ["sanity", "in_sample", "walk_forward", "holdout"]
 threshold = 0.85
 
 [redundancy]
-threshold = 0.99
+# v2 (2026-09-24): v1 used correlation >= 0.99, which discarded every parameter variant of this one model
+# (half-life 4 -> 5 gave 0.999996; cycle 1 in docs/evidence/2026-09-24-prompt6). Here redundant means
+# near-identical predictions: max |p_home - p_away| difference on the sanity matches <= 0.001.
+measure = "max_abs_diff"
+threshold = 0.001
 
 [evaluator]
 python = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/bin/python"
