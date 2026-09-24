@@ -9,6 +9,8 @@ __pycache__/
 data/
 !src/cain/evaluation/data/
 !src/cain/evaluation/data/**
+!src/cain/claims/data/
+!src/cain/claims/data/**
 build/
 dist/
 *.db

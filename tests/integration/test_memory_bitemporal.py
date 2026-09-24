@@ -1,5 +1,6 @@
 """Bitemporal memory: leakage, correction, tampering, rebuild, cubes and ingestion paths."""
 
+from contextlib import closing
 from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 import json
@@ -83,7 +84,7 @@ def test_future_recorded_fact_is_invisible_to_earlier_as_of_including_vector_sea
     assert all("LEAK" not in hit["text"] for hit in result["hits"])
 
     def vector_ids():
-        with sqlite3.connect(tmp_path / "memory.db") as db:
+        with closing(sqlite3.connect(tmp_path / "memory.db")) as db:
             return {row[0] for row in db.execute("SELECT id FROM memory_vectors")}
 
     # The temporal filter ran before any vector work: the future row was never even embedded.
@@ -91,6 +92,17 @@ def test_future_recorded_fact_is_invisible_to_earlier_as_of_including_vector_sea
     later = memory.search("LEAK edge confirmed on btc funding", as_of=iso(clock.now), cubes=["crypto"])
     assert later["hits"][0]["id"] == future["id"]
     assert future["id"] in vector_ids()
+
+
+def test_read_now_never_precedes_the_log_head(memory, clock):
+    # Found as an intermittent CLI failure: a wall clock that steps back made "now" miss an event.
+    fact = memory.assert_fact("crypto", "H1", "state", "REFUTED", status="DECLARED")
+    clock.advance(seconds=-5)  # the clock steps back after the write
+    now = memory.now()
+    assert now == fact["recorded_at"]
+    assert [f["id"] for f in memory.facts(as_of=now, cubes=["crypto"])] == [fact["id"]]
+    clock.advance(seconds=10)
+    assert memory.now() > fact["recorded_at"]
 
 
 def test_corrected_fact_before_and_after_the_correction(memory, clock):
@@ -147,7 +159,7 @@ def test_tampering_with_an_old_event_breaks_the_chain(memory, tmp_path, clock):
 
 def test_tampered_projection_is_detected_and_rebuilt_from_the_log(memory, tmp_path, clock):
     fact = memory.assert_fact("crypto", "H1", "state", "REFUTED", status="DECLARED")
-    with sqlite3.connect(tmp_path / "memory.db") as db:
+    with closing(sqlite3.connect(tmp_path / "memory.db")) as db, db:
         db.execute("UPDATE memory_facts SET object = '\"SUPPORTED\"' WHERE id = ?", (fact["id"],))
     assert memory.verify()["projection"] == "diverged"
     assert memory.rebuild_index()["events_replayed"] == 1

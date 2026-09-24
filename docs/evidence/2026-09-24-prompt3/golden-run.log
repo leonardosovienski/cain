@@ -1,0 +1,25 @@
+Loading weights:   0%|          | 0/560 [00:00<?, ?it/s]Loading weights: 100%|██████████| 560/560 [00:00<00:00, 13690.10it/s]
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+	Command being timed: "/home/superleo13/predictors/runtime/cain-melhorias/venv/bin/cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3/memory.db golden --models-dir /home/superleo13/predictors/tools/hf/models --output docs/evidence/2026-09-24-prompt3/golden-v1-result.json"
+	User time (seconds): 134.63
+	System time (seconds): 4.39
+	Percent of CPU this job got: 619%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:22.42
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3982244
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 699
+	Minor (reclaiming a frame) page faults: 432640
+	Voluntary context switches: 14022
+	Involuntary context switches: 502
+	Swaps: 0
+	File system inputs: 7883216
+	File system outputs: 62776
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,14 @@
+# branch melhorias/p3-evidencias-claims head b8133bf004621f333b93b1ae9ab4d6c7ba1e2928
+# python Python 3.13.15
+$ ruff check src tests
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --junitxml=<runtime>/p3-junit.xml
+../../runtime/cain-melhorias/venv/lib/python3.13/site-packages/starlette/testclient.py:53
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1209 passed, 2 skipped, 2 warnings in 48.96s
+[exit 0]
+# testcases in junit: 1211
