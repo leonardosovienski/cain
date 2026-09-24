@@ -127,9 +127,10 @@ class RuleRouter:
             return self._selected('conversa', registry, 'conversation_rule:literal_copy')
         # Match the entire message: a greeting prefix must never hide a task,
         # quoted source, or subsequent line from the operation router.
+        # A greeting may carry one social phrase ("Olá, tudo bem?") and nothing else.
         if re.fullmatch(
             r'\s*(?:oi|olá|ola|bom dia|boa tarde|boa noite|hello|hi)'
-            r'(?:[ ,]+cain)?[.!?\s]*', payload, flags=re.I,
+            r'(?:[ ,]+cain)?(?:[ ,!.]+(?:tudo bem|tudo bom|como vai))?[.!?\s]*', payload, flags=re.I,
         ):
             return self._selected("resumo", registry, "social_greeting")
         head = strip_preference_scope_marks(instruction_head(payload))
