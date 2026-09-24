@@ -93,12 +93,24 @@ _SCHEMA = {
 }
 
 
+def model_digest(provider) -> str | None:
+    """Digest of the model that will answer: the local Ollama inventory for ``OllamaLLM`` (fails
+    closed when the model is not installed), otherwise the provider's declared ``model_digest``."""
+    from cain.research.workflows import model_identity
+
+    try:
+        return model_identity(provider)["model_digest"]
+    except (OSError, ValueError) as exc:
+        raise MemoryStoreError("MODEL_UNKNOWN", f"cannot establish the model digest: {exc}") from exc
+
+
 def extract_facts(memory: MemoryStore, provider, *, cube: str, text: str, source: str) -> dict:
     """Ask a local model for facts; keep only literally supported ones, all DECLARED."""
     if type(text) is not str or not text.strip() or len(text) > 6000:
         raise MemoryStoreError("INVALID_FIELD", "text must have 1-6000 characters")
     prompt = "Text:\n" + text
     prompt_hash = sha256((_INSTRUCTION + "\n" + prompt).encode("utf-8")).hexdigest()
+    digest = model_digest(provider)
     raw = provider.generate_json(prompt, _INSTRUCTION, _SCHEMA)
     try:
         parsed = json.loads(raw)
@@ -107,7 +119,7 @@ def extract_facts(memory: MemoryStore, provider, *, cube: str, text: str, source
             raise ValueError
     except (ValueError, KeyError, TypeError) as exc:
         raise MemoryStoreError("EXTRACTION_INVALID", "model output is not the requested JSON") from exc
-    model = f"{getattr(provider, 'model', type(provider).__name__)}@{getattr(provider, 'model_digest', None) or 'unknown-digest'}"
+    model = f"{getattr(provider, 'model', type(provider).__name__)}@{digest or 'unknown-digest'}"
     source_hash = sha256(text.encode("utf-8")).hexdigest()
     kept, rejected = [], []
     for item in proposals:

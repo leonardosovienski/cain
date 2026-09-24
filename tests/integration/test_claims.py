@@ -247,6 +247,39 @@ def test_extraction_keeps_only_literal_spans_and_never_guesses(memory, clock):
         extract_claims(memory, JsonModel({"nope": 1}), cube="stocks", document_id=report["id"])
 
 
+def test_extraction_with_a_local_ollama_model_records_the_installed_digest(memory, clock, monkeypatch):
+    # Found by the runtime demo: OllamaLLM has no model_digest attribute, so the digest was null.
+    from cain.llm import OllamaLLM
+
+    class Local(OllamaLLM):
+        def generate_json(self, prompt, context, schema):
+            return json.dumps({"claims": [{"text": "The backtest covered 49 rebalance periods.",
+                                           "source_quote": "the backtest covered 49 rebalance periods",
+                                           "verifiable": True, "ambiguous": False, "reason": "count"}]})
+
+    class Tags:
+        def __init__(self, models):
+            self.raw = json.dumps({"models": models}).encode()
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self, limit):
+            return self.raw
+
+    _, report = _setup(memory, clock)
+    installed = [{"name": "qwen-local:4b", "digest": "9" * 64}]
+    monkeypatch.setattr("cain.research.workflows.urlopen", lambda *a, **kw: Tags(installed))
+    result = extract_claims(memory, Local(model="qwen-local:4b"), cube="stocks", document_id=report["id"])
+    assert result["extractor"]["model_digest"] == "9" * 64
+    monkeypatch.setattr("cain.research.workflows.urlopen", lambda *a, **kw: Tags([]))
+    with pytest.raises(MemoryStoreError, match="cannot establish the model digest"):
+        extract_claims(memory, Local(model="qwen-local:4b"), cube="stocks", document_id=report["id"])
+
+
 def test_trace_answers_where_a_number_came_from(memory, clock):
     source, report = _setup(memory, clock)
     s, e = _span(SOURCE, "49 rebalance periods")
