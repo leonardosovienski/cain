@@ -1,23 +1,28 @@
-"""Atomic SQLite archive + rebuildable projection. No domain or provider imports."""
+"""Atomic SQLite archive + rebuildable projection. No domain or provider imports.
 
-from contextlib import contextmanager
+The service keeps the public contract; policy handling lives in ``policy.py``, the
+projection in ``projection.py`` and the schema/connection in ``schema.py``.
+"""
+
 from datetime import datetime, timezone
 import json
 from pathlib import Path
 import sqlite3
 from uuid import uuid4
 
-from research_snapshot import MAX_BYTES, canonical, confined, digest, keys, loads, validate
+from research_snapshot import MAX_BYTES, canonical, confined, loads, validate
+
+from cain.research import policy as receiver_policy
+from cain.research.projection import (
+    ContentConflict, load_archive, project, projection as record_projection, verify_projection,
+)
+from cain.research.schema import SCHEMA, connect
+
+__all__ = ["ContentConflict", "ResearchService", "now"]
 
 
 def now():
     return datetime.now(timezone.utc).isoformat()
-
-
-class ContentConflict(ValueError):
-    def __init__(self, record_id):
-        super().__init__("CONFLICT: identical source occurrence/revision has divergent payload")
-        self.record_id = record_id
 
 
 class ResearchService:
@@ -29,232 +34,35 @@ class ResearchService:
         self.policy()  # fail before creating storage
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connection() as db:
-            db.executescript("""
-                CREATE TABLE IF NOT EXISTS publications(
-                  scope TEXT NOT NULL, id TEXT NOT NULL, origin TEXT NOT NULL,
-                  restrictions TEXT NOT NULL, raw BLOB NOT NULL, received_at TEXT NOT NULL,
-                  PRIMARY KEY(scope,id));
-                CREATE TABLE IF NOT EXISTS records(
-                  scope TEXT NOT NULL, id TEXT NOT NULL, domain TEXT NOT NULL,
-                  source_id TEXT NOT NULL, kind TEXT NOT NULL, status TEXT NOT NULL,
-                  revision TEXT NOT NULL, payload TEXT NOT NULL, signature TEXT NOT NULL,
-                  PRIMARY KEY(scope,id));
-                CREATE INDEX IF NOT EXISTS research_filter ON records(scope,domain,source_id,status);
-                CREATE TABLE IF NOT EXISTS membership(
-                  scope TEXT NOT NULL, publication TEXT NOT NULL, record TEXT NOT NULL,
-                  PRIMARY KEY(scope,publication,record),
-                  FOREIGN KEY(scope,publication) REFERENCES publications(scope,id),
-                  FOREIGN KEY(scope,record) REFERENCES records(scope,id));
-                CREATE TABLE IF NOT EXISTS receipts(
-                  id TEXT PRIMARY KEY, scope TEXT NOT NULL, at TEXT NOT NULL,
-                  publication TEXT, status TEXT NOT NULL, error TEXT);
-                CREATE TABLE IF NOT EXISTS queries(
-                  id TEXT PRIMARY KEY, scope TEXT NOT NULL, at TEXT NOT NULL,
-                  request TEXT NOT NULL, result TEXT NOT NULL);
-                CREATE TABLE IF NOT EXISTS conflicts(
-                  scope TEXT NOT NULL, receipt TEXT PRIMARY KEY, record TEXT NOT NULL,
-                  incoming_publication TEXT NOT NULL);
-            """)
+            db.executescript(SCHEMA)
 
-    @contextmanager
     def connection(self):
-        db = sqlite3.connect(self.path, timeout=15)
-        db.row_factory = sqlite3.Row
-        db.execute("PRAGMA foreign_keys=ON")
-        try:
-            with db:
-                yield db
-        finally:
-            db.close()
+        return connect(self.path)
 
     def policy(self):
-        policy = loads(self.policy_path.read_bytes())
-        if type(policy) is not dict:
-            raise ValueError("Invalid receiver policy")
-        version = policy.get("version")
-        keys(policy, "version import_root grants" if version == 1 else
-             "version imports grants bundle_grants" if version == 3 else "version imports grants")
-        if type(version) is not int or version not in (1, 2, 3) or type(policy["grants"]) is not list:
-            raise ValueError("Invalid receiver policy")
-        if version == 3:
-            from cain.research.bundles import validate_grants
-            validate_grants(policy["bundle_grants"])
-        if version == 1:
-            roots = [policy["import_root"]]
-        else:
-            if type(policy["imports"]) is not list:
-                raise ValueError("Invalid import bindings")
-            scopes, roots = set(), []
-            for binding in policy["imports"]:
-                keys(binding, "user project collection root")
-                scope = self.scope(binding["user"], binding["project"], binding["collection"])
-                if scope in scopes:
-                    raise ValueError("Ambiguous import binding")
-                scopes.add(scope)
-                roots.append(binding["root"])
-        if any(type(root) is not str or not Path(root).is_absolute() for root in roots):
-            raise ValueError("Receiver import root must be absolute")
-        for grant in policy["grants"]:
-            keys(
-                grant,
-                "user project collection domain repository publisher stream sources policies generate",
-            )
-            if type(grant["generate"]) is not bool:
-                raise ValueError("Invalid generation permission")
-            for key in (
-                "user",
-                "project",
-                "collection",
-                "domain",
-                "repository",
-                "publisher",
-                "stream",
-            ):
-                if type(grant[key]) is not str or len(grant[key]) > 500:
-                    raise ValueError("Invalid grant identity")
-            for key in ("sources", "policies"):
-                if type(grant[key]) is not list or not all(type(v) is str for v in grant[key]):
-                    raise ValueError("Invalid grant list")
-        return policy
+        return receiver_policy.load(self.policy_path)
 
     def import_root(self, scope):
-        policy = self.policy()
-        if policy["version"] == 1:
-            return policy["import_root"]
-        for binding in policy["imports"]:
-            if self.scope(binding["user"], binding["project"], binding["collection"]) == scope:
-                return binding["root"]
-        raise ValueError("No import root admitted for this scope")
+        return receiver_policy.import_root(self.policy(), scope)
 
-    @staticmethod
-    def scope(user="leo", project=None, collection="crypto"):
-        if any(type(v) is not str or not v.strip() or len(v) > 200 for v in (user, collection)):
-            raise ValueError("Invalid research scope")
-        if project is not None and (type(project) is not str or len(project) > 200):
-            raise ValueError("Invalid project scope")
-        return canonical([user, project or "", collection]).decode()
+    scope = staticmethod(receiver_policy.scope)
 
     def authorized(self, scope, origin, restrictions, generate=False):
-        user, project, collection = json.loads(scope)
-        if restrictions.get("read") is not True or (
-            generate and restrictions.get("generate") is not True
-        ):
-            return False
-        for grant in self.policy()["grants"]:
-            if (
-                [grant[k] for k in ("user", "project", "collection")] == [user, project, collection]
-                and all(
-                    grant[k] == origin.get(k)
-                    for k in ("domain", "repository", "publisher", "stream")
-                )
-                and set(origin.get("inputs", {})) <= set(grant["sources"])
-                and restrictions.get("policy") in grant["policies"]
-                and (not generate or grant["generate"])
-            ):
-                return True
-        return False
+        return receiver_policy.authorized(self.policy(), scope, origin, restrictions, generate)
 
     def _archive(self, db, scope, generate=False):
-        allowed = {}
-        admitted_bytes = 0
-        # Authorization metadata only; do not retrieve archived content until authorized.
-        if (
-            db.execute("SELECT count(*) FROM publications WHERE scope=?", (scope,)).fetchone()[0]
-            > 500
-        ):
-            raise ValueError("L0 scope exceeds 500 publications; split collections")
-        for row in db.execute(
-            "SELECT id,origin,restrictions,length(raw) AS size FROM publications WHERE scope=?",
-            (scope,),
-        ):
-            if self.authorized(
-                scope, json.loads(row["origin"]), json.loads(row["restrictions"]), generate
-            ):
-                admitted_bytes += row["size"]
-                if admitted_bytes > 20_000_000:
-                    raise ValueError(
-                        "L0 admitted archive exceeds 20000000 bytes; split collections"
-                    )
-                raw = db.execute(
-                    "SELECT raw FROM publications WHERE scope=? AND id=?", (scope, row["id"])
-                ).fetchone()[0]
-                package = validate(loads(raw))
-                if (
-                    canonical(package["origin"]).decode() != row["origin"]
-                    or canonical(package["restrictions"]).decode() != row["restrictions"]
-                    or package["publication_id"] != row["id"]
-                ):
-                    raise ValueError("Archive authorization metadata corrupt")
-                allowed[row["id"]] = package
-        return allowed
+        return load_archive(
+            db, scope,
+            lambda origin, restrictions: self.authorized(scope, origin, restrictions, generate),
+        )
 
-    @staticmethod
-    def projection(package, record):
-        origin = package["origin"]
-        namespace = [origin[k] for k in ("domain", "repository", "publisher", "stream")]
-        rid = digest(canonical(namespace + [record["source_id"], record["revision"]]))
-        evidence = {e["id"]: e for e in package["evidence"]}
-        signature = digest(canonical([record, [evidence[e] for e in record["evidence_ids"]]]))
-        return rid, signature
+    projection = staticmethod(record_projection)
 
     def _project(self, db, scope, package):
-        for record in package["records"]:
-            rid, signature = self.projection(package, record)
-            old = db.execute(
-                "SELECT signature FROM records WHERE scope=? AND id=?", (scope, rid)
-            ).fetchone()
-            if old and old[0] != signature:
-                raise ContentConflict(rid)
-            db.execute(
-                "INSERT OR IGNORE INTO records VALUES(?,?,?,?,?,?,?,?,?)",
-                (
-                    scope,
-                    rid,
-                    package["origin"]["domain"],
-                    record["source_id"],
-                    record["kind"],
-                    record["source_status"],
-                    record["revision"],
-                    canonical(record).decode(),
-                    signature,
-                ),
-            )
-            db.execute(
-                "INSERT OR IGNORE INTO membership VALUES(?,?,?)",
-                (scope, package["publication_id"], rid),
-            )
+        project(db, scope, package)
 
     def _verify_projection(self, db, scope, archives):
-        """Verify before filtering: a corrupt index must never become false absence."""
-        for pubid, package in archives.items():
-            expected_members = set()
-            for record in package["records"]:
-                rid, signature = self.projection(package, record)
-                expected_members.add(rid)
-                row = db.execute(
-                    "SELECT domain,source_id,kind,status,revision,payload,signature "
-                    "FROM records WHERE scope=? AND id=?",
-                    (scope, rid),
-                ).fetchone()
-                expected = (
-                    package["origin"]["domain"],
-                    record["source_id"],
-                    record["kind"],
-                    record["source_status"],
-                    record["revision"],
-                    canonical(record).decode(),
-                    signature,
-                )
-                if row is None or tuple(row) != expected:
-                    raise ValueError("Projection corrupt; research projection requires rebuild")
-            actual_members = {
-                r[0]
-                for r in db.execute(
-                    "SELECT record FROM membership WHERE scope=? AND publication=?", (scope, pubid)
-                )
-            }
-            if actual_members != expected_members:
-                raise ValueError("Research membership corrupt; verify and rebuild")
+        verify_projection(db, scope, archives)
 
     def ingest(self, relative, scope):
         receipt, publication = uuid4().hex, None
