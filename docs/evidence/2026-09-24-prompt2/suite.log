@@ -1,0 +1,503 @@
+........................................................................ [  6%]
+........................................................................ [ 12%]
+........................................................................ [ 18%]
+........................................................................ [ 24%]
+........................................................................ [ 30%]
+........................................................................ [ 36%]
+...........................ss........................................... [ 42%]
+........................................................................ [ 48%]
+........................................................................ [ 54%]
+........................................................................ [ 60%]
+........................................................................ [ 66%]
+........................................................................ [ 72%]
+........................................................................ [ 78%]
+........................................................................ [ 84%]
+........................................................................ [ 90%]
+........................................................................ [ 96%]
+................................................                         [100%]
+=============================== warnings summary ===============================
+../../runtime/cain-melhorias/venv/lib/python3.13/site-packages/fastapi/testclient.py:1
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../../runtime/cain-melhorias/venv/lib/python3.13/site-packages/starlette/testclient.py:53
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/starlette/testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+tests/integration/test_agent_api_routes.py::test_job_listing_trace_cancel_and_abstain
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/contextlib.py:108: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bee6e30>
+    def __init__(self, func, args, kwds):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_conversation_regressions.py::test_everyday_conversation_does_not_search_old_turns[Calcule 17 * 3.-17 * 3 = 51.]
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/copy.py:125: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf19e40>
+    d = id(x)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf18310>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1b790>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1a200>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1a980>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf19990>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1be20>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf18b80>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf185e0>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1b4c0>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf19d50>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf18130>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:2921: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf18400>
+    def __init__(self) -> None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[False]
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/inspect.py:2505: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1c400>
+    def _signature_from_callable(obj, *,
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[True]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_core_utils.py:65: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf184f0>
+    def get_type_ref(type_: Any, args_override: tuple[type[Any], ...] | None = None) -> str:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_history_failure_reopens_and_replays_without_generation_or_identity_duplication[True]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_config.py:247: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf18d60>
+    def __init__(self, config_wrapper: ConfigWrapper):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_conversation_read_recovers_missing_projection
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/fields.py:237: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037897498a0>
+    self._attributes_set = {k: v for k, v in kwargs.items() if v is not _Unset and k not in self.metadata_lookup}
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_completion_and_outcome_roll_back_together
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/fields.py:237: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1db70>
+    self._attributes_set = {k: v for k, v in kwargs.items() if v is not _Unset and k not in self.metadata_lookup}
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_abandoned_processing_receipt_is_not_silently_reexecuted
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:997: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf193f0>
+    args = tuple(self._resolve_forward_ref(a) if isinstance(a, ForwardRef) else a for a in args)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_two_app_instances_cannot_generate_the_same_receipt
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py:408: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378a8833d0>
+    self._child_scopes: set[CancelScope] = set()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_two_app_instances_cannot_generate_the_same_receipt
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/anyio/_backends/_asyncio.py:408: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1d6c0>
+    self._child_scopes: set[CancelScope] = set()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_abrupt_process_exit_preserves_commit_boundary[before_completion]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/fields.py:257: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1c4f0>
+    alias_is_set = any(alias is not None for alias in (self.alias, self.validation_alias, self.serialization_alias))
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_abrupt_process_exit_preserves_commit_boundary[after_completion]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:901: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974be20>
+    def _generate_schema_from_get_schema_method(self, obj: Any, source: Any) -> core_schema.CoreSchema | None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_abrupt_process_exit_preserves_commit_boundary[after_completion]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_generate_schema.py:901: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf18220>
+    def _generate_schema_from_get_schema_method(self, obj: Any, source: Any) -> core_schema.CoreSchema | None:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_abrupt_process_exit_preserves_commit_boundary[after_history]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/fields.py:257: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789749d50>
+    alias_is_set = any(alias is not None for alias in (self.alias, self.validation_alias, self.serialization_alias))
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_delivery_architecture.py::test_abrupt_process_exit_preserves_commit_boundary[after_history]
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/fields.py:257: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974af20>
+    alias_is_set = any(alias is not None for alias in (self.alias, self.validation_alias, self.serialization_alias))
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_evidence_selection.py::test_g04_g05_late_field[T42-40]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1eb60>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_evidence_selection.py::test_g04_g05_late_field[T42-40]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1c5e0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_evidence_selection.py::test_g04_g05_late_field[T42-40]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974bf10>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_evidence_selection.py::test_g04_g05_late_field[T42-40]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037897494e0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_memory_bitemporal.py::test_clock_going_backwards_is_refused
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/functools.py:36: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037897495d0>
+    def update_wrapper(wrapper,
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_memory_bitemporal.py::test_clock_going_backwards_is_refused
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/functools.py:36: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974a3e0>
+    def update_wrapper(wrapper,
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_memory_bitemporal.py::test_clock_going_backwards_is_refused
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/functools.py:36: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037897487c0>
+    def update_wrapper(wrapper,
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_cli_commands.py::test_read_only_commands
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/gettext.py:496: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789749f30>
+    if val:
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_completion.py::test_comparative_harness_executes_both_model_arms_with_same_provider
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:277: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1c9a0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_completion.py::test_comparative_harness_executes_both_model_arms_with_same_provider
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:277: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1d3f0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_completion.py::test_comparative_harness_executes_both_model_arms_with_same_provider
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:277: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1bd30>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_completion.py::test_comparative_harness_executes_both_model_arms_with_same_provider
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:277: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789749210>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_completion.py::test_comparative_harness_executes_both_model_arms_with_same_provider
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:277: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974b1f0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_completion.py::test_comparative_harness_executes_both_model_arms_with_same_provider
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:277: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037897496c0>
+    @property
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_inspection.py::test_api_and_cli_offline
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/contextlib.py:112: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378e22b5b0>
+    doc = getattr(func, "__doc__", None)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_inspection.py::test_api_and_cli_offline
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/contextlib.py:112: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bf1a4d0>
+    doc = getattr(func, "__doc__", None)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_inspection.py::test_api_and_cli_offline
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/contextlib.py:112: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974bc40>
+    doc = getattr(func, "__doc__", None)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_research_l0.py::test_provider_errors_never_fallback[error1]
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/json/encoder.py:254: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378bebff10>
+    _iterencode = c_make_encoder(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_scoped_preferences.py::test_scope_precedence_does_not_overwrite_global_and_removal_falls_back
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/copy.py:221: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f9f30>
+    for key, value in x.items():
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_scoped_preferences.py::test_scope_precedence_does_not_overwrite_global_and_removal_falls_back
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/copy.py:221: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896faa70>
+    for key, value in x.items():
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789748a90>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896fb100>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896fa020>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896fa6b0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789748f40>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f93f0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f88b0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f8400>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896fb2e0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896fa200>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f8d60>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789749c60>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f85e0>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_system_expansion.py::test_general_historian_selects_relevant_fields_from_large_source[K71]
+  /home/superleo13/predictors/work/cain-melhorias/src/cain/research/grounding_structured.py:105: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f9990>
+    entry['record_context'] = list(nearest.values())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/integration/test_v03_workspace_api.py::test_profile_answer_uses_effective_state_without_calling_the_model
+  /home/superleo13/predictors/runtime/cain-melhorias/venv/lib/python3.13/site-packages/pydantic/_internal/_config.py:93: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x70378974b4c0>
+    def __init__(self, config: ConfigDict | dict[str, Any] | type[Any] | None, *, check: bool = True):
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_bundle_remediation.py::test_evidence_only_fact_retrievable_and_revoked
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/argparse.py:2021: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x7037896f95d0>
+    seen_non_default_actions = set()
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+tests/test_structural_diagnostics.py::test_restart_idempotence_and_revocation
+  /home/superleo13/predictors/tools/python/cpython-3.13.15-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:128: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x703789749b70>
+    path = os.fspath(arg)
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.15-final-0 _______________
+
+Name                                        Stmts   Miss  Cover
+---------------------------------------------------------------
+src/cain/__init__.py                            1      0   100%
+src/cain/__main__.py                            2      2     0%
+src/cain/agents/__init__.py                   302     16    95%
+src/cain/agents/arithmetic.py                  72      2    97%
+src/cain/api.py                               249      4    98%
+src/cain/archive.py                           125     10    92%
+src/cain/cli.py                               164     29    82%
+src/cain/common/__init__.py                    89      0   100%
+src/cain/common/text.py                         6      0   100%
+src/cain/evaluation/__init__.py                 3      0   100%
+src/cain/evaluation/__main__.py                41      6    85%
+src/cain/evaluation/budget.py                  37      1    97%
+src/cain/evaluation/functional.py             172     41    76%
+src/cain/evaluation/functional_worker.py       16     16     0%
+src/cain/evaluation/harness.py                203     29    86%
+src/cain/evaluation/metrics.py                 62      7    89%
+src/cain/evaluation/quality.py                299     47    84%
+src/cain/evaluation/resources.py               22      4    82%
+src/cain/evaluation/v2.py                     331    193    42%
+src/cain/evaluation/v2_controls.py             96     82    15%
+src/cain/evaluation/v2_integrity.py           129     11    91%
+src/cain/evaluation/v2_replay.py               36     36     0%
+src/cain/evaluation/v2_research.py             61     51    16%
+src/cain/evaluation/v2_utility.py              52     37    29%
+src/cain/identity/__init__.py                 233     12    95%
+src/cain/identity/explicit.py                 124      7    94%
+src/cain/identity/scopes.py                    36      0   100%
+src/cain/llm/__init__.py                      107      3    97%
+src/cain/llm/llamacpp.py                       63     14    78%
+src/cain/llm/qwen35.py                         28      5    82%
+src/cain/llm/streaming.py                      86      9    90%
+src/cain/mcp.py                                85      1    99%
+src/cain/memory/__init__.py                     3      0   100%
+src/cain/memory/cli.py                        114     17    85%
+src/cain/memory/ingest.py                      61      4    93%
+src/cain/memory/jcs.py                         71      0   100%
+src/cain/memory/store.py                      306     25    92%
+src/cain/orchestrator/__init__.py              87      5    94%
+src/cain/orchestrator/routing.py              134      4    97%
+src/cain/persistence/__init__.py               11      0   100%
+src/cain/persistence/adapters/__init__.py       3      0   100%
+src/cain/persistence/adapters/lexical.py       32      2    94%
+src/cain/persistence/adapters/sqlite.py       186     18    90%
+src/cain/playground.py                         42     42     0%
+src/cain/profile_answers.py                    19      2    89%
+src/cain/providers.py                          23     10    57%
+src/cain/research/__init__.py                   2      0   100%
+src/cain/research/agent_api.py                123      7    94%
+src/cain/research/analysis.py                 257     16    94%
+src/cain/research/answer_review.py             86     11    87%
+src/cain/research/api.py                      168      6    96%
+src/cain/research/approved_memory.py           27      5    81%
+src/cain/research/bundle_backup.py             52      3    94%
+src/cain/research/bundle_policy.py             34      5    85%
+src/cain/research/bundle_projection.py         67      7    90%
+src/cain/research/bundle_schema.py              1      0   100%
+src/cain/research/bundles.py                  239     10    96%
+src/cain/research/claim_tables.py              25      2    92%
+src/cain/research/cli.py                      190      1    99%
+src/cain/research/coverage.py                  25      2    92%
+src/cain/research/diagnostics.py               67      4    94%
+src/cain/research/field_review.py             107     12    89%
+src/cain/research/grounded_analysis.py        109     18    83%
+src/cain/research/grounding.py                241     10    96%
+src/cain/research/grounding_markdown.py       106      2    98%
+src/cain/research/grounding_structured.py     114      2    98%
+src/cain/research/grounding_text.py            37      1    97%
+src/cain/research/historian.py                204     19    91%
+src/cain/research/inspection.py               111      5    95%
+src/cain/research/objects.py                   63      5    92%
+src/cain/research/policy.py                    60      8    87%
+src/cain/research/projection.py                50      2    96%
+src/cain/research/schema.py                    12      0   100%
+src/cain/research/service.py                  248     20    92%
+src/cain/research/workflows.py                163     15    91%
+src/cain/research_egress.py                    84      5    94%
+src/cain/research_results.py                  198     28    86%
+src/cain/research_tasks.py                    105     16    85%
+src/cain/runtime.py                            59      9    85%
+src/cain/search/__init__.py                   241     30    88%
+src/cain/search/embeddings.py                 138     18    87%
+src/cain/search/hybrid.py                      68      8    88%
+src/cain/settings.py                          132     15    89%
+src/cain/workspace.py                         180     12    93%
+---------------------------------------------------------------
+TOTAL                                        8617   1143    87%
+1198 passed, 2 skipped, 66 warnings in 60.43s (0:01:00)
