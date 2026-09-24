@@ -42,6 +42,8 @@ pythonpath = ["src"]
 [tool.ruff]
 target-version = "py311"
 line-length = 100
+# docs/ holds dated evidence, including preserved scripts; it is not lintable code.
+extend-exclude = ["docs"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]
