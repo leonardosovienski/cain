@@ -1,0 +1,23 @@
+# branch melhorias/p9-proveniencia-observabilidade head 036ee30a0105acb5f17518d72c1d69f5585be3fd
+$ ruff check src tests loops
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain
+src/cain/claims/faithfulness.py                43      5    88%
+src/cain/observability/__init__.py              0      0   100%
+src/cain/observability/semconv.py              23      0   100%
+src/cain/observability/tracing.py              64     12    81%
+src/cain/provenance/__init__.py                 0      0   100%
+src/cain/provenance/cli.py                     33      0   100%
+src/cain/provenance/graph.py                  114     19    83%
+TOTAL                                       11521   1499    87%
+1265 passed, 2 skipped, 63 warnings in 77.83s (0:01:17)
+# testcases in junit: 1267
+$ pytest tests/integration/test_provenance.py -v
+tests/integration/test_provenance.py::test_invalidating_an_evidence_flags_every_dependent_and_deletes_nothing PASSED [ 16%]
+tests/integration/test_provenance.py::test_why_returns_the_complete_chain_of_a_decision PASSED [ 33%]
+tests/integration/test_provenance.py::test_model_and_tool_calls_become_gen_ai_spans PASSED [ 50%]
+tests/integration/test_provenance.py::test_span_duration_survives_a_wall_clock_step_back PASSED [ 66%]
+tests/integration/test_provenance.py::test_faithfulness_estimate_covers_the_truth_and_the_sample_is_deterministic PASSED [ 83%]
+tests/integration/test_provenance.py::test_cli_trace_why_impact_invalidate_and_faithfulness PASSED [100%]
+============================== 6 passed in 0.96s ===============================

@@ -1,0 +1,893 @@
+# P9 provenance demo on a copy of the Prompt 3 demo memory (/home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db)
+# evidence: {"evidence:73f43020ab66440a81fcac4ea385611b": "The backtest covered 49 rebalance periods between July 2022 and August 2025.", "evidence:5b2fb529f291402f988f907d63cd37fc": "Net excess return averaged 29 basis points per period", "evidence:a1b51e5421064015b888cef6948b4d3a": "with a 95% confidence interval from -43 to 95 basis points"}
+
+$ cain why event:b3920942396741659b5933596b17c8d1 --as-of now
+{
+  "root": "event:b3920942396741659b5933596b17c8d1",
+  "nodes": [
+    {
+      "node": "claim:bde88a6b835841029fbe93f89328ced2",
+      "depth": 1,
+      "kind": "claim"
+    },
+    {
+      "node": "doc:43752919cd914051a3c50e93eefa6089",
+      "depth": 2,
+      "kind": "document"
+    },
+    {
+      "node": "evidence:a1b51e5421064015b888cef6948b4d3a",
+      "depth": 2,
+      "kind": "evidence"
+    },
+    {
+      "node": "event:fab8503152714fc283c5cf824f2dac0a",
+      "depth": 2,
+      "kind": "assessment"
+    }
+  ],
+  "edges": [
+    {
+      "from": "event:b3920942396741659b5933596b17c8d1",
+      "relation": "USED",
+      "to": "claim:bde88a6b835841029fbe93f89328ced2",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "claim:bde88a6b835841029fbe93f89328ced2",
+      "relation": "DERIVED_FROM",
+      "to": "doc:43752919cd914051a3c50e93eefa6089",
+      "origin": "claim.recorded",
+      "depth": 2
+    },
+    {
+      "from": "evidence:a1b51e5421064015b888cef6948b4d3a",
+      "relation": "SUPPORTS",
+      "to": "claim:bde88a6b835841029fbe93f89328ced2",
+      "origin": "claim.recorded",
+      "depth": 2
+    },
+    {
+      "from": "event:fab8503152714fc283c5cf824f2dac0a",
+      "relation": "UPDATED",
+      "to": "claim:bde88a6b835841029fbe93f89328ced2",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:b3920942396741659b5933596b17c8d1",
+      "relation": "UPDATED",
+      "to": "claim:bde88a6b835841029fbe93f89328ced2",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "evidence:a1b51e5421064015b888cef6948b4d3a",
+      "relation": "DERIVED_FROM",
+      "to": "doc:43752919cd914051a3c50e93eefa6089",
+      "origin": "evidence.recorded",
+      "depth": 3
+    },
+    {
+      "from": "event:fab8503152714fc283c5cf824f2dac0a",
+      "relation": "USED",
+      "to": "claim:bde88a6b835841029fbe93f89328ced2",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:fab8503152714fc283c5cf824f2dac0a",
+      "relation": "USED",
+      "to": "evidence:a1b51e5421064015b888cef6948b4d3a",
+      "origin": "claim.assessed",
+      "depth": 3
+    }
+  ],
+  "as_of": "2026-09-24T18:14:08.982913Z",
+  "evidence": [
+    "evidence:a1b51e5421064015b888cef6948b4d3a"
+  ],
+  "runs": [],
+  "claims": [
+    "claim:bde88a6b835841029fbe93f89328ced2"
+  ],
+  "documents": [
+    "doc:43752919cd914051a3c50e93eefa6089"
+  ]
+}
+[exit 0]
+
+$ cain impact evidence:73f43020ab66440a81fcac4ea385611b --as-of now
+{
+  "root": "evidence:73f43020ab66440a81fcac4ea385611b",
+  "nodes": [
+    {
+      "node": "claim:ebface50600a4656b97be95449959c88",
+      "depth": 1,
+      "kind": "claim"
+    },
+    {
+      "node": "event:aa798c41876e4e649d58501805926b59",
+      "depth": 1,
+      "kind": "assessment"
+    },
+    {
+      "node": "event:2c3501bb4fc34fcfaef247f2175bab5f",
+      "depth": 1,
+      "kind": "assessment"
+    },
+    {
+      "node": "event:2d05b53c37254474829c6e50c1904dd9",
+      "depth": 1,
+      "kind": "assessment"
+    },
+    {
+      "node": "event:ed33272fa867486c8d832221446762dd",
+      "depth": 1,
+      "kind": "assessment"
+    },
+    {
+      "node": "event:b17e60b61b194efc84dbce16d55b716b",
+      "depth": 1,
+      "kind": "assessment"
+    },
+    {
+      "node": "event:41ce4f4ab2be45fdabc464004e2eca09",
+      "depth": 1,
+      "kind": "assessment"
+    },
+    {
+      "node": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "depth": 2,
+      "kind": "claim"
+    },
+    {
+      "node": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "depth": 2,
+      "kind": "claim"
+    },
+    {
+      "node": "claim:9916f567fe0241cc92856c6165be2681",
+      "depth": 2,
+      "kind": "claim"
+    },
+    {
+      "node": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "depth": 2,
+      "kind": "claim"
+    },
+    {
+      "node": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "depth": 2,
+      "kind": "claim"
+    }
+  ],
+  "edges": [
+    {
+      "from": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "relation": "SUPPORTS",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.recorded",
+      "depth": 1
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "event:2c3501bb4fc34fcfaef247f2175bab5f",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "event:2d05b53c37254474829c6e50c1904dd9",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "event:ed33272fa867486c8d832221446762dd",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "event:b17e60b61b194efc84dbce16d55b716b",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "event:41ce4f4ab2be45fdabc464004e2eca09",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 1
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "USED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "UPDATED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:2c3501bb4fc34fcfaef247f2175bab5f",
+      "relation": "UPDATED",
+      "to": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:2d05b53c37254474829c6e50c1904dd9",
+      "relation": "UPDATED",
+      "to": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:ed33272fa867486c8d832221446762dd",
+      "relation": "UPDATED",
+      "to": "claim:9916f567fe0241cc92856c6165be2681",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:b17e60b61b194efc84dbce16d55b716b",
+      "relation": "UPDATED",
+      "to": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:41ce4f4ab2be45fdabc464004e2eca09",
+      "relation": "UPDATED",
+      "to": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:2c3501bb4fc34fcfaef247f2175bab5f",
+      "relation": "USED",
+      "to": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:2d05b53c37254474829c6e50c1904dd9",
+      "relation": "USED",
+      "to": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:ed33272fa867486c8d832221446762dd",
+      "relation": "USED",
+      "to": "claim:9916f567fe0241cc92856c6165be2681",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:b17e60b61b194efc84dbce16d55b716b",
+      "relation": "USED",
+      "to": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:41ce4f4ab2be45fdabc464004e2eca09",
+      "relation": "USED",
+      "to": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "origin": "claim.assessed",
+      "depth": 3
+    }
+  ],
+  "as_of": "2026-09-24T18:14:09.068138Z"
+}
+[exit 0]
+
+$ cain relate decision:p3-backtest-report-published USED claim:ebface50600a4656b97be95449959c88 --by "cain-agent (demo)" --note "the published summary cites this claim"
+{
+  "id": "fact:32cf143f8d794835927134145a2db81a",
+  "cube": "provenance",
+  "subject": "decision:p3-backtest-report-published",
+  "predicate": "prov:USED",
+  "object": {
+    "to": "claim:ebface50600a4656b97be95449959c88",
+    "by": "cain-agent (demo)",
+    "note": "the published summary cites this claim"
+  },
+  "valid_from": null,
+  "valid_to": null,
+  "supersedes": null,
+  "source_episode_id": null,
+  "source_hash": null,
+  "extractor_model": null,
+  "extractor_prompt_hash": null,
+  "extractor_version": null,
+  "status": "DECLARED",
+  "recorded_at": "2026-09-24T18:14:09.145800Z",
+  "event_id": "event:046bcf56de5745c8aad514c0a0207552"
+}
+[exit 0]
+
+$ cain why decision:p3-backtest-report-published --as-of now
+{
+  "root": "decision:p3-backtest-report-published",
+  "nodes": [
+    {
+      "node": "claim:ebface50600a4656b97be95449959c88",
+      "depth": 1,
+      "kind": "claim"
+    },
+    {
+      "node": "doc:43752919cd914051a3c50e93eefa6089",
+      "depth": 2,
+      "kind": "document"
+    },
+    {
+      "node": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "depth": 2,
+      "kind": "evidence"
+    },
+    {
+      "node": "event:aa798c41876e4e649d58501805926b59",
+      "depth": 2,
+      "kind": "assessment"
+    }
+  ],
+  "edges": [
+    {
+      "from": "decision:p3-backtest-report-published",
+      "relation": "USED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "relate by cain-agent (demo)",
+      "depth": 1
+    },
+    {
+      "from": "claim:ebface50600a4656b97be95449959c88",
+      "relation": "DERIVED_FROM",
+      "to": "doc:43752919cd914051a3c50e93eefa6089",
+      "origin": "claim.recorded",
+      "depth": 2
+    },
+    {
+      "from": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "relation": "SUPPORTS",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.recorded",
+      "depth": 2
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "UPDATED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "relation": "DERIVED_FROM",
+      "to": "doc:43752919cd914051a3c50e93eefa6089",
+      "origin": "evidence.recorded",
+      "depth": 3
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "USED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 3
+    }
+  ],
+  "as_of": "2026-09-24T18:14:09.227000Z",
+  "evidence": [
+    "evidence:73f43020ab66440a81fcac4ea385611b"
+  ],
+  "runs": [],
+  "claims": [
+    "claim:ebface50600a4656b97be95449959c88"
+  ],
+  "documents": [
+    "doc:43752919cd914051a3c50e93eefa6089"
+  ]
+}
+[exit 0]
+
+$ cain invalidate evidence:73f43020ab66440a81fcac4ea385611b --by "cain-agent (demo)" --reason "demo: pretend the periods sentence came from a superseded draft"
+{
+  "invalidation": "invalidation:077fb00c9bdd",
+  "invalidated": "evidence:73f43020ab66440a81fcac4ea385611b",
+  "flagged": [
+    {
+      "node": "claim:ebface50600a4656b97be95449959c88",
+      "kind": "claim",
+      "via": "event:14d01b2ffbdd477d996e5f4df1807a6b"
+    },
+    {
+      "node": "event:aa798c41876e4e649d58501805926b59",
+      "kind": "assessment",
+      "via": "fact:abc03e62633c4edeaa3143dee47c9ec4"
+    },
+    {
+      "node": "event:2c3501bb4fc34fcfaef247f2175bab5f",
+      "kind": "assessment",
+      "via": "fact:e930dd89d35243048a1978db4bf237e9"
+    },
+    {
+      "node": "event:2d05b53c37254474829c6e50c1904dd9",
+      "kind": "assessment",
+      "via": "fact:2887021a1c3b492aa43dd84a9f59edf8"
+    },
+    {
+      "node": "event:ed33272fa867486c8d832221446762dd",
+      "kind": "assessment",
+      "via": "fact:8b9e280139174b269e23b21fab326dfd"
+    },
+    {
+      "node": "event:b17e60b61b194efc84dbce16d55b716b",
+      "kind": "assessment",
+      "via": "fact:ff8d793a07aa4ca0b4a5a621041a59e0"
+    },
+    {
+      "node": "event:41ce4f4ab2be45fdabc464004e2eca09",
+      "kind": "assessment",
+      "via": "fact:bd90ce626b754143bf9ca324b2b3a652"
+    },
+    {
+      "node": "decision:p3-backtest-report-published",
+      "kind": "other",
+      "via": "fact:811a55592c004d629dd02359fff59ff4"
+    },
+    {
+      "node": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "kind": "claim",
+      "via": "event:931b30a03c604b46967e82c16368bc9f"
+    },
+    {
+      "node": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "kind": "claim",
+      "via": "event:e6c7f6e43af94e9c89f3898a6b2542d0"
+    },
+    {
+      "node": "claim:9916f567fe0241cc92856c6165be2681",
+      "kind": "claim",
+      "via": "event:b016a5ce4b664448aa20b84b91d4a73d"
+    },
+    {
+      "node": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "kind": "claim",
+      "via": "event:8ae270f0cc75481993e9d4350ac4fad9"
+    },
+    {
+      "node": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "kind": "claim",
+      "via": "event:6950c50e0226405bba8c58cd055b25b3"
+    }
+  ]
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-p9/prov/memory.db list --as-of now --cube research --unsupported
+{
+  "claims": [
+    {
+      "id": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "cube": "research",
+      "text": "The backtest covered 49 rebalance periods.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "needs_human_review",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:31.886588Z",
+      "assessed_by": "provenance:invalidation:077fb00c9bdd",
+      "rule": "provenance-invalidation/1"
+    },
+    {
+      "id": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "cube": "research",
+      "text": "The strategy did not beat the benchmark with statistical confidence.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 225,
+      "source_end": 293,
+      "source_quote": "The strategy did not beat the benchmark with statistical confidence.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "needs_human_review",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:31.914051Z",
+      "assessed_by": "provenance:invalidation:077fb00c9bdd",
+      "rule": "provenance-invalidation/1"
+    },
+    {
+      "id": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "cube": "research",
+      "text": "The 95% confidence interval for net excess return was from -43 to 95 basis points.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 224,
+      "source_quote": "Net excess return averaged 29 basis points per period, with a 95% confidence interval from -43 to 95 basis points.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "needs_human_review",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:31.910756Z",
+      "assessed_by": "provenance:invalidation:077fb00c9bdd",
+      "rule": "provenance-invalidation/1"
+    },
+    {
+      "id": "claim:9916f567fe0241cc92856c6165be2681",
+      "cube": "research",
+      "text": "Net excess return averaged 29 basis points per period.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 224,
+      "source_quote": "Net excess return averaged 29 basis points per period, with a 95% confidence interval from -43 to 95 basis points.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "needs_human_review",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:31.907489Z",
+      "assessed_by": "provenance:invalidation:077fb00c9bdd",
+      "rule": "provenance-invalidation/1"
+    },
+    {
+      "id": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "cube": "research",
+      "text": "The backtest period was between July 2022 and August 2025.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "needs_human_review",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:31.903404Z",
+      "assessed_by": "provenance:invalidation:077fb00c9bdd",
+      "rule": "provenance-invalidation/1"
+    },
+    {
+      "id": "claim:ebface50600a4656b97be95449959c88",
+      "cube": "research",
+      "text": "The backtest spans 49 rebalance periods.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "needs_human_review",
+      "evidence_ids": [
+        "evidence:73f43020ab66440a81fcac4ea385611b"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:11.054617Z",
+      "assessed_by": "provenance:invalidation:077fb00c9bdd",
+      "rule": "provenance-invalidation/1"
+    },
+    {
+      "id": "claim:f1ab773d4f5b496f80934e2e3415b18e",
+      "cube": "research",
+      "text": "Net excess return averaged 92 basis points per period.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 163,
+      "source_quote": "Net excess return averaged 29 basis points per period",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:5b2fb529f291402f988f907d63cd37fc"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.023453,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.410473,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.143177Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    }
+  ]
+}
+[exit 0]
+
+$ cain trace decision:p3-backtest-report-published --as-of now
+{
+  "root": "decision:p3-backtest-report-published",
+  "nodes": [
+    {
+      "node": "claim:ebface50600a4656b97be95449959c88",
+      "depth": 1,
+      "kind": "claim"
+    },
+    {
+      "node": "doc:43752919cd914051a3c50e93eefa6089",
+      "depth": 2,
+      "kind": "document"
+    },
+    {
+      "node": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "depth": 2,
+      "kind": "evidence"
+    },
+    {
+      "node": "event:aa798c41876e4e649d58501805926b59",
+      "depth": 2,
+      "kind": "assessment"
+    },
+    {
+      "node": "event:14d01b2ffbdd477d996e5f4df1807a6b",
+      "depth": 2,
+      "kind": "assessment"
+    },
+    {
+      "node": "invalidation:077fb00c9bdd",
+      "depth": 3,
+      "kind": "invalidation"
+    }
+  ],
+  "edges": [
+    {
+      "from": "decision:p3-backtest-report-published",
+      "relation": "USED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "relate by cain-agent (demo)",
+      "depth": 1
+    },
+    {
+      "from": "claim:ebface50600a4656b97be95449959c88",
+      "relation": "DERIVED_FROM",
+      "to": "doc:43752919cd914051a3c50e93eefa6089",
+      "origin": "claim.recorded",
+      "depth": 2
+    },
+    {
+      "from": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "relation": "SUPPORTS",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.recorded",
+      "depth": 2
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "UPDATED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "event:14d01b2ffbdd477d996e5f4df1807a6b",
+      "relation": "UPDATED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 2
+    },
+    {
+      "from": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "relation": "DERIVED_FROM",
+      "to": "doc:43752919cd914051a3c50e93eefa6089",
+      "origin": "evidence.recorded",
+      "depth": 3
+    },
+    {
+      "from": "invalidation:077fb00c9bdd",
+      "relation": "INVALIDATES",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "relate by cain-agent (demo)",
+      "depth": 3
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "USED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:aa798c41876e4e649d58501805926b59",
+      "relation": "USED",
+      "to": "evidence:73f43020ab66440a81fcac4ea385611b",
+      "origin": "claim.assessed",
+      "depth": 3
+    },
+    {
+      "from": "event:14d01b2ffbdd477d996e5f4df1807a6b",
+      "relation": "USED",
+      "to": "claim:ebface50600a4656b97be95449959c88",
+      "origin": "claim.assessed",
+      "depth": 3
+    }
+  ],
+  "as_of": "2026-09-24T18:14:09.511725Z"
+}
+[exit 0]
+
+$ cain memory --db /home/superleo13/predictors/runtime/cain-p9/prov/memory.db verify
+{
+  "entries": 36,
+  "status": "intact",
+  "broken_at": null,
+  "head": "dff2d51eb525aa3a123a64c9f8a1a0e0ffddf8b70d68b39fd4d4dbe185c43145",
+  "head_recorded_at": "2026-09-24T18:14:09.355969Z",
+  "projection": "consistent"
+}
+[exit 0]
+
