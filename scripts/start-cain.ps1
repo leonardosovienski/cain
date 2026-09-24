@@ -18,10 +18,14 @@ if ($taskLocal -and (Test-Path -LiteralPath $taskLocal.python)) {
     $taskPython = $taskLocal.python
 }
 if (-not (Test-Path -LiteralPath $taskPython)) {
-    & python -m venv (Join-Path $taskRoot '.venv')
-    if ($LASTEXITCODE -ne 0) { throw 'Python 3.11+ is required.' }
-    & $taskPython -m pip install --find-links (Join-Path $taskRoot 'vendor') -e ($taskRoot + '[api]')
-    if ($LASTEXITCODE -ne 0) { throw 'Could not install Cain dependencies.' }
+    # Fresh checkout: install from uv.lock, the same flow the CI runs (README.md).
+    $taskUv = Get-Command uv -ErrorAction SilentlyContinue
+    if (-not $taskUv) {
+        throw 'uv is required to install Cain from uv.lock: https://docs.astral.sh/uv/getting-started/installation/ (see README.md).'
+    }
+    & $taskUv.Source sync --locked --extra api --project $taskRoot
+    if ($LASTEXITCODE -ne 0) { throw 'Could not install Cain dependencies (uv sync --locked failed).' }
+    if (-not (Test-Path -LiteralPath $taskPython)) { throw 'uv sync finished but .venv\Scripts\python.exe was not created.' }
 }
 $env:PYTHONUTF8 = '1'
 if ($Mode -in @('chat', 'demo') -or ($Mode -eq 'web' -and $taskLocal -and $taskLocal.auto_start_ollama -eq $true)) {
