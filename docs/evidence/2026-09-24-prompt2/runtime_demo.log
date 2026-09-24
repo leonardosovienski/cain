@@ -1,0 +1,17 @@
+### console script: cain (venv do uv.lock), branch melhorias/p2-memoria-bitemporal
+$ cain memory facts --as-of T1 (antes da correção) → objeto e superseded_at
+[(29, None)]
+$ cain memory facts --as-of now
+[({'correction_reason': 'releitura', 'value': 31}, True)]
+$ cain memory facts sem --as-of
+cain memory facts: error: the following arguments are required: --as-of
+exit=2
+$ cain memory verify
+intact consistent 2
+$ cain memory rebuild-index
+2
+### adulteração: evento 1 reescrito fora da API
+$ cain memory verify (após adulteração)
+broken broken_at= 1
+$ cain memory rebuild-index (após adulteração)
+Cain: CHAIN_BROKEN: log broken at seq 1; refusing to rebuild
