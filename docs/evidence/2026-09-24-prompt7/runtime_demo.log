@@ -1,0 +1,871 @@
+# P7 runtime demo: findings from the real predictors (origin/main of each local repo)
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-registry --domain brasileirao --repo /home/superleo13/predictors/repos/brasileirao-predictor --path data/trials.v2.json
+{
+  "domain": "brasileirao",
+  "source": {
+    "repo": "brasileirao-predictor",
+    "commit": "d80a4edee94ca0219ec308911d56628499792885",
+    "path": "data/trials.v2.json",
+    "sha256": "659fb75aeda5e844d7dbd7be49982c30c1a00e197a7fa97143002da24c7944ed"
+  },
+  "rows": 29,
+  "counts": {
+    "recorded:negative": 6,
+    "recorded:informative": 22,
+    "recorded:positive": 1
+  }
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-registry --domain crypto --repo /home/superleo13/predictors/repos/cripto-predictor --path GarimpoInvestimentos/trials.json
+{
+  "domain": "crypto",
+  "source": {
+    "repo": "cripto-predictor",
+    "commit": "652cc63f8dd8915162cbf6f1bd6a96a08ee98d1f",
+    "path": "GarimpoInvestimentos/trials.json",
+    "sha256": "b43661d5fec21da0c9d0b9d1f2847555688b7bfb1ac436deee12d8fe923f1ece"
+  },
+  "rows": 26,
+  "counts": {
+    "recorded:informative": 26
+  }
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-registry --domain stocks --repo /home/superleo13/predictors/repos/stocks-predictor --path trials_v2.json
+{
+  "domain": "stocks",
+  "source": {
+    "repo": "stocks-predictor",
+    "commit": "fe53b19331ddc0cbae777d9b3d3606c0cf3d73b5",
+    "path": "trials_v2.json",
+    "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+  },
+  "rows": 15,
+  "counts": {
+    "recorded:informative": 15
+  }
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-state --domain crypto --repo /home/superleo13/predictors/repos/cripto-predictor --path charters/scientific_state.json --registry-path GarimpoInvestimentos/trials.json
+{
+  "domain": "crypto",
+  "source": {
+    "repo": "cripto-predictor",
+    "commit": "652cc63f8dd8915162cbf6f1bd6a96a08ee98d1f",
+    "path": "charters/scientific_state.json",
+    "sha256": "4d2a7d7bbfcc0264ac1d0f30b76ecd20fd883b8a2cb6732c00fc502499793636"
+  },
+  "hypotheses": 9,
+  "counts": {
+    "recorded:negative": 8,
+    "recorded:informative": 2
+  }
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-loop --domain brasileirao --loop-db /home/superleo13/predictors/runtime/cain-p6/run/state/loop.db --loop-id loop:brasileirao-dev2022-1
+{
+  "status": "recorded",
+  "fact_id": "fact:7e2588b45479486eb2032a1894a9af75",
+  "supersedes": null,
+  "finding_status": "DECLARED"
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-loop --domain brasileirao --loop-db /home/superleo13/predictors/runtime/cain-p6/run/state/loop.db --loop-id loop:brasileirao-dev2022-2
+{
+  "status": "recorded",
+  "fact_id": "fact:a0abcd93834d4b25927b70e086da8af7",
+  "supersedes": null,
+  "finding_status": "DECLARED"
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db ingest-registry --domain brasileirao --repo /home/superleo13/predictors/repos/brasileirao-predictor --path data/trials.v2.json
+{
+  "domain": "brasileirao",
+  "source": {
+    "repo": "brasileirao-predictor",
+    "commit": "d80a4edee94ca0219ec308911d56628499792885",
+    "path": "data/trials.v2.json",
+    "sha256": "659fb75aeda5e844d7dbd7be49982c30c1a00e197a7fa97143002da24c7944ed"
+  },
+  "rows": 29,
+  "counts": {
+    "unchanged:negative": 6,
+    "unchanged:informative": 22,
+    "unchanged:positive": 1
+  }
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db list --domain brasileirao --as-of now
+{
+  "as_of": "2026-09-24T17:49:08.843507Z",
+  "include_quarantine": false,
+  "count": 0,
+  "findings": []
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db list --domain brasileirao --as-of now --include-quarantine
+{
+  "as_of": "2026-09-24T17:49:08.919028Z",
+  "include_quarantine": true,
+  "count": 31,
+  "findings": [
+    {
+      "details": {
+        "attempts": 6,
+        "best": {
+          "attempt": 1,
+          "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+          "params": {
+            "elo_form_half_life_years": 4,
+            "elo_home_advantage": 100,
+            "elo_window_years": 6,
+            "model_calibration_window_years": 4,
+            "model_max_goals": 12
+          },
+          "value": 0.209340038051
+        },
+        "evaluator_files": [
+          {
+            "path": "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py",
+            "sha256": "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/brasileirao_predictor/research_runtime/worker.py",
+            "sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/predictor_core/measurement/replay.py",
+            "sha256": "f4a2854e8a68c9532c8256ab94d6e9d7c68fac6d50fcf5298980d6b4830accec"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json",
+            "sha256": "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2021-1X2-climatology.json",
+            "sha256": "5f7f29846c94d25f2467b37611b04ee399d981dbeb92ce0adb726becb247619e"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2022-1X2-climatology.json",
+            "sha256": "11bcff4906104430c011416ada7e17bd8c7b5c9e538980b4d50de872d339c947"
+          }
+        ],
+        "stop": "stagnation"
+      },
+      "evaluation_report": {
+        "path": "cain-loop-ledger:loop:brasileirao-dev2022-1#seq=4",
+        "sha256": "227cee7407e7b94feaaa9d9a6d54b52ccc862ca61f507c2ecaebe47bb7bdd42d",
+        "value": 0.209340038051
+      },
+      "finding_id": "brasileirao:loop:loop:brasileirao-dev2022-1",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+        "world_id": "brasileirao-elo-1x2-dev2022"
+      },
+      "kind": "negative",
+      "quarantine_reason": "missing governance transition",
+      "source": {
+        "loop_id": "loop:brasileirao-dev2022-1",
+        "path": "/home/superleo13/predictors/runtime/cain-p6/run/state/loop.db",
+        "repo": "cain-loop-ledger",
+        "sha256": "6c03bab645765b03d652702aa467d3b86e18e4358e9b99f08dd1540587871aa4",
+        "world_sha256": "08949ca83c1ef296884159a9d2370bb188cd602502bf01c2cb5c2c1eae50a56a"
+      },
+      "statement": "CAIN-LOOP:BR-ELO-TUNING-DEV2022 brasileirao-elo-1x2-dev2022: NO_IMPROVEMENT_OVER_BASELINE after 6 attempts (stop: stagnation)",
+      "verdict": "NO_IMPROVEMENT_OVER_BASELINE",
+      "domain": "brasileirao",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:7e2588b45479486eb2032a1894a9af75",
+      "recorded_at": "2026-09-24T17:49:08.442654Z"
+    },
+    {
+      "details": {
+        "attempts": 6,
+        "best": {
+          "attempt": 1,
+          "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+          "params": {
+            "elo_form_half_life_years": 4,
+            "elo_home_advantage": 100,
+            "elo_window_years": 6,
+            "model_calibration_window_years": 4,
+            "model_max_goals": 12
+          },
+          "value": 0.209340038051
+        },
+        "evaluator_files": [
+          {
+            "path": "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py",
+            "sha256": "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/brasileirao_predictor/research_runtime/worker.py",
+            "sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/predictor_core/measurement/replay.py",
+            "sha256": "f4a2854e8a68c9532c8256ab94d6e9d7c68fac6d50fcf5298980d6b4830accec"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json",
+            "sha256": "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2021-1X2-climatology.json",
+            "sha256": "5f7f29846c94d25f2467b37611b04ee399d981dbeb92ce0adb726becb247619e"
+          },
+          {
+            "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2022-1X2-climatology.json",
+            "sha256": "11bcff4906104430c011416ada7e17bd8c7b5c9e538980b4d50de872d339c947"
+          }
+        ],
+        "stop": "stagnation"
+      },
+      "evaluation_report": {
+        "path": "cain-loop-ledger:loop:brasileirao-dev2022-2#seq=21",
+        "sha256": "e86892024c9163e82de117f623344dd57678defff8f5f009977820e2325b379b",
+        "value": 0.209340038051
+      },
+      "finding_id": "brasileirao:loop:loop:brasileirao-dev2022-2",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+        "world_id": "brasileirao-elo-1x2-dev2022"
+      },
+      "kind": "negative",
+      "quarantine_reason": "missing governance transition",
+      "source": {
+        "l
+[... truncated ...]
+w-information {\"capital_enabled\": false, \"feature_family\": \"lineup\", \"mechanism\": \"composição provável ou confirmada altera força e continuidade esperadas\", \"pit_requirement\": \"available_at strictly before kickoff\", \"training_gate\": \"phase0b_go OR live_viability_go\"} Mecanismo ex ante registrado como scaffold. Escalação não recebe peso quantitativo antes do gate externo e de transformação congelada.",
+      "verdict": "PREREGISTERED",
+      "domain": "brasileirao",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:cd67e1e2fe324fc093e79bd96ef18b82",
+      "recorded_at": "2026-09-24T17:49:07.879817Z"
+    },
+    {
+      "details": {
+        "hashes": {},
+        "notes": "Registro informativo do scaffold de validação prospectiva. Não é evidência de edge e nunca habilita capital automaticamente.",
+        "params": {
+          "allowed_capital_outputs": [
+            "CAPITAL_GATE: LOCKED",
+            "CAPITAL_GATE: ELIGIBLE_FOR_REVIEW"
+          ],
+          "capital_decision_authority": "human_outside_code",
+          "metrics": [
+            "clv",
+            "roi_bootstrap_ci95",
+            "calibration",
+            "coverage",
+            "psr",
+            "dsr"
+          ],
+          "minimum_dsr": 0.95,
+          "mode": "paper_trading_only",
+          "stake": "fixed-1u"
+        },
+        "registered_at": "2026-08-24T12:06:00Z",
+        "result": {
+          "sharpe": null
+        },
+        "status": "informativa"
+      },
+      "evaluation_report": null,
+      "finding_id": "brasileirao:trial:prospective-paper-validation-governance",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_family": null,
+        "hypothesis_id": null,
+        "trial_id": "prospective-paper-validation-governance"
+      },
+      "kind": "informative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "d80a4edee94ca0219ec308911d56628499792885",
+        "path": "data/trials.v2.json",
+        "repo": "brasileirao-predictor",
+        "row_identity": "prospective-paper-validation-governance",
+        "sha256": "659fb75aeda5e844d7dbd7be49982c30c1a00e197a7fa97143002da24c7944ed"
+      },
+      "statement": "prospective-paper-validation-governance {\"allowed_capital_outputs\": [\"CAPITAL_GATE: LOCKED\", \"CAPITAL_GATE: ELIGIBLE_FOR_REVIEW\"], \"capital_decision_authority\": \"human_outside_code\", \"metrics\": [\"clv\", \"roi_bootstrap_ci95\", \"calibration\", \"coverage\", \"psr\", \"dsr\"], \"minimum_dsr\": 0.95, \"mode\": \"paper_trading_only\", \"stake\": \"fixed-1u\"} Registro informativo do scaffold de validação prospectiva. Não é evidência de edge e nunca habilita capital automaticamente.",
+      "verdict": "INFORMATIVE",
+      "domain": "brasileirao",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:df78e54b6ce34e48b23614fe8d3d113c",
+      "recorded_at": "2026-09-24T17:49:07.895109Z"
+    }
+  ]
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db list --domain crypto --as-of now
+{
+  "as_of": "2026-09-24T17:49:08.995299Z",
+  "include_quarantine": false,
+  "count": 0,
+  "findings": []
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db list --domain crypto --as-of now --include-quarantine
+{
+  "as_of": "2026-09-24T17:49:09.100070Z",
+  "include_quarantine": true,
+  "count": 36,
+  "findings": [
+    {
+      "details": {
+        "as_of_commit": "9949b510586cafe08c11a4733c19ebf30edf253c",
+        "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir. Errata CRIPTO v1.2, 2026-09-07: H6 e H9 permanecem encerradas, agora CLOSED_INSUFFICIENT_SAMPLE. H6: INCONCLUSIVE_DUE_TO_POWER (n=84, IC cruza zero, poder 23% para rho=0.2); H9: INCONCLUSIVE (44/45 folds insuficientes). A decisão de não promoção de 2026-09-04 é mantida; sua leitura como refutação científica é retirada. Ver docs/HYPOTHESES.md, errata 2026-09-07. Isto não reativa hipóteses nem altera coleta, ledger, selos ou frozen_families."
+      },
+      "evaluation_report": null,
+      "finding_id": "crypto:frozen-family:funding_oi_hmm_v3",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_family": "funding_oi_hmm_v3"
+      },
+      "kind": "negative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "652cc63f8dd8915162cbf6f1bd6a96a08ee98d1f",
+        "key": "frozen_families",
+        "path": "charters/scientific_state.json",
+        "repo": "cripto-predictor",
+        "sha256": "4d2a7d7bbfcc0264ac1d0f30b76ecd20fd883b8a2cb6732c00fc502499793636"
+      },
+      "statement": "frozen family funding_oi_hmm_v3: cannot be reopened or reparameterized silently",
+      "verdict": "FROZEN_FAMILY",
+      "domain": "crypto",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:6694eb68c6ad430bbe71afb6cd97a56c",
+      "recorded_at": "2026-09-24T17:49:08.361585Z"
+    },
+    {
+      "details": {
+        "as_of_commit": "9949b510586cafe08c11a4733c19ebf30edf253c",
+        "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir. Errata CRIPTO v1.2, 2026-09-07: H6 e H9 permanecem encerradas, agora CLOSED_INSUFFICIENT_SAMPLE. H6: INCONCLUSIVE_DUE_TO_POWER (n=84, IC cruza zero, poder 23% para rho=0.2); H9: INCONCLUSIVE (44/45 folds insuficientes). A decisão de não promoção de 2026-09-04 é mantida; sua leitura como refutação científica é retirada. Ver docs/HYPOTHESES.md, errata 2026-09-07. Isto não reativa hipóteses nem altera coleta, ledger, selos ou frozen_families.",
+        "state": "CLOSED_NO_GO"
+      },
+      "evaluation_report": null,
+      "finding_id": "crypto:hypothesis:H1",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_id": "H1",
+        "trial_id": "v3-hmm-funding-oi-fr90"
+      },
+      "kind": "negative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "652cc63f8dd8915162cbf6f1bd6a96a08ee98d1f",
+        "key": "hypotheses.H1",
+        "path": "charters/scientific_state.json",
+        "repo": "cripto-predictor",
+        "sha256": "4d2a7d7bbfcc0264ac1d0f30b76ecd20fd883b8a2cb6732c00fc502499793636"
+      },
+      "statement": "H1 v3-hmm-funding-oi-fr90 v3-hmm-funding-oi-fr90 {\"custos\": \"taker 10bps + slip 5bps por perna + funding real\", \"features\": \"funding_zscore(90), oi_log_delta, leverage_pressure, log_return_8h, realized_vol_24h\", \"horizonte_horas\": 24, \"modelo\": \"GaussianHMM 3 estados (forward causal)\", \"validacao\": \"WFA IS/OOS por timestamp\"} VEREDITO FINAL 2026-07-02 (com custos completos): NO-GO. BTCUSDT n=3958 sinais OOS, bruto +0.44bps/sinal -> liquido -0.09bps/sinal (custos ~0.53bps comem o edge); PSR 0.445, DSR<=0.445, IC_lo Spearman -0.086, MaxDD 29%. ETHUSDT: PSR 0.051, liquido -1.11bps/sinal. PSR e kelly-invariante => nenhuma fracao salva. GO historico de 27/06 (PSR 0.909) era PRE-custos e pos kelly-sweep. Hipotese fechada com",
+      "verdict": "NO_GO",
+      "domain": "crypto",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:4b1f0920c6ae49268ee6c4e7573a71e8",
+      "recorded_at": "2026-09-24T17:49:08.312342Z"
+    },
+    {
+      "details": {
+        "as_of_commit": "9949b510586cafe08c11a4733c19ebf30edf253c",
+        "notes": "H1-H3/V3 cannot be reopened or reparameterized silently. Any materially new hypothesis requires a new trial and valid power attestation. Correção 2026-08-19: 'H1' era confundido com a trial 'v1-direct-gemini-h7' (ancestral pré-protocolo da linha LLM, sem rótulo formal). O H1 real é 'v3-hmm-funding-oi-fr90' (docs/HYPOTHESES.md) — ver hypothesis_trials para o mapeamento explícito H<N> -> nome real em trials.json, que existe justamente para impedir essa ambiguidade se repetir. Errata CRIPTO v1.2, 2026-09-07: H6 e H9 permanecem encerradas, agora CLOSED_INSUFFICIENT_SAMPLE. H6: INCONCLUSIVE_DUE_TO_POWER (n=84, IC cruza zero, poder 23% para rho=0.2); H9: INCONCLUSIVE (44/45 folds insuficientes). A decisão de não promoção de 2026-09-04 é mantida; sua leitura como refutação científica é retirada. Ver docs/HYPOTHESES.md, errata 2026-09-07. Isto não reativa hipóteses nem altera coleta, ledger, selos ou frozen_families.",
+        "state": "CLOSED_NO_GO"
+      },
+      "evaluation_report": null,
+      "finding_id": "crypto:hypothesis:H2",
+      "governance_transition": null,
+      "identity": {
+        "
+[... truncated ...]
+), oi_log_delta, leverage_pressure, log_return_8h, realized_vol_24h\", \"horizonte_horas\": 24, \"modelo\": \"GaussianHMM 3 estados (forward causal)\", \"validacao\": \"WFA IS/OOS por timestamp\"} VEREDITO FINAL 2026-07-02 (com custos completos): NO-GO. BTCUSDT n=3958 sinais OOS, bruto +0.44bps/sinal -> liquido -0.09bps/sinal (custos ~0.53bps comem o edge); PSR 0.445, DSR<=0.445, IC_lo Spearman -0.086, MaxDD 29%. ETHUSDT: PSR 0.051, liquido -1.11bps/sinal. PSR e kelly-invariante => nenhuma fracao salva. GO historico de 27/06 (PSR 0.909) era PRE-custos e pos kelly-sweep. Hipotese fechada com",
+      "verdict": "UNLABELLED",
+      "domain": "crypto",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:845e412a66b44fb3b658d734b993e289",
+      "recorded_at": "2026-09-24T17:49:08.007242Z"
+    },
+    {
+      "details": {
+        "hashes": {},
+        "notes": "H3 REFUTADA 2026-07-02: NO-GO. Horizonte 48h NAO amortiza — o edge bruto VIRA NEGATIVO (-0.35bps -> liquido -0.75bps/sinal), PSR 0.192, MaxDD 50.3%. O sinal e de vida curta; esticar horizonte destroi em vez de amortizar. Pre-registrada em docs/HYPOTHESES.md antes do resultado.",
+        "params": {
+          "custos": "taker 10 + slip 5 bps/perna + funding real",
+          "features": "funding_zscore(90) + OI",
+          "horizonte_horas": 48,
+          "modelo": "GaussianHMM 3 estados (forward causal)"
+        },
+        "registered_at": "2026-07-02T07:00:00Z",
+        "result": {
+          "sharpe": -0.0132
+        },
+        "status": null
+      },
+      "evaluation_report": null,
+      "finding_id": "crypto:trial:v3-hmm-funding-oi-fr90-h48",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_family": null,
+        "hypothesis_id": null,
+        "trial_id": "v3-hmm-funding-oi-fr90-h48"
+      },
+      "kind": "informative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "652cc63f8dd8915162cbf6f1bd6a96a08ee98d1f",
+        "path": "GarimpoInvestimentos/trials.json",
+        "repo": "cripto-predictor",
+        "row_identity": "v3-hmm-funding-oi-fr90-h48",
+        "sha256": "b43661d5fec21da0c9d0b9d1f2847555688b7bfb1ac436deee12d8fe923f1ece"
+      },
+      "statement": "v3-hmm-funding-oi-fr90-h48 {\"custos\": \"taker 10 + slip 5 bps/perna + funding real\", \"features\": \"funding_zscore(90) + OI\", \"horizonte_horas\": 48, \"modelo\": \"GaussianHMM 3 estados (forward causal)\"} H3 REFUTADA 2026-07-02: NO-GO. Horizonte 48h NAO amortiza — o edge bruto VIRA NEGATIVO (-0.35bps -> liquido -0.75bps/sinal), PSR 0.192, MaxDD 50.3%. O sinal e de vida curta; esticar horizonte destroi em vez de amortizar. Pre-registrada em docs/HYPOTHESES.md antes do resultado.",
+      "verdict": "UNLABELLED",
+      "domain": "crypto",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:2c635d75bb2549f3a9e097eca17f2324",
+      "recorded_at": "2026-09-24T17:49:08.017252Z"
+    }
+  ]
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db list --domain stocks --as-of now
+{
+  "as_of": "2026-09-24T17:49:09.204788Z",
+  "include_quarantine": false,
+  "count": 0,
+  "findings": []
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db list --domain stocks --as-of now --include-quarantine
+{
+  "as_of": "2026-09-24T17:49:09.300120Z",
+  "include_quarantine": true,
+  "count": 15,
+  "findings": [
+    {
+      "details": {
+        "hashes": {},
+        "notes": "retroativa: veredito final da H1 (run 20260712T091903477689-41cc24), Sharpe anualizado 0.1592 -> por-período /sqrt(252); não comprovada",
+        "params": {
+          "backtest.purge_embargo_months": 1,
+          "backtest.test_start": "2018-01-01",
+          "backtest.warmup_end": "2017-12-31",
+          "bootstrap.block_length": 21,
+          "bootstrap.confidence": 0.95,
+          "bootstrap.n_boot": 10000,
+          "execution.b3_fee_pct": 0.0003,
+          "execution.brokerage_pct": 0,
+          "execution.price": "next_open",
+          "execution.spread_slippage_pct": 0.0015,
+          "factor.lookback_days": 252,
+          "factor.name": "momentum_12_1",
+          "factor.skip_days": 21,
+          "portfolio.direction": "long_only",
+          "portfolio.quantile": "top_quintile",
+          "portfolio.weighting": "equal",
+          "universe.lookback_trading_days": 126,
+          "universe.min_history_days": 252,
+          "universe.rebalance_frequency": "monthly",
+          "universe.top_n": 60
+        },
+        "registered_at": "2026-07-16T22:15:30Z",
+        "result": {
+          "legacy_sharpe": 0.010029
+        },
+        "status": "JUDGED"
+      },
+      "evaluation_report": null,
+      "finding_id": "stocks:trial:h1-momentum-12-1",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_family": "momentum_12_1",
+        "hypothesis_id": "H1",
+        "trial_id": "h1-momentum-12-1"
+      },
+      "kind": "informative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "fe53b19331ddc0cbae777d9b3d3606c0cf3d73b5",
+        "path": "trials_v2.json",
+        "repo": "stocks-predictor",
+        "row_identity": "h1-momentum-12-1",
+        "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+      },
+      "statement": "h1-momentum-12-1 momentum_12_1 {\"backtest.purge_embargo_months\": 1, \"backtest.test_start\": \"2018-01-01\", \"backtest.warmup_end\": \"2017-12-31\", \"bootstrap.block_length\": 21, \"bootstrap.confidence\": 0.95, \"bootstrap.n_boot\": 10000, \"execution.b3_fee_pct\": 0.0003, \"execution.brokerage_pct\": 0.0, \"execution.price\": \"next_open\", \"execution.spread_slippage_pct\": 0.0015, \"factor.lookback_days\": 252, \"factor.name\": \"momentum_12_1\", \"factor.skip_days\": 21, \"portfolio.direction\": \"long_only\", \"portfolio.quantile\": \"top_quintile\", \"portfolio.weighting\": \"equal\", \"universe.lookback_trading_days\": 126, \"universe.min_history_days\": 252, \"universe.rebalance_frequency\": \"monthly\", \"universe.top_n\": 60} retroativa: veredito final da H1 (run 20260712T091903477689-41cc24), Sharpe anualizado 0.1592 -> por-período /sqrt(252); não comprovada",
+      "verdict": "JUDGED",
+      "domain": "stocks",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:c6a17dfec1dc42ac9faaf58b94a51b27",
+      "recorded_at": "2026-09-24T17:49:08.174325Z"
+    },
+    {
+      "details": {
+        "hashes": {},
+        "notes": "rodada única da H10 (filtro duplo ROE top ∩ baixa alavancagem; sharpe por-período realizado)",
+        "params": {
+          "backtest.purge_embargo_months": 1,
+          "backtest.test_start": "2018-01-01",
+          "backtest.warmup_end": "2017-12-31",
+          "bootstrap.block_length": 21,
+          "bootstrap.confidence": 0.95,
+          "bootstrap.method": "stationary",
+          "bootstrap.n_boot": 10000,
+          "execution.b3_fee_pct": 0.0003,
+          "execution.brokerage_pct": 0,
+          "execution.price": "next_open",
+          "execution.spread_slippage_pct": 0.0015,
+          "h10_criteria.dsr_min": 0.95,
+          "h10_factor.leverage_disclosure_embargo_days": 90,
+          "h10_factor.roe_disclosure_embargo_days": 90,
+          "h10_portfolio.direction": "long_only",
+          "h10_portfolio.leverage_quantile": 0.5,
+          "h10_portfolio.roe_quantile": 0.4,
+          "h10_portfolio.weighting": "equal",
+          "universe.lookback_trading_days": 126,
+          "universe.min_history_days": 252,
+          "universe.rebalance_frequency": "monthly",
+          "universe.top_n": 60
+        },
+        "registered_at": "2026-09-04T03:22:11Z",
+        "result": {
+          "legacy_sharpe": 0.006019
+        },
+        "status": "UNKNOWN"
+      },
+      "evaluation_report": null,
+      "finding_id": "stocks:trial:h10-roe-leverage-double",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_family": "quality_roe_leverage_intersection",
+        "hypothesis_id": "H10",
+        "trial_id": "h10-roe-leverage-double"
+      },
+      "kind": "informative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "fe53b19331ddc0cbae777d9b3d3606c0cf3d73b5",
+        "path": "trials_v2.json",
+        "repo": "stocks-predictor",
+        "row_identity": "h10-roe-leverage-double",
+        "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+      },
+      "statement": "h10-roe-leverage-double quality_roe_leverage_intersection {\"backtest.purge_embargo_months\": 1, \"backtest.test_start\": \"2018-01-01\", \"backtest.warmup_end\": \"2017-12-31\", \"bootstrap.block_length\": 21, \"bootstrap.confidence\": 0.95, \"bootstrap.method\": \"stationary\", \"bootstrap.n_boot\": 10000, \"execution.b3_fee_pct\": 0.0003, \"execution.brokerage_pct\": 0.0, \"execution.price\": \"next_open\", \"execution.spread_slippage_pct\": 0.0015, \"h10_criteria.dsr_min\": 0.95, \"h10_factor.leverage_disclosure_embargo_days\": 90, \"h10_factor.roe_disclosure_embargo_days\": 90, \"h10_portfolio.direction\": \"long_only\", \"h10_portfolio.leverage_quantile\": 0.5, \"h10_portfolio.roe_quantile\": 0.4, \"h10_portfolio.weighting\": \"equal\", \"universe.lookback_tra
+[... truncated ...]
+l inferior; sharpe por-período realizado)",
+        "params": {
+          "backtest.purge_embargo_months": 1,
+          "backtest.test_start": "2018-01-01",
+          "backtest.warmup_end": "2017-12-31",
+          "bootstrap.block_length": 21,
+          "bootstrap.confidence": 0.95,
+          "bootstrap.method": "stationary",
+          "bootstrap.n_boot": 10000,
+          "execution.b3_fee_pct": 0.0003,
+          "execution.brokerage_pct": 0,
+          "execution.price": "next_open",
+          "execution.spread_slippage_pct": 0.0015,
+          "h9_criteria.dsr_min": 0.95,
+          "h9_factor.disclosure_embargo_days": 90,
+          "h9_factor.name": "leverage",
+          "h9_portfolio.direction": "long_only",
+          "h9_portfolio.quantile": "bottom_quintile",
+          "h9_portfolio.weighting": "equal",
+          "universe.lookback_trading_days": 126,
+          "universe.min_history_days": 252,
+          "universe.rebalance_frequency": "monthly",
+          "universe.top_n": 60
+        },
+        "registered_at": "2026-09-04T03:01:01Z",
+        "result": {
+          "legacy_sharpe": 0.005103
+        },
+        "status": "UNKNOWN"
+      },
+      "evaluation_report": null,
+      "finding_id": "stocks:trial:h9-quality-leverage",
+      "governance_transition": null,
+      "identity": {
+        "hypothesis_family": "quality_leverage",
+        "hypothesis_id": "H9",
+        "trial_id": "h9-quality-leverage"
+      },
+      "kind": "informative",
+      "quarantine_reason": "missing evaluation report and governance transition",
+      "source": {
+        "commit": "fe53b19331ddc0cbae777d9b3d3606c0cf3d73b5",
+        "path": "trials_v2.json",
+        "repo": "stocks-predictor",
+        "row_identity": "h9-quality-leverage",
+        "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+      },
+      "statement": "h9-quality-leverage quality_leverage {\"backtest.purge_embargo_months\": 1, \"backtest.test_start\": \"2018-01-01\", \"backtest.warmup_end\": \"2017-12-31\", \"bootstrap.block_length\": 21, \"bootstrap.confidence\": 0.95, \"bootstrap.method\": \"stationary\", \"bootstrap.n_boot\": 10000, \"execution.b3_fee_pct\": 0.0003, \"execution.brokerage_pct\": 0.0, \"execution.price\": \"next_open\", \"execution.spread_slippage_pct\": 0.0015, \"h9_criteria.dsr_min\": 0.95, \"h9_factor.disclosure_embargo_days\": 90, \"h9_factor.name\": \"leverage\", \"h9_portfolio.direction\": \"long_only\", \"h9_portfolio.quantile\": \"bottom_quintile\", \"h9_portfolio.weighting\": \"equal\", \"universe.lookback_trading_days\": 126, \"universe.min_history_days\": 252, \"universe.rebalance_frequency\": \"monthly\", \"universe.top_n\": 60} rodada única da H9 (alavancagem isolada, quintil inferior; sharpe por-período realizado)",
+      "verdict": "UNKNOWN",
+      "domain": "stocks",
+      "status": "DECLARED",
+      "quarantine": true,
+      "fact_id": "fact:62063d67f7aa4516a8d9dc340ef8eb67",
+      "recorded_at": "2026-09-24T17:49:08.201209Z"
+    }
+  ]
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db check --domain crypto --as-of now --statement "A three-state hidden Markov regime model on funding rate and open interest" --hypothesis-family funding_oi_hmm_v3
+{
+  "equivalent_to_closed": true,
+  "matches": [
+    {
+      "finding_id": "crypto:frozen-family:funding_oi_hmm_v3",
+      "verdict": "FROZEN_FAMILY",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [
+        "hypothesis_family"
+      ],
+      "similarity": 0.0,
+      "statement": "frozen family funding_oi_hmm_v3: cannot be reopened or reparameterized silently"
+    }
+  ]
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db check --domain crypto --as-of now --statement "Weekend liquidity of stablecoin pairs predicts Monday volatility"
+{
+  "equivalent_to_closed": false,
+  "matches": []
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db apply brasileirao:loop:loop:brasileirao-dev2022-2 --from brasileirao --to crypto --as-of now
+[stderr] Cain: CROSS_DOMAIN_NEEDS_PREREGISTRATION: using a brasileirao finding in crypto needs a new hypothesis pre-registered in crypto
+[exit 1]
+
+$ cain loop --db /home/superleo13/predictors/runtime/cain-p7/run/loop.db run --predictor brasileirao --world /home/superleo13/predictors/work/cain-p7/loops/brasileirao/research_world.toml --memory-db /home/superleo13/predictors/runtime/cain-p7/run/memory.db --loop-id loop:brasileirao-dev2022-retry
+{
+  "loop_id": "loop:brasileirao-dev2022-retry",
+  "started": {
+    "budget": {
+      "attempt_seconds": 180,
+      "max_variants_per_hypothesis": 4,
+      "total_attempts": 12,
+      "total_seconds": 1800
+    },
+    "cascade": [
+      "sanity",
+      "in_sample",
+      "walk_forward",
+      "holdout"
+    ],
+    "evaluator": {
+      "files": 6,
+      "mismatches": [],
+      "status": "intact"
+    },
+    "evaluator_files": [
+      {
+        "path": "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py",
+        "sha256": "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/brasileirao_predictor/research_runtime/worker.py",
+        "sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/predictor_core/measurement/replay.py",
+        "sha256": "f4a2854e8a68c9532c8256ab94d6e9d7c68fac6d50fcf5298980d6b4830accec"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json",
+        "sha256": "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2021-1X2-climatology.json",
+        "sha256": "5f7f29846c94d25f2467b37611b04ee399d981dbeb92ce0adb726becb247619e"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2022-1X2-climatology.json",
+        "sha256": "11bcff4906104430c011416ada7e17bd8c7b5c9e538980b4d50de872d339c947"
+      }
+    ],
+    "gates": [
+      "holdout"
+    ],
+    "hypothesis": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+    "predictor": "brasileirao",
+    "proposer": "neighbor/1",
+    "stagnation": {
+      "attempts_without_improvement": 5
+    },
+    "world_id": "brasileirao-elo-1x2-dev2022",
+    "world_sha256": "d11b6f605cc0a6d1840b540a4f1c81a3c51022b9cfb07da056a786df74fc69bc",
+    "world_version": 2
+  },
+  "attempts": 0,
+  "outcomes": {},
+  "hypotheses": [],
+  "best": null,
+  "gates": [
+    {
+      "gate": "closed_hypothesis",
+      "matches": [
+        {
+          "finding_id": "brasileirao:loop:loop:brasileirao-dev2022-1",
+          "quarantine": true,
+          "same_identity": [
+            "hypothesis_id"
+          ],
+          "similarity": 0,
+          "statement": "CAIN-LOOP:BR-ELO-TUNING-DEV2022 brasileirao-elo-1x2-dev2022: NO_IMPROVEMENT_OVER_BASELINE after 6 attempts (stop: stagnation)",
+          "status": "DECLARED",
+          "verdict": "NO_IMPROVEMENT_OVER_BASELINE"
+        },
+        {
+          "finding_id": "brasileirao:loop:loop:brasileirao-dev2022-2",
+          "quarantine": true,
+          "same_identity": [
+            "hypothesis_id"
+          ],
+          "similarity": 0,
+          "statement": "CAIN-LOOP:BR-ELO-TUNING-DEV2022 brasileirao-elo-1x2-dev2022: NO_IMPROVEMENT_OVER_BASELINE after 6 attempts (stop: stagnation)",
+          "status": "DECLARED",
+          "verdict": "NO_IMPROVEMENT_OVER_BASELINE"
+        }
+      ]
+    }
+  ],
+  "finished": [],
+  "attempt_log": [],
+  "stopped": {
+    "attempts": 0,
+    "best": null,
+    "elapsed_seconds": 0.03,
+    "matches": [
+      {
+        "finding_id": "brasileirao:loop:loop:brasileirao-dev2022-1",
+        "quarantine": true,
+        "same_identity": [
+          "hypothesis_id"
+        ],
+        "similarity": 0,
+        "statement": "CAIN-LOOP:BR-ELO-TUNING-DEV2022 brasileirao-elo-1x2-dev2022: NO_IMPROVEMENT_OVER_BASELINE after 6 attempts (stop: stagnation)",
+        "status": "DECLARED",
+        "verdict": "NO_IMPROVEMENT_OVER_BASELINE"
+      },
+      {
+        "finding_id": "brasileirao:loop:loop:brasileirao-dev2022-2",
+        "quarantine": true,
+        "same_identity": [
+          "hypothesis_id"
+        ],
+        "similarity": 0,
+        "statement": "CAIN-LOOP:BR-ELO-TUNING-DEV2022 brasileirao-elo-1x2-dev2022: NO_IMPROVEMENT_OVER_BASELINE after 6 attempts (stop: stagnation)",
+        "status": "DECLARED",
+        "verdict": "NO_IMPROVEMENT_OVER_BASELINE"
+      }
+    ],
+    "reason": "equivalent_to_closed"
+  },
+  "events": 3
+}
+[exit 0]
+
+$ cain memory --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db verify
+{
+  "entries": 82,
+  "status": "intact",
+  "broken_at": null,
+  "head": "7876d8d210d0de90cc5675fa65fd532e572bbe84d83fa69cc3c02250129a13b2",
+  "head_recorded_at": "2026-09-24T17:49:08.532904Z",
+  "projection": "consistent"
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db add-procedure --domain brasileirao --file /home/superleo13/predictors/runtime/cain-p7/run/procedure.json
+{
+  "status": "recorded",
+  "fact_id": "fact:2642e0f0d88240d2a9dc4543d0396653",
+  "supersedes": null
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db procedures --domain brasileirao --as-of now
+{
+  "procedures": [
+    {
+      "code_sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626",
+      "data_sha256": "31f30a4dcf33867d1f3aa3d12337a9a66047e6bff10b9a3fa86aae9ef06c9e43",
+      "demotion": null,
+      "metrics": {
+        "baseline_rps": 0.223369669384,
+        "ci_delta": [
+          -0.021412832505,
+          -0.006833520083
+        ],
+        "mean_delta": -0.014029631333,
+        "n": 380,
+        "result_state": "NO_EDGE",
+        "rps": 0.209340038051,
+        "scope": "forecasting procedure (probabilities beat climatology); NOT a profitable strategy: economics NO_EDGE",
+        "season": "2022"
+      },
+      "name": "elo-goal-model-1x2-probabilities",
+      "source": {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json",
+        "repo": "brasileirao-predictor",
+        "sha256": "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97",
+        "wheel": "0.3.0rc3"
+      },
+      "source_trial": null,
+      "state": "ACTIVE",
+      "tests": {
+        "commit": "25cdf4d",
+        "failed": 0,
+        "passed": 2348,
+        "report": "/home/superleo13/predictors/runtime/cain-p7/br-tests/junit.xml",
+        "sha256": "2f7e1dca62120ccd599f987ab4d97c84aba36880a2f8e484c3e26f63b12166c9",
+        "skipped": 1,
+        "suite": "brasileirao-predictor rc3 own suite",
+        "tested_worker_sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"
+      },
+      "walk_forward": {
+        "criterion": "SUPPORTED if ci_hi < 0; REFUTED if ci_lo > 0; else INCONCLUSIVE (lower score is better)",
+        "passed": true,
+        "ref": "cain-loop-ledger:loop:brasileirao-dev2022-2#seq=21",
+        "sha256": "e86892024c9163e82de117f623344dd57678defff8f5f009977820e2325b379b"
+      },
+      "fact_id": "fact:2642e0f0d88240d2a9dc4543d0396653",
+      "recorded_at": "2026-09-24T17:51:49.349049Z"
+    }
+  ]
+}
+[exit 0]
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p7/run/memory.db add-procedure --domain brasileirao --file /home/superleo13/predictors/runtime/cain-p7/run/procedure-untested.json
+[stderr] Cain: PROCEDURE_NOT_TESTED: a procedure enters only with a passing test report
+[exit 1]
+

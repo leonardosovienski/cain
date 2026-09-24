@@ -1,0 +1,8 @@
+# brasileirao-predictor own test suite (rc3 checkout, read-only), run for the procedure library
+25cdf4d ci(BR-F018): core.longpaths no windows-latest antes do checkout
+<testsuite name="pytest" errors="0" failures="0" skipped="1" tests="2349" time="192.012" timestamp="2026-09-24T14:47:39.889100-03:00" hostname="DESKTOP-EJPA2MT"
+junit.xml sha256 2f7e1dca62120ccd599f987ab4d97c84aba36880a2f8e484c3e26f63b12166c9 (kept in runtime/cain-p7/br-tests)
+tested worker.py sha256: 9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626
+evaluator wheel worker.py sha256: 9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626
+	Page size (bytes): 4096
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:04.12

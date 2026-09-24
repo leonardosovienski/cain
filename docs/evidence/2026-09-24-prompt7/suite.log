@@ -1,0 +1,23 @@
+# branch melhorias/p7-aprendizado-quarentena head 17863d00621d644a8535500629a8be8f4b487a7a
+$ ruff check src tests loops
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain
+src/cain/findings/__init__.py                   0      0   100%
+src/cain/findings/archive.py                  114      6    95%
+src/cain/findings/cli.py                       95     19    80%
+src/cain/findings/ingest.py                    77      4    95%
+src/cain/loop/engine.py                       215     25    88%
+TOTAL                                       10945   1453    87%
+1253 passed, 2 skipped, 63 warnings in 85.54s (0:01:25)
+# testcases in junit: 1255
+$ pytest tests/integration/test_findings.py -v
+tests/integration/test_findings.py::test_declared_finding_is_quarantined_by_default PASSED [ 12%]
+tests/integration/test_findings.py::test_proven_needs_both_the_report_and_the_governance_transition PASSED [ 25%]
+tests/integration/test_findings.py::test_registry_ingestion_is_deterministic_and_supersedes_on_status_change PASSED [ 37%]
+tests/integration/test_findings.py::test_loop_flags_a_hypothesis_equivalent_to_a_closed_one_before_running PASSED [ 50%]
+tests/integration/test_findings.py::test_a_procedure_demoted_at_the_source_is_demoted_in_the_library PASSED [ 62%]
+tests/integration/test_findings.py::test_a_finding_crosses_domains_only_through_a_preregistered_hypothesis PASSED [ 75%]
+tests/integration/test_findings.py::test_scientific_state_and_loop_outcomes_are_ingested PASSED [ 87%]
+tests/integration/test_findings.py::test_cli_ingest_list_and_check PASSED [100%]
+============================== 8 passed in 0.67s ===============================

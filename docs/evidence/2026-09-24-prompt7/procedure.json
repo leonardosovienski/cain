@@ -1,0 +1,40 @@
+{
+  "name": "elo-goal-model-1x2-probabilities",
+  "code_sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626",
+  "data_sha256": "31f30a4dcf33867d1f3aa3d12337a9a66047e6bff10b9a3fa86aae9ef06c9e43",
+  "metrics": {
+    "season": "2022",
+    "rps": 0.209340038051,
+    "baseline_rps": 0.223369669384,
+    "mean_delta": -0.014029631333,
+    "ci_delta": [
+      -0.021412832505,
+      -0.006833520083
+    ],
+    "n": 380,
+    "result_state": "NO_EDGE",
+    "scope": "forecasting procedure (probabilities beat climatology); NOT a profitable strategy: economics NO_EDGE"
+  },
+  "tests": {
+    "report": "/home/superleo13/predictors/runtime/cain-p7/br-tests/junit.xml",
+    "sha256": "2f7e1dca62120ccd599f987ab4d97c84aba36880a2f8e484c3e26f63b12166c9",
+    "passed": 2348,
+    "failed": 0,
+    "skipped": 1,
+    "suite": "brasileirao-predictor rc3 own suite",
+    "commit": "25cdf4d",
+    "tested_worker_sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"
+  },
+  "walk_forward": {
+    "ref": "cain-loop-ledger:loop:brasileirao-dev2022-2#seq=21",
+    "sha256": "e86892024c9163e82de117f623344dd57678defff8f5f009977820e2325b379b",
+    "passed": true,
+    "criterion": "SUPPORTED if ci_hi < 0; REFUTED if ci_lo > 0; else INCONCLUSIVE (lower score is better)"
+  },
+  "source": {
+    "repo": "brasileirao-predictor",
+    "wheel": "0.3.0rc3",
+    "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json",
+    "sha256": "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"
+  }
+}
