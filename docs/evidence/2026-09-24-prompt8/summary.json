@@ -1,0 +1,132 @@
+{
+  "generation_seconds": 62.5,
+  "items": 16,
+  "failures": [],
+  "blocking": [
+    "H11b:closed-archive:1",
+    "H11b:costs-execution:1",
+    "H11b:costs-execution:2",
+    "H11b:costs-execution:3",
+    "H11b:overfitting:1",
+    "H11b:overfitting:2",
+    "H11b:overfitting:3",
+    "H11b:regime-change:1",
+    "H11b:regime-change:2",
+    "H11b:regime-change:3",
+    "H11b:temporal-leakage:1",
+    "H11b:temporal-leakage:2",
+    "H11b:temporal-leakage:3"
+  ],
+  "ready": false,
+  "statuses": [
+    [
+      "H11b:already-priced:1",
+      "TEST_PROPOSED",
+      false
+    ],
+    [
+      "H11b:already-priced:2",
+      "TEST_PROPOSED",
+      false
+    ],
+    [
+      "H11b:already-priced:3",
+      "TEST_PROPOSED",
+      false
+    ],
+    [
+      "H11b:closed-archive:1",
+      "OPEN",
+      true
+    ],
+    [
+      "H11b:costs-execution:1",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:costs-execution:2",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:costs-execution:3",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:overfitting:1",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:overfitting:2",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:overfitting:3",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:regime-change:1",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:regime-change:2",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:regime-change:3",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:temporal-leakage:1",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:temporal-leakage:2",
+      "TEST_PROPOSED",
+      true
+    ],
+    [
+      "H11b:temporal-leakage:3",
+      "TEST_PROPOSED",
+      true
+    ]
+  ],
+  "closed": [
+    [
+      {
+        "finding_id": "brasileirao:trial:h11-refit-cadence-rodada-vs-100jogos",
+        "quarantine": true,
+        "same_identity": [
+          "trial_id"
+        ],
+        "similarity": 0.02,
+        "statement": "h11-refit-cadence-rodada-vs-100jogos {\"block_guard\": \"kickoff (jogos simultâneos fora do treino um do outro)\", \"bootstrap\": {\"block_length\": 21, \"n_boot\": 10000, \"scheme\": \"moving\", \"seed\": 42}, \"control\": 100, \"league\": \"Brasileirão Série A\", \"market\": \"1x2\", \"min_history\": 200, \"model\": \"H4_DIXON_",
+        "status": "DECLARED",
+        "verdict": "REFUTED"
+      }
+    ]
+  ],
+  "inference_audit": {
+    "calls": 5,
+    "by_status": {
+      "called": {
+        "calls": 5,
+        "complete": 5
+      }
+    },
+    "missing": {}
+  },
+  "web": {
+    "questions": 16,
+    "same_as_cli": true
+  }
+}

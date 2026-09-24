@@ -1,0 +1,398 @@
+# P8 runtime demo: adversarial review of H11b (derived from the refuted H11), qwen3.5:4b
+
+$ cain findings --db /home/superleo13/predictors/runtime/cain-p8/run/memory.db ingest-registry --domain brasileirao --repo /home/superleo13/predictors/repos/brasileirao-predictor --path data/trials.v2.json
+{
+  "domain": "brasileirao",
+  "source": {
+    "repo": "brasileirao-predictor",
+    "commit": "d80a4edee94ca0219ec308911d56628499792885",
+    "path": "data/trials.v2.json",
+    "sha256": "659fb75aeda5e844d7dbd7be49982c30c1a00e197a7fa97143002da24c7944ed"
+  },
+  "rows": 29,
+  "counts": {
+    "recorded:negative": 6,
+    "recorded:informative": 22,
+    "recorded:positive": 1
+  }
+}
+[exit 0]
+
+$ cain review --db /home/superleo13/predictors/runtime/cain-p8/run/memory.db open --domain brasileirao --file /home/superleo13/predictors/runtime/cain-p8/run/draft-H11b.json
+{
+  "hypothesis_id": "H11b",
+  "statement": "Refitting the Brasileirão goal model every round (about 10 matches) instead of every 100 matches lowers the 1X2 RPS against the serving model",
+  "metric": "paired 1X2 RPS difference (round refit minus 100-match refit), cluster bootstrap 95% CI",
+  "data": "Brasileirão Série A 2021-2024 panel, snapshot 31f30a4d (as_of 2026-09-08)",
+  "design": "walk-forward with decision cutoff 1h before kickoff; one evaluation at the end; no interim reads",
+  "author": "cain (draft for the owner)",
+  "derived_from": "brasileirao:trial:h11-refit-cadence-rodada-vs-100jogos",
+  "domain": "brasileirao",
+  "state": "UNDER_REVIEW"
+}
+[exit 0]
+
+$ cain review --db /home/superleo13/predictors/runtime/cain-p8/run/memory.db generate --domain brasileirao H11b --config cain.toml
+{
+  "hypothesis_id": "H11b",
+  "items": [
+    "H11b:overfitting:1",
+    "H11b:overfitting:2",
+    "H11b:overfitting:3",
+    "H11b:temporal-leakage:1",
+    "H11b:temporal-leakage:2",
+    "H11b:temporal-leakage:3",
+    "H11b:costs-execution:1",
+    "H11b:costs-execution:2",
+    "H11b:costs-execution:3",
+    "H11b:regime-change:1",
+    "H11b:regime-change:2",
+    "H11b:regime-change:3",
+    "H11b:already-priced:1",
+    "H11b:already-priced:2",
+    "H11b:already-priced:3",
+    "H11b:closed-archive:1"
+  ],
+  "failures": [],
+  "perspectives_sha256": "eec32995b2383f614804474dfc8e7ac53ac6628bc2c3ed532ef9a7c8730c01e6"
+}
+[exit 0]
+
+$ cain review --db /home/superleo13/predictors/runtime/cain-p8/run/memory.db map --domain brasileirao H11b --as-of now
+{
+  "hypothesis_id": "H11b",
+  "domain": "brasileirao",
+  "state": "UNDER_REVIEW",
+  "statement": "Refitting the Brasileirão goal model every round (about 10 matches) instead of every 100 matches lowers the 1X2 RPS against the serving model",
+  "as_of": "2026-09-24T18:01:36.422433Z",
+  "blocking": [
+    "H11b:closed-archive:1",
+    "H11b:costs-execution:1",
+    "H11b:costs-execution:2",
+    "H11b:costs-execution:3",
+    "H11b:overfitting:1",
+    "H11b:overfitting:2",
+    "H11b:overfitting:3",
+    "H11b:regime-change:1",
+    "H11b:regime-change:2",
+    "H11b:regime-change:3",
+    "H11b:temporal-leakage:1",
+    "H11b:temporal-leakage:2",
+    "H11b:temporal-leakage:3"
+  ],
+  "ready_to_preregister": false,
+  "questions": [
+    {
+      "item_id": "H11b:already-priced:1",
+      "perspective_name": "Is the market already pricing it?",
+      "mandatory": false,
+      "question": "If the round-refit model genuinely outperforms the 100-match refit by lowering RPS, why does the market not currently price this advantage into the closing odds before kickoff?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Compare the closing odds (or implied probabilities) for the same match-day events in the 2021-2024 panel against a synthetic 'market-aware' baseline that assumes the round-refit advantage exists. Specifically, calculate the difference between the market's implied RPS and the model's predicted RPS for matches where the round-refit model was used.",
+        "kind": "statistical",
+        "pass_criterion": "The difference between market-implied RPS and model-predicted RPS must be statistically indistinguishable from zero (e.g., 95% CI includes 0), indicating the market has not priced in the claimed advantage."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:already-priced:2",
+      "perspective_name": "Is the market already pricing it?",
+      "mandatory": false,
+      "question": "Does the '1X2' metric capture the full scope of the model's improvement, or is it biased by the specific nature of draw outcomes in the Brasileirão?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Decompose the RPS difference into components attributable to Home Win, Away Win, and Draw outcomes separately. Calculate the weighted average RPS improvement assuming market weights (e.g., based on historical win probabilities).",
+        "kind": "statistical",
+        "pass_criterion": "The decomposition must show that the improvement in Home/Away prediction accuracy outweighs any degradation in Draw prediction accuracy when weighted by realistic market expectations."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:already-priced:3",
+      "perspective_name": "Is the market already pricing it?",
+      "mandatory": false,
+      "question": "Is the '100-match refit' baseline a fair comparator, given that the market likely uses models with different update frequencies or data sources?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Construct a 'market-equivalent' baseline by simulating a model that updates every 10 matches (matching the round-refit frequency) but uses the same feature set and methodology as the 100-match refit. Compare the round-refit against this simulated frequent-updater.",
+        "kind": "statistical",
+        "pass_criterion": "The round-refit must still show a statistically significant reduction in RPS compared to the simulated frequent-updater baseline, proving the benefit comes from the update frequency itself, not just the specific 100-match interval."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:closed-archive:1",
+      "perspective_name": "Already closed? (findings archive)",
+      "mandatory": true,
+      "question": "Is this hypothesis equivalent to one already refuted, closed or frozen in this domain?",
+      "status": "OPEN",
+      "test": null,
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": [
+        {
+          "finding_id": "brasileirao:trial:h11-refit-cadence-rodada-vs-100jogos",
+          "quarantine": true,
+          "same_identity": [
+            "trial_id"
+          ],
+          "similarity": 0.02,
+          "statement": "h11-refit-cadence-rodada-vs-100jogos {\"block_guard\": \"kickoff (jogos simultâneos fora do treino um do outro)\", \"bootstrap\": {\"block_length\": 21, \"n_boot\": 10000, \"scheme\": \"moving\", \"seed\": 42}, \"control\": 100, \"league\": \"Brasileirão Série A\", \"market\": \"1x2\", \"min_history\": 200, \"model\": \"H4_DIXON_",
+          "status": "DECLARED",
+          "verdict": "REFUTED"
+        }
+      ]
+    },
+    {
+      "item_id": "H11b:costs-execution:1",
+      "perspective_name": "Costs and execution",
+      "mandatory": true,
+      "question": "The hypothesis assumes a '10-match' round for refitting, but does the model's convergence speed or data sparsity within this window actually support a stable parameter update before the next kickoff?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Extract the parameter covariance matrix for every 10-match window from the training data (2021-2024). Calculate the standard error of each coefficient at the end of round N and compare it to the standard error at the end of round N+10. If the SE increases significantly (e.g., >20%) within a single 10-match window, the refit is unstable.",
+        "kind": "statistical",
+        "pass_criterion": "The standard error of coefficients must remain stable or decrease across consecutive 10-match windows; a significant increase indicates overfitting to noise rather than improved signal."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:costs-execution:2",
+      "perspective_name": "Costs and execution",
+      "mandatory": true,
+      "question": "Does the '1 hour before kickoff' decision cutoff introduce sufficient latency for the model to capture real-time market shifts, or does it rely on stale data that the 100-match refit would have already incorporated?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Simulate the RPS difference using only data available at T-1h (the cutoff) versus T+0. If the RPS improvement of the round-refit model vanishes when restricted to pre-cutoff data, the effect is an artifact of post-hoc optimization rather than a real-time advantage.",
+        "kind": "statistical",
+        "pass_criterion": "The paired RPS difference must remain significant and positive even when the training window is artificially truncated to exclude any data arriving after the 1-hour cutoff."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:costs-execution:3",
+      "perspective_name": "Costs and execution",
+      "mandatory": true,
+      "question": "Given the 'cluster bootstrap' methodology, does the cluster size (defined by the 10-match round) adequately capture the intra-cluster correlation of match outcomes, or is it artificially inflating confidence intervals?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Perform an intraclass correlation coefficient (ICC) analysis on match outcomes within each 10-match cluster. Compare this against the ICC of a larger 100-match cluster. If the intra-cluster ICC is near 1.0, the bootstrap assumption is violated.",
+        "kind": "statistical",
+        "pass_criterion": "The ICC for 10-match clusters must be significantly lower than 0.8 (indicating independent-ish events) and comparable to the ICC of the 100-match clusters; high ICC implies the bootstrap CI is invalid."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:overfitting:1",
+      "perspective_name": "Overfitting skeptic",
+      "mandatory": true,
+      "question": "The hypothesis claims a reduction in RPS difference via round-based refitting. Given that 'one evaluation at the end' is specified, how does the walk-forward protocol ensure that the '100-match refit' baseline was not also optimized or tuned on the same historical data to artificially inflate its performance relative to the round-refit model?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Extract the training/validation split history for both the 'round refit' and '100-match refit' models. Verify that the 100-match refit model was trained on a single, fixed historical window (e.g., matches 1-100) without any hyperparameter tuning or window selection performed on the data used to generate the snapshot.",
+        "kind": "data_check",
+        "pass_criterion": "The training history for the 100-match refit must show exactly one training configuration derived from a fixed historical window, with no evidence of multiple candidate windows being evaluated or selected."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:overfitting:2",
+      "perspective_name": "Overfitting skeptic",
+      "mandatory": true,
+      "question": "The hypothesis states that round-based refitting lowers RPS difference. Does the reported 95% confidence interval (via cluster bootstrap) capture the uncertainty introduced by the walk-forward nature of the experiment, or does it only reflect the variance within a single fixed walk-forward run?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Re-run the walk-forward evaluation on at least 5 distinct random seeds or initial date offsets within the available historical data to generate multiple independent 'walk-forward' paths. Calculate the mean and standard deviation of the RPS difference across these paths.",
+        "kind": "statistical",
+        "pass_criterion": "The reported 95% CI must be wider than or consistent with the distribution observed across these multiple independent walk-forward paths; if the original CI is narrower than the variance seen across different seeds, it indicates insufficient uncertainty quantification."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:overfitting:3",
+      "perspective_name": "Overfitting skeptic",
+      "mandatory": true,
+      "question": "The hypothesis claims a gain in RPS difference. Is this gain statistically significant when corrected for the number of rounds (approximately 10) where the model was refitted, or is the observed improvement likely due to multiple testing?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Perform a permutation test: Shuffle the labels of the target variable (win/draw/loss) in the historical data while keeping the model structure and refitting schedule identical. Repeat this shuffling process 1000 times to generate a null distribution of RPS differences for both models.",
+        "kind": "statistical",
+        "pass_criterion": "The p-value calculated from the permutation test must be below 0.05 (or adjusted for multiple rounds if applicable), confirming that the observed difference is not present in the shuffled data."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:regime-change:1",
+      "perspective_name": "Regime change",
+      "mandatory": true,
+      "question": "The hypothesis claims a reduction in RPS for the round-refit model across the entire panel (2021-2024). Given the 'Regime change' perspective, is this effect driven by a specific anomaly in one season (e.g., 2023) or stable across all four seasons?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Perform a stratified analysis of the paired RPS difference metric by season (2021, 2022, 2023, 2024). Calculate the mean difference and 95% CI for each season separately.",
+        "kind": "statistical",
+        "pass_criterion": "The mean difference must be statistically significant (CI excludes zero) in at least three out of four seasons."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:regime-change:2",
+      "perspective_name": "Regime change",
+      "mandatory": true,
+      "question": "The hypothesis relies on a 'walk-forward' design with a 1h cutoff. Does the model's performance degrade or improve significantly when the decision window is extended to 24 hours, which might capture more late-game dynamics?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Re-run the refitting procedure on the same historical dataset but apply a 24-hour decision cutoff instead of 1 hour. Compare the resulting RPS difference against the baseline model.",
+        "kind": "statistical",
+        "pass_criterion": "The mean RPS difference for the round-refit model must remain statistically significant (CI excludes zero) with the 24h cutoff."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:regime-change:3",
+      "perspective_name": "Regime change",
+      "mandatory": true,
+      "question": "The hypothesis assumes the 'serving model' is static. Is the baseline model's performance itself degrading over time due to data drift, which could artificially inflate the relative gain of the round-refit approach?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Fit the '100-match refit' model once at the start of each season (e.g., Jan 2021, Jan 2022, etc.) and compare its RPS against a fully static baseline model fitted only at the very beginning of the entire panel.",
+        "kind": "statistical",
+        "pass_criterion": "The 'season-start refit' model must show a statistically significant improvement over the 'static baseline' model in at least three seasons."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:temporal-leakage:1",
+      "perspective_name": "Temporal leakage",
+      "mandatory": true,
+      "question": "The hypothesis states a 'decision cutoff 1h before kickoff' and 'no interim reads', yet the design specifies 'one evaluation at the end'. Does this imply that the model parameters (fitted coefficients) used for the final evaluation were derived from rounds where the decision was made more than 1 hour prior to those specific matches, or could the 'end' evaluation have inadvertently used data from a",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Extract the timestamp of the 'decision cutoff' for every match in the panel. For each match, verify that the last round of data used to fit the model parameters (the 'round refit') occurred strictly before the decision time (T_decision = T_kickoff - 1h). If any match's training data includes information released after T_decision, the test fails.",
+        "kind": "data_check",
+        "pass_criterion": "For all N matches in the panel, the timestamp of the last training round used for that match must be < (T_kickoff - 1h)."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:temporal-leakage:2",
+      "perspective_name": "Temporal leakage",
+      "mandatory": true,
+      "question": "The metric is 'paired 1X2 RPS difference (round refit minus 100-match refit)'. If the 'round refit' model is trained on data up to round R, and the '100-match refit' model is trained on data up to round R-100, does the hypothesis account for the fact that the 'round refit' model might have been retrained multiple times within the same 10-round window?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Identify the exact index of the 'round refit' model used for each match in the panel. Verify that this specific model version was trained on a dataset that ended strictly before the decision time (T_decision) for that match. If the model was updated after T_decision, the test fails.",
+        "kind": "data_check",
+        "pass_criterion": "The training end-time of the specific 'round refit' model instance used for each match must be < (T_kickoff - 1h)."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    },
+    {
+      "item_id": "H11b:temporal-leakage:3",
+      "perspective_name": "Temporal leakage",
+      "mandatory": true,
+      "question": "The hypothesis claims lowering RPS against the 'serving model'. Is the 'serving model' defined as a static model trained on historical data, or is it also subject to updates that might occur between the decision time and the match kickoff?",
+      "status": "TEST_PROPOSED",
+      "test": {
+        "defined_by": "model:proposed",
+        "description": "Determine the training cutoff time for the 'serving model' used in the evaluation. Verify that this cutoff time is consistent with a static baseline (i.e., trained on data up to Round R-100 or a fixed historical point) and did not incorporate any matches played after the decision time of the panel.",
+        "kind": "data_check",
+        "pass_criterion": "The 'serving model' must be defined as a static model trained on data strictly prior to the start of the evaluation period, with no updates occurring between the decision time and match kickoff."
+      },
+      "answered_by": null,
+      "waiver": null,
+      "not_testable_reason": null,
+      "matches": null
+    }
+  ]
+}
+[exit 0]
+
+$ cain review --db /home/superleo13/predictors/runtime/cain-p8/run/memory.db preregister --domain brasileirao H11b --by cain-agent
+[stderr] Cain: CHECKLIST_UNRESOLVED: mandatory items without test, answer or human waiver: ['H11b:closed-archive:1', 'H11b:costs-execution:1', 'H11b:costs-execution:2', 'H11b:costs-execution:3', 'H11b:overfitting:1', 'H11b:overfitting:2', 'H11b:overfitting:3', 'H11b:regime-change:1', 'H11b:regime-change:2', 'H11b:regime-change:3', 'H11b:temporal-leakage:1', 'H11b:temporal-leakage:2', 'H11b:temporal-leakage:3']
+[exit 1]
+
+$ cain inference --config cain.toml audit
+{
+  "store": "/home/superleo13/predictors/runtime/cain-p8/run/state/inference.db",
+  "calls": 5,
+  "by_status": {
+    "called": {
+      "calls": 5,
+      "complete": 5
+    }
+  },
+  "missing": {}
+}
+[exit 0]
+
+GET /review/brasileirao/H11b -> 16 questions, blocking ['H11b:closed-archive:1', 'H11b:costs-execution:1', 'H11b:costs-execution:2', 'H11b:costs-execution:3', 'H11b:overfitting:1', 'H11b:overfitting:2', 'H11b:overfitting:3', 'H11b:regime-change:1', 'H11b:regime-change:2', 'H11b:regime-change:3', 'H11b:temporal-leakage:1', 'H11b:temporal-leakage:2', 'H11b:temporal-leakage:3']
+GET /review-map -> 3027 bytes, title present: True
+$ cain memory --db /home/superleo13/predictors/runtime/cain-p8/run/memory.db verify
+{
+  "entries": 46,
+  "status": "intact",
+  "broken_at": null,
+  "head": "115e70725d1571cf9ea98270ff342550472c04c8e22924b26504d921c52028c1",
+  "head_recorded_at": "2026-09-24T18:01:36.333687Z",
+  "projection": "consistent"
+}
+[exit 0]
+

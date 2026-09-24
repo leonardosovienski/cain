@@ -1,0 +1,9 @@
+{
+  "hypothesis_id": "H11b",
+  "statement": "Refitting the Brasileir\u00e3o goal model every round (about 10 matches) instead of every 100 matches lowers the 1X2 RPS against the serving model",
+  "metric": "paired 1X2 RPS difference (round refit minus 100-match refit), cluster bootstrap 95% CI",
+  "data": "Brasileir\u00e3o S\u00e9rie A 2021-2024 panel, snapshot 31f30a4d (as_of 2026-09-08)",
+  "design": "walk-forward with decision cutoff 1h before kickoff; one evaluation at the end; no interim reads",
+  "author": "cain (draft for the owner)",
+  "derived_from": "brasileirao:trial:h11-refit-cadence-rodada-vs-100jogos"
+}

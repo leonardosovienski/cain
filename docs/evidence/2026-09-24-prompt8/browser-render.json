@@ -1,0 +1,14 @@
+{
+  "note": "DOM read in the Claude app's built-in browser from the real local API (uvicorn cain.api:create_app, CAIN_MEMORY_DB = the demo memory), page /review-map?domain=brasileirao&hypothesis=H11b, after the CSP fix. Screenshots timed out (app window not drawn); the DOM below was read with a script in the page.",
+  "summary": "H11b (UNDER_REVIEW): 13 item(ns) obrigatório(s) bloqueando; pré-registro recusado até resolver.",
+  "rows": 16,
+  "blockingRows": 13,
+  "statuses": {"OPEN": 1, "TEST_PROPOSED": 15},
+  "closedRow": [
+    "Already closed? (findings archive) *",
+    "Is this hypothesis equivalent to one already refuted, closed or frozen in this domain?",
+    "OPEN",
+    "equivalente a: brasileirao:trial:h11-refit-cadence-rodada-vs-100jogos (REFUTED)"
+  ],
+  "before_the_fix": "the first load rendered an empty table: the browser console showed the API's CSP (script-src 'self'; style-src 'self') blocking the page's inline script and style"
+}
