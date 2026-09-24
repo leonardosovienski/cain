@@ -157,15 +157,18 @@ def unsupported_numbers(analysis, citations, excerpts, records, question):
     """Numeric tokens in the generated prose that no cited excerpt, its context, the
     reported records or the question contain. A lexical check, never semantic approval:
     a number the model rounded, derived or invented is refused rather than published."""
+    # Compare magnitudes only: the instruction tells the model not to append "%",
+    # so "2%" in the source must support "2" in the prose.
+    def magnitudes(text):
+        return {value for _, (value, _percent) in _numbers(text)}
     supported = set()
     for key in dict.fromkeys(citations):
         entry = excerpts[key]
-        supported.update(value for _, value in _numbers(entry["quote"]))
+        supported |= magnitudes(entry["quote"])
         for part in entry.get("source_context", []):
-            supported.update(value for _, value in _numbers(part["quote"]))
-    supported.update(value for _, value in _numbers(json.dumps(records, ensure_ascii=False)))
-    supported.update(value for _, value in _numbers(question))
-    return sorted({token for token, value in _numbers(analysis) if value not in supported})
+            supported |= magnitudes(part["quote"])
+    supported |= magnitudes(json.dumps(records, ensure_ascii=False)) | magnitudes(question)
+    return sorted({token for token, (value, _percent) in _numbers(analysis) if value not in supported})
 
 
 def review(service, scope, question, provider, *, role, source_id=None, previous=None):

@@ -63,3 +63,10 @@ def test_unsupported_numbers_helper_is_lexical_and_context_aware():
     assert unsupported_numbers("n=737 e RPS 0.21132, IC95 -0.002 a 0.006, revisão 2 de 3 [S1]",
                                ["S1"], excerpts, records, "Qual o resultado de H4?") == ["3"]
     assert unsupported_numbers("Sem números [S1]", ["S1"], excerpts, records, "?") == []
+
+
+def test_percent_in_source_supports_the_bare_number_the_instruction_asks_for():
+    """Regression from the real campaign: the prompt forbids appending "%", so
+    "acima de 2%" in the evidence must support "acima de 2" in the prose."""
+    excerpts = {"S1": {"quote": "Retorno acima de 2% com IC de 95% e retorno semanal de 0.35%"}}
+    assert unsupported_numbers("retorno acima de 2, IC 95, semanal 0.35 [S1]", ["S1"], excerpts, [], "?") == []
