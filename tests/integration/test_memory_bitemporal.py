@@ -94,6 +94,25 @@ def test_future_recorded_fact_is_invisible_to_earlier_as_of_including_vector_sea
     assert future["id"] in vector_ids()
 
 
+def test_a_small_step_back_of_the_real_clock_waits_a_large_one_is_refused(tmp_path, clock):
+    # Found by the Prompt 8 run: WSL2 stepped the wall clock 1.4 s back between two CLI commands.
+    slept = []
+
+    def sleep(seconds):
+        slept.append(round(seconds, 3))
+        clock.advance(seconds=seconds)
+
+    store = MemoryStore(tmp_path / "wait.db", clock=clock, max_clock_wait=5.0, sleep=sleep)
+    first = store.assert_fact("crypto", "H1", "state", "REFUTED", status="DECLARED")
+    clock.advance(seconds=-1.4)
+    second = store.assert_fact("crypto", "H2", "state", "REFUTED", status="DECLARED")
+    assert slept == [1.401] and second["recorded_at"] >= first["recorded_at"]
+    clock.advance(seconds=-10)
+    with pytest.raises(MemoryStoreError, match="CLOCK_WENT_BACKWARDS"):
+        store.assert_fact("crypto", "H3", "state", "REFUTED", status="DECLARED")
+    assert slept == [1.401]
+
+
 def test_read_now_never_precedes_the_log_head(memory, clock):
     # Found as an intermittent CLI failure: a wall clock that steps back made "now" miss an event.
     fact = memory.assert_fact("crypto", "H1", "state", "REFUTED", status="DECLARED")

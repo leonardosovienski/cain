@@ -28,6 +28,7 @@ import math
 from pathlib import Path
 import re
 import sqlite3
+import time
 from typing import Callable, Iterable, Sequence
 from uuid import uuid4
 
@@ -109,8 +110,14 @@ def _tokens(text: str) -> list[str]:
 class MemoryStore:
     """SQLite-backed bitemporal memory. One connection per operation."""
 
-    def __init__(self, path: str | Path, *, clock: Callable[[], datetime] = utc_now, embedding=None):
+    def __init__(self, path: str | Path, *, clock: Callable[[], datetime] = utc_now, embedding=None,
+                 max_clock_wait: float | None = None, sleep: Callable[[float], None] = time.sleep):
         self.path = Path(path)
+        # A wall clock can step back (WSL2 host time sync stepped it 1.4 s back between two commands).
+        # With the real clock, a write waits for it to pass the log head again (at most this long);
+        # a larger jump, or any step back of an injected clock, is still refused.
+        self.max_clock_wait = (5.0 if clock is utc_now else 0.0) if max_clock_wait is None else max_clock_wait
+        self.sleep = sleep
         self.clock = clock
         self.embedding = embedding
         if embedding is not None and (not getattr(embedding, "model", "") or not getattr(embedding, "model_digest", "")):
@@ -138,6 +145,12 @@ class MemoryStore:
     def _append(self, db, kind: str, body: dict) -> dict:
         last = db.execute("SELECT recorded_at, entry_hash FROM memory_events ORDER BY seq DESC LIMIT 1").fetchone()
         recorded_at = instant(self.clock())
+        if last is not None and recorded_at < last["recorded_at"]:
+            behind = (datetime.fromisoformat(last["recorded_at"].replace("Z", "+00:00"))
+                      - datetime.fromisoformat(recorded_at.replace("Z", "+00:00"))).total_seconds()
+            if behind <= self.max_clock_wait:
+                self.sleep(behind + 0.001)
+                recorded_at = instant(self.clock())
         if last is not None and recorded_at < last["recorded_at"]:
             raise MemoryStoreError("CLOCK_WENT_BACKWARDS",
                               f"recorded_at {recorded_at} is before the log head {last['recorded_at']}")
