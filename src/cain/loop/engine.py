@@ -82,9 +82,11 @@ def _better(world: dict, value: float, reference: float | None) -> bool:
 
 class ResearchLoop:
     def __init__(self, world: dict, ledger: LoopLedger, proposer, *, similarity=lexical_similarity,
-                 clock=time.monotonic, runner=run_stage):
+                 clock=time.monotonic, runner=run_stage, closed_check=None):
         self.world, self.ledger, self.proposer = world, ledger, proposer
         self.similarity, self.clock, self.runner = similarity, clock, runner
+        # closed_check(statement, identity) -> equivalent closed (negative) findings (Prompt 7).
+        self.closed_check = closed_check
 
     # ------------------------------------------------------------------ helpers
     def _event(self, state: LoopState, kind: str, body: dict) -> dict:
@@ -129,6 +131,14 @@ class ResearchLoop:
             "cascade": world["cascade"]["stages"], "proposer": getattr(self.proposer, "name", "unknown")})
         if check["status"] != "intact":
             return self._stop(state, "evaluator_changed", evaluator=check)
+        if self.closed_check is not None:
+            identity = {"hypothesis_id": world["world"]["hypothesis"], "hypothesis_family": world["world"].get("family"),
+                        "trial_id": world["world"].get("trial_id")}
+            matches = self.closed_check(world["world"]["description"], identity)
+            if matches:
+                # A retest of a closed hypothesis under another name: nothing runs; a human decides.
+                self._event(state, "gate.requested", {"gate": "closed_hypothesis", "matches": matches})
+                return self._stop(state, "equivalent_to_closed", matches=matches)
         root = {"hypothesis_id": world["world"]["hypothesis"], "description": world["world"]["description"],
                 "variant_of": None, "closest": None, "similarity_to_closest": None, "variants": 0}
         state.hypotheses.append(root)
@@ -181,6 +191,13 @@ class ResearchLoop:
         state.tried[key] = attempt
         if kind != "baseline":
             hypothesis, new = self._hypothesis_for(state, proposal.get("description", ""))
+            if new and self.closed_check is not None:
+                matches = self.closed_check(proposal.get("description", ""), {})
+                if matches:
+                    state.since_improvement += 1
+                    self._event(state, "experiment.discarded", {"attempt": attempt, "reason": "EQUIVALENT_TO_CLOSED",
+                                                                "matches": matches})
+                    return None
             if new:
                 state.hypotheses.append(hypothesis)
                 self._event(state, "hypothesis.registered", {**hypothesis, "source": "proposal",
