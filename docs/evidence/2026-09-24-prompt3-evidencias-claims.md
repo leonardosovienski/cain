@@ -42,8 +42,8 @@ Extras: acordo decide, e documentos longos usam a melhor janela; TEXTUAL_SUPPORT
 a extração só guarda spans literais e não chuta; `trace` responde de onde veio um número; os caminhos da CLI passam
 por `cain.cli.main`.
 
-Suíte completa (Python 3.13.15, venv do `uv.lock` com o extra `verify`): **1208 passed, 2 skipped, 0 failed**
-(1210 casos no junit). Cobertura total **87%** (piso do CI: 86%); `claims/`: verify 91%, lint 95%, extract 92%,
+Suíte completa (Python 3.13.15, venv do `uv.lock` com o extra `verify`): **1209 passed, 2 skipped, 0 failed**
+(1211 casos no junit; `suite.log` regenerado na cabeça `b8133bf`). Cobertura total **87%** (piso do CI: 86%); `claims/`: verify 91%, lint 95%, extract 92%,
 golden 95%, cli 83%, verifiers 42%; `memory/ingest` 94%. O carregamento dos pesos não roda na CI e está coberto pela execução real abaixo.
 `ruff check src tests`: ok.
 
@@ -151,7 +151,19 @@ Logs brutos:
 | `2026-09-24-prompt3/golden-v1-result.json` | `96aba3900e2e0dd570f23cbc31ac513c1837c0b4a20f1f9ee3c01b0913f6e73c` |
 | `2026-09-24-prompt3/golden-run.log` | `5bb6d3ed99f6182168afd6973632809c08a586f3bc72bd96fae7971f05af6011` |
 | `2026-09-24-prompt3/runtime_demo.log` | `825618efbd5b5abb8304e6b7047033f6b402c3401f13422af4453930015e925c` |
-| `2026-09-24-prompt3/suite.log` | `4a4e2630d6cafceb3dabf71459efed204249be57ca5c73a99e5141e7e5827576` |
+| `2026-09-24-prompt3/suite.log` | `53e85e89fc429faf10766047c16353a66be1e25f907d9ab0b5e09736bf040123` |
+
+## Commits depois da primeira versão deste relatório
+
+- `6d3c58b test(memory)`: os testes do Prompt 2 fecham as conexões sqlite que abriam (`with sqlite3.connect` só faz
+  commit). Com `--cov`, a contagem de `ResourceWarning` volta à do `main`.
+- `b8133bf fix(memory,claims)`: `--as-of now` nunca lê antes da cabeça do log. Uma suíte completa falhou uma vez em
+  `test_cli_paths`: o `lint --as-of now` não viu a revisão gravada instantes antes. A causa é um relógio de parede
+  que volta (sincronização de tempo do WSL2); a escrita já recusava isso (`CLOCK_WENT_BACKWARDS`), mas a leitura
+  não. `MemoryStore.now()` = máximo entre o relógio e o `recorded_at` da cabeça, com o teste
+  `test_read_now_never_precedes_the_log_head`. A falha não se reproduziu isolada (0/40), e a causa é inferida, não
+  observada diretamente.
+- `5506376 docs(evidence)`: a extração rodou na GPU, não na CPU (seção de extração).
 
 ## PROVEN × DECLARED
 

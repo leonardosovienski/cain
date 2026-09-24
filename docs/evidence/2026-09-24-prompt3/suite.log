@@ -1,4 +1,4 @@
-# branch melhorias/p3-evidencias-claims head 81aa8362e7f9ff3dba70b46b827a4f45b853a353
+# branch melhorias/p3-evidencias-claims head b8133bf004621f333b93b1ae9ab4d6c7ba1e2928
 # python Python 3.13.15
 $ ruff check src tests
 All checks passed!
@@ -9,6 +9,6 @@ $ pytest -q -p no:cacheprovider --junitxml=<runtime>/p3-junit.xml
     _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-1208 passed, 2 skipped, 2 warnings in 52.40s
+1209 passed, 2 skipped, 2 warnings in 48.96s
 [exit 0]
-# testcases in junit: 1210
+# testcases in junit: 1211
