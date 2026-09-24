@@ -2,7 +2,9 @@
 
 from dataclasses import asdict
 from pathlib import Path
+import hmac
 import json
+import os
 import sqlite3
 from threading import Lock
 from typing import Literal, Sequence
@@ -19,7 +21,7 @@ from cain.providers import configured_llm, configured_embedding
 from cain import __version__
 from cain.runtime import build_cain, build_retriever, build_profile
 from cain.orchestrator.routing import RuleRouter
-from cain.settings import load_settings
+from cain.settings import is_loopback_url, load_settings
 from cain.workspace import WorkspaceStore
 
 # Production Host allowlist: loopback names only. Test clients opt in explicitly via
@@ -97,16 +99,42 @@ class FeedbackRequest(BaseModel):
 def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | None = None,
                embedding=None, research_policy: Path | None = None,
                research_db: Path | None = None,
-               trusted_hosts: Sequence[str] = TRUSTED_HOSTS) -> FastAPI:
+               trusted_hosts: Sequence[str] = TRUSTED_HOSTS,
+               api_token: str | None = None) -> FastAPI:
+    """Local API. ``trusted_hosts`` names what counts as this machine, for the Host header
+    and for the address the socket accepted the connection on. A connection accepted
+    anywhere else (``--host 0.0.0.0``, a reverse proxy) is refused unless ``api_token``
+    (default: ``CAIN_API_TOKEN``) is configured and presented as a bearer token."""
     if (isinstance(trusted_hosts, str) or not trusted_hosts
             or any(type(host) is not str or not host.strip() for host in trusted_hosts)):
         raise ValueError("trusted_hosts deve ser uma sequência de nomes de host não vazios")
+    if api_token is None:
+        api_token = os.environ.get("CAIN_API_TOKEN") or None
+    if api_token is not None and (type(api_token) is not str or len(api_token) < 16
+                                  or any(c.isspace() for c in api_token)):
+        raise ValueError("CAIN_API_TOKEN deve ter ao menos 16 caracteres, sem espaços")
+    local_names = {host.strip().strip("[]").lower() for host in trusted_hosts}
     app = FastAPI(title="Cain — memória e projetos", version=__version__, docs_url=None, redoc_url=None)
     settings = load_settings(config_path)
     storage_path = Path(db_path if db_path is not None else settings.db_path)
     workspace = WorkspaceStore(storage_path)
     generation_lock = Lock()
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(trusted_hosts))
+
+    @app.middleware("http")
+    async def local_binding(request: Request, call_next):
+        server = request.scope.get("server") or ("", 0)
+        accepted_on = str(server[0] or "").strip("[]").lower()
+        local = accepted_on in local_names or is_loopback_url(
+            f"http://[{accepted_on}]" if ":" in accepted_on else f"http://{accepted_on}")
+        if not local:
+            scheme, _, presented = request.headers.get("authorization", "").partition(" ")
+            if (api_token is None or scheme.lower() != "bearer"
+                    or not hmac.compare_digest(presented.strip().encode(), api_token.encode())):
+                return JSONResponse(
+                    {"detail": "Conexão aceita fora do loopback; configure CAIN_API_TOKEN e envie Authorization: Bearer"},
+                    status_code=403)
+        return await call_next(request)
 
     @app.middleware("http")
     async def same_origin(request: Request, call_next):

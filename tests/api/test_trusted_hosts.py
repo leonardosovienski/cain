@@ -18,9 +18,13 @@ def test_production_default_is_loopback_only():
 
 
 def test_production_default_rejects_testserver_host(tmp_path):
-    with TestClient(create_app(tmp_path / "api.db", FakeLLM())) as client:
-        assert client.get("/health").status_code == 400  # Host: testserver
+    # Connection accepted on loopback (so the local-bind guard passes); only the Host header
+    # is under test here.
+    with TestClient(create_app(tmp_path / "api.db", FakeLLM()), base_url="http://127.0.0.1") as client:
         assert client.get("/health", headers={"Host": "testserver"}).status_code == 400
+        assert client.get("/health", headers={"Host": "testserver:8000"}).status_code == 400
+    with TestClient(create_app(tmp_path / "api.db", FakeLLM())) as client:
+        assert client.get("/health").status_code == 403  # socket "testserver" is not local either
 
 
 @pytest.mark.parametrize("host", ["127.0.0.1", "localhost", "127.0.0.1:8000"])

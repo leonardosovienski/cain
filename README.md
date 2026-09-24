@@ -113,6 +113,9 @@ e altere o valor no mesmo PR que subiu a cobertura; nunca reduza sem justificati
 `/openapi.json` descreve a API. `/run` exige `user_id`, `session_id` e `payload`.
 Em `/research/explain`, `session_id` é opcional; quando informado, deve identificar uma conversa existente no projeto.
 O perfil por nome é local, não autenticação. O serviço usa loopback e controles Host/Origin.
+Conexões aceitas fora do loopback (por exemplo, `--host 0.0.0.0` ou um proxy reverso) são recusadas com 403,
+a menos que `CAIN_API_TOKEN` (16+ caracteres, sem espaços) esteja definido e o cliente envie
+`Authorization: Bearer <token>`. Em loopback nada muda e nenhum token é exigido.
 
 Leia [operação local](docs/LOCAL_INSTALLATION.md) para pastas e recuperação, [Pesquisa L0](docs/RESEARCH_L0.md) para contratos
 e [histórico documental](docs/historico/README.md) para estados anteriores. Relatórios datados conservam seu escopo original.
