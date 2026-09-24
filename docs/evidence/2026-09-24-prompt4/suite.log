@@ -1,0 +1,23 @@
+# branch melhorias/p4-aprovacao-fork head c0e2a1bce9be00f0fdbb3e05b4cba03708e40dd1
+# python Python 3.13.15
+$ ruff check src tests
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain --junitxml=<runtime>/p4-junit.xml
+src/cain/research/agent_api.py                142      8    94%
+src/cain/research/cli.py                      210      6    97%
+src/cain/research/workflows.py                303     27    91%
+TOTAL                                        9374   1246    87%
+1216 passed, 2 skipped, 63 warnings in 59.37s
+[exit 0]
+# testcases in junit: 1218
+$ pytest tests/integration/test_workflow_approval.py -v
+tests/integration/test_workflow_approval.py::test_run_waiting_for_approval_survives_a_killed_process PASSED [ 12%]
+tests/integration/test_workflow_approval.py::test_rejection_executes_no_side_effects PASSED [ 25%]
+tests/integration/test_workflow_approval.py::test_edit_records_the_diff_and_the_step_uses_the_edited_question PASSED [ 37%]
+tests/integration/test_workflow_approval.py::test_explicit_approve_flag_is_recorded_and_attributed PASSED [ 50%]
+tests/integration/test_workflow_approval.py::test_fork_reuses_earlier_steps_and_reexecutes_only_from_the_fork_point PASSED [ 62%]
+tests/integration/test_workflow_approval.py::test_fork_refuses_a_changed_corpus PASSED [ 75%]
+tests/integration/test_workflow_approval.py::test_event_chain_detects_tampering PASSED [ 87%]
+tests/integration/test_workflow_approval.py::test_api_decision_and_fork_routes PASSED [100%]
+======================== 8 passed, 2 warnings in 1.68s =========================

@@ -1,0 +1,1602 @@
+# P4 runtime demo, model qwen3.5:4b, corpus publication e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31
+$ cain research import report-a.json   (0.1s)
+{
+  "receipt_id": "af255e9fc6364cf8bad2f568817e1363",
+  "publication_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31",
+  "status": "admitted",
+  "records": 1
+}
+[exit 0]
+
+## 1. Park a run at a human approval, then kill -9 the server
+server pid 234758 up: model=qwen3.5:4b version=0.4.13rc4
+POST /research/jobs {"question": "What does Report A support about the funding-rate strategy?", "source_id": "A", "run_id": "demo", "steps": ["inspect", "search", "support", "challenge", "synthesis"]}   (0.1s)
+  -> {"id": "demo", "status": "ready", "next_step": "inspect", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "demo", "status": "ready", "next_step": "search", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "demo", "status": "ready", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "demo", "status": "awaiting_generation_approval", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null, "pending_approval": {"step": "support", "position": 2}}
+kill -9 234758 -> exit -9
+
+## 2. New server process: the run is still waiting; approve each step and finish with the real model
+server pid 234760 up: model=qwen3.5:4b version=0.4.13rc4
+POST /research/jobs/demo/read {}   (0.0s)
+  -> {"id": "demo", "status": "awaiting_generation_approval", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null, "pending_approval": {"step": "support", "position": 2}}
+POST /research/jobs/demo/decision {"decision": "APPROVE", "note": "reviewed in the demo"}   (0.0s)
+  -> {"id": "demo", "status": "ready", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (5.9s)
+  -> {"id": "demo", "status": "ready", "next_step": "challenge", "model_calls": 1, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "demo", "status": "awaiting_generation_approval", "next_step": "challenge", "model_calls": 1, "parent_run_id": null, "fork_point": null, "pending_approval": {"step": "challenge", "position": 3}}
+POST /research/jobs/demo/decision {"decision": "APPROVE", "note": "reviewed in the demo"}   (0.0s)
+  -> {"id": "demo", "status": "ready", "next_step": "challenge", "model_calls": 1, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (2.4s)
+  -> {"id": "demo", "status": "ready", "next_step": "synthesis", "model_calls": 2, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "demo", "status": "awaiting_generation_approval", "next_step": "synthesis", "model_calls": 2, "parent_run_id": null, "fork_point": null, "pending_approval": {"step": "synthesis", "position": 4}}
+POST /research/jobs/demo/decision {"decision": "APPROVE", "note": "reviewed in the demo"}   (0.0s)
+  -> {"id": "demo", "status": "ready", "next_step": "synthesis", "model_calls": 2, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (2.4s)
+  -> {"id": "demo", "status": "completed", "next_step": null, "model_calls": 3, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/demo/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "demo", "status": "completed", "next_step": null, "model_calls": 3, "parent_run_id": null, "fork_point": null}
+parent final: status=completed model_calls=3
+
+## 3. Rejected run: no model call, terminal
+POST /research/jobs {"question": "Should the strategy be deployed tomorrow?", "source_id": "A", "run_id": "rejected", "steps": ["inspect", "search", "support", "challenge", "synthesis"]}   (0.0s)
+  -> {"id": "rejected", "status": "ready", "next_step": "inspect", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/rejected/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "rejected", "status": "ready", "next_step": "search", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/rejected/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "rejected", "status": "ready", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/rejected/advance {"approve_generation": false}   (0.0s)
+  -> {"id": "rejected", "status": "awaiting_generation_approval", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null, "pending_approval": {"step": "support", "position": 2}}
+POST /research/jobs/rejected/decision {"decision": "REJECT", "note": "deployment is out of scope"}   (0.0s)
+  -> {"id": "rejected", "status": "rejected", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+POST /research/jobs/rejected/advance {"approve_generation": true}   (0.0s)
+  -> {"id": "rejected", "status": "rejected", "next_step": "support", "model_calls": 0, "parent_run_id": null, "fork_point": null}
+rejected final: status=rejected model_calls=0 steps=2
+
+## 4. Fork from step 3 with the CLI; only steps 3..4 run again
+$ cain research fork demo --from 3 --run-id child --config cain.toml   (0.1s)
+
+                    "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                  },
+                  "publisher": "fixture",
+                  "repository": "fixture://crypto",
+                  "stream": "synthetic"
+                },
+                "publication_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31",
+                "sha256": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0",
+                "source": "report.md",
+                "start": 0,
+                "text": "Report A: the funding-rate strategy was reviewed by Alice on 2026-08-30. Net excess return averaged 29 basis points per period over 49 periods, with a 95% confidence interval from -43 to 95 basis points. The review concluded the edge is not statistically established and recommended no deployment."
+              }
+            }
+          ]
+        },
+        "facts": {
+          "ambiguous_observations": 0,
+          "conflicts": [],
+          "coverage": [
+            {
+              "completeness": "partial",
+              "excluded": [
+                "protected"
+              ],
+              "included": [
+                "report.md"
+              ],
+              "limitations": [
+                "synthetic"
+              ],
+              "missing": [],
+              "publication_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31",
+              "scope": "Synthetic cases"
+            }
+          ],
+          "distinct_source_occurrences": 1,
+          "generation_scope": false,
+          "has_more": false,
+          "limit": 10,
+          "limitations": [
+            "Not found in the admitted scope does not mean never occurred",
+            "Counts are record revisions, not independent experiments",
+            "Unordered revisions coexist; receipt time does not select truth",
+            "Integrity is not semantic support or scientific validity"
+          ],
+          "mode": "deterministic",
+          "multiple_revisions": [],
+          "offset": 0,
+          "query_id": "d981d9aec34a4d458c38c434840b5e69",
+          "records": [
+            {
+              "available_at": null,
+              "domain": "crypto",
+              "event_at": null,
+              "evidence": [
+                {
+                  "availability": "received",
+                  "end": 297,
+                  "hash_basis": "received_utf8",
+                  "id": "e",
+                  "locator": "whole_document",
+                  "offset_unit": "unicode_codepoints",
+                  "reference_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e",
+                  "sha256": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0",
+                  "source": "report.md",
+                  "start": 0,
+                  "text": "Report A: the funding-rate strategy was reviewed by Alice on 2026-08-30. Net excess return averaged 29 basis points per period over 49 periods, with a 95% confidence interval from -43 to 95 basis points. The review concluded the edge is not statistically established and recommended no deployment."
+                }
+              ],
+              "evidence_ids": [
+                "e"
+              ],
+              "id": "eef9d9f54d79b7b5f50d0527296338edd1a015aa3c86ec267f34a378826bdb99",
+              "identity_basis": "source_assigned",
+              "kind": "documented_claim",
+              "mapping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 104,
+            "eval_duration": 1857944000,
+            "input_bytes": 2774,
+            "load_duration": 3464857888,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 565,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 5836333822
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "e2dca742c46c0285ade57bc96749df8887852fd489d17100d4986905e0ab96af",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:664671898e9d4275a5af21a559ab1e76"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "support",
+        "status": "generated"
+      },
+      "inherited_from": "demo:2"
+    }
+  ],
+  "attempts": [],
+  "next_step": "challenge",
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 0
+}
+[exit 0]
+$ cain research advance child --config cain.toml   (0.1s)
+  "scope": "Synthetic cases"
+            }
+          ],
+          "distinct_source_occurrences": 1,
+          "generation_scope": false,
+          "has_more": false,
+          "limit": 10,
+          "limitations": [
+            "Not found in the admitted scope does not mean never occurred",
+            "Counts are record revisions, not independent experiments",
+            "Unordered revisions coexist; receipt time does not select truth",
+            "Integrity is not semantic support or scientific validity"
+          ],
+          "mode": "deterministic",
+          "multiple_revisions": [],
+          "offset": 0,
+          "query_id": "d981d9aec34a4d458c38c434840b5e69",
+          "records": [
+            {
+              "available_at": null,
+              "domain": "crypto",
+              "event_at": null,
+              "evidence": [
+                {
+                  "availability": "received",
+                  "end": 297,
+                  "hash_basis": "received_utf8",
+                  "id": "e",
+                  "locator": "whole_document",
+                  "offset_unit": "unicode_codepoints",
+                  "reference_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e",
+                  "sha256": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0",
+                  "source": "report.md",
+                  "start": 0,
+                  "text": "Report A: the funding-rate strategy was reviewed by Alice on 2026-08-30. Net excess return averaged 29 basis points per period over 49 periods, with a 95% confidence interval from -43 to 95 basis points. The review concluded the edge is not statistically established and recommended no deployment."
+                }
+              ],
+              "evidence_ids": [
+                "e"
+              ],
+              "id": "eef9d9f54d79b7b5f50d0527296338edd1a015aa3c86ec267f34a378826bdb99",
+              "identity_basis": "source_assigned",
+              "kind": "documented_claim",
+              "mapping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 104,
+            "eval_duration": 1857944000,
+            "input_bytes": 2774,
+            "load_duration": 3464857888,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 565,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 5836333822
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "e2dca742c46c0285ade57bc96749df8887852fd489d17100d4986905e0ab96af",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:664671898e9d4275a5af21a559ab1e76"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "support",
+        "status": "generated"
+      },
+      "inherited_from": "demo:2"
+    }
+  ],
+  "attempts": [],
+  "next_step": "challenge",
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": {
+    "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+    "requested_at": "2026-09-24T16:50:19.439543Z",
+    "diff": null,
+    "evidence_ids": [
+      "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+    ],
+    "position": 3,
+    "proposal": {
+      "model": "qwen3.5:4b",
+      "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+      "previous_proposals": 1,
+      "question": "What does Report A support about the funding-rate strategy?",
+      "source_id": "A"
+    },
+    "step": "challenge"
+  },
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 0
+}
+[exit 0]
+$ cain research decide child --decision APPROVE --by leo --note fork reviewed   (0.1s)
+_occurrences": 1,
+          "generation_scope": false,
+          "has_more": false,
+          "limit": 10,
+          "limitations": [
+            "Not found in the admitted scope does not mean never occurred",
+            "Counts are record revisions, not independent experiments",
+            "Unordered revisions coexist; receipt time does not select truth",
+            "Integrity is not semantic support or scientific validity"
+          ],
+          "mode": "deterministic",
+          "multiple_revisions": [],
+          "offset": 0,
+          "query_id": "d981d9aec34a4d458c38c434840b5e69",
+          "records": [
+            {
+              "available_at": null,
+              "domain": "crypto",
+              "event_at": null,
+              "evidence": [
+                {
+                  "availability": "received",
+                  "end": 297,
+                  "hash_basis": "received_utf8",
+                  "id": "e",
+                  "locator": "whole_document",
+                  "offset_unit": "unicode_codepoints",
+                  "reference_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e",
+                  "sha256": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0",
+                  "source": "report.md",
+                  "start": 0,
+                  "text": "Report A: the funding-rate strategy was reviewed by Alice on 2026-08-30. Net excess return averaged 29 basis points per period over 49 periods, with a 95% confidence interval from -43 to 95 basis points. The review concluded the edge is not statistically established and recommended no deployment."
+                }
+              ],
+              "evidence_ids": [
+                "e"
+              ],
+              "id": "eef9d9f54d79b7b5f50d0527296338edd1a015aa3c86ec267f34a378826bdb99",
+              "identity_basis": "source_assigned",
+              "kind": "documented_claim",
+              "mapping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 104,
+            "eval_duration": 1857944000,
+            "input_bytes": 2774,
+            "load_duration": 3464857888,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 565,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 5836333822
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "e2dca742c46c0285ade57bc96749df8887852fd489d17100d4986905e0ab96af",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:664671898e9d4275a5af21a559ab1e76"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "support",
+        "status": "generated"
+      },
+      "inherited_from": "demo:2"
+    }
+  ],
+  "attempts": [],
+  "next_step": "challenge",
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 0
+}
+[exit 0]
+$ cain research advance child --config cain.toml   (2.3s)
+
+            "Counts are record revisions, not independent experiments",
+            "Unordered revisions coexist; receipt time does not select truth",
+            "Integrity is not semantic support or scientific validity"
+          ],
+          "mode": "deterministic",
+          "multiple_revisions": [],
+          "offset": 0,
+          "query_id": "91876141db194c788815ce03ec87c3a2",
+          "records": [
+            {
+              "available_at": null,
+              "domain": "crypto",
+              "event_at": null,
+              "evidence": [
+                {
+                  "availability": "received",
+                  "end": 297,
+                  "hash_basis": "received_utf8",
+                  "id": "e",
+                  "locator": "whole_document",
+                  "offset_unit": "unicode_codepoints",
+                  "reference_id": "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e",
+                  "sha256": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0",
+                  "source": "report.md",
+                  "start": 0,
+                  "text": "Report A: the funding-rate strategy was reviewed by Alice on 2026-08-30. Net excess return averaged 29 basis points per period over 49 periods, with a 95% confidence interval from -43 to 95 basis points. The review concluded the edge is not statistically established and recommended no deployment."
+                }
+              ],
+              "evidence_ids": [
+                "e"
+              ],
+              "id": "eef9d9f54d79b7b5f50d0527296338edd1a015aa3c86ec267f34a378826bdb99",
+              "identity_basis": "source_assigned",
+              "kind": "documented_claim",
+              "mapping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 107,
+            "eval_duration": 1828624000,
+            "input_bytes": 3132,
+            "load_duration": 831890,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 649,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 2209810757
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "a1b1d1a14a3d1a94ed16464d73963086e58fb89ec5acd688bc85e856c497b960",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "challenge",
+        "status": "generated"
+      },
+      "inherited_from": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "2583748e8595404ea8fc1388afaae7b8",
+      "name": "challenge",
+      "status": "completed",
+      "error": null,
+      "duration": 2.23177922800096,
+      "started_at": 1790268619.6442926
+    }
+  ],
+  "next_step": "synthesis",
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 1
+}
+[exit 0]
+$ cain research advance child --config cain.toml   (0.1s)
+  }
+              ],
+              "evidence_ids": [
+                "e"
+              ],
+              "id": "eef9d9f54d79b7b5f50d0527296338edd1a015aa3c86ec267f34a378826bdb99",
+              "identity_basis": "source_assigned",
+              "kind": "documented_claim",
+              "mapping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 107,
+            "eval_duration": 1828624000,
+            "input_bytes": 3132,
+            "load_duration": 831890,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 649,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 2209810757
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "a1b1d1a14a3d1a94ed16464d73963086e58fb89ec5acd688bc85e856c497b960",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "challenge",
+        "status": "generated"
+      },
+      "inherited_from": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "2583748e8595404ea8fc1388afaae7b8",
+      "name": "challenge",
+      "status": "completed",
+      "error": null,
+      "duration": 2.23177922800096,
+      "started_at": 1790268619.6442926
+    }
+  ],
+  "next_step": "synthesis",
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": {
+    "event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+    "requested_at": "2026-09-24T16:50:21.985956Z",
+    "diff": null,
+    "evidence_ids": [
+      "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+    ],
+    "position": 4,
+    "proposal": {
+      "model": "qwen3.5:4b",
+      "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+      "previous_proposals": 2,
+      "question": "What does Report A support about the funding-rate strategy?",
+      "source_id": "A"
+    },
+    "step": "synthesis"
+  },
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 4,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 2,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+      "kind": "approval.requested",
+      "previous_hash": "fd5a0953f95e2b0053e8eb6c103303477fabf6a07a64861f9f314cc013152e81",
+      "recorded_at": "2026-09-24T16:50:21.985956Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 1
+}
+[exit 0]
+$ cain research decide child --decision APPROVE --by leo --note fork reviewed   (0.1s)
+     ],
+              "id": "eef9d9f54d79b7b5f50d0527296338edd1a015aa3c86ec267f34a378826bdb99",
+              "identity_basis": "source_assigned",
+              "kind": "documented_claim",
+              "mapping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 107,
+            "eval_duration": 1828624000,
+            "input_bytes": 3132,
+            "load_duration": 831890,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 649,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 2209810757
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "a1b1d1a14a3d1a94ed16464d73963086e58fb89ec5acd688bc85e856c497b960",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "challenge",
+        "status": "generated"
+      },
+      "inherited_from": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "2583748e8595404ea8fc1388afaae7b8",
+      "name": "challenge",
+      "status": "completed",
+      "error": null,
+      "duration": 2.23177922800096,
+      "started_at": 1790268619.6442926
+    }
+  ],
+  "next_step": "synthesis",
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 4,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 2,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+      "kind": "approval.requested",
+      "previous_hash": "fd5a0953f95e2b0053e8eb6c103303477fabf6a07a64861f9f314cc013152e81",
+      "recorded_at": "2026-09-24T16:50:21.985956Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 4,
+        "request_event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0",
+      "kind": "approval.decided",
+      "previous_hash": "7937010862ae948596fa573b2c14843e14969671aa172731a0b32852269a8ccf",
+      "recorded_at": "2026-09-24T16:50:22.087824Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 1
+}
+[exit 0]
+$ cain research advance child --config cain.toml   (2.4s)
+ping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 107,
+            "eval_duration": 1854977000,
+            "input_bytes": 3457,
+            "load_duration": 805392,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 729,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 2305947511
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "0350729a1df843e53b39bb2910ac1e213a511dc2427818f411faf442ffad1ab3",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "synthesis",
+        "status": "generated"
+      },
+      "inherited_from": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "2583748e8595404ea8fc1388afaae7b8",
+      "name": "challenge",
+      "status": "completed",
+      "error": null,
+      "duration": 2.23177922800096,
+      "started_at": 1790268619.6442926
+    },
+    {
+      "id": "9d07eaf6ba394a97b3de3a1bf53f06ab",
+      "name": "synthesis",
+      "status": "completed",
+      "error": null,
+      "duration": 2.3251380599976983,
+      "started_at": 1790268622.200243
+    }
+  ],
+  "next_step": null,
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 4,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 2,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+      "kind": "approval.requested",
+      "previous_hash": "fd5a0953f95e2b0053e8eb6c103303477fabf6a07a64861f9f314cc013152e81",
+      "recorded_at": "2026-09-24T16:50:21.985956Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 4,
+        "request_event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0",
+      "kind": "approval.decided",
+      "previous_hash": "7937010862ae948596fa573b2c14843e14969671aa172731a0b32852269a8ccf",
+      "recorded_at": "2026-09-24T16:50:22.087824Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 2
+}
+[exit 0]
+$ cain research advance child --config cain.toml   (0.1s)
+ping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 107,
+            "eval_duration": 1854977000,
+            "input_bytes": 3457,
+            "load_duration": 805392,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 729,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 2305947511
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "0350729a1df843e53b39bb2910ac1e213a511dc2427818f411faf442ffad1ab3",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "synthesis",
+        "status": "generated"
+      },
+      "inherited_from": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "2583748e8595404ea8fc1388afaae7b8",
+      "name": "challenge",
+      "status": "completed",
+      "error": null,
+      "duration": 2.23177922800096,
+      "started_at": 1790268619.6442926
+    },
+    {
+      "id": "9d07eaf6ba394a97b3de3a1bf53f06ab",
+      "name": "synthesis",
+      "status": "completed",
+      "error": null,
+      "duration": 2.3251380599976983,
+      "started_at": 1790268622.200243
+    }
+  ],
+  "next_step": null,
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 4,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 2,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+      "kind": "approval.requested",
+      "previous_hash": "fd5a0953f95e2b0053e8eb6c103303477fabf6a07a64861f9f314cc013152e81",
+      "recorded_at": "2026-09-24T16:50:21.985956Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 4,
+        "request_event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0",
+      "kind": "approval.decided",
+      "previous_hash": "7937010862ae948596fa573b2c14843e14969671aa172731a0b32852269a8ccf",
+      "recorded_at": "2026-09-24T16:50:22.087824Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 2
+}
+[exit 0]
+$ cain research job child   (0.1s)
+ping": null,
+              "origin": {
+                "code_revision": "fixture",
+                "domain": "crypto",
+                "exporter_revision": "fixture",
+                "inputs": {
+                  "report.md": "8408c3de3472d2dc8d01d646b1ffc8d352b1b471c872c9079842bdab6ac7f2f0"
+                },
+                "publisher": "fixture",
+                "repository": "fixture://crypto",
+                "stream": "synthetic"
+              },
+              "publications": [
+                "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31"
+              ],
+              "reason": null,
+              "recorded_at": null,
+              "revision": "1",
+              "source_id": "A",
+              "source_status": "FAILED",
+              "status_axis": "operational",
+              "supersedes": []
+            }
+          ],
+          "total_record_revisions": 1
+        },
+        "generation": {
+          "called": true,
+          "measured": {
+            "done_reason": "stop",
+            "effective_input_byte_budget": 6500,
+            "eval_count": 107,
+            "eval_duration": 1854977000,
+            "input_bytes": 3457,
+            "load_duration": 805392,
+            "max_input_bytes": 6500,
+            "model": "qwen3.5:4b",
+            "num_batch": null,
+            "num_ctx": 8192,
+            "prompt_eval_count": 729,
+            "structured_output": true,
+            "think": false,
+            "total_duration": 2305947511
+          },
+          "model": "qwen3.5:4b",
+          "prompt_hash": "0350729a1df843e53b39bb2910ac1e213a511dc2427818f411faf442ffad1ab3",
+          "prompt_version": "addressable-review/20"
+        },
+        "human_approval": {
+          "by": "leo",
+          "decision": "APPROVE",
+          "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0"
+        },
+        "independent_models": false,
+        "memory_promoted": false,
+        "role": "synthesis",
+        "status": "generated"
+      },
+      "inherited_from": null
+    }
+  ],
+  "attempts": [
+    {
+      "id": "2583748e8595404ea8fc1388afaae7b8",
+      "name": "challenge",
+      "status": "completed",
+      "error": null,
+      "duration": 2.23177922800096,
+      "started_at": 1790268619.6442926
+    },
+    {
+      "id": "9d07eaf6ba394a97b3de3a1bf53f06ab",
+      "name": "synthesis",
+      "status": "completed",
+      "error": null,
+      "duration": 2.3251380599976983,
+      "started_at": 1790268622.200243
+    }
+  ],
+  "next_step": null,
+  "created_at": "2026-09-24T16:50:19.340167+00:00",
+  "snapshot": "859a25880b84433073aa4439f872036614e34b2bbef02ed0c06586792c6b2bad",
+  "parent_run_id": "demo",
+  "fork_point": 3,
+  "pending_approval": null,
+  "approvals": [
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 3,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 1,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "challenge"
+      },
+      "event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+      "kind": "approval.requested",
+      "previous_hash": "7465a15f0abffef12a1d6d6076160175952d2b15286070d4d5e9bd0dc4b6ae0e",
+      "recorded_at": "2026-09-24T16:50:19.439543Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 3,
+        "request_event_id": "wfevent:ba4e9137fe434dc3935407ed530b73e6",
+        "step": "challenge"
+      },
+      "event_id": "wfevent:54eee3064a2c48818c1e8e1e34450c16",
+      "kind": "approval.decided",
+      "previous_hash": "36ed5860059f9461e9b5a2141b1d789816cfd55638b35df604014789cd46b67d",
+      "recorded_at": "2026-09-24T16:50:19.530661Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "diff": null,
+        "evidence_ids": [
+          "e940c6dbf4b121bd63d60e78b6c11ff9f9fe0c359c34d5c836dd123e5e6efb31:e"
+        ],
+        "position": 4,
+        "proposal": {
+          "model": "qwen3.5:4b",
+          "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "previous_proposals": 2,
+          "question": "What does Report A support about the funding-rate strategy?",
+          "source_id": "A"
+        },
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+      "kind": "approval.requested",
+      "previous_hash": "fd5a0953f95e2b0053e8eb6c103303477fabf6a07a64861f9f314cc013152e81",
+      "recorded_at": "2026-09-24T16:50:21.985956Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    },
+    {
+      "body": {
+        "by": "leo",
+        "decision": "APPROVE",
+        "diff": null,
+        "edit": null,
+        "note": "fork reviewed",
+        "position": 4,
+        "request_event_id": "wfevent:ff1c0b5bd6ce413896d095bb0af9649b",
+        "step": "synthesis"
+      },
+      "event_id": "wfevent:688bac555ef04d2a85ae9f70de4f9dd0",
+      "kind": "approval.decided",
+      "previous_hash": "7937010862ae948596fa573b2c14843e14969671aa172731a0b32852269a8ccf",
+      "recorded_at": "2026-09-24T16:50:22.087824Z",
+      "run_id": "child",
+      "schema": "cain-workflow-event/1",
+      "scope": "[\"leo\",\"\",\"crypto\"]"
+    }
+  ],
+  "model_call_count_scope": "completed_step_receipts_only",
+  "failed_generation_attempts": 0,
+  "failed_attempt_model_calls": "unknown; failures can occur before or after inference",
+  "proposals_only": true,
+  "model_calls": 2
+}
+[exit 0]
+## 5. Event chain: {"entries": 13, "status": "intact", "broken_at": null, "head": "8d8470594faad52802e6cc3379cc806396c10e8e7499a1f7c26e3355dcf7f938"}
+done
