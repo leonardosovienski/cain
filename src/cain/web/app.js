@@ -682,6 +682,8 @@ function renderJob(job, scope) {
   container.replaceChildren(node('h3', 'Fluxo salvo · ' + job.status));
   container.append(node('p', job.request.question), node('small', `${scope.collection} · ${job.id}`));
   container.append(node('p', `${job.steps.length}/${job.request.steps.length} etapas concluídas. Próxima: ${stepNames[job.next_step] ?? 'nenhuma'}.`));
+  if (job.parent_run_id) container.append(node('p', `Ramificado de ${job.parent_run_id} a partir da etapa ${job.fork_point}; etapas anteriores reaproveitadas.`));
+  if (job.status === 'rejected') container.append(node('p', 'Etapa rejeitada por decisão humana registrada. Nada foi executado depois dela.'));
   const abstentions = job.steps.filter(step => step.result.status?.startsWith('abstained')).length;
   if (abstentions) container.append(node('p', `${abstentions} etapa(s) com abstenção. Concluir o fluxo não valida essas saídas.`));
   for (const step of job.steps) {
@@ -698,7 +700,37 @@ function renderJob(job, scope) {
     const diagnostic = node('details');
     diagnostic.append(node('summary', 'Recibo completo e referências'), node('pre', JSON.stringify(step.result, null, 2)));
     detail.append(diagnostic);
+    if (step.inherited_from) detail.append(node('small', `Reaproveitada de ${step.inherited_from}`));
+    const fork = node('button', 'Ramificar daqui', 'secondary');
+    fork.dataset.forkFrom = String(step.position);
+    fork.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/fork`, 'POST',
+      {...scope, from_step: step.position}), scope)));
+    detail.append(fork);
     container.append(detail);
+  }
+  if (job.status === 'awaiting_generation_approval' && job.pending_approval) {
+    const pending = job.pending_approval;
+    const card = node('section');
+    card.append(node('h4', `Aprovação necessária: ${stepNames[pending.step] ?? pending.step}`),
+      node('p', `Pergunta: ${pending.proposal.question}`), node('small', `Modelo: ${pending.proposal.model} · evidências: ${pending.evidence_ids.length}`));
+    const decide = (decision, extra = {}) => handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/decision`, 'POST',
+      {...scope, decision, ...extra}), scope));
+    const approve = node('button', 'Aprovar esta etapa');
+    approve.addEventListener('click', decide('APPROVE'));
+    const reject = node('button', 'Rejeitar (encerra o fluxo)', 'secondary');
+    reject.addEventListener('click', decide('REJECT', {note: 'Rejeitado na interface'}));
+    const edit = node('button', 'Editar a pergunta e aprovar', 'secondary');
+    edit.addEventListener('click', event => {
+      const question = window.prompt('Nova pergunta para esta etapa', pending.proposal.question);
+      if (question && question !== pending.proposal.question) decide('EDIT', {question})(event);
+    });
+    card.append(approve, reject, edit);
+    container.append(card);
+  }
+  if (job.approvals?.length) {
+    const history = node('details');
+    history.append(node('summary', `Decisões humanas registradas (${job.approvals.length} eventos)`), node('pre', JSON.stringify(job.approvals, null, 2)));
+    container.append(history);
   }
   const traces = node('details');
   traces.append(node('summary', 'Tentativas, falhas e tempos'), node('pre', JSON.stringify(job.attempts, null, 2)));
@@ -718,16 +750,17 @@ function renderJob(job, scope) {
       {...scope, reason:'Saída da etapa recusada. Operador registrou abstenção; resultado inválido não aceito.'}), scope)));
     container.append(abstain);
   }
-  if (!['completed','cancelled'].includes(job.status)) {
+  if (!['completed','cancelled','rejected','awaiting_generation_approval'].includes(job.status)) {
     const next = node('button', job.status === 'running' ? 'Recuperar etapa interrompida (após 10 min)' : 'Executar próxima etapa', 'secondary');
+    // Never approve implicitly: a generation step stops at a recorded human decision.
     next.addEventListener('click', handle(async () => renderJob(await api(`/research/jobs/${encodeURIComponent(job.id)}/advance`, 'POST',
-      {...scope, approve_generation:true, recover:['failed','running'].includes(job.status)}), scope)));
-    const all = node('button', 'Executar etapas restantes', 'secondary');
+      {...scope, approve_generation:false, recover:['failed','running'].includes(job.status)}), scope)));
+    const all = node('button', 'Executar etapas restantes até a próxima aprovação', 'secondary');
     all.addEventListener('click', handle(async () => {
       let current = job;
-      for (let count=0; count<6 && !['completed','cancelled'].includes(current.status); count++) {
+      for (let count=0; count<6 && !['completed','cancelled','rejected','awaiting_generation_approval'].includes(current.status); count++) {
         current = await api(`/research/jobs/${encodeURIComponent(job.id)}/advance`, 'POST',
-          {...scope, approve_generation:true, recover:current.status === 'failed'});
+          {...scope, approve_generation:false, recover:current.status === 'failed'});
         renderJob(current, scope);
       }
     }));
