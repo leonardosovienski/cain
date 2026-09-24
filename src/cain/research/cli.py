@@ -99,6 +99,19 @@ def register(sub):
         if name == "advance":
             job.add_argument("--approve-generation", action="store_true")
             job.add_argument("--recover", action="store_true")
+    decide = commands.add_parser("decide", help="Human decision on a workflow step waiting for approval")
+    decide.add_argument("run_id")
+    decide.add_argument("--decision", required=True, choices=["APPROVE", "REJECT", "EDIT"])
+    decide.add_argument("--by", required=True)
+    decide.add_argument("--note")
+    decide.add_argument("--question", help="EDIT only: the edited question for this step")
+    fork = commands.add_parser("fork", help="Child run reusing the parent's steps before --from")
+    fork.add_argument("run_id")
+    fork.add_argument("--from", dest="from_step", type=int, required=True)
+    fork.add_argument("--model", help="run the new steps with another local model")
+    fork.add_argument("--prompt-version")
+    fork.add_argument("--run-id", dest="new_run_id")
+    fork.add_argument("--config", type=Path)
     commands.add_parser("jobs")
     backup = commands.add_parser("backup")
     backup.add_argument("destination", type=Path)
@@ -150,7 +163,8 @@ def execute(args):
             field = "artifacts" if action == "artifacts" else "relations"
             return {field: result[field], "total": result["artifact_total" if action == "artifacts" else "relation_total"]}
         return result
-    if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace", "abstain"}:
+    if cmd in {"search", "entities", "workflow", "job", "advance", "cancel", "jobs", "trace", "abstain", "decide",
+               "fork"}:
         from cain.research.analysis import search, entities
         from cain.research.workflows import Workflows
         from cain.providers import configured_llm
@@ -173,7 +187,16 @@ def execute(args):
             return jobs.cancel(scope, args.run_id)
         if cmd == "abstain":
             return jobs.abstain(scope, args.run_id, args.reason)
+        if cmd == "decide":
+            return jobs.decide(scope, args.run_id, args.decision, by=args.by, note=args.note, question=args.question)
         provider = configured_llm(load_settings(args.config))
+        if cmd == "fork":
+            if args.model:
+                from dataclasses import replace
+
+                provider = replace(provider, model=args.model)
+            return jobs.fork(scope, args.run_id, args.from_step, provider, prompt_version=args.prompt_version,
+                             new_run_id=args.new_run_id)
         if cmd == "entities":
             return entities(service, scope, args.question, provider, source_id=args.source_id)
         if cmd == "workflow":
