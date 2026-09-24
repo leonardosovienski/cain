@@ -1,11 +1,13 @@
 """Local research tools. Model output is a proposal with verifiable source quotes."""
 
 import math
+import json
 import re
 import unicodedata
 
 from research_snapshot import canonical, digest, keys, loads
 
+from cain.research.answer_review import _numbers
 from cain.llm.streaming import require_local
 from cain.research.grounding import structured, cards
 from cain.research.inspection import inspect
@@ -149,6 +151,24 @@ def entities(service, scope, question, provider, *, source_id=None):
             "model_calls": 1, "generation": getattr(provider, "last_metadata", {}),
             "prompt_sha256": digest((instruction + prompt).encode()),
             "semantic_support": "not_certified", "memory_promoted": False}
+
+
+def unsupported_numbers(analysis, citations, excerpts, records, question):
+    """Numeric tokens in the generated prose that no cited excerpt, its context, the
+    reported records or the question contain. A lexical check, never semantic approval:
+    a number the model rounded, derived or invented is refused rather than published."""
+    # Compare magnitudes only: the instruction tells the model not to append "%",
+    # so "2%" in the source must support "2" in the prose.
+    def magnitudes(text):
+        return {value for _, (value, _percent) in _numbers(text)}
+    supported = set()
+    for key in dict.fromkeys(citations):
+        entry = excerpts[key]
+        supported |= magnitudes(entry["quote"])
+        for part in entry.get("source_context", []):
+            supported |= magnitudes(part["quote"])
+    supported |= magnitudes(json.dumps(records, ensure_ascii=False)) | magnitudes(question)
+    return sorted({token for token, (value, _percent) in _numbers(analysis) if value not in supported})
 
 
 def review(service, scope, question, provider, *, role, source_id=None, previous=None):
@@ -396,6 +416,10 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
                 or type(result["analysis"]) is not str or not result["analysis"].strip()
                 or len(result["analysis"]) > 1000):
             raise ValueError("Invalid review output")
+        unsupported = unsupported_numbers(result["analysis"], result["citations"], excerpts,
+                                          payload["reported_records_untrusted"], question)
+        if unsupported:
+            raise ValueError("Unsupported numbers: " + ", ".join(unsupported))
         resolved = []
         for key in dict.fromkeys(result["citations"]):
             entry = excerpts[key]
@@ -422,7 +446,8 @@ def review(service, scope, question, provider, *, role, source_id=None, previous
     except (ValueError, RuntimeError, OSError, TypeError) as exc:
         guard(service, scope, snapshot)
         return {"role": role, "status": "generation_failed", "error": type(exc).__name__,
-                "error_code": "INVALID_REVIEW_OUTPUT" if isinstance(exc, (ValueError, TypeError)) else "PROVIDER_ERROR",
+                "error_code": ("UNSUPPORTED_NUMBER" if str(exc).startswith("Unsupported numbers") else
+                               "INVALID_REVIEW_OUTPUT" if isinstance(exc, (ValueError, TypeError)) else "PROVIDER_ERROR"),
                 "facts": service.query(scope, source_id=source_id, limit=10), "explanation": None,
                 "generation": {**metadata, "provider_failure": getattr(provider, "last_metadata", {})},
                 "coverage": coverage, "independent_models": False}
