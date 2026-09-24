@@ -26,7 +26,7 @@ from uuid import uuid4
 
 from cain.loop.evaluator import EvaluatorCrash, correlation, run_stage
 from cain.observability import semconv as sc
-from cain.observability.tracing import active_span, record_span
+from cain.observability.tracing import active_span, record_span, start
 from cain.loop.ledger import LoopLedger
 from cain.loop.world import baseline, surface_violations, verify_evaluator
 
@@ -231,7 +231,7 @@ class ResearchLoop:
             tool = {sc.OPERATION_NAME: sc.OPERATION_EXECUTE_TOOL, sc.TOOL_NAME: f"evaluator.{stage}",
                     sc.TOOL_CALL_ID: f"{state.loop_id}#{attempt}:{stage}", sc.CAIN_LOOP_ID: state.loop_id,
                     sc.CAIN_LOOP_ATTEMPT: attempt}
-            stage_started = time.time_ns()
+            stage_started = start()
             try:
                 if remaining <= 0:
                     raise EvaluatorCrash("TIMEOUT", f"attempt budget of {timeout}s spent before {stage}")

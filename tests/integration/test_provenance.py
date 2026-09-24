@@ -109,6 +109,26 @@ def test_model_and_tool_calls_become_gen_ai_spans(tmp_path):
     assert all(t.parent is not None and t.parent.span_id in attempts for t in tools)
 
 
+def test_span_duration_survives_a_wall_clock_step_back(monkeypatch):
+    # Found in MLflow: an evaluator span with a negative duration (the WSL2 wall clock stepped back).
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+
+    from cain.observability import tracing
+
+    exporter = InMemorySpanExporter()
+    tracing.configure(exporter=exporter, simple=True)
+    try:
+        started = tracing.start()
+        real = tracing.time.time_ns
+        monkeypatch.setattr(tracing.time, "time_ns", lambda: real() - 2_000_000_000)  # 2 s back
+        tracing.record_span("execute_tool evaluator.sanity", started, {"cain.outcome": "ok"}, kind="internal")
+    finally:
+        monkeypatch.undo()
+        tracing.shutdown()
+    span = exporter.get_finished_spans()[0]
+    assert span.end_time >= span.start_time
+
+
 def test_faithfulness_estimate_covers_the_truth_and_the_sample_is_deterministic():
     rng = random.Random(7)
     truth = {f"claim:{i}": int(rng.random() < 0.7) for i in range(400)}

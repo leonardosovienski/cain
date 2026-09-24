@@ -34,7 +34,6 @@ import re
 import sqlite3
 import subprocess
 import threading
-import time
 from urllib.parse import urlsplit
 from urllib.request import Request
 from uuid import uuid4
@@ -414,7 +413,9 @@ class Recorder:
         parts = urlsplit(url)
         if parts.path not in GENERATION_PATHS or not isinstance(request, Request) or request.data is None:
             return self.base(request, timeout=timeout)
-        started = time.time_ns()
+        from cain.observability.tracing import start
+
+        started = start()
         self.last_manifest = None
         try:
             response = self._generation(request, timeout, parts)
@@ -424,7 +425,7 @@ class Recorder:
         self._span(started)
         return response
 
-    def _span(self, started: int, error: str | None = None) -> None:
+    def _span(self, started, error: str | None = None) -> None:
         """OpenTelemetry span with gen_ai.* attributes from the manifest (no-op when tracing is off)."""
         from cain.observability import semconv as sc
         from cain.observability.tracing import record_span

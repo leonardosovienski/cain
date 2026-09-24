@@ -62,12 +62,26 @@ def shutdown():
     _STATE.update(tracer=None, provider=None, configured=False)
 
 
-def record_span(name: str, start_ns: int, attributes: dict, *, error: str | None = None,
+def start() -> tuple[int, int]:
+    """Start instant of a span: (wall-clock ns, monotonic ns)."""
+    return time.time_ns(), time.monotonic_ns()
+
+
+def record_span(name: str, started, attributes: dict, *, error: str | None = None,
                 end_ns: int | None = None, kind: str = "client") -> None:
-    """Record a finished span (no-op without a tracer)."""
+    """Record a finished span (no-op without a tracer).
+
+    ``started`` comes from ``start()``: the end is the wall-clock start plus the *monotonic* duration,
+    because the wall clock can step back inside a span (a WSL2 time sync produced a negative
+    duration in MLflow before this)."""
     active = tracer()
     if active is None:
         return
+    if isinstance(started, tuple):
+        start_ns, mono = started
+        end_ns = end_ns or start_ns + max(0, time.monotonic_ns() - mono)
+    else:
+        start_ns = started
     try:
         from opentelemetry.trace import SpanKind, Status, StatusCode
 
