@@ -9,11 +9,12 @@ from urllib.parse import urlsplit
 from urllib.request import Request
 
 from cain.llm import LLMError, LLMTruncated, urlopen
+from cain.settings import is_loopback_url
 
 
 def require_local(provider):
     parts = urlsplit(getattr(provider, "base_url", ""))
-    if (parts.scheme != "http" or parts.hostname not in {"localhost", "127.0.0.1", "::1"}
+    if (parts.scheme != "http" or not is_loopback_url(getattr(provider, "base_url", ""))
             or parts.username or parts.password or parts.query or parts.fragment):
         raise ValueError("This capability requires a loopback Ollama provider")
 

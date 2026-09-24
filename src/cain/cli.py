@@ -4,6 +4,7 @@ import argparse
 import json
 import sqlite3
 import sys
+from urllib.parse import urlsplit
 from dataclasses import asdict
 from pathlib import Path
 from urllib.request import urlopen
@@ -13,7 +14,7 @@ from uuid import uuid4
 from cain.llm import FakeLLM
 from cain.runtime import build_cain, build_retriever, build_profile
 from cain.orchestrator.routing import RuleRouter
-from cain.settings import load_settings
+from cain.settings import is_loopback_url, load_settings
 
 
 def _write(value):
@@ -126,13 +127,20 @@ def main(argv=None) -> int:
             return 1 if isinstance(result, dict) and result.get("status") == "generation_failed" else 0
         settings = _settings(args)
         if args.command == "doctor":
+            warnings = []
+            if not is_loopback_url(settings.base_url):
+                host = urlsplit(settings.base_url).hostname or settings.base_url
+                warnings.append(f"llm.base_url não é loopback ({host}): perfil, histórico e "
+                                "documentos da conversa saem desta máquina")
+                print(f"Cain: aviso: {warnings[-1]}", file=sys.stderr)  # visible even if the probe fails
             with urlopen(settings.base_url.rstrip("/") + "/api/tags", timeout=5) as response:
                 tags = json.load(response)
             available = [m["name"] for m in tags.get("models", [])]
             ready = settings.model in available
             _write({"provider": settings.provider, "model": settings.model,
                     "model_available": ready, "available_models": available,
-                    "database": str(settings.db_path), "sources": list(map(str, settings.source_paths))})
+                    "database": str(settings.db_path), "sources": list(map(str, settings.source_paths)),
+                    "warnings": warnings})
             return 0 if ready else 1
         llm = FakeLLM() if args.command == "profile" else configured_llm(settings)
         if args.command != "profile" and args.project_id:
