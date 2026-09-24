@@ -31,3 +31,37 @@ jobs:
         with:
           name: cain-wheel-${{ matrix.python-version }}
           path: dist/*.whl
+
+  # Windows smoke: the documented launcher flow on a fresh checkout, without Ollama.
+  # scripts/start-cain.ps1 installs from uv.lock (uv on PATH) when .venv is absent and
+  # then runs `cain doctor`. Without an Ollama service, doctor exits 1 after printing
+  # "Cain: <urlopen error ...>", which already proves the install and the start-up;
+  # any other failure (missing uv, uv sync error, import error, traceback) fails the job.
+  windows-launcher:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+      - name: Launcher in doctor mode (installs .venv from uv.lock, no Ollama)
+        shell: pwsh
+        run: |
+          $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/start-cain.ps1 -Mode doctor 2>&1 | Out-String
+          $code = $LASTEXITCODE
+          Write-Output $output
+          if (-not (Test-Path .venv/Scripts/python.exe)) { throw "launcher did not create .venv" }
+          if ($output -match 'Traceback') { throw "launcher raised a Python traceback" }
+          $doctorRan = ($output -match '"model_available"') -or ($output -match 'Cain: <urlopen error')
+          if (-not $doctorRan) { throw "cain doctor did not run (exit $code)" }
+          if ($code -ne 0 -and -not ($output -match 'Cain: <urlopen error')) { throw "doctor failed for another reason (exit $code)" }
+      - name: Installed package answers --help
+        shell: pwsh
+        run: |
+          & .venv/Scripts/python.exe -X utf8 -m cain --help
+          if ($LASTEXITCODE -ne 0) { throw "python -m cain --help failed" }
+      - name: No background processes left behind
+        shell: pwsh
+        run: |
+          $left = Get-Process -Name ollama, uvicorn -ErrorAction SilentlyContinue
+          if ($left) { $left | Format-Table; throw "launcher left processes running" }
