@@ -95,6 +95,8 @@ def main(argv=None) -> int:
     register(sub)
     from cain.archive import register as register_archive
     register_archive(sub)
+    from cain.memory.cli import register as register_memory
+    register_memory(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
     run.add_argument("--intent", choices=["busca", "codigo", "resumo", "conversa"])
@@ -120,6 +122,11 @@ def main(argv=None) -> int:
             from cain.archive import execute as execute_archive
             _write(execute_archive(args))
             return 0
+        if args.command == "memory":
+            from cain.memory.cli import execute as execute_memory
+            result = execute_memory(args)
+            _write(result)
+            return 1 if isinstance(result, dict) and result.get("status") == "broken" else 0
         if args.command == "research":
             from cain.research.cli import execute
             result = execute(args)
