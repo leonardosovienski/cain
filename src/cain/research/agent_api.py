@@ -3,7 +3,7 @@
 from dataclasses import replace
 import json
 import os
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import HTTPException
 from fastapi.responses import StreamingResponse
@@ -44,6 +44,18 @@ class AdvanceRequest(Context):
 
 class AbstainRequest(Context):
     reason: str = Field(min_length=1, max_length=500)
+
+
+class DecisionRequest(Context):
+    decision: Literal["APPROVE", "REJECT", "EDIT"]
+    note: str | None = Field(default=None, max_length=1000)
+    question: str | None = Field(default=None, min_length=1, max_length=500)
+
+
+class ForkRequest(Context):
+    from_step: int = Field(ge=0, le=6)
+    model: str | None = Field(default=None, min_length=1, max_length=200)
+    prompt_version: str | None = Field(default=None, min_length=1, max_length=100)
 
 
 class StreamRequest(BaseModel):
@@ -136,6 +148,22 @@ def mount(app, service_factory, validate_context, provider_factory, generation_l
                                                   approve_generation=request.approve_generation, recover=request.recover)
             except (RuntimeError, OSError) as exc:
                 raise HTTPException(502, "Provider failed; workflow step was not completed") from exc
+
+    @app.post("/research/jobs/{run_id}/decision")
+    def decide_job(run_id: str, request: DecisionRequest):
+        service, scope = prepare(request)
+        # The local profile name is the approver identity (local-only service; not authentication).
+        return Workflows(service).decide(scope, run_id, request.decision, by=request.user_id, note=request.note,
+                                         question=request.question)
+
+    @app.post("/research/jobs/{run_id}/fork")
+    def fork_job(run_id: str, request: ForkRequest):
+        service, scope = prepare(request)
+        provider = provider_factory()
+        if request.model is not None:
+            provider = replace(provider, model=request.model)
+        return Workflows(service).fork(scope, run_id, request.from_step, provider,
+                                       prompt_version=request.prompt_version)
 
     @app.post("/assistant/stream")
     def stream_request(request: StreamRequest):
