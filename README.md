@@ -110,7 +110,7 @@ uv run python -m cain --help
 
 A [CI](.github/workflows/ci.yml) verifica Python 3.11–3.14, lint, testes, build e instalação não editável fora do checkout.
 Um job fixo (Linux, Python 3.12) mede a cobertura com `uv run pytest -q --cov=cain` e falha abaixo do piso
-(`--cov-fail-under`, hoje 84%, a baseline reproduzida). Para elevar o piso, meça na `main`, arredonde para baixo
+(`--cov-fail-under`, hoje 86%; a baseline da auditoria era 84%). Para elevar o piso, meça na `main`, arredonde para baixo
 e altere o valor no mesmo PR que subiu a cobertura; nunca reduza sem justificativa escrita.
 `/openapi.json` descreve a API. `/run` exige `user_id`, `session_id` e `payload`.
 Em `/research/explain`, `session_id` é opcional; quando informado, deve identificar uma conversa existente no projeto.
