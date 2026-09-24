@@ -9,10 +9,27 @@ from copy import deepcopy
 from pathlib import Path
 
 
+_CREDENTIAL_NAMES = (
+    r"(?:api[_-]?key|access[_-]?token|client[_-]?secret|secret[_-]?access[_-]?key|"
+    r"aws[_-]?secret[_-]?access[_-]?key|(?:auth|bearer|refresh|session)[_-]?token|"
+    r"password|passwd)"
+)
+# Second line of defence behind field redaction. Each pattern targets a credential *shape*;
+# prose that merely mentions a provider or a word like "password" must not match.
 _SECRET_PATTERNS = (
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
-    re.compile(r"\b(?:api[_-]?key|access[_-]?token|client[_-]?secret)\s*[:=]\s*\S+", re.I),
+    # name=value / name: value assignments in text
+    re.compile(r"\b" + _CREDENTIAL_NAMES + r"\s*[:=]\s*\S+", re.I),
+    # the same names as JSON object keys with a non-empty string value
+    re.compile(r'"' + _CREDENTIAL_NAMES + r'"\s*:\s*"[^"]+"', re.I),
     re.compile(r"\bsk-[A-Za-z0-9_-]{16,}\b"),
+    re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b"),  # JWT
+    re.compile(r"\b(?:AKIA|ASIA)[A-Z0-9]{16}\b"),  # AWS access key id
+    re.compile(r"\bgh[pousr]_[A-Za-z0-9]{36,}\b|\bgithub_pat_[A-Za-z0-9_]{22,}\b"),  # GitHub
+    re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}\b"),  # Slack
+    re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"),  # Google API key
+    re.compile(r"\bBearer\s+[A-Za-z0-9._~+/=-]{16,}"),  # Authorization header value
+    re.compile(r"\b[a-z][a-z0-9+.-]*://[^\s/:@]+:[^\s@/]+@"),  # scheme://user:password@host
 )
 
 
