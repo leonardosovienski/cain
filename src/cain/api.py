@@ -12,10 +12,9 @@ from urllib.parse import urlsplit
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
-from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from cain.providers import configured_llm, configured_embedding
 from cain import __version__
@@ -30,6 +29,23 @@ TRUSTED_HOSTS: tuple[str, ...] = ("127.0.0.1", "localhost", "[::1]")
 
 Scope = Literal["user", "project", "session", "turn"]
 PreferenceKey = Literal["format", "verbosity", "language"]
+
+
+def _host_header_name(value: str) -> str | None:
+    """The host named by a ``Host`` header (``host`` or ``host:port``, IPv6 in brackets).
+
+    Anything else (credentials, path, query, unbracketed IPv6, bad port) yields None, so a
+    decorated or malformed header never matches an allowlisted name.
+    """
+    try:
+        parts = urlsplit("//" + value)
+        parts.port  # noqa: B018  (validates a malformed or out-of-range port)
+    except ValueError:
+        return None
+    if (parts.username is not None or parts.password is not None or parts.path or parts.query
+            or parts.fragment or not parts.hostname or " " in value):
+        return None
+    return parts.hostname.lower()
 
 
 def _normalized_origin(value: str) -> tuple[str, str, int] | None:
@@ -119,7 +135,13 @@ def create_app(db_path: str | Path | None = None, llm=None, config_path: Path | 
     storage_path = Path(db_path if db_path is not None else settings.db_path)
     workspace = WorkspaceStore(storage_path)
     generation_lock = Lock()
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(trusted_hosts))
+    @app.middleware("http")
+    async def trusted_host(request: Request, call_next):
+        # Own parser instead of Starlette's TrustedHostMiddleware, which splits the header
+        # on ":" and therefore could never match the IPv6 loopback "[::1]".
+        if _host_header_name(request.headers.get("host", "")) not in local_names:
+            return PlainTextResponse("Invalid host header", status_code=400)
+        return await call_next(request)
 
     @app.middleware("http")
     async def local_binding(request: Request, call_next):
