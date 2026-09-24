@@ -1,0 +1,10 @@
+{
+  "policy": "claim-verifier-policy",
+  "version": 1,
+  "rule": "two-verifiers-agree/1",
+  "thresholds": {
+    "vectara/hallucination_evaluation_model": 0.5,
+    "lytang/MiniCheck-Flan-T5-Large": 0.5
+  },
+  "note": "Initial policy values (the models' published 0.5 decision point), not calibrated on CAIN data. Changing a threshold requires a recorded human approval and applies only to claims recorded after the change."
+}
