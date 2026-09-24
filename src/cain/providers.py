@@ -15,11 +15,17 @@ def make_llm(provider: str, model: str, base_url: str, temperature=0.0, seed=42,
 
 
 def configured_llm(settings):
-    return make_llm(settings.provider, settings.model, settings.base_url,
-                    settings.temperature, settings.seed, timeout=settings.timeout,
-                    num_ctx=settings.num_ctx, num_predict=settings.num_predict,
-                    max_input_bytes=settings.max_input_bytes, think=settings.think,
-                    num_batch=settings.num_batch)
+    llm = make_llm(settings.provider, settings.model, settings.base_url,
+                   settings.temperature, settings.seed, timeout=settings.timeout,
+                   num_ctx=settings.num_ctx, num_predict=settings.num_predict,
+                   max_input_bytes=settings.max_input_bytes, think=settings.think,
+                   num_batch=settings.num_batch)
+    mode = getattr(settings, "inference_mode", "disabled")
+    if mode != "disabled" and settings.inference_db is not None and isinstance(llm, OllamaLLM):
+        from cain.inference.recorder import InferenceStore, attach
+
+        attach(llm, InferenceStore(settings.inference_db), mode=mode)
+    return llm
 
 
 def configured_embedding(settings):
