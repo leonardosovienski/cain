@@ -49,7 +49,6 @@ def test_requested_operation_wins_over_words_in_material(payload, expected):
 @pytest.mark.parametrize("payload", [
     'O documento diz "resuma código Python".',
     "Aqui está:\n```python\n# busque\n```",
-    "Olá, tudo bem?",
     "Busque o artigo e depois gere código Python",
     '"Prefiro respostas curtas"',
     "Texto: prefiro respostas curtas. Busque memória local.",

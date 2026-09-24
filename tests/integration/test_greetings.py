@@ -9,7 +9,8 @@ class NoInference:
         raise AssertionError('A greeting must not call a model')
 
 
-@pytest.mark.parametrize('payload', ['oi ', 'Olá!', 'bom dia', 'Boa tarde, CAIN!', 'boa noite', 'Hi!'])
+@pytest.mark.parametrize('payload', ['oi ', 'Olá!', 'bom dia', 'Boa tarde, CAIN!', 'boa noite', 'Hi!',
+                                     'Olá, tudo bem?', 'Oi CAIN, tudo bom!', 'bom dia, como vai?'])
 def test_greeting_avoids_model_and_retrieval_and_is_logged(tmp_path, payload):
     def no_retrieval():
         raise AssertionError('A greeting must not open retrieval')
@@ -22,7 +23,8 @@ def test_greeting_avoids_model_and_retrieval_and_is_logged(tmp_path, payload):
         assert events[-1].status == 'completed'
 
 
-@pytest.mark.parametrize('payload', ['oi, pesquise SQLite', 'oi\nPesquise SQLite', '"oi"'])
+@pytest.mark.parametrize('payload', ['oi, pesquise SQLite', 'oi\nPesquise SQLite', '"oi"',
+                                     'Olá, tudo bem? Pesquise SQLite', 'tudo bem, pesquise SQLite'])
 def test_greeting_does_not_swallow_other_content(tmp_path, payload):
     class Classifier:
         def generate(self, *args):
