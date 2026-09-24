@@ -1,4 +1,9 @@
-"""Receiver-authorized bundle archive and rebuildable projections."""
+"""Receiver-authorized bundle archive and rebuildable projections.
+
+``BundleService`` keeps the public contract; grants live in ``bundle_policy.py``, the
+projections and integrity checks in ``bundle_projection.py``, the schema in
+``bundle_schema.py``.
+"""
 
 import io
 import json
@@ -9,12 +14,9 @@ from uuid import uuid4
 
 from research_bundle import (
     MAX_BYTES,
-    MAX_OBJECT,
-    MAX_RECEIVED,
     canonical,
     digest,
     entity_key,
-    keys,
     loads,
     namespace,
     signature,
@@ -22,38 +24,15 @@ from research_bundle import (
 )
 from research_bundle.files import safe_open, transfer
 
+from cain.research.bundle_policy import admit, grants_for, resource_allowed, validate_grants
+from cain.research.bundle_projection import (
+    check_projection, check_raw_variants, load_archives, project,
+)
+from cain.research.bundle_schema import SCHEMA
 from cain.research.objects import Objects
 from cain.research.service import now
 
-
-def validate_grants(grants):
-    if type(grants) is not list or len(grants) > 200:
-        raise ValueError("Invalid bundle grants")
-    for grant in grants:
-        keys(
-            grant,
-            "user project collection domain repository publisher stream sources policies generate roles reference_only max_manifest_bytes max_object_bytes max_received_bytes",
-        )
-        for key in ("user", "project", "collection", "domain", "repository", "publisher", "stream"):
-            if type(grant[key]) is not str or len(grant[key]) > 500:
-                raise ValueError("Invalid bundle grant identity")
-        for key in ("sources", "policies", "roles"):
-            if (
-                type(grant[key]) is not list
-                or len(grant[key]) > 200
-                or any(type(v) is not str for v in grant[key])
-            ):
-                raise ValueError("Invalid bundle grant list")
-        for key in ("generate", "reference_only"):
-            if type(grant[key]) is not bool:
-                raise ValueError("Invalid bundle permission")
-        for key, cap in (
-            ("max_manifest_bytes", MAX_BYTES),
-            ("max_object_bytes", MAX_OBJECT),
-            ("max_received_bytes", MAX_RECEIVED),
-        ):
-            if type(grant[key]) is not int or not 0 <= grant[key] <= cap:
-                raise ValueError("Invalid bundle cap")
+__all__ = ["BundleService", "validate_grants"]
 
 
 class BundleService:
@@ -65,133 +44,18 @@ class BundleService:
             or service.path.parent / "research-objects"
         )
         with service.connection() as db:
-            db.executescript("""
-                CREATE TABLE IF NOT EXISTS research_bundles(
-                  scope TEXT NOT NULL, id TEXT NOT NULL, origin TEXT NOT NULL,
-                  restrictions TEXT NOT NULL, raw BLOB NOT NULL, raw_sha TEXT NOT NULL,
-                  received_at TEXT NOT NULL, PRIMARY KEY(scope,id));
-                CREATE TABLE IF NOT EXISTS research_entities(
-                  scope TEXT NOT NULL, id TEXT NOT NULL, domain TEXT NOT NULL,
-                  entity_type TEXT NOT NULL, entity_id TEXT NOT NULL, revision TEXT NOT NULL,
-                  status TEXT NOT NULL, signature TEXT NOT NULL, payload TEXT NOT NULL,
-                  PRIMARY KEY(scope,id));
-                CREATE INDEX IF NOT EXISTS bundle_entity_filter ON research_entities(scope,domain,entity_type,entity_id,status);
-                CREATE TABLE IF NOT EXISTS research_bundle_entities(
-                  scope TEXT NOT NULL, bundle TEXT NOT NULL, entity TEXT NOT NULL,
-                  PRIMARY KEY(scope,bundle,entity),
-                  FOREIGN KEY(scope,bundle) REFERENCES research_bundles(scope,id),
-                  FOREIGN KEY(scope,entity) REFERENCES research_entities(scope,id));
-                CREATE TABLE IF NOT EXISTS research_artifacts(
-                  scope TEXT NOT NULL, bundle TEXT NOT NULL, id TEXT NOT NULL,
-                  sha256 TEXT, payload TEXT NOT NULL, PRIMARY KEY(scope,bundle,id),
-                  FOREIGN KEY(scope,bundle) REFERENCES research_bundles(scope,id));
-                CREATE INDEX IF NOT EXISTS bundle_hash ON research_artifacts(scope,sha256);
-                CREATE TABLE IF NOT EXISTS research_relations(
-                  scope TEXT NOT NULL, bundle TEXT NOT NULL, id TEXT NOT NULL,
-                  source TEXT NOT NULL, target TEXT NOT NULL, payload TEXT NOT NULL,
-                  PRIMARY KEY(scope,bundle,id),
-                  FOREIGN KEY(scope,bundle) REFERENCES research_bundles(scope,id));
-                CREATE INDEX IF NOT EXISTS bundle_relation_source ON research_relations(scope,source);
-                CREATE INDEX IF NOT EXISTS bundle_relation_target ON research_relations(scope,target);
-                CREATE TABLE IF NOT EXISTS research_bundle_receipts(
-                  id TEXT PRIMARY KEY, scope TEXT NOT NULL, at TEXT NOT NULL, payload TEXT NOT NULL);
-                CREATE TABLE IF NOT EXISTS research_entity_reservations(
-                  id TEXT PRIMARY KEY, signature TEXT NOT NULL);
-                CREATE TABLE IF NOT EXISTS research_bundle_approvals(
-                  scope TEXT NOT NULL, id TEXT NOT NULL, approved_at TEXT NOT NULL,
-                  raw BLOB NOT NULL,
-                  PRIMARY KEY(scope,id));
-                CREATE TABLE IF NOT EXISTS research_bundle_raw_variants(
-                  scope TEXT NOT NULL, bundle TEXT NOT NULL, raw_sha TEXT NOT NULL,
-                  raw BLOB NOT NULL, received_at TEXT NOT NULL,
-                  PRIMARY KEY(scope,bundle,raw_sha),
-                  FOREIGN KEY(scope,bundle) REFERENCES research_bundles(scope,id));
-            """)
+            db.executescript(SCHEMA)
 
     def grants(self, scope, origin, restrictions, generate=False):
-        if not restrictions["read"] or (generate and not restrictions["generate"]):
-            return []
-        policy = self.service.policy()
-        if policy["version"] != 3:
-            return []
-        identity = json.loads(scope)
-        return [
-            g
-            for g in policy["bundle_grants"]
-            if [g[k] for k in ("user", "project", "collection")] == identity
-            and all(g[k] == origin[k] for k in ("domain", "repository", "publisher", "stream"))
-            and set(origin["inputs"]) <= set(g["sources"])
-            and restrictions["policy"] in g["policies"]
-            and (not generate or g["generate"])
-        ]
+        return grants_for(self.service.policy(), scope, origin, restrictions, generate)
 
-    @staticmethod
-    def resource_allowed(artifact, grants):
-        return any(
-            artifact["role"] in g["roles"]
-            and (artifact["availability"] == "received" or g["reference_only"])
-            for g in grants
-        )
+    resource_allowed = staticmethod(resource_allowed)
 
     def _admit(self, scope, package, size):
-        grants = self.grants(scope, package["origin"], package["restrictions"])
-        total = sum(a["size"] for a in package["artifacts"] if a["availability"] == "received")
-        # One complete grant must admit the operation; partial grants do not compose caps.
-        for grant in grants:
-            if (
-                size <= grant["max_manifest_bytes"]
-                and total <= grant["max_received_bytes"]
-                and all(
-                    self.resource_allowed(a, [grant])
-                    and (a["availability"] != "received" or a["size"] <= grant["max_object_bytes"])
-                    for a in package["artifacts"]
-                )
-            ):
-                return
-        raise PermissionError("NOT_AUTHORIZED")
+        admit(self.grants(scope, package["origin"], package["restrictions"]), package, size)
 
     def _project(self, db, scope, package):
-        bid = package["bundle_id"]
-        for entity in package["entities"]:
-            eid, sig = entity_key(package["origin"], entity), signature(package, entity)
-            if db.execute(
-                "SELECT 1 FROM research_entities WHERE id=? AND signature<>?", (eid, sig)
-            ).fetchone():
-                raise ValueError("CONFLICT")
-            db.execute(
-                "INSERT OR IGNORE INTO research_entities VALUES(?,?,?,?,?,?,?,?,?)",
-                (
-                    scope,
-                    eid,
-                    package["origin"]["domain"],
-                    entity["entity_type"],
-                    entity["entity_id"],
-                    entity["revision"],
-                    entity["status"],
-                    sig,
-                    canonical(entity).decode(),
-                ),
-            )
-            db.execute(
-                "INSERT OR IGNORE INTO research_bundle_entities VALUES(?,?,?)", (scope, bid, eid)
-            )
-        for a in package["artifacts"]:
-            db.execute(
-                "INSERT INTO research_artifacts VALUES(?,?,?,?,?)",
-                (scope, bid, a["artifact_id"], a["sha256"], canonical(a).decode()),
-            )
-        for r in package["relations"]:
-            db.execute(
-                "INSERT INTO research_relations VALUES(?,?,?,?,?,?)",
-                (
-                    scope,
-                    bid,
-                    r["relation_id"],
-                    canonical(r["source"]).decode(),
-                    canonical(r["target"]).decode(),
-                    canonical(r).decode(),
-                ),
-            )
+        project(db, scope, package)
 
     def _receipt(self, scope, status, package=None, error=None, raw_sha=None):
         result = dict(
@@ -366,122 +230,16 @@ class BundleService:
             self._receipt(scope, "rejected", error=code)
             raise
 
-    @staticmethod
-    def _check_raw_variants(db, scope, bundle):
-        """Verify preserved transports, including new receipt-to-byte commitments.
-
-        Old receipts never promised variant preservation and are not rewritten.
-        """
-        if not db.execute(
-            "SELECT 1 FROM sqlite_master WHERE name='research_bundle_raw_variants'"
-        ).fetchone():
-            return
-        bid = bundle["bundle_id"]
-        hashes = {
-            db.execute(
-                "SELECT raw_sha FROM research_bundles WHERE scope=? AND id=?", (scope, bid)
-            ).fetchone()[0]
-        }
-        for row in db.execute(
-            "SELECT raw_sha,raw FROM research_bundle_raw_variants WHERE scope=? AND bundle=?",
-            (scope, bid),
-        ):
-            if digest(row["raw"]) != row["raw_sha"] or validate(loads(row["raw"])) != bundle:
-                raise ValueError("CORRUPTION: raw variant")
-            hashes.add(row["raw_sha"])
-        for row in db.execute(
-            "SELECT payload FROM research_bundle_receipts WHERE scope=?", (scope,)
-        ):
-            receipt = json.loads(row[0])
-            if (
-                receipt.get("raw_preserved")
-                and receipt["bundle_id"] == bid
-                and receipt["raw_manifest_sha256"] not in hashes
-            ):
-                raise ValueError("CORRUPTION: missing receipted raw variant")
+    _check_raw_variants = staticmethod(check_raw_variants)
 
     def _archives(self, db, scope, generate=False):
-        result = []
-        used = 0
-        for row in db.execute(
-            "SELECT id,origin,restrictions,length(raw) AS size FROM research_bundles WHERE scope=? ORDER BY id",
-            (scope,),
-        ):
-            grants = self.grants(
-                scope, json.loads(row["origin"]), json.loads(row["restrictions"]), generate
-            )
-            if not grants:
-                continue
-            used += row["size"]
-            if used > 20_000_000 or len(result) >= 100:
-                raise ValueError("SCOPE_LIMIT")
-            stored = db.execute(
-                "SELECT raw,raw_sha FROM research_bundles WHERE scope=? AND id=?",
-                (scope, row["id"]),
-            ).fetchone()
-            bundle = validate(loads(stored["raw"]))
-            if (
-                digest(stored["raw"]) != stored["raw_sha"]
-                or bundle["bundle_id"] != row["id"]
-                or canonical(bundle["origin"]).decode() != row["origin"]
-                or canonical(bundle["restrictions"]).decode() != row["restrictions"]
-            ):
-                raise ValueError("CORRUPTION: raw authorization metadata")
-            self._check_raw_variants(db, scope, bundle)
-            result.append((bundle, grants))
-        return result
+        return load_archives(
+            db, scope,
+            lambda origin, restrictions: self.grants(scope, origin, restrictions, generate),
+        )
 
     def _check_projection(self, db, scope, bundle):
-        bid = bundle["bundle_id"]
-        expected = set()
-        for e in bundle["entities"]:
-            eid = entity_key(bundle["origin"], e)
-            expected.add(eid)
-            row = db.execute(
-                "SELECT * FROM research_entities WHERE scope=? AND id=?", (scope, eid)
-            ).fetchone()
-            values = (
-                scope,
-                eid,
-                bundle["origin"]["domain"],
-                e["entity_type"],
-                e["entity_id"],
-                e["revision"],
-                e["status"],
-                signature(bundle, e),
-                canonical(e).decode(),
-            )
-            if row is None or tuple(row) != values:
-                raise ValueError("CORRUPTION: entity projection")
-        actual = {
-            r[0]
-            for r in db.execute(
-                "SELECT entity FROM research_bundle_entities WHERE scope=? AND bundle=?",
-                (scope, bid),
-            )
-        }
-        if expected != actual:
-            raise ValueError("CORRUPTION: memberships")
-        for table, items, identity in (
-            ("research_artifacts", bundle["artifacts"], "artifact_id"),
-            ("research_relations", bundle["relations"], "relation_id"),
-        ):
-            rows = db.execute(
-                "SELECT * FROM " + table + " WHERE scope=? AND bundle=?", (scope, bid)
-            ).fetchall()
-            if {r["id"]: r["payload"] for r in rows} != {
-                i[identity]: canonical(i).decode() for i in items
-            }:
-                raise ValueError("CORRUPTION: resource/relation projection")
-            for row in rows:
-                item = json.loads(row["payload"])
-                if table == "research_artifacts" and row["sha256"] != item["sha256"]:
-                    raise ValueError("CORRUPTION: resource index")
-                if table == "research_relations" and (
-                    row["source"] != canonical(item["source"]).decode()
-                    or row["target"] != canonical(item["target"]).decode()
-                ):
-                    raise ValueError("CORRUPTION: relation index")
+        check_projection(db, scope, bundle)
 
     def query(
         self,
