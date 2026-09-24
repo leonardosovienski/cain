@@ -1,0 +1,77 @@
+{
+  "equivalent_to_closed": true,
+  "matches": [
+    {
+      "finding_id": "crypto:frozen-family:funding_oi_hmm_v3",
+      "verdict": "FROZEN_FAMILY",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.6638,
+      "statement": "frozen family funding_oi_hmm_v3: cannot be reopened or reparameterized silently"
+    },
+    {
+      "finding_id": "crypto:hypothesis:H1",
+      "verdict": "NO_GO",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.7465,
+      "statement": "H1 v3-hmm-funding-oi-fr90 v3-hmm-funding-oi-fr90 {\"custos\": \"taker 10bps + slip 5bps por perna + funding real\", \"features\": \"funding_zscore(90), oi_log_delta, leverage_pressure, log_return_8h, realized_vol_24h\", \"horizonte_horas\": 24, \"modelo\": \"GaussianHMM 3 estados (forward causal)\", \"validacao\": "
+    },
+    {
+      "finding_id": "crypto:hypothesis:H2",
+      "verdict": "NO_GO",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.6833,
+      "statement": "H2 v3-hmm-funding-oi-fr21 v3-hmm-funding-oi-fr21 {\"features\": \"funding_zscore(21) — pivot de janela\", \"horizonte_horas\": 24, \"modelo\": \"GaussianHMM 3 estados (forward causal)\"} H2 REFUTADA 2026-07-02 (com custos): NO-GO. PSR 0.215, bruto +0.07bps -> liquido -0.37bps/sinal, IC_lo Spearman -0.218, Max"
+    },
+    {
+      "finding_id": "crypto:hypothesis:H3",
+      "verdict": "NO_GO",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.7095,
+      "statement": "H3 v3-hmm-funding-oi-fr90-h48 v3-hmm-funding-oi-fr90-h48 {\"custos\": \"taker 10 + slip 5 bps/perna + funding real\", \"features\": \"funding_zscore(90) + OI\", \"horizonte_horas\": 48, \"modelo\": \"GaussianHMM 3 estados (forward causal)\"} H3 REFUTADA 2026-07-02: NO-GO. Horizonte 48h NAO amortiza — o edge bruto"
+    },
+    {
+      "finding_id": "crypto:hypothesis:H4",
+      "verdict": "CLOSED_INSUFFICIENT_SAMPLE",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.6515,
+      "statement": "H4 v2-dpl-gemini-h7 v2-dpl-gemini-h7 {\"fonte\": \"dpl:fallback\", \"horizonte_dias\": 7, \"input\": \"LLM + indicadores + noticias (mercado offline da Feature Store; universo via --discover)\", \"juiz\": \"gemini:gemini-2.5-flash\"} Pipeline pos-merge (ADR DECISAO_MERGE_DPL_DISCOVERY). Em coleta desde 2026-07-01"
+    },
+    {
+      "finding_id": "crypto:hypothesis:H5",
+      "verdict": "NO_GO",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.6899,
+      "statement": "H5 v2-dpl-multi-h7 v2-dpl-multi-h7 {\"fonte\": \"dpl:fallback\", \"horizonte_dias\": 7, \"input\": \"LLM + indicadores + noticias (mesmo pipeline da v2-dpl-gemini-h7; so muda o juiz por-ativo, carimbado por previsao)\", \"juiz\": \"multi (particao fixa sha256: gemini 5, groq 8, cerebras 3, mistral 6 dos 22 ativo"
+    },
+    {
+      "finding_id": "crypto:hypothesis:H6",
+      "verdict": "CLOSED_INSUFFICIENT_SAMPLE",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.647,
+      "statement": "H6 h6-sinal-invertido-d7 h6-sinal-invertido-d7 {\"fonte\": \"reserved:h6-inversao-sinal\", \"horizonte_dias\": 7} Pre-registro anti-data-snooping anterior ao resultado dedicado. A hipotese nasceu da correlacao negativa observada nas familias anteriores e so aceita previsoes posteriores a registered_at. MA"
+    },
+    {
+      "finding_id": "crypto:hypothesis:H9",
+      "verdict": "CLOSED_INSUFFICIENT_SAMPLE",
+      "status": "DECLARED",
+      "quarantine": true,
+      "same_identity": [],
+      "similarity": 0.744,
+      "statement": "H9 h9-oi-volume-ratio-hmm-v1 h9-oi-volume-ratio-hmm-v1 {\"code_ref\": \"v3/crowding_features.py (build_oi_volume_ratio), v3/feature_builder.py (build_volume_index), v3/backtest_v3.py --use-oi-volume-ratio\", \"dado_ja_coletado\": true, \"decided_by\": \"owner, 2026-09-04\", \"family\": \"oi-volume-crowding-hmm-c"
+    }
+  ]
+}

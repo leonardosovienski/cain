@@ -1,0 +1,90 @@
+{
+  "registry:brasileirao": {
+    "recorded:negative": 6,
+    "recorded:informative": 22,
+    "recorded:positive": 1
+  },
+  "registry:crypto": {
+    "recorded:informative": 26
+  },
+  "registry:stocks": {
+    "recorded:informative": 15
+  },
+  "state:crypto": {
+    "recorded:negative": 8,
+    "recorded:informative": 2
+  },
+  "loop:brasileirao-dev2022-1": "DECLARED",
+  "loop:brasileirao-dev2022-2": "DECLARED",
+  "re-ingest:brasileirao": {
+    "unchanged:negative": 6,
+    "unchanged:informative": 22,
+    "unchanged:positive": 1
+  },
+  "list:brasileirao": {
+    "default_count": 0,
+    "with_quarantine": 31,
+    "by_status_kind": {
+      "DECLARED:negative": 8,
+      "DECLARED:informative": 22,
+      "DECLARED:positive": 1
+    }
+  },
+  "list:crypto": {
+    "default_count": 0,
+    "with_quarantine": 36,
+    "by_status_kind": {
+      "DECLARED:negative": 8,
+      "DECLARED:informative": 28
+    }
+  },
+  "list:stocks": {
+    "default_count": 0,
+    "with_quarantine": 15,
+    "by_status_kind": {
+      "DECLARED:informative": 15
+    }
+  },
+  "check:frozen-family": {
+    "equivalent_to_closed": true,
+    "matches": [
+      {
+        "finding_id": "crypto:frozen-family:funding_oi_hmm_v3",
+        "verdict": "FROZEN_FAMILY",
+        "status": "DECLARED",
+        "quarantine": true,
+        "same_identity": [
+          "hypothesis_family"
+        ],
+        "similarity": 0.0,
+        "statement": "frozen family funding_oi_hmm_v3: cannot be reopened or reparameterized silently"
+      }
+    ]
+  },
+  "check:new-idea": {
+    "equivalent_to_closed": false,
+    "matches": []
+  },
+  "apply:cross-domain-refused": null,
+  "loop:retry": {
+    "stopped": "equivalent_to_closed",
+    "attempts": 0,
+    "matches": [
+      [
+        "brasileirao:loop:loop:brasileirao-dev2022-1",
+        [
+          "hypothesis_id"
+        ],
+        true
+      ],
+      [
+        "brasileirao:loop:loop:brasileirao-dev2022-2",
+        [
+          "hypothesis_id"
+        ],
+        true
+      ]
+    ]
+  },
+  "memory:verify": "intact"
+}

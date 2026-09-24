@@ -15,6 +15,8 @@ def register(sub):
     run.add_argument("--novelty", choices=["lexical", "embedding"], default="lexical")
     run.add_argument("--config", type=Path, help="cain.toml for the local model / embedding")
     run.add_argument("--loop-id")
+    run.add_argument("--memory-db", type=Path, help="findings archive (Prompt 7): stop on a closed hypothesis")
+    run.add_argument("--closed-threshold", type=float, default=0.6)
     status = commands.add_parser("status", help="What a loop did, from its ledger events")
     status.add_argument("loop_id", nargs="?")
     decide = commands.add_parser("decide", help="Human decision on the pending gate of a loop")
@@ -29,16 +31,21 @@ def register(sub):
 
 
 def _similarity(args):
+    return similarity_function(args.novelty, args.config)
+
+
+def similarity_function(kind: str, config=None):
+    """Lexical overlap, or cosine of the configured local embedding model (qwen3-embedding)."""
     from cain.loop.engine import lexical_similarity
 
-    if args.novelty == "lexical":
+    if kind == "lexical":
         return lexical_similarity
     import math
 
     from cain.providers import configured_embedding
     from cain.settings import load_settings
 
-    settings = load_settings(args.config)
+    settings = load_settings(config)
     settings.search_mode = "hybrid"
     embedding = configured_embedding(settings)
     cache = {}
@@ -86,4 +93,16 @@ def execute(args):
         from cain.settings import load_settings
 
         proposer = LocalModelProposer(configured_llm(load_settings(args.config)))
-    return ResearchLoop(world, ledger, proposer, similarity=_similarity(args)).run(loop_id=args.loop_id)
+    closed_check = None
+    if args.memory_db is not None:
+        from cain.findings.archive import FindingsArchive
+        from cain.memory.store import MemoryStore
+
+        archive = FindingsArchive(MemoryStore(args.memory_db))
+        domain = world["world"]["predictor"]
+
+        def closed_check(statement, identity):
+            return archive.equivalent_closed(domain, statement, as_of=archive.memory.now(), identity=identity,
+                                             threshold=args.closed_threshold)
+    return ResearchLoop(world, ledger, proposer, similarity=_similarity(args),
+                        closed_check=closed_check).run(loop_id=args.loop_id)

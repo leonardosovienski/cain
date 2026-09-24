@@ -103,6 +103,8 @@ def main(argv=None) -> int:
     register_inference(sub)
     from cain.loop.cli import register as register_loop
     register_loop(sub)
+    from cain.findings.cli import register as register_findings
+    register_findings(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
     run.add_argument("--intent", choices=["busca", "codigo", "resumo", "conversa"])
@@ -138,6 +140,10 @@ def main(argv=None) -> int:
             result = execute_claims(args)
             _write(result)
             return 1 if isinstance(result, dict) and result.get("status") == "blocked" else 0
+        if args.command == "findings":
+            from cain.findings.cli import execute as execute_findings
+            _write(execute_findings(args))
+            return 0
         if args.command == "loop":
             from cain.loop.cli import execute as execute_loop
             _write(execute_loop(args))
