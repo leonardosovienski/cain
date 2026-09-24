@@ -18,6 +18,8 @@ dependencies = [
 api = ["fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
 dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "ruff>=0.9,<1", "httpx>=0.27,<1", "fastapi>=0.115,<1", "uvicorn>=0.30,<1"]
 vision = ["Pillow>=11,<13"]
+# Local claim verifiers (HHEM-2.1-Open, MiniCheck-Flan-T5-Large); CPU-only torch wheels on Linux/Windows.
+verify = ["torch>=2.6,<3", "transformers>=4.46,<6", "huggingface-hub>=0.25,<2"]
 
 [project.scripts]
 cain = "cain.cli:main"
@@ -28,12 +30,18 @@ cain-stream = "cain.playground:main"
 predictor-research-snapshot = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-snapshot-v1.0.2rc1/predictor_research_snapshot-1.0.2rc1-py3-none-any.whl" }
 predictor-research-bundle = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-bundle-v1.0.1rc1/predictor_research_bundle-1.0.1rc1-py3-none-any.whl" }
 predictor-research-protocol = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v1.0.3rc1/predictor_research_protocol-1.0.3rc1-py3-none-any.whl" }
+torch = [{ index = "pytorch-cpu", marker = "sys_platform != 'darwin'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-cain = ["web/*.html", "web/*.css", "web/*.js", "evaluation/data/scenarios/*.json", "evaluation/data/probes/*.json", "evaluation/data/rubrics/*.md"]
+cain = ["web/*.html", "web/*.css", "web/*.js", "evaluation/data/scenarios/*.json", "evaluation/data/probes/*.json", "evaluation/data/rubrics/*.md", "claims/data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

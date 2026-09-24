@@ -1,0 +1,1501 @@
+$ cain memory --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-document --cube research --title "Backtest bt-2026-07" --published-at 2026-09-24T12:00:00+00:00 --source demo:report.txt --file report.txt
+{
+  "id": "doc:43752919cd914051a3c50e93eefa6089",
+  "cube": "research",
+  "title": "Backtest bt-2026-07",
+  "text": "Backtest report, run bt-2026-07.\nThe backtest covered 49 rebalance periods between July 2022 and August 2025. Net excess return averaged 29 basis points per period, with a 95% confidence interval from -43 to 95 basis points. The strategy did not beat the benchmark with statistical confidence.\n",
+  "content_sha256": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+  "published_at": "2026-09-24T12:00:00.000000Z",
+  "source": "demo:report.txt",
+  "supersedes": null,
+  "recorded_at": "2026-09-24T16:26:10.614534Z",
+  "event_id": "event:cd120a14af6a425ab53323f93bd554e4"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-evidence --cube research --document-id doc:43752919cd914051a3c50e93eefa6089 --start 33 --end 109 --quote "The backtest covered 49 rebalance periods between July 2022 and August 2025."
+{
+  "id": "evidence:73f43020ab66440a81fcac4ea385611b",
+  "cube": "research",
+  "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+  "doc_hash": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+  "chunk_id": null,
+  "quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+  "char_start": 33,
+  "char_end": 109,
+  "page": null,
+  "published_at": "2026-09-24T12:00:00.000000Z",
+  "query": null,
+  "summary": null,
+  "relevance_score": null,
+  "model_id": null,
+  "settings_hash": null,
+  "recorded_at": "2026-09-24T16:26:10.700597Z",
+  "event_id": "event:d5dddcc9980d4097aa97d3ab7ea57cbf"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-evidence --cube research --document-id doc:43752919cd914051a3c50e93eefa6089 --start 110 --end 163 --quote "Net excess return averaged 29 basis points per period"
+{
+  "id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+  "cube": "research",
+  "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+  "doc_hash": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+  "chunk_id": null,
+  "quote": "Net excess return averaged 29 basis points per period",
+  "char_start": 110,
+  "char_end": 163,
+  "page": null,
+  "published_at": "2026-09-24T12:00:00.000000Z",
+  "query": null,
+  "summary": null,
+  "relevance_score": null,
+  "model_id": null,
+  "settings_hash": null,
+  "recorded_at": "2026-09-24T16:26:10.791228Z",
+  "event_id": "event:28ffa814b1e14b1eb0da51da5dbe5b97"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-evidence --cube research --document-id doc:43752919cd914051a3c50e93eefa6089 --start 165 --end 223 --quote "with a 95% confidence interval from -43 to 95 basis points"
+{
+  "id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+  "cube": "research",
+  "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+  "doc_hash": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+  "chunk_id": null,
+  "quote": "with a 95% confidence interval from -43 to 95 basis points",
+  "char_start": 165,
+  "char_end": 223,
+  "page": null,
+  "published_at": "2026-09-24T12:00:00.000000Z",
+  "query": null,
+  "summary": null,
+  "relevance_score": null,
+  "model_id": null,
+  "settings_hash": null,
+  "recorded_at": "2026-09-24T16:26:10.887271Z",
+  "event_id": "event:e006b3d9fe2c466aac8ced264001d0d5"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-evidence --cube research --document-id doc:43752919cd914051a3c50e93eefa6089 --start 0 --end 10 --quote "The backtest"
+[stderr]
+Cain: QUOTE_NOT_LITERAL: quote differs from doc[char_start:char_end]
+[exit 1]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-claim --cube research --text "The backtest spans 49 rebalance periods." --document-id doc:43752919cd914051a3c50e93eefa6089 --start 33 --end 109 --evidence evidence:73f43020ab66440a81fcac4ea385611b
+{
+  "id": "claim:ebface50600a4656b97be95449959c88",
+  "cube": "research",
+  "text": "The backtest spans 49 rebalance periods.",
+  "kind": "TEXTUAL_SUPPORT",
+  "status": "INCONCLUSIVE",
+  "review_state": "pending_verification",
+  "evidence_ids": [
+    "evidence:73f43020ab66440a81fcac4ea385611b"
+  ],
+  "run_ref": null,
+  "extractor": null,
+  "source_span": {
+    "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+    "char_start": 33,
+    "char_end": 109,
+    "quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025."
+  },
+  "recorded_at": "2026-09-24T16:26:11.054617Z",
+  "event_id": "event:da8fd6adebb544479c995f29fb7fba2b"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-claim --cube research --text "Net excess return averaged 92 basis points per period." --document-id doc:43752919cd914051a3c50e93eefa6089 --start 110 --end 163 --evidence evidence:5b2fb529f291402f988f907d63cd37fc
+{
+  "id": "claim:f1ab773d4f5b496f80934e2e3415b18e",
+  "cube": "research",
+  "text": "Net excess return averaged 92 basis points per period.",
+  "kind": "TEXTUAL_SUPPORT",
+  "status": "INCONCLUSIVE",
+  "review_state": "pending_verification",
+  "evidence_ids": [
+    "evidence:5b2fb529f291402f988f907d63cd37fc"
+  ],
+  "run_ref": null,
+  "extractor": null,
+  "source_span": {
+    "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+    "char_start": 110,
+    "char_end": 163,
+    "quote": "Net excess return averaged 29 basis points per period"
+  },
+  "recorded_at": "2026-09-24T16:26:11.143177Z",
+  "event_id": "event:2aa0ac2af3784367b1b11c8464a154e6"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db add-claim --cube research --text "The confidence interval for net excess return includes zero." --document-id doc:43752919cd914051a3c50e93eefa6089 --start 165 --end 223 --evidence evidence:a1b51e5421064015b888cef6948b4d3a
+{
+  "id": "claim:bde88a6b835841029fbe93f89328ced2",
+  "cube": "research",
+  "text": "The confidence interval for net excess return includes zero.",
+  "kind": "TEXTUAL_SUPPORT",
+  "status": "INCONCLUSIVE",
+  "review_state": "pending_verification",
+  "evidence_ids": [
+    "evidence:a1b51e5421064015b888cef6948b4d3a"
+  ],
+  "run_ref": null,
+  "extractor": null,
+  "source_span": {
+    "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+    "char_start": 165,
+    "char_end": 223,
+    "quote": "with a 95% confidence interval from -43 to 95 basis points"
+  },
+  "recorded_at": "2026-09-24T16:26:11.220994Z",
+  "event_id": "event:0302d6a7989d468d820525648ca2d2a7"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:ebface50600a4656b97be95449959c88 --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:ebface50600a4656b97be95449959c88",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:73f43020ab66440a81fcac4ea385611b"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.966611,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:73f43020ab66440a81fcac4ea385611b",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.977369,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:73f43020ab66440a81fcac4ea385611b",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:16.439825Z",
+  "event_id": "event:aa798c41876e4e649d58501805926b59"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:f1ab773d4f5b496f80934e2e3415b18e --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:f1ab773d4f5b496f80934e2e3415b18e",
+  "cube": "research",
+  "status": "INCONCLUSIVE",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:5b2fb529f291402f988f907d63cd37fc"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.410473,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.023453,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:19.875584Z",
+  "event_id": "event:6f7cb9325b86421ba8407348e9b259c7"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:bde88a6b835841029fbe93f89328ced2 --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:bde88a6b835841029fbe93f89328ced2",
+  "cube": "research",
+  "status": "INCONCLUSIVE",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.057609,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.161679,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:24.683191Z",
+  "event_id": "event:fab8503152714fc283c5cf824f2dac0a"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db list --as-of now --cube research
+{
+  "claims": [
+    {
+      "id": "claim:bde88a6b835841029fbe93f89328ced2",
+      "cube": "research",
+      "text": "The confidence interval for net excess return includes zero.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 165,
+      "source_end": 223,
+      "source_quote": "with a 95% confidence interval from -43 to 95 basis points",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:a1b51e5421064015b888cef6948b4d3a"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+            "start": 0
+          },
+          "score": 0.161679,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+            "start": 0
+          },
+          "score": 0.057609,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.220994Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:ebface50600a4656b97be95449959c88",
+      "cube": "research",
+      "text": "The backtest spans 49 rebalance periods.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:73f43020ab66440a81fcac4ea385611b"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:73f43020ab66440a81fcac4ea385611b"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:73f43020ab66440a81fcac4ea385611b",
+            "start": 0
+          },
+          "score": 0.977369,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:73f43020ab66440a81fcac4ea385611b",
+            "start": 0
+          },
+          "score": 0.966611,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.054617Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:f1ab773d4f5b496f80934e2e3415b18e",
+      "cube": "research",
+      "text": "Net excess return averaged 92 basis points per period.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 163,
+      "source_quote": "Net excess return averaged 29 basis points per period",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:5b2fb529f291402f988f907d63cd37fc"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.023453,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.410473,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.143177Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    }
+  ]
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db review-queue --as-of now --cube research
+{
+  "review_queue": []
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db review claim:bde88a6b835841029fbe93f89328ced2 --status SUPPORTED --reviewer agent-demo --note "-43 < 0 < 95: the interval includes zero (arithmetic the NLI verifiers do not do)"
+{
+  "claim_id": "claim:bde88a6b835841029fbe93f89328ced2",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "human-review/1",
+  "review_state": "reviewed",
+  "assessed_by": "human:agent-demo",
+  "verifier_scores": {},
+  "note": "-43 < 0 < 95: the interval includes zero (arithmetic the NLI verifiers do not do)",
+  "recorded_at": "2026-09-24T16:26:25.422807Z",
+  "event_id": "event:b3920942396741659b5933596b17c8d1"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db list --as-of now --cube research --unsupported
+{
+  "claims": [
+    {
+      "id": "claim:f1ab773d4f5b496f80934e2e3415b18e",
+      "cube": "research",
+      "text": "Net excess return averaged 92 basis points per period.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 163,
+      "source_quote": "Net excess return averaged 29 basis points per period",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:5b2fb529f291402f988f907d63cd37fc"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.023453,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.410473,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.143177Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    }
+  ]
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db trace claim:bde88a6b835841029fbe93f89328ced2 --as-of now
+{
+  "as_of": "2026-09-24T16:26:25.584616Z",
+  "claim": {
+    "id": "claim:bde88a6b835841029fbe93f89328ced2",
+    "cube": "research",
+    "text": "The confidence interval for net excess return includes zero.",
+    "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+    "source_start": 165,
+    "source_end": 223,
+    "source_quote": "with a 95% confidence interval from -43 to 95 basis points",
+    "kind": "TEXTUAL_SUPPORT",
+    "status": "SUPPORTED",
+    "review_state": "reviewed",
+    "evidence_ids": [
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "run_ref": null,
+    "extractor": null,
+    "verifier_scores": {},
+    "recorded_at": "2026-09-24T16:26:11.220994Z",
+    "assessed_by": "human:agent-demo",
+    "rule": "human-review/1"
+  },
+  "source_document": {
+    "id": "doc:43752919cd914051a3c50e93eefa6089",
+    "cube": "research",
+    "title": "Backtest bt-2026-07",
+    "text": "Backtest report, run bt-2026-07.\nThe backtest covered 49 rebalance periods between July 2022 and August 2025. Net excess return averaged 29 basis points per period, with a 95% confidence interval from -43 to 95 basis points. The strategy did not beat the benchmark with statistical confidence.\n",
+    "content_sha256": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+    "published_at": "2026-09-24T12:00:00.000000Z",
+    "recorded_at": "2026-09-24T16:26:10.614534Z",
+    "superseded_at": null,
+    "supersedes": null,
+    "source": "demo:report.txt"
+  },
+  "evidence": [
+    {
+      "id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+      "cube": "research",
+      "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "doc_hash": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+      "chunk_id": null,
+      "quote": "with a 95% confidence interval from -43 to 95 basis points",
+      "char_start": 165,
+      "char_end": 223,
+      "page": null,
+      "published_at": "2026-09-24T12:00:00.000000Z",
+      "query": null,
+      "summary": null,
+      "relevance_score": null,
+      "model_id": null,
+      "settings_hash": null,
+      "recorded_at": "2026-09-24T16:26:10.887271Z"
+    }
+  ],
+  "evidence_documents": {
+    "doc:43752919cd914051a3c50e93eefa6089": {
+      "id": "doc:43752919cd914051a3c50e93eefa6089",
+      "title": "Backtest bt-2026-07",
+      "content_sha256": "c281c9881a859ff042ca48d04154dc12cda1c7d75af56a1e117288b41bc12a48",
+      "published_at": "2026-09-24T12:00:00.000000Z",
+      "source": "demo:report.txt"
+    }
+  },
+  "run_ref": null,
+  "assessments": [
+    {
+      "event_id": "event:fab8503152714fc283c5cf824f2dac0a",
+      "claim_id": "claim:bde88a6b835841029fbe93f89328ced2",
+      "cube": "research",
+      "status": "INCONCLUSIVE",
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+            "start": 0
+          },
+          "score": 0.161679,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:a1b51e5421064015b888cef6948b4d3a",
+            "start": 0
+          },
+          "score": 0.057609,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "rule": "two-verifiers-agree/1",
+      "review_state": "not_applicable",
+      "assessed_by": "verifiers",
+      "note": null,
+      "recorded_at": "2026-09-24T16:26:24.683191Z"
+    },
+    {
+      "event_id": "event:b3920942396741659b5933596b17c8d1",
+      "claim_id": "claim:bde88a6b835841029fbe93f89328ced2",
+      "cube": "research",
+      "status": "SUPPORTED",
+      "verifier_scores": {},
+      "rule": "human-review/1",
+      "review_state": "reviewed",
+      "assessed_by": "human:agent-demo",
+      "note": "-43 < 0 < 95: the interval includes zero (arithmetic the NLI verifiers do not do)",
+      "recorded_at": "2026-09-24T16:26:25.422807Z"
+    }
+  ]
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db lint report-good.md --as-of now --cube research
+{
+  "as_of": "2026-09-24T16:26:25.658604Z",
+  "status": "publishable",
+  "numbers_checked": 3,
+  "markers_resolved": [
+    "ev:evidence:73f43020ab66440a81fcac4ea385611b",
+    "ev:evidence:a1b51e5421064015b888cef6948b4d3a"
+  ],
+  "violations": []
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db lint report-bad.md --as-of now --cube research
+{
+  "as_of": "2026-09-24T16:26:25.734373Z",
+  "status": "blocked",
+  "numbers_checked": 5,
+  "markers_resolved": [
+    "ev:evidence:73f43020ab66440a81fcac4ea385611b",
+    "ev:evidence:a1b51e5421064015b888cef6948b4d3a"
+  ],
+  "violations": [
+    {
+      "number": "29",
+      "sentence": "Net excess return was 29 basis points per period, above the 25 we needed.",
+      "code": "NO_PROVENANCE"
+    },
+    {
+      "number": "25",
+      "sentence": "Net excess return was 29 basis points per period, above the 25 we needed.",
+      "code": "NO_PROVENANCE"
+    }
+  ]
+}
+[exit 1]
+
+$ cain memory --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify
+{
+  "entries": 11,
+  "status": "intact",
+  "broken_at": null,
+  "head": "c7663bae29e3b1cdf973b3152262527c0b72ee19f99ccf3eedb13a0f707a455d",
+  "head_recorded_at": "2026-09-24T16:26:25.422807Z",
+  "projection": "consistent"
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db extract --cube research --document-id doc:43752919cd914051a3c50e93eefa6089 --config /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/cain.toml
+{
+  "document_id": "doc:43752919cd914051a3c50e93eefa6089",
+  "claims": [
+    {
+      "id": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "status": "INCONCLUSIVE",
+      "occurrences_of_quote": 1
+    },
+    {
+      "id": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "status": "INCONCLUSIVE",
+      "occurrences_of_quote": 1
+    },
+    {
+      "id": "claim:9916f567fe0241cc92856c6165be2681",
+      "status": "INCONCLUSIVE",
+      "occurrences_of_quote": 1
+    },
+    {
+      "id": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "status": "INCONCLUSIVE",
+      "occurrences_of_quote": 1
+    },
+    {
+      "id": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "status": "INCONCLUSIVE",
+      "occurrences_of_quote": 1
+    }
+  ],
+  "rejected": [],
+  "extractor": {
+    "model": "qwen3.5:4b",
+    "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+    "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+    "version": "claimify-lite/1",
+    "generation": {
+      "model": "qwen3.5:4b",
+      "done_reason": "stop",
+      "prompt_eval_count": 262,
+      "eval_count": 349,
+      "total_duration": 5860066789,
+      "load_duration": 808252,
+      "eval_duration": 5537737000,
+      "input_bytes": 1026,
+      "num_ctx": 8192,
+      "max_input_bytes": 6500,
+      "effective_input_byte_budget": 6500,
+      "think": false,
+      "structured_output": true,
+      "num_batch": null
+    }
+  }
+}
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:1130f6a2a256496cb47fffb03189d10e --evidence evidence:73f43020ab66440a81fcac4ea385611b --evidence evidence:5b2fb529f291402f988f907d63cd37fc --evidence evidence:a1b51e5421064015b888cef6948b4d3a --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:1130f6a2a256496cb47fffb03189d10e",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:5b2fb529f291402f988f907d63cd37fc",
+      "evidence:73f43020ab66440a81fcac4ea385611b",
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.95334,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.961156,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:37.194156Z",
+  "event_id": "event:2c3501bb4fc34fcfaef247f2175bab5f"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:defbaa5be85b4be7a1872461b9a687d0 --evidence evidence:73f43020ab66440a81fcac4ea385611b --evidence evidence:5b2fb529f291402f988f907d63cd37fc --evidence evidence:a1b51e5421064015b888cef6948b4d3a --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:defbaa5be85b4be7a1872461b9a687d0",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:5b2fb529f291402f988f907d63cd37fc",
+      "evidence:73f43020ab66440a81fcac4ea385611b",
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.958245,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.971468,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:43.237213Z",
+  "event_id": "event:2d05b53c37254474829c6e50c1904dd9"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:9916f567fe0241cc92856c6165be2681 --evidence evidence:73f43020ab66440a81fcac4ea385611b --evidence evidence:5b2fb529f291402f988f907d63cd37fc --evidence evidence:a1b51e5421064015b888cef6948b4d3a --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:9916f567fe0241cc92856c6165be2681",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:5b2fb529f291402f988f907d63cd37fc",
+      "evidence:73f43020ab66440a81fcac4ea385611b",
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.95791,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.935116,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:49.142754Z",
+  "event_id": "event:ed33272fa867486c8d832221446762dd"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:2772d32e2b634dc2b4ba57138cc57a76 --evidence evidence:73f43020ab66440a81fcac4ea385611b --evidence evidence:5b2fb529f291402f988f907d63cd37fc --evidence evidence:a1b51e5421064015b888cef6948b4d3a --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:5b2fb529f291402f988f907d63cd37fc",
+      "evidence:73f43020ab66440a81fcac4ea385611b",
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.959124,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.957973,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:53.583047Z",
+  "event_id": "event:b17e60b61b194efc84dbce16d55b716b"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify claim:1ac05541c22841ea8a370a42ceec8310 --evidence evidence:73f43020ab66440a81fcac4ea385611b --evidence evidence:5b2fb529f291402f988f907d63cd37fc --evidence evidence:a1b51e5421064015b888cef6948b4d3a --models-dir /home/superleo13/predictors/tools/hf/models
+{
+  "claim_id": "claim:1ac05541c22841ea8a370a42ceec8310",
+  "cube": "research",
+  "status": "SUPPORTED",
+  "rule": "two-verifiers-agree/1",
+  "review_state": "not_applicable",
+  "assessed_by": "verifiers",
+  "verifier_scores": {
+    "evidence_ids": [
+      "evidence:5b2fb529f291402f988f907d63cd37fc",
+      "evidence:73f43020ab66440a81fcac4ea385611b",
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "policy": {
+      "policy": "claim-verifier-policy",
+      "version": 1,
+      "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c"
+    },
+    "vectara/hallucination_evaluation_model": {
+      "score": 0.969576,
+      "threshold": 0.5,
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "score": 0.971005,
+      "threshold": 0.5,
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "best_window": {
+        "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+        "start": 0,
+        "end": 294
+      }
+    }
+  },
+  "note": null,
+  "recorded_at": "2026-09-24T16:26:59.518005Z",
+  "event_id": "event:41ce4f4ab2be45fdabc464004e2eca09"
+}
+[stderr]
+
+[transformers] The tied weights mapping and config for this model specifies to tie shared.weight to lm_head.weight, but both are present in the checkpoints with different values, so we will NOT tie them. You should update the config with `tie_word_embeddings=False` to silence this warning.
+[exit 0]
+
+$ cain claims --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db list --as-of now --cube research
+{
+  "claims": [
+    {
+      "id": "claim:1130f6a2a256496cb47fffb03189d10e",
+      "cube": "research",
+      "text": "The backtest covered 49 rebalance periods.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc",
+          "evidence:73f43020ab66440a81fcac4ea385611b",
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.961156,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.95334,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:31.886588Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:1ac05541c22841ea8a370a42ceec8310",
+      "cube": "research",
+      "text": "The strategy did not beat the benchmark with statistical confidence.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 225,
+      "source_end": 293,
+      "source_quote": "The strategy did not beat the benchmark with statistical confidence.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc",
+          "evidence:73f43020ab66440a81fcac4ea385611b",
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.971005,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.969576,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:31.914051Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:2772d32e2b634dc2b4ba57138cc57a76",
+      "cube": "research",
+      "text": "The 95% confidence interval for net excess return was from -43 to 95 basis points.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 224,
+      "source_quote": "Net excess return averaged 29 basis points per period, with a 95% confidence interval from -43 to 95 basis points.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc",
+          "evidence:73f43020ab66440a81fcac4ea385611b",
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.957973,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.959124,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:31.910756Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:9916f567fe0241cc92856c6165be2681",
+      "cube": "research",
+      "text": "Net excess return averaged 29 basis points per period.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 224,
+      "source_quote": "Net excess return averaged 29 basis points per period, with a 95% confidence interval from -43 to 95 basis points.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc",
+          "evidence:73f43020ab66440a81fcac4ea385611b",
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.935116,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.95791,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:31.907489Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:bde88a6b835841029fbe93f89328ced2",
+      "cube": "research",
+      "text": "The confidence interval for net excess return includes zero.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 165,
+      "source_end": 223,
+      "source_quote": "with a 95% confidence interval from -43 to 95 basis points",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "reviewed",
+      "evidence_ids": [
+        "evidence:a1b51e5421064015b888cef6948b4d3a"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {},
+      "recorded_at": "2026-09-24T16:26:11.220994Z",
+      "assessed_by": "human:agent-demo",
+      "rule": "human-review/1"
+    },
+    {
+      "id": "claim:defbaa5be85b4be7a1872461b9a687d0",
+      "cube": "research",
+      "text": "The backtest period was between July 2022 and August 2025.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [],
+      "run_ref": null,
+      "extractor": {
+        "generation": {
+          "done_reason": "stop",
+          "effective_input_byte_budget": 6500,
+          "eval_count": 349,
+          "eval_duration": 5537737000,
+          "input_bytes": 1026,
+          "load_duration": 808252,
+          "max_input_bytes": 6500,
+          "model": "qwen3.5:4b",
+          "num_batch": null,
+          "num_ctx": 8192,
+          "prompt_eval_count": 262,
+          "structured_output": true,
+          "think": false,
+          "total_duration": 5860066789
+        },
+        "model": "qwen3.5:4b",
+        "model_digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+        "prompt_hash": "6aa300c9a232c2bf754025ef5e8f29124847b7b88e2ee23b6af161f7947fab82",
+        "version": "claimify-lite/1"
+      },
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc",
+          "evidence:73f43020ab66440a81fcac4ea385611b",
+          "evidence:a1b51e5421064015b888cef6948b4d3a"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.971468,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.958245,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:31.903404Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:ebface50600a4656b97be95449959c88",
+      "cube": "research",
+      "text": "The backtest spans 49 rebalance periods.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 33,
+      "source_end": 109,
+      "source_quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "SUPPORTED",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:73f43020ab66440a81fcac4ea385611b"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:73f43020ab66440a81fcac4ea385611b"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:73f43020ab66440a81fcac4ea385611b",
+            "start": 0
+          },
+          "score": 0.977369,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:73f43020ab66440a81fcac4ea385611b",
+            "start": 0
+          },
+          "score": 0.966611,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.054617Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    },
+    {
+      "id": "claim:f1ab773d4f5b496f80934e2e3415b18e",
+      "cube": "research",
+      "text": "Net excess return averaged 92 basis points per period.",
+      "source_document_id": "doc:43752919cd914051a3c50e93eefa6089",
+      "source_start": 110,
+      "source_end": 163,
+      "source_quote": "Net excess return averaged 29 basis points per period",
+      "kind": "TEXTUAL_SUPPORT",
+      "status": "INCONCLUSIVE",
+      "review_state": "not_applicable",
+      "evidence_ids": [
+        "evidence:5b2fb529f291402f988f907d63cd37fc"
+      ],
+      "run_ref": null,
+      "extractor": null,
+      "verifier_scores": {
+        "evidence_ids": [
+          "evidence:5b2fb529f291402f988f907d63cd37fc"
+        ],
+        "lytang/MiniCheck-Flan-T5-Large": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.023453,
+          "threshold": 0.5,
+          "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3"
+        },
+        "policy": {
+          "policy": "claim-verifier-policy",
+          "sha256": "9bdcde2214505f689057451048261d237e8c8558bccaafd59b5afd6a4fb78a2c",
+          "version": 1
+        },
+        "vectara/hallucination_evaluation_model": {
+          "best_window": {
+            "end": 294,
+            "evidence_id": "evidence:5b2fb529f291402f988f907d63cd37fc",
+            "start": 0
+          },
+          "score": 0.410473,
+          "threshold": 0.5,
+          "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
+        }
+      },
+      "recorded_at": "2026-09-24T16:26:11.143177Z",
+      "assessed_by": "verifiers",
+      "rule": "two-verifiers-agree/1"
+    }
+  ]
+}
+[exit 0]
+
+$ cain memory --db /home/superleo13/predictors/runtime/cain-melhorias/demo-p3-run/memory.db verify
+{
+  "entries": 21,
+  "status": "intact",
+  "broken_at": null,
+  "head": "87aacb07a7df8c625459a115f478345408344106f0c328807cfc1ec001308747",
+  "head_recorded_at": "2026-09-24T16:26:59.518005Z",
+  "projection": "consistent"
+}
+[exit 0]
+
