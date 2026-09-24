@@ -1,0 +1,655 @@
+{
+  "golden_set": "cain-claim-verification",
+  "version": 1,
+  "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+  "pairs": 48,
+  "labels": "SUPPORTED = the document entails the claim; NOT_SUPPORTED = contradicted or not stated. Labels written by the agent that built the set; human review pending.",
+  "seconds": 14.62,
+  "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "3.13.15",
+  "verifiers": {
+    "vectara/hallucination_evaluation_model": {
+      "weights_revision": "8e4a2e6e96c708cc76c2344f7e4757df2515292c",
+      "threshold": 0.5,
+      "all": {
+        "correct": 41,
+        "total": 48,
+        "accuracy": 0.8542
+      },
+      "en": {
+        "correct": 21,
+        "total": 24,
+        "accuracy": 0.875
+      },
+      "pt": {
+        "correct": 20,
+        "total": 24,
+        "accuracy": 0.8333
+      }
+    },
+    "lytang/MiniCheck-Flan-T5-Large": {
+      "weights_revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+      "threshold": 0.5,
+      "all": {
+        "correct": 43,
+        "total": 48,
+        "accuracy": 0.8958
+      },
+      "en": {
+        "correct": 23,
+        "total": 24,
+        "accuracy": 0.9583
+      },
+      "pt": {
+        "correct": 20,
+        "total": 24,
+        "accuracy": 0.8333
+      }
+    }
+  },
+  "combined": {
+    "all": {
+      "decided": 40,
+      "sent_to_review": 8,
+      "correct_when_decided": 38,
+      "accuracy_when_decided": 0.95,
+      "false_supported": 0
+    },
+    "en": {
+      "decided": 22,
+      "sent_to_review": 2,
+      "correct_when_decided": 21,
+      "accuracy_when_decided": 0.9545,
+      "false_supported": 0
+    },
+    "pt": {
+      "decided": 18,
+      "sent_to_review": 6,
+      "correct_when_decided": 17,
+      "accuracy_when_decided": 0.9444,
+      "false_supported": 0
+    }
+  },
+  "rows": [
+    {
+      "id": "en-01",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.930393,
+        "lytang/MiniCheck-Flan-T5-Large": 0.972087
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-02",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.017408,
+        "lytang/MiniCheck-Flan-T5-Large": 0.027439
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-03",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.033036,
+        "lytang/MiniCheck-Flan-T5-Large": 0.113086
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-04",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.004933,
+        "lytang/MiniCheck-Flan-T5-Large": 0.019323
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-05",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.986077,
+        "lytang/MiniCheck-Flan-T5-Large": 0.928707
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-06",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.030944,
+        "lytang/MiniCheck-Flan-T5-Large": 0.022212
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-07",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.917526,
+        "lytang/MiniCheck-Flan-T5-Large": 0.933075
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-08",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.032543,
+        "lytang/MiniCheck-Flan-T5-Large": 0.012175
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-09",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.818954,
+        "lytang/MiniCheck-Flan-T5-Large": 0.963831
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-10",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.935606,
+        "lytang/MiniCheck-Flan-T5-Large": 0.979182
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-11",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.186605,
+        "lytang/MiniCheck-Flan-T5-Large": 0.059125
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-12",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.879581,
+        "lytang/MiniCheck-Flan-T5-Large": 0.634909
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-13",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.112507,
+        "lytang/MiniCheck-Flan-T5-Large": 0.079595
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-14",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.858319,
+        "lytang/MiniCheck-Flan-T5-Large": 0.94713
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-15",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.344605,
+        "lytang/MiniCheck-Flan-T5-Large": 0.030325
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-16",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.572798,
+        "lytang/MiniCheck-Flan-T5-Large": 0.022094
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "en-17",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.913681,
+        "lytang/MiniCheck-Flan-T5-Large": 0.974374
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-18",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.195938,
+        "lytang/MiniCheck-Flan-T5-Large": 0.043291
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-19",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.964488,
+        "lytang/MiniCheck-Flan-T5-Large": 0.956856
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-20",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.845726,
+        "lytang/MiniCheck-Flan-T5-Large": 0.010336
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "en-21",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.918272,
+        "lytang/MiniCheck-Flan-T5-Large": 0.946616
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-22",
+      "lang": "en",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.959029,
+        "lytang/MiniCheck-Flan-T5-Large": 0.972851
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "en-23",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.03331,
+        "lytang/MiniCheck-Flan-T5-Large": 0.012516
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "en-24",
+      "lang": "en",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.045213,
+        "lytang/MiniCheck-Flan-T5-Large": 0.03313
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-01",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.903858,
+        "lytang/MiniCheck-Flan-T5-Large": 0.90044
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-02",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.078362,
+        "lytang/MiniCheck-Flan-T5-Large": 0.041696
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-03",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.062827,
+        "lytang/MiniCheck-Flan-T5-Large": 0.106947
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-04",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.026046,
+        "lytang/MiniCheck-Flan-T5-Large": 0.030941
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-05",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.645815,
+        "lytang/MiniCheck-Flan-T5-Large": 0.915737
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-06",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.07893,
+        "lytang/MiniCheck-Flan-T5-Large": 0.029546
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-07",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.881737,
+        "lytang/MiniCheck-Flan-T5-Large": 0.899651
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-08",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.10826,
+        "lytang/MiniCheck-Flan-T5-Large": 0.029629
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-09",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.751519,
+        "lytang/MiniCheck-Flan-T5-Large": 0.749921
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-10",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.851096,
+        "lytang/MiniCheck-Flan-T5-Large": 0.958738
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-11",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.38758,
+        "lytang/MiniCheck-Flan-T5-Large": 0.047979
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-12",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.878753,
+        "lytang/MiniCheck-Flan-T5-Large": 0.880832
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-13",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.117325,
+        "lytang/MiniCheck-Flan-T5-Large": 0.071073
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-14",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.673517,
+        "lytang/MiniCheck-Flan-T5-Large": 0.276109
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "pt-15",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.215393,
+        "lytang/MiniCheck-Flan-T5-Large": 0.03826
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-16",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.915384,
+        "lytang/MiniCheck-Flan-T5-Large": 0.02627
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "pt-17",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.441204,
+        "lytang/MiniCheck-Flan-T5-Large": 0.949682
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "pt-18",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.074419,
+        "lytang/MiniCheck-Flan-T5-Large": 0.854238
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "pt-19",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.669875,
+        "lytang/MiniCheck-Flan-T5-Large": 0.305489
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "pt-20",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.191614,
+        "lytang/MiniCheck-Flan-T5-Large": 0.038302
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-21",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.427401,
+        "lytang/MiniCheck-Flan-T5-Large": 0.803203
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "REVIEW"
+    },
+    {
+      "id": "pt-22",
+      "lang": "pt",
+      "label": "SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.922314,
+        "lytang/MiniCheck-Flan-T5-Large": 0.950531
+      },
+      "vectara/hallucination_evaluation_model": "SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "SUPPORTED",
+      "combined": "SUPPORTED"
+    },
+    {
+      "id": "pt-23",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.092544,
+        "lytang/MiniCheck-Flan-T5-Large": 0.014145
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    },
+    {
+      "id": "pt-24",
+      "lang": "pt",
+      "label": "NOT_SUPPORTED",
+      "scores": {
+        "vectara/hallucination_evaluation_model": 0.047404,
+        "lytang/MiniCheck-Flan-T5-Large": 0.057393
+      },
+      "vectara/hallucination_evaluation_model": "NOT_SUPPORTED",
+      "lytang/MiniCheck-Flan-T5-Large": "NOT_SUPPORTED",
+      "combined": "NOT_SUPPORTED"
+    }
+  ],
+  "runtime": {
+    "torch": "2.14.0+cpu",
+    "transformers": "5.17.0"
+  }
+}
