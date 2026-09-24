@@ -36,7 +36,11 @@ from cain.memory.jcs import canonicalize
 EVENT_SCHEMA = "cain-memory-event/1"
 GENESIS = "cain-memory-log/1"
 STATUSES = ("DECLARED", "PROVEN")
-KINDS = ("fact.asserted", "document.recorded")
+KINDS = ("fact.asserted", "document.recorded", "evidence.recorded", "claim.recorded", "claim.assessed")
+PROJECTIONS = ("memory_facts", "memory_documents", "memory_evidence", "memory_claims", "memory_claim_assessments")
+CLAIM_STATUSES = ("UNVERIFIABLE", "AMBIGUOUS", "SUPPORTED", "CONTRADICTED", "INCONCLUSIVE")
+CLAIM_KINDS = ("TEXTUAL_SUPPORT", "EMPIRICAL_PROOF")
+REVIEW_STATES = ("not_applicable", "pending_verification", "needs_human_review", "reviewed")
 _CUBE = re.compile(r"[a-z][a-z0-9_-]{0,31}\Z")
 _TEXT_ID = re.compile(r"[^\x00-\x1f\x7f]{1,300}\Z")
 _TOKEN = re.compile(r"\w+", re.UNICODE)
@@ -174,6 +178,39 @@ class MemoryStore:
                  body["published_at"], at, body["supersedes"], body["source"], seq),
             )
             table = "memory_documents"
+        elif event["kind"] == "evidence.recorded":
+            db.execute(
+                "INSERT INTO memory_evidence VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (body["id"], body["cube"], body["document_id"], body["doc_hash"], body["chunk_id"], body["quote"],
+                 body["char_start"], body["char_end"], body["page"], body["published_at"], body["query"],
+                 body["summary"], body["relevance_score"], body["model_id"], body["settings_hash"], at, seq),
+            )
+            return
+        elif event["kind"] == "claim.recorded":
+            span = body["source_span"]
+            db.execute(
+                "INSERT INTO memory_claims VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (body["id"], body["cube"], body["text"], span["document_id"], span["char_start"], span["char_end"],
+                 span["quote"], body["kind"], body["status"], body["review_state"],
+                 canonicalize(body["evidence_ids"]).decode("utf-8"), canonicalize(body["run_ref"]).decode("utf-8"),
+                 canonicalize(body["extractor"]).decode("utf-8"), "{}", at, seq),
+            )
+            return
+        elif event["kind"] == "claim.assessed":
+            db.execute(
+                "INSERT INTO memory_claim_assessments VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                (event["event_id"], body["claim_id"], body["cube"], body["status"],
+                 canonicalize(body["verifier_scores"]).decode("utf-8"), body["rule"], body["review_state"],
+                 body["assessed_by"], body["note"], at, seq),
+            )
+            changed = db.execute(
+                "UPDATE memory_claims SET status=?, review_state=?, verifier_scores=? WHERE id=? AND cube=?",
+                (body["status"], body["review_state"], canonicalize(body["verifier_scores"]).decode("utf-8"),
+                 body["claim_id"], body["cube"]),
+            ).rowcount
+            if changed != 1:
+                raise MemoryStoreError("CLAIM_UNKNOWN", "assessment must name a claim of the same cube")
+            return
         else:
             raise MemoryStoreError("UNKNOWN_EVENT", f"cannot project {event['kind']!r}")
         if body["supersedes"] is not None:
@@ -214,9 +251,9 @@ class MemoryStore:
             projection = "not_checked"
             if broken_at is None:
                 projection = "consistent"
-                for table in ("memory_facts", "memory_documents"):
-                    stored = [tuple(r) for r in db.execute(f"SELECT * FROM {table} ORDER BY id")]
-                    rebuilt = [tuple(r) for r in replay.execute(f"SELECT * FROM {table} ORDER BY id")]
+                for table in PROJECTIONS:
+                    stored = [tuple(r) for r in db.execute(f"SELECT * FROM {table} ORDER BY 1")]
+                    rebuilt = [tuple(r) for r in replay.execute(f"SELECT * FROM {table} ORDER BY 1")]
                     if stored != rebuilt:
                         projection = "diverged"
         replay.close()
@@ -231,7 +268,7 @@ class MemoryStore:
             raise MemoryStoreError("CHAIN_BROKEN", f"log broken at seq {check['broken_at']}; refusing to rebuild")
         with self.connection() as db:
             db.execute("BEGIN IMMEDIATE")
-            for table in ("memory_vectors", "memory_facts", "memory_documents"):
+            for table in ("memory_vectors", *PROJECTIONS):
                 db.execute(f"DELETE FROM {table}")
             events = 0
             for row in db.execute("SELECT seq, body FROM memory_events ORDER BY seq").fetchall():
@@ -405,6 +442,168 @@ class MemoryStore:
         return {"as_of": instant(as_of), "cubes": _cubes(cubes, cross_cube), "mode": mode,
                 "candidates": len(candidates), "hits": hits[:limit]}
 
+    # ------------------------------------------------------------------ evidence and claims
+    def document(self, document_id: str, *, as_of) -> dict | None:
+        at = instant(as_of)
+        with self.connection() as db:
+            row = db.execute(f"SELECT * FROM memory_documents WHERE id=? AND {_VISIBLE}",
+                             (document_id, at, at)).fetchone()
+        return None if row is None else _as_of_view({k: row[k] for k in row.keys() if k != "event_seq"}, at)
+
+    def record_evidence(self, cube, document_id, char_start, char_end, quote, *, query=None, summary=None,
+                        relevance_score=None, model_id=None, settings_hash=None, page=None, chunk_id=None) -> dict:
+        """Evidence is a literal span of a stored document: ``doc[char_start:char_end] == quote`` exactly."""
+        cube = _cube(cube)
+        now = instant(self.clock())
+        doc = self.document(document_id, as_of=now)
+        if doc is None or doc["cube"] != cube:
+            raise MemoryStoreError("DOCUMENT_UNKNOWN", "evidence must point to a current document of the same cube")
+        if (type(char_start) is not int or type(char_end) is not int
+                or not 0 <= char_start < char_end <= len(doc["text"])):
+            raise MemoryStoreError("QUOTE_NOT_LITERAL", "offsets outside the document")
+        if type(quote) is not str or doc["text"][char_start:char_end] != quote:
+            raise MemoryStoreError("QUOTE_NOT_LITERAL", "quote differs from doc[char_start:char_end]")
+        if relevance_score is not None and (type(relevance_score) not in (int, float)
+                                            or not math.isfinite(relevance_score)):
+            raise MemoryStoreError("INVALID_FIELD", "relevance_score must be a finite number")
+        body = {"id": "evidence:" + uuid4().hex, "cube": cube, "document_id": document_id,
+                "doc_hash": doc["content_sha256"], "chunk_id": chunk_id, "quote": quote, "char_start": char_start,
+                "char_end": char_end, "page": page, "published_at": doc["published_at"], "query": query,
+                "summary": summary, "relevance_score": relevance_score, "model_id": model_id,
+                "settings_hash": settings_hash}
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            event = self._append(db, "evidence.recorded", body)
+        return {**body, "recorded_at": event["recorded_at"], "event_id": event["event_id"]}
+
+    def record_claim(self, cube, text, *, source_document_id, char_start, char_end, kind="TEXTUAL_SUPPORT",
+                     status="INCONCLUSIVE", evidence_ids=(), run_ref=None, extractor=None) -> dict:
+        cube = _cube(cube)
+        if type(text) is not str or not text.strip() or len(text) > 2000:
+            raise MemoryStoreError("INVALID_FIELD", "claim text must have 1-2000 characters")
+        if kind not in CLAIM_KINDS:
+            raise MemoryStoreError("INVALID_KIND", f"kind must be one of {CLAIM_KINDS}")
+        if status not in ("UNVERIFIABLE", "AMBIGUOUS", "INCONCLUSIVE"):
+            raise MemoryStoreError("INVALID_STATUS", "a new claim is UNVERIFIABLE, AMBIGUOUS or INCONCLUSIVE; "
+                                   "SUPPORTED/CONTRADICTED only come from an assessment")
+        now = instant(self.clock())
+        source = self.document(source_document_id, as_of=now)
+        if source is None or source["cube"] != cube:
+            raise MemoryStoreError("DOCUMENT_UNKNOWN", "claim source must be a current document of the same cube")
+        if (type(char_start) is not int or type(char_end) is not int
+                or not 0 <= char_start < char_end <= len(source["text"])):
+            raise MemoryStoreError("QUOTE_NOT_LITERAL", "source span outside the document")
+        evidence_ids = list(evidence_ids)
+        if evidence_ids:
+            known = {e["id"] for e in self.evidence(as_of=now, cubes=[cube], ids=evidence_ids)}
+            if set(evidence_ids) != known:
+                raise MemoryStoreError("EVIDENCE_UNKNOWN", "every evidence id must exist in the same cube")
+        if kind == "EMPIRICAL_PROOF":
+            if (not isinstance(run_ref, dict) or set(run_ref) != {"run_id", "report_sha256", "report_path"}
+                    or not re.fullmatch(r"[0-9a-f]{64}", str(run_ref["report_sha256"]))):
+                raise MemoryStoreError("RUN_REF_REQUIRED",
+                                       "EMPIRICAL_PROOF needs run_ref {run_id, report_sha256, report_path}")
+        elif run_ref is not None:
+            raise MemoryStoreError("RUN_REF_ON_TEXTUAL", "a TEXTUAL_SUPPORT claim never points to a run")
+        review_state = "pending_verification" if status == "INCONCLUSIVE" else "not_applicable"
+        body = {"id": "claim:" + uuid4().hex, "cube": cube, "text": text, "kind": kind, "status": status,
+                "review_state": review_state, "evidence_ids": evidence_ids, "run_ref": run_ref,
+                "extractor": extractor,
+                "source_span": {"document_id": source_document_id, "char_start": char_start, "char_end": char_end,
+                                "quote": source["text"][char_start:char_end]}}
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            event = self._append(db, "claim.recorded", body)
+        return {**body, "recorded_at": event["recorded_at"], "event_id": event["event_id"]}
+
+    def assess_claim(self, claim_id, status, *, rule, assessed_by, verifier_scores=None,
+                     review_state="reviewed", note=None) -> dict:
+        if status not in CLAIM_STATUSES:
+            raise MemoryStoreError("INVALID_STATUS", f"status must be one of {CLAIM_STATUSES}")
+        if review_state not in REVIEW_STATES:
+            raise MemoryStoreError("INVALID_FIELD", f"review_state must be one of {REVIEW_STATES}")
+        with self.connection() as db:
+            row = db.execute("SELECT cube FROM memory_claims WHERE id=?", (claim_id,)).fetchone()
+        if row is None:
+            raise MemoryStoreError("CLAIM_UNKNOWN", f"unknown claim {claim_id!r}")
+        body = {"claim_id": claim_id, "cube": row["cube"], "status": status, "rule": _text(rule, "rule"),
+                "review_state": review_state, "assessed_by": _text(assessed_by, "assessed_by"),
+                "verifier_scores": verifier_scores or {}, "note": note}
+        with self.connection() as db:
+            db.execute("BEGIN IMMEDIATE")
+            event = self._append(db, "claim.assessed", body)
+        return {**body, "recorded_at": event["recorded_at"], "event_id": event["event_id"]}
+
+    def evidence(self, *, as_of, cubes: Sequence[str], cross_cube: bool = False, ids=None) -> list[dict]:
+        at = instant(as_of)
+        selected = _cubes(cubes, cross_cube)
+        where, params = [f"cube IN ({','.join('?' * len(selected))})", "recorded_at <= ?"], [*selected, at]
+        if ids is not None:
+            ids = list(ids)
+            where.append(f"id IN ({','.join('?' * len(ids)) or 'NULL'})")
+            params.extend(ids)
+        with self.connection() as db:
+            rows = db.execute("SELECT * FROM memory_evidence WHERE " + " AND ".join(where) + " ORDER BY id", params)
+            return [{k: r[k] for k in r.keys() if k != "event_seq"} for r in rows]
+
+    def claims(self, *, as_of, cubes: Sequence[str], cross_cube: bool = False, unsupported: bool = False,
+               ids=None) -> list[dict]:
+        """Claims recorded at ``as_of`` with the status they had at ``as_of`` (last assessment <= as_of)."""
+        at = instant(as_of)
+        selected = _cubes(cubes, cross_cube)
+        where, params = [f"c.cube IN ({','.join('?' * len(selected))})", "c.recorded_at <= ?"], [*selected, at]
+        if ids is not None:
+            ids = list(ids)
+            where.append(f"c.id IN ({','.join('?' * len(ids)) or 'NULL'})")
+            params.extend(ids)
+        out = []
+        with self.connection() as db:
+            rows = db.execute("SELECT c.* FROM memory_claims c WHERE " + " AND ".join(where) + " ORDER BY c.id",
+                              params).fetchall()
+            for row in rows:
+                claim = {k: row[k] for k in row.keys() if k != "event_seq"}
+                for key in ("evidence_ids", "run_ref", "extractor"):
+                    claim[key] = json.loads(claim[key])
+                last = db.execute("SELECT * FROM memory_claim_assessments WHERE claim_id=? AND recorded_at <= ? "
+                                  "ORDER BY event_seq DESC LIMIT 1", (claim["id"], at)).fetchone()
+                if last is None:
+                    first = json.loads(db.execute("SELECT body FROM memory_events WHERE seq=?",
+                                                  (row["event_seq"],)).fetchone()["body"])["body"]
+                    claim.update(status=first["status"], review_state=first["review_state"], verifier_scores={},
+                                 assessed_by=None, rule=None)
+                else:
+                    claim.update(status=last["status"], review_state=last["review_state"],
+                                 verifier_scores=json.loads(last["verifier_scores"]),
+                                 assessed_by=last["assessed_by"], rule=last["rule"])
+                if unsupported and claim["status"] == "SUPPORTED":
+                    continue
+                out.append(claim)
+        return out
+
+    def claim_trace(self, claim_id: str, *, as_of) -> dict:
+        """Where did this claim come from: source span, evidence, documents, run and every assessment."""
+        at = instant(as_of)
+        with self.connection() as db:
+            row = db.execute("SELECT cube FROM memory_claims WHERE id=? AND recorded_at <= ?",
+                             (claim_id, at)).fetchone()
+            if row is None:
+                raise MemoryStoreError("CLAIM_UNKNOWN", f"claim {claim_id!r} not recorded at {at}")
+            assessments = [dict(r) for r in db.execute(
+                "SELECT * FROM memory_claim_assessments WHERE claim_id=? AND recorded_at <= ? ORDER BY event_seq",
+                (claim_id, at))]
+        claim = self.claims(as_of=at, cubes=[row["cube"]], ids=[claim_id])[0]
+        evidence = self.evidence(as_of=at, cubes=[row["cube"]], ids=claim["evidence_ids"])
+        documents = {e["document_id"]: self.document(e["document_id"], as_of=at) for e in evidence}
+        for assessment in assessments:
+            assessment["verifier_scores"] = json.loads(assessment["verifier_scores"])
+            assessment.pop("event_seq")
+        return {"as_of": at, "claim": claim,
+                "source_document": self.document(claim["source_document_id"], as_of=at),
+                "evidence": evidence,
+                "evidence_documents": {k: None if v is None else {x: v[x] for x in (
+                    "id", "title", "content_sha256", "published_at", "source")} for k, v in documents.items()},
+                "run_ref": claim["run_ref"], "assessments": assessments}
+
     # ------------------------------------------------------------------ derived vectors
     def _embed(self, texts: list[str]) -> list[list[float]]:
         vectors = self.embedding.embed(texts)
@@ -491,6 +690,26 @@ CREATE TABLE IF NOT EXISTS memory_documents (
   superseded_at TEXT, supersedes TEXT, source TEXT NOT NULL, event_seq INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS memory_documents_visible ON memory_documents(cube, recorded_at, published_at);
+CREATE TABLE IF NOT EXISTS memory_evidence (
+  id TEXT PRIMARY KEY, cube TEXT NOT NULL, document_id TEXT NOT NULL, doc_hash TEXT NOT NULL, chunk_id TEXT,
+  quote TEXT NOT NULL, char_start INTEGER NOT NULL, char_end INTEGER NOT NULL, page INTEGER,
+  published_at TEXT NOT NULL, query TEXT, summary TEXT, relevance_score REAL, model_id TEXT,
+  settings_hash TEXT, recorded_at TEXT NOT NULL, event_seq INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS memory_claims (
+  id TEXT PRIMARY KEY, cube TEXT NOT NULL, text TEXT NOT NULL, source_document_id TEXT NOT NULL,
+  source_start INTEGER NOT NULL, source_end INTEGER NOT NULL, source_quote TEXT NOT NULL,
+  kind TEXT NOT NULL CHECK(kind IN ('TEXTUAL_SUPPORT','EMPIRICAL_PROOF')),
+  status TEXT NOT NULL CHECK(status IN ('UNVERIFIABLE','AMBIGUOUS','SUPPORTED','CONTRADICTED','INCONCLUSIVE')),
+  review_state TEXT NOT NULL, evidence_ids TEXT NOT NULL, run_ref TEXT NOT NULL, extractor TEXT NOT NULL,
+  verifier_scores TEXT NOT NULL, recorded_at TEXT NOT NULL, event_seq INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS memory_claim_assessments (
+  event_id TEXT PRIMARY KEY, claim_id TEXT NOT NULL, cube TEXT NOT NULL, status TEXT NOT NULL,
+  verifier_scores TEXT NOT NULL, rule TEXT NOT NULL, review_state TEXT NOT NULL, assessed_by TEXT NOT NULL,
+  note TEXT, recorded_at TEXT NOT NULL, event_seq INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS memory_claim_assessments_claim ON memory_claim_assessments(claim_id, recorded_at);
 CREATE TABLE IF NOT EXISTS memory_vectors (
   kind TEXT NOT NULL, id TEXT NOT NULL, model TEXT NOT NULL, model_digest TEXT NOT NULL,
   vector TEXT NOT NULL, PRIMARY KEY(kind, id, model, model_digest)
