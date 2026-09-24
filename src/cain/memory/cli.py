@@ -1,14 +1,13 @@
 """`cain memory`: CLI adapter of the bitemporal memory. Every read requires --as-of."""
 
-from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
 
 
-def _as_of(value: str) -> str:
-    # "now" must be typed explicitly: there is no implicit read time.
-    return datetime.now(timezone.utc).isoformat() if value == "now" else value
+def _as_of(memory, value: str) -> str:
+    # "now" must be typed explicitly: there is no implicit read time. It never precedes the log head.
+    return memory.now() if value == "now" else value
 
 
 def _reads(parser, *, cube_required=True):
@@ -101,18 +100,19 @@ def execute(args):
         return memory.verify()
     if cmd == "rebuild-index":
         return memory.rebuild_index()
+    if cmd in {"facts", "documents", "search", "history"}:
+        at = _as_of(memory, args.as_of)
     if cmd == "facts":
-        return {"as_of": _as_of(args.as_of), "facts": memory.facts(
-            as_of=_as_of(args.as_of), cubes=args.cube, cross_cube=args.cross_cube, subject=args.subject,
+        return {"as_of": at, "facts": memory.facts(
+            as_of=at, cubes=args.cube, cross_cube=args.cross_cube, subject=args.subject,
             predicate=args.predicate, valid_at=args.valid_at, statuses=args.status or ("DECLARED", "PROVEN"))}
     if cmd == "documents":
-        return {"as_of": _as_of(args.as_of),
-                "documents": memory.documents(as_of=_as_of(args.as_of), cubes=args.cube, cross_cube=args.cross_cube)}
+        return {"as_of": at, "documents": memory.documents(as_of=at, cubes=args.cube, cross_cube=args.cross_cube)}
     if cmd == "search":
-        return memory.search(args.query, as_of=_as_of(args.as_of), cubes=args.cube, cross_cube=args.cross_cube,
+        return memory.search(args.query, as_of=at, cubes=args.cube, cross_cube=args.cross_cube,
                              limit=args.limit, statuses=args.status or ("DECLARED", "PROVEN"))
     if cmd == "history":
-        return {"fact_id": args.fact_id, "chain": memory.fact_history(args.fact_id, as_of=_as_of(args.as_of))}
+        return {"fact_id": args.fact_id, "chain": memory.fact_history(args.fact_id, as_of=at)}
     if cmd == "add-fact":
         return memory.assert_fact(args.cube, args.subject, args.predicate, _value(args.object), status="DECLARED",
                                   valid_from=args.valid_from, valid_to=args.valid_to,
@@ -128,7 +128,7 @@ def execute(args):
 
         service = ResearchService(args.research_db, args.policy)
         scope = service.scope(args.user, args.project, args.collection)
-        return ingest_research(memory, service, scope, cube=args.cube, as_of=_as_of("now"))
+        return ingest_research(memory, service, scope, cube=args.cube, as_of=_as_of(memory, "now"))
     if cmd == "extract":
         from cain.memory.ingest import extract_facts
         from cain.providers import configured_llm
