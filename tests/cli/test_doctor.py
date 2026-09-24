@@ -70,3 +70,17 @@ def test_warning_is_printed_before_an_unreachable_remote_probe_fails(config, mon
     out, err = capsys.readouterr()
     assert out == ""
     assert err.index("Cain: aviso: llm.base_url não é loopback (10.0.0.5)") < err.index("Cain: connection refused")
+
+
+def test_fake_provider_reports_the_deterministic_setup_without_probing(tmp_path, monkeypatch, capsys):
+    """Found while driving the CLI: doctor used to exit 1 with a connection error for provider fake."""
+    def never(request, timeout):
+        raise AssertionError("no probe for the fake provider")
+
+    monkeypatch.setattr(cli, "urlopen", never)
+    path = tmp_path / "fake.toml"
+    path.write_text('[llm]\nprovider="fake"\n[search]\npaths=[]\nallow_public_urls=false\n', encoding="utf-8")
+    assert cli.main(["doctor", "--config", str(path)]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert report["provider"] == "fake" and report["model_available"] is False
+    assert any("simuladas" in w for w in report["warnings"])
