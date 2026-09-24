@@ -99,6 +99,8 @@ def main(argv=None) -> int:
     register_memory(sub)
     from cain.claims.cli import register as register_claims
     register_claims(sub)
+    from cain.inference.cli import register as register_inference
+    register_inference(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
     run.add_argument("--intent", choices=["busca", "codigo", "resumo", "conversa"])
@@ -134,6 +136,10 @@ def main(argv=None) -> int:
             result = execute_claims(args)
             _write(result)
             return 1 if isinstance(result, dict) and result.get("status") == "blocked" else 0
+        if args.command == "inference":
+            from cain.inference.cli import execute as execute_inference
+            _write(execute_inference(args))
+            return 0
         if args.command == "research":
             from cain.research.cli import execute
             result = execute(args)

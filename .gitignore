@@ -11,6 +11,8 @@ data/
 !src/cain/evaluation/data/**
 !src/cain/claims/data/
 !src/cain/claims/data/**
+!src/cain/inference/data/
+!src/cain/inference/data/**
 build/
 dist/
 *.db
