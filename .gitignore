@@ -15,3 +15,8 @@ dist/
 *.db-shm
 *.db-wal
 *.sqlite*
+
+# coverage.py data (gerado por pytest --cov; o CI usa apenas o relatório no terminal)
+.coverage
+.coverage.*
+htmlcov/
