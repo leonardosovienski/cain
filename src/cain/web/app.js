@@ -505,6 +505,7 @@ function renderResearch(result) {
       INCOMPATIBLE_FIELDS: 'O modelo devolveu campos inesperados ou ausentes; a resposta foi recusada.',
       GENERATION_REJECTED: 'A geração foi recusada pela validação; nenhuma saída parcial foi aceita.',
       PROVIDER_ERROR: 'O provider local falhou ao gerar; confira o serviço do modelo e tente novamente.',
+      UNSUPPORTED_NUMBER: 'O texto gerado contém números que não constam das evidências citadas; a resposta foi recusada.',
     };
     explanation.append(node('summary', statusMessages[result.status] ?? (extractive ? 'Explicação por trechos da fonte' : `Explicação opcional: ${result.status} · suporte semântico não certificado`)));
     if (result.error_code) explanation.append(node('p', errorMessages[result.error_code] ?? `Erro ${result.error_code}${result.error ? ` (${result.error})` : ''}; a resposta foi recusada.`));
