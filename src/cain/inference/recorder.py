@@ -509,6 +509,7 @@ class _FileLock:
         self.path, self.handle = path, None
 
     def acquire(self):
+        self.path.parent.mkdir(parents=True, exist_ok=True)  # the store itself is created lazily
         self.handle = self.path.open("a+")
         try:
             import fcntl

@@ -209,6 +209,13 @@ def test_cache_mode_calls_once_then_serves(ollama, tmp_path):
     assert [c["cache_hit"] for c in store.calls(2)] == [1, 0]
 
 
+def test_record_mode_on_a_store_whose_directory_does_not_exist_yet(ollama, tmp_path):
+    # Found by the runtime run: the lock file was opened before the lazy store created its directory.
+    store = InferenceStore(tmp_path / "state" / "nested" / "inference.db")
+    assert _llm(ollama, store, "record").generate("q").startswith("echo: q")
+    assert store.path.exists() and store.calls(1)[0]["status"] == "called"
+
+
 def test_record_mode_sends_one_request_at_a_time(ollama, tmp_path):
     ollama.delay = 0.05
     store = InferenceStore(tmp_path / "inference.db")
