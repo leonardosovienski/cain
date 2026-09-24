@@ -92,6 +92,8 @@ uv sync --locked --extra api
 O inicializador do checkout usa a porta 8000 por padrão; o atalho da instalação principal usa 8877.
 Para terminal, use `INICIAR_CAIN.cmd`. A configuração vem de `cain.toml` e dos overrides locais.
 O modelo configurado é `qwen3.5:4b`; embeddings usam `qwen3-embedding:0.6b` com digest verificado.
+`llm.base_url` fora do loopback é recusado ao carregar a configuração, a menos que `llm.allow_remote = true`
+(ou `CAIN_OLLAMA_ALLOW_REMOTE=1`) declare que perfil, histórico e documentos podem sair desta máquina; `cain doctor` avisa.
 Pesos não acompanham o pacote. Inferência requer Ollama disponível; ajuda e consulta determinística não requerem modelo.
 
 ## Desenvolvimento e API

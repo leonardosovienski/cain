@@ -72,7 +72,7 @@ def fake_ollama():
 
 def ollama_client(tmp_path, base_url, policy, research_db):
     config = tmp_path / "ollama.toml"
-    config.write_text(f'[llm]\nprovider="ollama"\nmodel="qwen3.5:4b"\nbase_url="{base_url}"\n[search]\npaths=[]\n'
+    config.write_text(f'[llm]\nprovider="ollama"\nmodel="qwen3.5:4b"\nbase_url="{base_url}"\nallow_remote=true\n[search]\npaths=[]\n'
                       'allow_public_urls=false\n[orchestration]\nllm_routing=false\n', encoding="utf-8")
     return TestClient(create_app(tmp_path / "w.db", config_path=config, research_policy=policy,
                                  research_db=research_db, trusted_hosts=("testserver",)))
