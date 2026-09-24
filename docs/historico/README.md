@@ -22,6 +22,7 @@ Nessas cópias, links e caminhos conservam o contexto original; use a referênci
 - [Consolidação inicial em main](../MAIN_CONSOLIDATION_20260912.md).
 - [Supply](../supply/README.md) e [handoff da rodada](../supply/FINAL_HANDOFF.md).
 - [Entrega 0.4.7 original](../DELIVERY_047.md).
+- [Auditoria Brasileirão de 16/09/2026](brasileirao_auditoria_20260916/README.md): os nove documentos da branch `checkpoint/brasileirao-auditoria-20260916` (commit `e402de5`), cujo código já estava em `main` desde `7d64d4c`. Copiados byte a byte dos blobs daquela branch. O `PUBLICATION_SHA256.json` original confere para `README.md` e `test_cain.py`; cinco arquivos conferem só ao reconverter para CRLF (foram registrados no Windows e a branch os guardou com LF) e `PROMPT_INICIAR_CAIN.md` não confere em nenhuma forma, então seu hash registrado descreve outra versão. Rodada científica não executada; caminhos locais e a branch do `brasileirao-predictor` são referências históricas.
 - [Manifesto operacional de 13/09/2026](operational-state-20260913-0.4.12.json): fotografia da instalação 0.4.12 no commit `5364c3b`, antes na raiz como `operational-state.json`; bytes preservados.
 - Documentos originais em importacao e documentação conflitante preservada em consolidation-20260912.
 
