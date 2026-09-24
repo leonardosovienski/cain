@@ -204,6 +204,44 @@ class InferenceStore:
         return [{**{k: r[k] for k in r.keys() if k != "manifest"}, "manifest": json.loads(r["manifest"])}
                 for r in rows]
 
+    def audit(self) -> dict:
+        """Every stored manifest checked against ``required_fields``, grouped by call status."""
+        with self.connection() as db:
+            rows = db.execute("SELECT status, endpoint, manifest FROM inference_calls ORDER BY recorded_at").fetchall()
+        report: dict = {"calls": len(rows), "by_status": {}, "missing": {}}
+        for row in rows:
+            status = report["by_status"].setdefault(row["status"], {"calls": 0, "complete": 0})
+            status["calls"] += 1
+            missing = missing_fields(json.loads(row["manifest"]), row["endpoint"])
+            if not missing:
+                status["complete"] += 1
+            for name in missing:
+                report["missing"][name] = report["missing"].get(name, 0) + 1
+        return report
+
+
+REQUIRED_FIELDS = (
+    "model.gguf_sha256", "runtime.name", "runtime.version", "hardware.os", "hardware.cpu", "hardware.ram_bytes",
+    "parameters.requested", "input.request_sha256", "input.prompt_sha256", "output.response_sha256",
+    "output.text_sha256", "output.output_tokens", "context.cain", "cache.key",
+)
+OLLAMA_FIELDS = ("model.ollama_digest", "model.quantization", "model.template_sha256", "model.default_parameters",
+                 "runtime.backend")
+
+
+def missing_fields(manifest: dict, endpoint: str) -> list[str]:
+    """Manifest fields that are absent or empty for a call that returned an answer. A replay did not
+    run the model, so where it would have run (``runtime.backend``) is not asked of it."""
+    required = REQUIRED_FIELDS + (OLLAMA_FIELDS if endpoint != "/completion" else ())
+    if manifest.get("status") == "replayed":
+        required = tuple(name for name in required if name != "runtime.backend")
+    missing = []
+    for name in required:
+        section, key = name.split(".")
+        if (manifest.get(section) or {}).get(key) in (None, "", {}, []):
+            missing.append(name)
+    return missing
+
 
 def _cain_identity() -> dict:
     root = Path(__file__).resolve().parents[1]

@@ -11,7 +11,7 @@ from urllib.request import Request
 import pytest
 
 from cain.inference.harness import load_tasks, run_model, score
-from cain.inference.recorder import InferenceStore, Recorder, ReplayMiss, attach
+from cain.inference.recorder import InferenceStore, Recorder, ReplayMiss, attach, missing_fields
 from cain.inference.structured import StructuredOutputError, check, generate_structured
 from cain.llm import LLMError, OllamaLLM
 from cain.providers import configured_llm
@@ -115,15 +115,6 @@ def _llm(fake, store, mode="manifest", **kw):
     return attach(llm, store, mode=mode)
 
 
-REQUIRED = [
-    ("model", "gguf_sha256"), ("model", "ollama_digest"), ("model", "quantization"), ("model", "template_sha256"),
-    ("model", "default_parameters"), ("runtime", "name"), ("runtime", "version"), ("runtime", "backend"),
-    ("hardware", "os"), ("hardware", "cpu_count"), ("parameters", "requested"), ("input", "request_sha256"),
-    ("input", "prompt_sha256"), ("input", "system_sha256"), ("output", "text_sha256"), ("output", "output_tokens"),
-    ("context", "cain"), ("cache", "key"),
-]
-
-
 def test_every_call_gets_a_complete_manifest(ollama, tmp_path):
     store = InferenceStore(tmp_path / "inference.db")
     assert not (tmp_path / "inference.db").exists()  # nothing written before a call
@@ -134,8 +125,8 @@ def test_every_call_gets_a_complete_manifest(ollama, tmp_path):
     assert len(calls) == 3 and {c["status"] for c in calls} == {"called"}
     for call in calls:
         manifest = call["manifest"]
-        missing = [f"{a}.{b}" for a, b in REQUIRED if manifest.get(a, {}).get(b) in (None, "", {})]
-        assert missing == []
+        assert missing_fields(manifest, "/api/generate") == []
+        assert manifest["input"]["system_sha256"] == sha256(b"system text").hexdigest()
         assert manifest["model"]["gguf_sha256"] == BLOB and manifest["runtime"]["backend"] == "cpu"
         assert manifest["parameters"]["requested"] == {"temperature": 0.0, "seed": 42, "num_ctx": 8192,
                                                        "num_predict": 768}
@@ -143,6 +134,11 @@ def test_every_call_gets_a_complete_manifest(ollama, tmp_path):
         assert manifest["runtime_verified"] is True
     assert calls[0]["manifest"]["input"]["prompt_sha256"] == sha256(b"third question").hexdigest()
     assert ollama.generate_calls == 3
+    audit = store.audit()
+    assert audit["calls"] == 3 and audit["by_status"] == {"called": {"calls": 3, "complete": 3}}
+    # A manifest missing a field is reported, not silently accepted.
+    broken = {**calls[0]["manifest"], "model": {**calls[0]["manifest"]["model"], "gguf_sha256": None}}
+    assert missing_fields(broken, "/api/generate") == ["model.gguf_sha256"]
 
 
 def test_twenty_identical_calls_counted_and_replay_is_identical(ollama, tmp_path):
@@ -201,6 +197,8 @@ def test_offline_replay_serves_the_recording_and_says_identity_was_not_rechecked
     manifest = store.calls(1)[0]["manifest"]
     assert manifest["status"] == "replayed" and manifest["runtime_verified"] is False
     assert manifest["facts_error"]
+    # Offline, the model identity could not be re-read: the audit says so instead of passing it.
+    assert "model.gguf_sha256" in missing_fields(manifest, "/api/generate")
 
 
 def test_cache_mode_calls_once_then_serves(ollama, tmp_path):

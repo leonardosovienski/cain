@@ -18,6 +18,7 @@ def register(sub):
     commands = inference.add_subparsers(dest="inference_command", required=True)
     calls = commands.add_parser("calls", help="Most recent calls with their manifests")
     calls.add_argument("--limit", type=int, default=10)
+    commands.add_parser("audit", help="Check every stored manifest for the required fields")
     show = commands.add_parser("show", help="One call: manifest, request and response bytes")
     show.add_argument("call_id")
     repeat = commands.add_parser("repeat", help="Same call N times in record mode; count distinct outputs")
@@ -58,7 +59,7 @@ def execute(args):
     from cain.inference.recorder import InferenceStore, Recorder
 
     cmd = args.inference_command
-    if cmd in {"calls", "show"}:
+    if cmd in {"calls", "show", "audit"}:
         db = args.db
         if db is None:
             from cain.settings import load_settings
@@ -67,6 +68,8 @@ def execute(args):
         store = InferenceStore(db)
         if cmd == "calls":
             return {"store": str(db), "calls": store.calls(args.limit)}
+        if cmd == "audit":
+            return {"store": str(db), **store.audit()}
         found = store.call(args.call_id)
         if found is None:
             raise ValueError(f"unknown call {args.call_id}")
