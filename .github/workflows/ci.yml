@@ -32,6 +32,24 @@ jobs:
           name: cain-wheel-${{ matrix.python-version }}
           path: dist/*.whl
 
+  # Coverage gate on ONE fixed job (Linux, Python 3.12): coverage varies across Python
+  # versions and operating systems (skipped tests, platform branches), so the matrix
+  # above never gates on it. The floor is the Phase 0 baseline reproduced on main
+  # (84%, rounded down). To raise it: run `uv run --locked pytest -q --cov=cain` on main,
+  # take the TOTAL rounded down to an integer, and update --cov-fail-under in the same
+  # PR that lifted the coverage. Never lower it without a written reason in the PR.
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+      - run: uv sync --locked --extra dev --extra vision
+      - run: uv run --locked pytest -q --cov=cain --cov-report=term --cov-fail-under=84
+
   # Windows smoke: the documented launcher flow on a fresh checkout, without Ollama.
   # scripts/start-cain.ps1 installs from uv.lock (uv on PATH) when .venv is absent and
   # then runs `cain doctor`. Without an Ollama service, doctor exits 1 after printing
