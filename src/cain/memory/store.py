@@ -221,6 +221,16 @@ class MemoryStore:
             if changed != 1:
                 raise MemoryStoreError("SUPERSEDES_UNKNOWN", "supersedes must name a current row in the same cube")
 
+    def now(self) -> str:
+        """The read instant "now": the store clock, but never before the head of the log.
+
+        A wall clock can step back (NTP or a WSL2 time sync). Writes refuse that
+        (CLOCK_WENT_BACKWARDS); a read "now" must still see everything already recorded."""
+        current = instant(self.clock())
+        with self.connection() as db:
+            head = db.execute("SELECT recorded_at FROM memory_events ORDER BY seq DESC LIMIT 1").fetchone()
+        return max(current, head["recorded_at"]) if head is not None else current
+
     def verify(self) -> dict:
         """Recompute the chain and compare the projections with a replay of the log."""
         expected, entries, broken_at, head_at = GENESIS, 0, None, None

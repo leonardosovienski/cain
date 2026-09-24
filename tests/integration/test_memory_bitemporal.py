@@ -94,6 +94,17 @@ def test_future_recorded_fact_is_invisible_to_earlier_as_of_including_vector_sea
     assert future["id"] in vector_ids()
 
 
+def test_read_now_never_precedes_the_log_head(memory, clock):
+    # Found as an intermittent CLI failure: a wall clock that steps back made "now" miss an event.
+    fact = memory.assert_fact("crypto", "H1", "state", "REFUTED", status="DECLARED")
+    clock.advance(seconds=-5)  # the clock steps back after the write
+    now = memory.now()
+    assert now == fact["recorded_at"]
+    assert [f["id"] for f in memory.facts(as_of=now, cubes=["crypto"])] == [fact["id"]]
+    clock.advance(seconds=10)
+    assert memory.now() > fact["recorded_at"]
+
+
 def test_corrected_fact_before_and_after_the_correction(memory, clock):
     original = memory.assert_fact("stocks", "QUAL-PIT-MOM-001", "net_excess_bps", 29, status="DECLARED")
     before = iso(clock.advance(hours=1))

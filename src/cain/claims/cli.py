@@ -1,12 +1,11 @@
 """`cain claims`: evidence, claims, verification, review queue, trace and the report linter."""
 
-from datetime import datetime, timezone
 import os
 from pathlib import Path
 
 
-def _as_of(value: str) -> str:
-    return datetime.now(timezone.utc).isoformat() if value == "now" else value
+def _as_of(memory, value: str) -> str:
+    return memory.now() if value == "now" else value
 
 
 def register(sub):
@@ -113,18 +112,18 @@ def execute(args):
 
         return review(memory, args.claim_id, args.status, reviewer=args.reviewer, note=args.note)
     if cmd == "list":
-        return {"claims": memory.claims(as_of=_as_of(args.as_of), cubes=args.cube, cross_cube=args.cross_cube,
+        return {"claims": memory.claims(as_of=_as_of(memory, args.as_of), cubes=args.cube, cross_cube=args.cross_cube,
                                         unsupported=args.unsupported)}
     if cmd == "review-queue":
-        queue = [c for c in memory.claims(as_of=_as_of(args.as_of), cubes=args.cube, cross_cube=args.cross_cube)
+        queue = [c for c in memory.claims(as_of=_as_of(memory, args.as_of), cubes=args.cube, cross_cube=args.cross_cube)
                  if c["review_state"] == "needs_human_review"]
         return {"review_queue": queue}
     if cmd == "trace":
-        return memory.claim_trace(args.claim_id, as_of=_as_of(args.as_of))
+        return memory.claim_trace(args.claim_id, as_of=_as_of(memory, args.as_of))
     if cmd == "lint":
         from cain.claims.lint import lint_report
 
-        return lint_report(memory, args.report.read_text(encoding="utf-8"), as_of=_as_of(args.as_of),
+        return lint_report(memory, args.report.read_text(encoding="utf-8"), as_of=_as_of(memory, args.as_of),
                            cubes=args.cube, cross_cube=args.cross_cube, root=args.root)
     if cmd == "golden":
         from cain.claims.golden import run_golden
