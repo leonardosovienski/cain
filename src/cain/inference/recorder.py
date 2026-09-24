@@ -282,16 +282,33 @@ def _hardware() -> dict:
                 break
     except OSError:
         cpu = platform.processor() or None
-    ram = None
+    return {"os": platform.platform(), "machine": platform.machine(), "cpu": cpu or platform.machine() or None,
+            "cpu_count": os.cpu_count(), "ram_bytes": _ram_bytes(), "python": platform.python_version()}
+
+
+def _ram_bytes() -> int | None:
+    """Physical memory: sysconf on Linux/macOS, GlobalMemoryStatusEx on Windows (None if unknown)."""
     try:
-        for line in Path("/proc/meminfo").read_text().splitlines():
-            if line.startswith("MemTotal:"):
-                ram = int(line.split()[1]) * 1024
-                break
-    except (OSError, ValueError):
+        return os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
+    except (AttributeError, ValueError, OSError):
         pass
-    return {"os": platform.platform(), "machine": platform.machine(), "cpu": cpu, "cpu_count": os.cpu_count(),
-            "ram_bytes": ram, "python": platform.python_version()}
+    try:
+        import ctypes
+
+        class _MemoryStatus(ctypes.Structure):
+            _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                        ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                        ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                        ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+                        ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+
+        status = _MemoryStatus()
+        status.dwLength = ctypes.sizeof(_MemoryStatus)
+        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+            return int(status.ullTotalPhys)
+    except (AttributeError, OSError):
+        pass
+    return None
 
 
 def _parse_parameters(text: str | None) -> dict:
