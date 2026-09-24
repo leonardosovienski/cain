@@ -107,6 +107,24 @@ def ollama_rss_bytes() -> int | None:
     return total if seen else None
 
 
+def loaded_model(provider) -> dict | None:
+    """Where Ollama holds the model right now (/api/ps): total size and the part in GPU memory."""
+    from urllib.request import Request
+
+    from cain.llm import urlopen
+
+    try:
+        with urlopen(Request(provider.base_url.rstrip("/") + "/api/ps"), timeout=5) as response:
+            running = json.loads(response.read(1_000_001))
+    except (OSError, ValueError):
+        return None
+    found = next((m for m in running.get("models", []) if m.get("name") == provider.model), None)
+    if found is None:
+        return None
+    return {"loaded_bytes": found.get("size"), "vram_bytes": found.get("size_vram"),
+            "context_length": found.get("context_length")}
+
+
 def _percentile(values: list[float], q: float) -> float | None:
     if not values:
         return None
@@ -160,7 +178,8 @@ def run_model(provider, store: InferenceStore, *, mode: str = "record", attempts
         "latency_s": {"p50": _percentile(wall, 0.5), "p95": _percentile(wall, 0.95),
                       "mean": round(statistics.fmean(wall), 3) if wall else None,
                       "total": round(sum(wall), 1)},
-        "memory": {"ollama_rss_peak_bytes": peak_rss,
-                   "method": "sum of VmRSS of processes named ollama, sampled after each task"},
+        "memory": {"ollama_rss_peak_bytes": peak_rss, "model": loaded_model(provider),
+                   "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task "
+                             "(a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"},
         "rows": rows,
     }

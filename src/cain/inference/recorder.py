@@ -132,22 +132,23 @@ class InferenceStore:
         finally:
             db.close()
 
-    def cached(self, key: str, *, request_key: str | None = None) -> tuple[bytes, str] | None:
+    def cached(self, key: str, *, request_key: str | None = None) -> tuple[bytes, str, str] | None:
         """Recorded answer for the full key; with ``request_key``, the latest answer for the same request
         bytes (used only when the runtime cannot be asked for the model identity: offline replay)."""
         with self.connection() as db:
             if request_key is None:
-                row = db.execute("SELECT response, response_sha256, cache_key FROM inference_cache "
+                row = db.execute("SELECT response, response_sha256, cache_key, call_id FROM inference_cache "
                                  "WHERE cache_key=?", (key,)).fetchone()
             else:
-                row = db.execute("SELECT c.response, c.response_sha256, c.cache_key FROM inference_cache c "
+                row = db.execute("SELECT c.response, c.response_sha256, c.cache_key, c.call_id "
+                                 "FROM inference_cache c "
                                  "JOIN inference_calls k ON k.id = c.call_id WHERE c.request_key=? "
                                  "ORDER BY k.recorded_at DESC LIMIT 1", (request_key,)).fetchone()
         if row is None:
             return None
         if _hash(row["response"]) != row["response_sha256"]:
             raise ReplayMiss("cached response bytes do not match their sha256")
-        return row["response"], row["cache_key"]
+        return row["response"], row["cache_key"], row["call_id"]
 
     def save(self, call: dict, *, cache: bool) -> None:
         with self.connection() as db:
@@ -238,7 +239,10 @@ def missing_fields(manifest: dict, endpoint: str) -> list[str]:
     missing = []
     for name in required:
         section, key = name.split(".")
-        if (manifest.get(section) or {}).get(key) in (None, "", {}, []):
+        value = (manifest.get(section) or {}).get(key)
+        # A model that declares no default parameters has an empty set, which is a recorded fact.
+        empty = (None, "") if name == "model.default_parameters" else (None, "", {}, [])
+        if value in empty:
             missing.append(name)
     return missing
 
@@ -417,9 +421,13 @@ class Recorder:
                 # recording of these exact request bytes and say so in the manifest.
                 found = self.store.cached(key, request_key=request_key)
         if found is not None:
-            cached, recorded_key = found
+            cached, recorded_key, recorded_call = found
             call.update(cache_hit=True, status="replayed", response=cached, response_sha256=_hash(cached),
-                        cache_key=recorded_key)
+                        cache_key=recorded_key, identity_from_call=recorded_call)
+            if "error" in facts:
+                # The runtime could not be asked; the identity is the one recorded with the answer.
+                original = self.store.call(recorded_call)["manifest"]
+                facts = {**{k: original.get(k) for k in ("model", "runtime", "hardware")}, "error": facts["error"]}
             call["manifest"] = self._manifest(call, facts, body, cached)
             self.store.save(call, cache=False)
             return _Response(cached)
@@ -484,6 +492,7 @@ class Recorder:
             "model": facts.get("model"), "runtime": {**facts.get("runtime", {}), **call.get("backend", {})},
             "hardware": facts.get("hardware"), "facts_error": facts.get("error"),
             "runtime_verified": call["runtime_verified"],
+            "identity_from_call": call.get("identity_from_call"),
             "parameters": {
                 "requested": options, "stream": body.get("stream"), "think": body.get("think"),
                 "keep_alive": body.get("keep_alive"), "cache_prompt": body.get("cache_prompt"),

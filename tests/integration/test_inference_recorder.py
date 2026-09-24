@@ -139,6 +139,9 @@ def test_every_call_gets_a_complete_manifest(ollama, tmp_path):
     # A manifest missing a field is reported, not silently accepted.
     broken = {**calls[0]["manifest"], "model": {**calls[0]["manifest"]["model"], "gguf_sha256": None}}
     assert missing_fields(broken, "/api/generate") == ["model.gguf_sha256"]
+    # A model whose Modelfile declares no defaults has an empty set: recorded, not missing.
+    no_defaults = {**calls[0]["manifest"], "model": {**calls[0]["manifest"]["model"], "default_parameters": {}}}
+    assert missing_fields(no_defaults, "/api/generate") == []
 
 
 def test_twenty_identical_calls_counted_and_replay_is_identical(ollama, tmp_path):
@@ -197,8 +200,10 @@ def test_offline_replay_serves_the_recording_and_says_identity_was_not_rechecked
     manifest = store.calls(1)[0]["manifest"]
     assert manifest["status"] == "replayed" and manifest["runtime_verified"] is False
     assert manifest["facts_error"]
-    # Offline, the model identity could not be re-read: the audit says so instead of passing it.
-    assert "model.gguf_sha256" in missing_fields(manifest, "/api/generate")
+    # Offline, the identity comes from the call that recorded the answer, and the manifest says so.
+    original = store.call(manifest["identity_from_call"])["manifest"]
+    assert original["status"] == "called" and manifest["model"] == original["model"]
+    assert missing_fields(manifest, "/api/generate") == []
 
 
 def test_cache_mode_calls_once_then_serves(ollama, tmp_path):
