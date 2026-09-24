@@ -283,8 +283,9 @@ class Workflows:
         request = current["request"]
         previous = [s["result"].get("explanation", {}).get("proposed_synthesis", "")
                     for s in current["steps"] if s["name"] in GENERATION and s["result"].get("explanation")]
+        # The references the search step found (its "evidence" list); what the approver is shown.
         evidence = sorted({e.get("reference_id") for s in current["steps"] if s["name"] == "search"
-                           for e in s["result"].get("results", []) if isinstance(e, dict) and e.get("reference_id")})
+                           for e in s["result"].get("evidence", []) if isinstance(e, dict) and e.get("reference_id")})
         return {"position": len(current["steps"]), "step": current["next_step"],
                 "proposal": {"question": request["question"], "source_id": request["source_id"],
                              "model": request["model"].get("model"), "model_digest": request["model"].get("model_digest"),

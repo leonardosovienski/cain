@@ -66,6 +66,10 @@ def test_run_waiting_for_approval_survives_a_killed_process(setup):
     job = restarted.get(scope, "durable")
     assert job["status"] == "awaiting_generation_approval"
     assert job["pending_approval"]["step"] == "entities" and job["pending_approval"]["position"] == 2
+    # The approver sees which evidence the search step found (found empty by the runtime demo).
+    evidence = job["pending_approval"]["evidence_ids"]
+    assert len(evidence) == 1 and evidence[0].endswith(":e")
+    assert evidence == [e["reference_id"] for e in job["steps"][1]["result"]["evidence"]]
     for _ in range(4):
         job = restarted.decide(scope, "durable", "APPROVE", by="leo", note="reviewed the proposal")
         job = restarted.advance(scope, "durable", model)  # runs the approved step
