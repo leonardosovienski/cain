@@ -1,0 +1,5211 @@
+{
+  "summary": {
+    "store": "state/harness.db",
+    "models": [
+      {
+        "model": "qwen3.5:4b",
+        "mode": "record",
+        "attempts_allowed": 2,
+        "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+        "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+        "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+        "tasks": 96,
+        "tasks_run": 96,
+        "accuracy": {
+          "all": {
+            "correct": 93,
+            "total": 96,
+            "accuracy": 0.9688
+          },
+          "en": {
+            "correct": 47,
+            "total": 48,
+            "accuracy": 0.9792
+          },
+          "pt": {
+            "correct": 46,
+            "total": 48,
+            "accuracy": 0.9583
+          },
+          "evidence": {
+            "all": {
+              "correct": 48,
+              "total": 48,
+              "accuracy": 1.0
+            },
+            "en": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            },
+            "pt": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            }
+          },
+          "extraction": {
+            "all": {
+              "correct": 21,
+              "total": 24,
+              "accuracy": 0.875
+            },
+            "en": {
+              "correct": 11,
+              "total": 12,
+              "accuracy": 0.9167
+            },
+            "pt": {
+              "correct": 10,
+              "total": 12,
+              "accuracy": 0.8333
+            }
+          },
+          "verifiability": {
+            "all": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            },
+            "en": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            },
+            "pt": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            }
+          }
+        },
+        "structured": {
+          "first_attempt_valid": 96,
+          "no_valid_answer": 0,
+          "extra_attempts": 0
+        },
+        "latency_s": {
+          "p50": 0.321,
+          "p95": 0.661,
+          "mean": 0.409,
+          "total": 39.3
+        },
+        "memory": {
+          "ollama_rss_peak_bytes": 35426304,
+          "model": {
+            "loaded_bytes": 3266450553,
+            "vram_bytes": 3266450553,
+            "context_length": 8192
+          },
+          "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+        }
+      },
+      {
+        "model": "granite4:micro",
+        "mode": "record",
+        "attempts_allowed": 2,
+        "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+        "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+        "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+        "tasks": 96,
+        "tasks_run": 96,
+        "accuracy": {
+          "all": {
+            "correct": 93,
+            "total": 96,
+            "accuracy": 0.9688
+          },
+          "en": {
+            "correct": 47,
+            "total": 48,
+            "accuracy": 0.9792
+          },
+          "pt": {
+            "correct": 46,
+            "total": 48,
+            "accuracy": 0.9583
+          },
+          "evidence": {
+            "all": {
+              "correct": 47,
+              "total": 48,
+              "accuracy": 0.9792
+            },
+            "en": {
+              "correct": 23,
+              "total": 24,
+              "accuracy": 0.9583
+            },
+            "pt": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            }
+          },
+          "extraction": {
+            "all": {
+              "correct": 22,
+              "total": 24,
+              "accuracy": 0.9167
+            },
+            "en": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            },
+            "pt": {
+              "correct": 10,
+              "total": 12,
+              "accuracy": 0.8333
+            }
+          },
+          "verifiability": {
+            "all": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            },
+            "en": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            },
+            "pt": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            }
+          }
+        },
+        "structured": {
+          "first_attempt_valid": 96,
+          "no_valid_answer": 0,
+          "extra_attempts": 0
+        },
+        "latency_s": {
+          "p50": 0.171,
+          "p95": 0.49,
+          "mean": 0.26,
+          "total": 25.0
+        },
+        "memory": {
+          "ollama_rss_peak_bytes": 34295808,
+          "model": {
+            "loaded_bytes": 2915943054,
+            "vram_bytes": 2915943054,
+            "context_length": 8192
+          },
+          "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+        }
+      },
+      {
+        "model": "phi4-mini:latest",
+        "mode": "record",
+        "attempts_allowed": 2,
+        "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+        "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+        "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+        "tasks": 96,
+        "tasks_run": 96,
+        "accuracy": {
+          "all": {
+            "correct": 92,
+            "total": 96,
+            "accuracy": 0.9583
+          },
+          "en": {
+            "correct": 46,
+            "total": 48,
+            "accuracy": 0.9583
+          },
+          "pt": {
+            "correct": 46,
+            "total": 48,
+            "accuracy": 0.9583
+          },
+          "evidence": {
+            "all": {
+              "correct": 47,
+              "total": 48,
+              "accuracy": 0.9792
+            },
+            "en": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            },
+            "pt": {
+              "correct": 23,
+              "total": 24,
+              "accuracy": 0.9583
+            }
+          },
+          "extraction": {
+            "all": {
+              "correct": 21,
+              "total": 24,
+              "accuracy": 0.875
+            },
+            "en": {
+              "correct": 10,
+              "total": 12,
+              "accuracy": 0.8333
+            },
+            "pt": {
+              "correct": 11,
+              "total": 12,
+              "accuracy": 0.9167
+            }
+          },
+          "verifiability": {
+            "all": {
+              "correct": 24,
+              "total": 24,
+              "accuracy": 1.0
+            },
+            "en": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            },
+            "pt": {
+              "correct": 12,
+              "total": 12,
+              "accuracy": 1.0
+            }
+          }
+        },
+        "structured": {
+          "first_attempt_valid": 96,
+          "no_valid_answer": 0,
+          "extra_attempts": 0
+        },
+        "latency_s": {
+          "p50": 0.174,
+          "p95": 0.499,
+          "mean": 0.255,
+          "total": 24.5
+        },
+        "memory": {
+          "ollama_rss_peak_bytes": 33890304,
+          "model": {
+            "loaded_bytes": 3628681133,
+            "vram_bytes": 3628681133,
+            "context_length": 8192
+          },
+          "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+        }
+      }
+    ]
+  },
+  "results": [
+    {
+      "model": "qwen3.5:4b",
+      "mode": "record",
+      "attempts_allowed": 2,
+      "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+      "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+      "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+      "tasks": 96,
+      "tasks_run": 96,
+      "accuracy": {
+        "all": {
+          "correct": 93,
+          "total": 96,
+          "accuracy": 0.9688
+        },
+        "en": {
+          "correct": 47,
+          "total": 48,
+          "accuracy": 0.9792
+        },
+        "pt": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "evidence": {
+          "all": {
+            "correct": 48,
+            "total": 48,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          }
+        },
+        "extraction": {
+          "all": {
+            "correct": 21,
+            "total": 24,
+            "accuracy": 0.875
+          },
+          "en": {
+            "correct": 11,
+            "total": 12,
+            "accuracy": 0.9167
+          },
+          "pt": {
+            "correct": 10,
+            "total": 12,
+            "accuracy": 0.8333
+          }
+        },
+        "verifiability": {
+          "all": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "structured": {
+        "first_attempt_valid": 96,
+        "no_valid_answer": 0,
+        "extra_attempts": 0
+      },
+      "latency_s": {
+        "p50": 0.321,
+        "p95": 0.661,
+        "mean": 0.409,
+        "total": 39.3
+      },
+      "memory": {
+        "ollama_rss_peak_bytes": 35426304,
+        "model": {
+          "loaded_bytes": 3266450553,
+          "vram_bytes": 3266450553,
+          "context_length": 8192
+        },
+        "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+      },
+      "rows": [
+        {
+          "id": "ev-en-01",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1061f2677def460d987ba7e18c4e5441"
+          ],
+          "wall_s": 4.43,
+          "runtime_ms": 4348.9
+        },
+        {
+          "id": "ev-en-02",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d111776a6720444bb6140e3dfaea587b"
+          ],
+          "wall_s": 0.255,
+          "runtime_ms": 242.4
+        },
+        {
+          "id": "ev-en-03",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a4db4ad73c8e47b7954034dd37bc6b54"
+          ],
+          "wall_s": 0.267,
+          "runtime_ms": 254.5
+        },
+        {
+          "id": "ev-en-04",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:87479c00e0c348b2a25751a994cdc8ac"
+          ],
+          "wall_s": 0.269,
+          "runtime_ms": 245.1
+        },
+        {
+          "id": "ev-en-05",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f3a4f86b02794bc9a83e7d7caf9717f8"
+          ],
+          "wall_s": 0.333,
+          "runtime_ms": 314.7
+        },
+        {
+          "id": "ev-en-06",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:06e2a0625a35403483a9ff1bbcf1573f"
+          ],
+          "wall_s": 0.246,
+          "runtime_ms": 232.1
+        },
+        {
+          "id": "ev-en-07",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:86827bf417c54734a966f39a7f09e185"
+          ],
+          "wall_s": 0.307,
+          "runtime_ms": 298.2
+        },
+        {
+          "id": "ev-en-08",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:34870b6fbf22462fae5c0d584b4c00e2"
+          ],
+          "wall_s": 0.249,
+          "runtime_ms": 236.2
+        },
+        {
+          "id": "ev-en-09",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:50b4a438e50a4f3d976501cb16dfe85d"
+          ],
+          "wall_s": 0.321,
+          "runtime_ms": 310.8
+        },
+        {
+          "id": "ev-en-10",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2c5e081f64334f4b9acdc1aa16d7b11a"
+          ],
+          "wall_s": 0.317,
+          "runtime_ms": 304.8
+        },
+        {
+          "id": "ev-en-11",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:8991611d8f7d4b489043c0cbc3b635a5"
+          ],
+          "wall_s": 0.327,
+          "runtime_ms": 314.7
+        },
+        {
+          "id": "ev-en-12",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:936f3221440d46dfa0116a777aca9a54"
+          ],
+          "wall_s": 0.337,
+          "runtime_ms": 309.9
+        },
+        {
+          "id": "ev-en-13",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:63b745c4cd5a40648290ab41bb905b14"
+          ],
+          "wall_s": 0.316,
+          "runtime_ms": 288.1
+        },
+        {
+          "id": "ev-en-14",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6512625659174869a45fe59f5532c24a"
+          ],
+          "wall_s": 0.292,
+          "runtime_ms": 269.9
+        },
+        {
+          "id": "ev-en-15",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:495fe6fa3d1c4e839329f1bbb8627c0e"
+          ],
+          "wall_s": 0.251,
+          "runtime_ms": 241.1
+        },
+        {
+          "id": "ev-en-16",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:00ed53d3cd8f42dab7b49792cefb0da3"
+          ],
+          "wall_s": 0.325,
+          "runtime_ms": 312.2
+        },
+        {
+          "id": "ev-en-17",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ca5b9cd7ba65479eaa72a7202844f38f"
+          ],
+          "wall_s": 0.309,
+          "runtime_ms": 299.4
+        },
+        {
+          "id": "ev-en-18",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:10f26c0d976140fc945a3853bdc2602a"
+          ],
+          "wall_s": 0.305,
+          "runtime_ms": 292.1
+        },
+        {
+          "id": "ev-en-19",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d50f6f8471e84cffbce85535bbd5f372"
+          ],
+          "wall_s": 0.32,
+          "runtime_ms": 301.9
+        },
+        {
+          "id": "ev-en-20",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:4e253fa6060347b49113bd0f873ab1bc"
+          ],
+          "wall_s": 0.32,
+          "runtime_ms": 309.3
+        },
+        {
+          "id": "ev-en-21",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f54b02d2dcb14205a0e488e0b0972918"
+          ],
+          "wall_s": 0.343,
+          "runtime_ms": 324.5
+        },
+        {
+          "id": "ev-en-22",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ed68d96b6a994a4ca8ae5fbbe6845df8"
+          ],
+          "wall_s": 0.302,
+          "runtime_ms": 290.8
+        },
+        {
+          "id": "ev-en-23",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c38048f510c6410686348bf3cb3b5a79"
+          ],
+          "wall_s": 0.327,
+          "runtime_ms": 308.0
+        },
+        {
+          "id": "ev-en-24",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ac92fc5abe2e4c32bef280404fafa56c"
+          ],
+          "wall_s": 0.32,
+          "runtime_ms": 307.5
+        },
+        {
+          "id": "ev-pt-01",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:68e6ea98bd834483ae23af13c4628f97"
+          ],
+          "wall_s": 0.36,
+          "runtime_ms": 350.8
+        },
+        {
+          "id": "ev-pt-02",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d1fa4fb0d81e41d697a8f0628426decc"
+          ],
+          "wall_s": 0.27,
+          "runtime_ms": 257.4
+        },
+        {
+          "id": "ev-pt-03",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e82793551b9549c0a694ff1d907bbbd8"
+          ],
+          "wall_s": 0.282,
+          "runtime_ms": 272.8
+        },
+        {
+          "id": "ev-pt-04",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7bfe721ef5e44fefa03132c0768c5616"
+          ],
+          "wall_s": 0.268,
+          "runtime_ms": 255.7
+        },
+        {
+          "id": "ev-pt-05",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:661ad7f7e13c423ea6c792e8490742e2"
+          ],
+          "wall_s": 0.322,
+          "runtime_ms": 311.8
+        },
+        {
+          "id": "ev-pt-06",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c622d118a6e34fda87999f91a14ab6ff"
+          ],
+          "wall_s": 0.251,
+          "runtime_ms": 238.5
+        },
+        {
+          "id": "ev-pt-07",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5c69d449b0e5425fa943ad4f24fc6fb2"
+          ],
+          "wall_s": 0.353,
+          "runtime_ms": 334.2
+        },
+        {
+          "id": "ev-pt-08",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:93c7f138861d44c88ee9ed8d38a74b52"
+          ],
+          "wall_s": 0.263,
+          "runtime_ms": 241.2
+        },
+        {
+          "id": "ev-pt-09",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:9b42c6cf90b74d4da1f330a00a88c956"
+          ],
+          "wall_s": 0.261,
+          "runtime_ms": 251.4
+        },
+        {
+          "id": "ev-pt-10",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:226026bdaa604dbfb82a743c55a5f8b7"
+          ],
+          "wall_s": 0.347,
+          "runtime_ms": 334.0
+        },
+        {
+          "id": "ev-pt-11",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ca24ea3633fe42f5a69695b2612557fa"
+          ],
+          "wall_s": 0.271,
+          "runtime_ms": 262.7
+        },
+        {
+          "id": "ev-pt-12",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:28660b5fdcc844689e267ad7e39ec707"
+          ],
+          "wall_s": 0.292,
+          "runtime_ms": 279.0
+        },
+        {
+          "id": "ev-pt-13",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:636e642fe5164560989f83e2a116deda"
+          ],
+          "wall_s": 0.239,
+          "runtime_ms": 229.7
+        },
+        {
+          "id": "ev-pt-14",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:96da99d99194414ea52be9294517aee8"
+          ],
+          "wall_s": 0.311,
+          "runtime_ms": 300.2
+        },
+        {
+          "id": "ev-pt-15",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f676fc7597ae42f79af1f4b63e630a7a"
+          ],
+          "wall_s": 0.281,
+          "runtime_ms": 262.5
+        },
+        {
+          "id": "ev-pt-16",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1028749691514f4a99f0e0a25d64aca5"
+          ],
+          "wall_s": 0.251,
+          "runtime_ms": 239.3
+        },
+        {
+          "id": "ev-pt-17",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:688ca86be2ad46ff849557248c838c46"
+          ],
+          "wall_s": 0.326,
+          "runtime_ms": 317.3
+        },
+        {
+          "id": "ev-pt-18",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0030b4b206b84e388d2931aeb25aa0f8"
+          ],
+          "wall_s": 0.343,
+          "runtime_ms": 320.7
+        },
+        {
+          "id": "ev-pt-19",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:073d19a442d94c2ba64a1968eb85faae"
+          ],
+          "wall_s": 0.337,
+          "runtime_ms": 318.0
+        },
+        {
+          "id": "ev-pt-20",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b510e888d20e40c88144dbc191234753"
+          ],
+          "wall_s": 0.244,
+          "runtime_ms": 231.7
+        },
+        {
+          "id": "ev-pt-21",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7c0402dbcd7740d097df9d518e60d2ad"
+          ],
+          "wall_s": 0.238,
+          "runtime_ms": 229.2
+        },
+        {
+          "id": "ev-pt-22",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:80b43471e70545bf860e7a04f4fbfd74"
+          ],
+          "wall_s": 0.311,
+          "runtime_ms": 298.2
+        },
+        {
+          "id": "ev-pt-23",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5787fcc7991c4a7f94868babccd5aef6"
+          ],
+          "wall_s": 0.287,
+          "runtime_ms": 278.0
+        },
+        {
+          "id": "ev-pt-24",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:aba18ef527d744f7aa6a09389b9c2fb2"
+          ],
+          "wall_s": 0.306,
+          "runtime_ms": 293.7
+        },
+        {
+          "id": "ex-en-01",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "1987",
+          "quote": "The Riverside library opened in 1987",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a021479a893f45c0972490c43bfe0c35"
+          ],
+          "wall_s": 0.604,
+          "runtime_ms": 590.5
+        },
+        {
+          "id": "ex-en-02",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "11,400",
+          "quote": "The company employs 11,400 people.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a214eea21f5e458485cebdef0958ac0c"
+          ],
+          "wall_s": 0.661,
+          "runtime_ms": 638.0
+        },
+        {
+          "id": "ex-en-03",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Tomas Varga",
+          "quote": "The bridge, designed by engineer Tomas Varga,",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b39fce68e5704df49ac49b4ea1bcd763"
+          ],
+          "wall_s": 0.594,
+          "runtime_ms": 568.1
+        },
+        {
+          "id": "ex-en-04",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "68 percent",
+          "quote": "turnout reached 68 percent",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:639a190e8bae437c8ae9c7746fd5b21d"
+          ],
+          "wall_s": 0.516,
+          "runtime_ms": 493.9
+        },
+        {
+          "id": "ex-en-05",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "2,300",
+          "quote": "2,300",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:8d881eebd43e4719a07713a99f205c73"
+          ],
+          "wall_s": 0.548,
+          "runtime_ms": 537.9
+        },
+        {
+          "id": "ex-en-06",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Andes Observatory Consortium",
+          "quote": "and is operated by the Andes Observatory Consortium.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cdd1d34d35824b2c88a6901f0f3ce4cc"
+          ],
+          "wall_s": 0.559,
+          "runtime_ms": 537.7
+        },
+        {
+          "id": "ex-en-07",
+          "family": "extraction",
+          "lang": "en",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "{240}",
+          "quote": "\"240\"",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:02e1fb0d741642d98da8eb7705e0df1c"
+          ],
+          "wall_s": 0.495,
+          "runtime_ms": 474.9
+        },
+        {
+          "id": "ex-en-08",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Ines Carvalho",
+          "quote": "The novel 'Salt Roads' was written by Ines Carvalho and won the Northern Prize in 2019.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:60e04280cc114a4083f29f8d899c1015"
+          ],
+          "wall_s": 0.749,
+          "runtime_ms": 736.2
+        },
+        {
+          "id": "ex-en-09",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Poznan",
+          "quote": "production moved to a plant in Poznan.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:da66131f8fc04f85b7be870840978989"
+          ],
+          "wall_s": 0.52,
+          "runtime_ms": 495.4
+        },
+        {
+          "id": "ex-en-10",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "740 millimetres per year",
+          "quote": "Average rainfall in the valley is 740 millimetres per year",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f93216e9799f4d5e9660061bd6f8c9e4"
+          ],
+          "wall_s": 0.692,
+          "runtime_ms": 671.8
+        },
+        {
+          "id": "ex-en-11",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "3 June 2021",
+          "quote": "3 June 2021",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1e73fe033b904e8c9c92eb817c8cf453"
+          ],
+          "wall_s": 0.586,
+          "runtime_ms": 567.0
+        },
+        {
+          "id": "ex-en-12",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "about 900",
+          "quote": "of which about 900 are on permanent display",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d3cd613690724cb3b1b6c2989d04f1e0"
+          ],
+          "wall_s": 0.57,
+          "runtime_ms": 549.8
+        },
+        {
+          "id": "ex-pt-01",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "1954",
+          "quote": "em 1954",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2814e0b0da714a6d8b94987a04b41dd4"
+          ],
+          "wall_s": 0.499,
+          "runtime_ms": 480.3
+        },
+        {
+          "id": "ex-pt-02",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "14 mil toneladas",
+          "quote": "14 mil toneladas",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0ac386463dab4f10ab9d3af1a65ea22f"
+          ],
+          "wall_s": 0.467,
+          "runtime_ms": 447.0
+        },
+        {
+          "id": "ex-pt-03",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Carla Nogueira",
+          "quote": "Carla Nogueira",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a80860e9853f409a826c7ff2d0cd8819"
+          ],
+          "wall_s": 0.486,
+          "runtime_ms": 477.2
+        },
+        {
+          "id": "ex-pt-04",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "380 metros",
+          "quote": "380 metros",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:510e7b1bd4224a01b66b69dd11c92387"
+          ],
+          "wall_s": 0.437,
+          "runtime_ms": 428.3
+        },
+        {
+          "id": "ex-pt-05",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "7,2%",
+          "quote": "caiu para 7,2%",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:633cef8fa241449f817ae3d6152c1428"
+          ],
+          "wall_s": 0.514,
+          "runtime_ms": 491.0
+        },
+        {
+          "id": "ex-pt-06",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "Aurora",
+          "quote": "publicada pela editora Aurora.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b567d6e7450e4524a99f4bc8d429978e"
+          ],
+          "wall_s": 0.509,
+          "runtime_ms": 485.6
+        },
+        {
+          "id": "ex-pt-07",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "{\"answer\": 12, \"quote\": \"12 países\"}",
+          "quote": "12 países",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5a0c0e4fb40a4cd1adaf27fea5eee1e2"
+          ],
+          "wall_s": 0.691,
+          "runtime_ms": 681.6
+        },
+        {
+          "id": "ex-pt-08",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "{35}",
+          "quote": "\"35\"",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:4646b32799054351bdd5995143713a2d"
+          ],
+          "wall_s": 0.478,
+          "runtime_ms": 456.6
+        },
+        {
+          "id": "ex-pt-09",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "700 mil",
+          "quote": "700 mil",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cb4cf01e467e4cd48e0d88be3e198164"
+          ],
+          "wall_s": 0.479,
+          "runtime_ms": 469.7
+        },
+        {
+          "id": "ex-pt-10",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Recife",
+          "quote": "Recife",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b14dfc0f4a474689b1421fe764a597d6"
+          ],
+          "wall_s": 0.38,
+          "runtime_ms": 369.8
+        },
+        {
+          "id": "ex-pt-11",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "julho de 2022",
+          "quote": "em julho de 2022",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3e5d3538d8a44962b7d91d3f6f01e66b"
+          ],
+          "wall_s": 0.588,
+          "runtime_ms": 568.7
+        },
+        {
+          "id": "ex-pt-12",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "{\"answer\": 3, \"quote\": \"abastece três cidades\"}",
+          "quote": "três",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6594a653a046401d9f7b5c4a4c57215b"
+          ],
+          "wall_s": 0.711,
+          "runtime_ms": 687.4
+        },
+        {
+          "id": "vf-en-01",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6df29980ef244d9c8bbe92783957624d"
+          ],
+          "wall_s": 0.306,
+          "runtime_ms": 284.7
+        },
+        {
+          "id": "vf-en-02",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e7230b4339104329a9d043dc54aacef9"
+          ],
+          "wall_s": 0.321,
+          "runtime_ms": 307.3
+        },
+        {
+          "id": "vf-en-03",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6379d93ab6204f348e98365202b262cd"
+          ],
+          "wall_s": 0.297,
+          "runtime_ms": 284.7
+        },
+        {
+          "id": "vf-en-04",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3230b2048be74e34b7977c9103e2c012"
+          ],
+          "wall_s": 0.295,
+          "runtime_ms": 283.3
+        },
+        {
+          "id": "vf-en-05",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:951c5c56c8ee4637a8fdd05484a61d09"
+          ],
+          "wall_s": 0.294,
+          "runtime_ms": 280.2
+        },
+        {
+          "id": "vf-en-06",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:da84457084ee466d968b5568102bed33"
+          ],
+          "wall_s": 0.301,
+          "runtime_ms": 285.2
+        },
+        {
+          "id": "vf-en-07",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:37486725786c40e78f25e55d5394797d"
+          ],
+          "wall_s": 0.31,
+          "runtime_ms": 300.6
+        },
+        {
+          "id": "vf-en-08",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:225eff7e74e742bc9554105a2737a643"
+          ],
+          "wall_s": 0.344,
+          "runtime_ms": 320.5
+        },
+        {
+          "id": "vf-en-09",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:63ec189243864e8ba12d2d4d9283c7db"
+          ],
+          "wall_s": 0.325,
+          "runtime_ms": 306.1
+        },
+        {
+          "id": "vf-en-10",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0b5a22f81cd84c2cb5184e466bbd4e62"
+          ],
+          "wall_s": 0.338,
+          "runtime_ms": 326.2
+        },
+        {
+          "id": "vf-en-11",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e6ceb84ec69c4b9192434bb2ec522b7d"
+          ],
+          "wall_s": 0.313,
+          "runtime_ms": 303.9
+        },
+        {
+          "id": "vf-en-12",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d1beca5025f64967ab0b98c5a7b86000"
+          ],
+          "wall_s": 0.318,
+          "runtime_ms": 304.0
+        },
+        {
+          "id": "vf-pt-01",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d0933d94808b4f75a4294d8f9126f62a"
+          ],
+          "wall_s": 0.3,
+          "runtime_ms": 288.3
+        },
+        {
+          "id": "vf-pt-02",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2f00fd5d86da427c9cdde8e1b885ed02"
+          ],
+          "wall_s": 0.309,
+          "runtime_ms": 296.2
+        },
+        {
+          "id": "vf-pt-03",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d79f18e113af4904b85edcf40e6e2d8b"
+          ],
+          "wall_s": 0.323,
+          "runtime_ms": 310.7
+        },
+        {
+          "id": "vf-pt-04",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:8d38638fdd3047f09e7fc03f34994c96"
+          ],
+          "wall_s": 0.327,
+          "runtime_ms": 315.5
+        },
+        {
+          "id": "vf-pt-05",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:bbe231a415d94a748d1abe724df93b3e"
+          ],
+          "wall_s": 0.309,
+          "runtime_ms": 298.5
+        },
+        {
+          "id": "vf-pt-06",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5fd718cb4ac84c309c7c868e3bd1a580"
+          ],
+          "wall_s": 0.321,
+          "runtime_ms": 294.9
+        },
+        {
+          "id": "vf-pt-07",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:71120c1dc27c4244966f053055fd26d0"
+          ],
+          "wall_s": 0.325,
+          "runtime_ms": 315.6
+        },
+        {
+          "id": "vf-pt-08",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2b84d74a1f2a464d963631d0d13f3705"
+          ],
+          "wall_s": 0.326,
+          "runtime_ms": 313.5
+        },
+        {
+          "id": "vf-pt-09",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5ed48334195b4a09b1af746b5e3a9345"
+          ],
+          "wall_s": 0.32,
+          "runtime_ms": 311.2
+        },
+        {
+          "id": "vf-pt-10",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:4bd2749a300e4e41aa71196cc1cf5328"
+          ],
+          "wall_s": 0.321,
+          "runtime_ms": 309.9
+        },
+        {
+          "id": "vf-pt-11",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7f549ee11b32484d8deb37308ff630f7"
+          ],
+          "wall_s": 0.309,
+          "runtime_ms": 300.2
+        },
+        {
+          "id": "vf-pt-12",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5b5d88e600b443b6b417c3d0a1b8e13b"
+          ],
+          "wall_s": 0.313,
+          "runtime_ms": 301.5
+        }
+      ]
+    },
+    {
+      "model": "granite4:micro",
+      "mode": "record",
+      "attempts_allowed": 2,
+      "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+      "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+      "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+      "tasks": 96,
+      "tasks_run": 96,
+      "accuracy": {
+        "all": {
+          "correct": 93,
+          "total": 96,
+          "accuracy": 0.9688
+        },
+        "en": {
+          "correct": 47,
+          "total": 48,
+          "accuracy": 0.9792
+        },
+        "pt": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "evidence": {
+          "all": {
+            "correct": 47,
+            "total": 48,
+            "accuracy": 0.9792
+          },
+          "en": {
+            "correct": 23,
+            "total": 24,
+            "accuracy": 0.9583
+          },
+          "pt": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          }
+        },
+        "extraction": {
+          "all": {
+            "correct": 22,
+            "total": 24,
+            "accuracy": 0.9167
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 10,
+            "total": 12,
+            "accuracy": 0.8333
+          }
+        },
+        "verifiability": {
+          "all": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "structured": {
+        "first_attempt_valid": 96,
+        "no_valid_answer": 0,
+        "extra_attempts": 0
+      },
+      "latency_s": {
+        "p50": 0.171,
+        "p95": 0.49,
+        "mean": 0.26,
+        "total": 25.0
+      },
+      "memory": {
+        "ollama_rss_peak_bytes": 34295808,
+        "model": {
+          "loaded_bytes": 2915943054,
+          "vram_bytes": 2915943054,
+          "context_length": 8192
+        },
+        "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+      },
+      "rows": [
+        {
+          "id": "ev-en-01",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1736e50e766946b99c61cf32f56c5364"
+          ],
+          "wall_s": 3.873,
+          "runtime_ms": 3824.4
+        },
+        {
+          "id": "ev-en-02",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e84dcd3ff4284ebcb7df8b4b1621f4c8"
+          ],
+          "wall_s": 0.15,
+          "runtime_ms": 124.7
+        },
+        {
+          "id": "ev-en-03",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:64c0207eeb134ce7948c30c1168acb1e"
+          ],
+          "wall_s": 0.147,
+          "runtime_ms": 122.8
+        },
+        {
+          "id": "ev-en-04",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:23b78841272d485a91be248794be213c"
+          ],
+          "wall_s": 0.146,
+          "runtime_ms": 123.7
+        },
+        {
+          "id": "ev-en-05",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6c8fa87d0ae14abcac7f08fd28cf5d3d"
+          ],
+          "wall_s": 0.166,
+          "runtime_ms": 145.2
+        },
+        {
+          "id": "ev-en-06",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:de6f6613e4c0430687cd5818fb17170c"
+          ],
+          "wall_s": 0.136,
+          "runtime_ms": 124.6
+        },
+        {
+          "id": "ev-en-07",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2b7cad5c9d2f4a639347b1007832dfd0"
+          ],
+          "wall_s": 0.167,
+          "runtime_ms": 142.7
+        },
+        {
+          "id": "ev-en-08",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:67865d5b856d42b2826a9e973f1deb64"
+          ],
+          "wall_s": 0.147,
+          "runtime_ms": 124.7
+        },
+        {
+          "id": "ev-en-09",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:9af88d5230e440c49a1a0688f15af4c3"
+          ],
+          "wall_s": 0.154,
+          "runtime_ms": 132.8
+        },
+        {
+          "id": "ev-en-10",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f23e9c18060144bb82284f9885783cba"
+          ],
+          "wall_s": 0.163,
+          "runtime_ms": 142.4
+        },
+        {
+          "id": "ev-en-11",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:67d49d76b4bf4dae93e5f27026932a7e"
+          ],
+          "wall_s": 0.154,
+          "runtime_ms": 132.6
+        },
+        {
+          "id": "ev-en-12",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:fe8e2c128aac49eb97a23910698003db"
+          ],
+          "wall_s": 0.156,
+          "runtime_ms": 144.3
+        },
+        {
+          "id": "ev-en-13",
+          "family": "evidence",
+          "lang": "en",
+          "correct": false,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1e0e51dc9a2d43618b48c9f83f1fa377"
+          ],
+          "wall_s": 0.145,
+          "runtime_ms": 123.4
+        },
+        {
+          "id": "ev-en-14",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d47ebf7856f84ab6920f053fab5e71ab"
+          ],
+          "wall_s": 0.173,
+          "runtime_ms": 143.0
+        },
+        {
+          "id": "ev-en-15",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3498690114f14cb88bd6ee82145cf4e1"
+          ],
+          "wall_s": 0.16,
+          "runtime_ms": 125.0
+        },
+        {
+          "id": "ev-en-16",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:063d0fd21e6c4e5586b46d2e3d8f71c1"
+          ],
+          "wall_s": 0.164,
+          "runtime_ms": 129.5
+        },
+        {
+          "id": "ev-en-17",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:dffa3fd4a0e04858afdfd537597613d2"
+          ],
+          "wall_s": 0.172,
+          "runtime_ms": 137.4
+        },
+        {
+          "id": "ev-en-18",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:9a2903cd0aba4b769bf7df384b864c1b"
+          ],
+          "wall_s": 0.166,
+          "runtime_ms": 129.7
+        },
+        {
+          "id": "ev-en-19",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:480db4c3c4b84aa0a41cfffc57904bf7"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 141.6
+        },
+        {
+          "id": "ev-en-20",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:fc2755bf987e44e286d5b0757dff12c6"
+          ],
+          "wall_s": 0.154,
+          "runtime_ms": 136.2
+        },
+        {
+          "id": "ev-en-21",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a4d0b0b989c6473182f4edc24ca6f39c"
+          ],
+          "wall_s": 0.156,
+          "runtime_ms": 134.3
+        },
+        {
+          "id": "ev-en-22",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1ea1f9890f6b4cd59428a3dfe7e73ebc"
+          ],
+          "wall_s": 0.148,
+          "runtime_ms": 136.1
+        },
+        {
+          "id": "ev-en-23",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a7c57a5b24c74b5596d1cb598898299b"
+          ],
+          "wall_s": 0.152,
+          "runtime_ms": 130.9
+        },
+        {
+          "id": "ev-en-24",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:512671d144a04755a39029c91a539093"
+          ],
+          "wall_s": 0.161,
+          "runtime_ms": 136.8
+        },
+        {
+          "id": "ev-pt-01",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7a73b770f2bb402089756225bc481550"
+          ],
+          "wall_s": 0.192,
+          "runtime_ms": 169.4
+        },
+        {
+          "id": "ev-pt-02",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b1985470878f4f59b36ceff91425bfcb"
+          ],
+          "wall_s": 0.15,
+          "runtime_ms": 125.8
+        },
+        {
+          "id": "ev-pt-03",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:11844833a84a4cca9e66a4fa3d5890c4"
+          ],
+          "wall_s": 0.145,
+          "runtime_ms": 130.5
+        },
+        {
+          "id": "ev-pt-04",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:370fd1065f0040b79ef600efef2b00a6"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 125.1
+        },
+        {
+          "id": "ev-pt-05",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e0d33de5583c405d887d851b04a67eb2"
+          ],
+          "wall_s": 0.206,
+          "runtime_ms": 155.7
+        },
+        {
+          "id": "ev-pt-06",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0f811818030b42de95770b6e23d25e1a"
+          ],
+          "wall_s": 0.152,
+          "runtime_ms": 128.3
+        },
+        {
+          "id": "ev-pt-07",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3237faf8359b45b6b6b62f343e497be8"
+          ],
+          "wall_s": 0.171,
+          "runtime_ms": 155.2
+        },
+        {
+          "id": "ev-pt-08",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:466f428f84b84a199aa03cbecf95227f"
+          ],
+          "wall_s": 0.155,
+          "runtime_ms": 123.2
+        },
+        {
+          "id": "ev-pt-09",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1755e0fee5fa4052ae866eb9d45c6d2d"
+          ],
+          "wall_s": 0.171,
+          "runtime_ms": 130.7
+        },
+        {
+          "id": "ev-pt-10",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2b2d3266d657425a85830cd4e0c90bc4"
+          ],
+          "wall_s": 0.19,
+          "runtime_ms": 157.1
+        },
+        {
+          "id": "ev-pt-11",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e48e748b424c47178ed976358d8e7490"
+          ],
+          "wall_s": 0.166,
+          "runtime_ms": 123.7
+        },
+        {
+          "id": "ev-pt-12",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:32b8014017ff4643afb31c0cc503f16a"
+          ],
+          "wall_s": 0.184,
+          "runtime_ms": 146.0
+        },
+        {
+          "id": "ev-pt-13",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5337ec0a66644f01803dda2ac253839d"
+          ],
+          "wall_s": 0.159,
+          "runtime_ms": 124.2
+        },
+        {
+          "id": "ev-pt-14",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b741c84d46ce4ae399069df7b3036860"
+          ],
+          "wall_s": 0.181,
+          "runtime_ms": 143.1
+        },
+        {
+          "id": "ev-pt-15",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e9824f7d7c1d4bd08b067f796e58a05d"
+          ],
+          "wall_s": 0.162,
+          "runtime_ms": 124.2
+        },
+        {
+          "id": "ev-pt-16",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:fc84144b30534fab8a1b7abed213cb27"
+          ],
+          "wall_s": 0.163,
+          "runtime_ms": 126.1
+        },
+        {
+          "id": "ev-pt-17",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b7aea02ce8d84d3a94630880bf4a4738"
+          ],
+          "wall_s": 0.17,
+          "runtime_ms": 154.1
+        },
+        {
+          "id": "ev-pt-18",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:774aee496ecf42f7adb69e1359532c68"
+          ],
+          "wall_s": 0.149,
+          "runtime_ms": 131.9
+        },
+        {
+          "id": "ev-pt-19",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6b004207378043fdb0247098f4cf3534"
+          ],
+          "wall_s": 0.171,
+          "runtime_ms": 148.0
+        },
+        {
+          "id": "ev-pt-20",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:11e3b93befee4961af59cc3e511895ee"
+          ],
+          "wall_s": 0.147,
+          "runtime_ms": 125.0
+        },
+        {
+          "id": "ev-pt-21",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:443d18a0655248efa1c18e7d84491a7d"
+          ],
+          "wall_s": 0.147,
+          "runtime_ms": 125.5
+        },
+        {
+          "id": "ev-pt-22",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ce62ba2c572f4b078c1f94d6090896c2"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 153.7
+        },
+        {
+          "id": "ev-pt-23",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3b3a82d0113948929e1888a475a60695"
+          ],
+          "wall_s": 0.153,
+          "runtime_ms": 132.9
+        },
+        {
+          "id": "ev-pt-24",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c72ae73b2bc14cf3bddc139a1cd4bc7d"
+          ],
+          "wall_s": 0.154,
+          "runtime_ms": 141.0
+        },
+        {
+          "id": "ex-en-01",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "1987",
+          "quote": "The Riverside library opened in 1987",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:89a3bd90f1ea46ecac514a618c1f4033"
+          ],
+          "wall_s": 0.296,
+          "runtime_ms": 287.0
+        },
+        {
+          "id": "ex-en-02",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "11400",
+          "quote": "The company employs 11,400 people.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:18322b8d0875489ca6add4b824786ea1"
+          ],
+          "wall_s": 0.303,
+          "runtime_ms": 294.0
+        },
+        {
+          "id": "ex-en-03",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Tomas Varga",
+          "quote": "The bridge, designed by engineer Tomas Varga,",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a6ba07eca51c45dc9c95bd474999be68"
+          ],
+          "wall_s": 0.347,
+          "runtime_ms": 328.1
+        },
+        {
+          "id": "ex-en-04",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "68 percent",
+          "quote": "In the 2022 election, turnout reached 68 percent, the highest since 1994.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ef990574c7a84cdab046975084bd789d"
+          ],
+          "wall_s": 0.434,
+          "runtime_ms": 415.1
+        },
+        {
+          "id": "ex-en-05",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "2,300",
+          "quote": "Dr. Aisha Bello leads the malaria vaccine trial, which enrolled 2,300 children across four countries.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:4ae6cedfcfb14c46b81498b8b1e4d126"
+          ],
+          "wall_s": 0.49,
+          "runtime_ms": 460.3
+        },
+        {
+          "id": "ex-en-06",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Andes Observatory Consortium",
+          "quote": "operated by the Andes Observatory Consortium.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:616a6be7b8164eae92067269919f7c76"
+          ],
+          "wall_s": 0.334,
+          "runtime_ms": 320.2
+        },
+        {
+          "id": "ex-en-07",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "240",
+          "quote": "Its fleet consists of 240 electric buses.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3f9d0c652926408f93a627ff4d8384b2"
+          ],
+          "wall_s": 0.317,
+          "runtime_ms": 303.9
+        },
+        {
+          "id": "ex-en-08",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Ines Carvalho",
+          "quote": "The novel 'Salt Roads' was written by Ines Carvalho and won the Northern Prize in 2019.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:39e1d2e51b5e43b2b3ec5232aff9ad17"
+          ],
+          "wall_s": 0.516,
+          "runtime_ms": 501.7
+        },
+        {
+          "id": "ex-en-09",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Poznan",
+          "quote": "production moved to a plant in Poznan.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:92383127f03a4bd3809eaf519ddf05aa"
+          ],
+          "wall_s": 0.309,
+          "runtime_ms": 299.9
+        },
+        {
+          "id": "ex-en-10",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "740 millimetres",
+          "quote": "Average rainfall in the valley is 740 millimetres per year,",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cfe07331146249728d60c607dc7028ce"
+          ],
+          "wall_s": 0.381,
+          "runtime_ms": 368.5
+        },
+        {
+          "id": "ex-en-11",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "3 June 2021",
+          "quote": "The merger between Kappa Bank and Lumen Credit was approved by regulators on 3 June 2021.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:af382880e1bc434b813e6c538059daa5"
+          ],
+          "wall_s": 0.492,
+          "runtime_ms": 480.6
+        },
+        {
+          "id": "ex-en-12",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "900",
+          "quote": "about 900 are on permanent display.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f3e8db09752d44f78acac5b73d21826c"
+          ],
+          "wall_s": 0.315,
+          "runtime_ms": 295.6
+        },
+        {
+          "id": "ex-pt-01",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "1954",
+          "quote": "A escola municipal Santa Rita foi fundada em 1954",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0a3b8f3de48c425084eed10efe54304d"
+          ],
+          "wall_s": 0.35,
+          "runtime_ms": 339.9
+        },
+        {
+          "id": "ex-pt-02",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "14 mil toneladas",
+          "quote": "A cooperativa Vale Verde produziu 14 mil toneladas de café na safra de 2023.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2d7069f77f7c4216a57190e45c651df7"
+          ],
+          "wall_s": 0.52,
+          "runtime_ms": 499.8
+        },
+        {
+          "id": "ex-pt-03",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Carla Nogueira",
+          "quote": "O hospital regional é dirigido pela médica Carla Nogueira desde 2018.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:771fde4bafec4ddc90799f56b18c15b8"
+          ],
+          "wall_s": 0.453,
+          "runtime_ms": 433.0
+        },
+        {
+          "id": "ex-pt-04",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "380 metros",
+          "quote": "A ponte sobre o rio Tieté tem 380 metros de extensão e foi inaugurada em 1999.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:78b14fa9fbee4d19bbf673c3aead02ea"
+          ],
+          "wall_s": 0.59,
+          "runtime_ms": 569.9
+        },
+        {
+          "id": "ex-pt-05",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "7,2%",
+          "quote": "taxa de desemprego da cidade caiu para 7,2% no segundo trimestre.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:292fa790dd794f1b89e368efdfec5198"
+          ],
+          "wall_s": 0.472,
+          "runtime_ms": 452.0
+        },
+        {
+          "id": "ex-pt-06",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Aurora",
+          "quote": "publicado pela editora Aurora.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d0a859df2dca4064a7ed3d9fe0b770e9"
+          ],
+          "wall_s": 0.299,
+          "runtime_ms": 287.1
+        },
+        {
+          "id": "ex-pt-07",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "12",
+          "quote": "exporta para 12 países.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:69bfc09811a943e391751fabfad05ac0"
+          ],
+          "wall_s": 0.295,
+          "runtime_ms": 282.7
+        },
+        {
+          "id": "ex-pt-08",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "35",
+          "quote": "35 espécies de mamíferos",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:32830e3792cd4a099fa1f96a655ad33f"
+          ],
+          "wall_s": 0.37,
+          "runtime_ms": 360.3
+        },
+        {
+          "id": "ex-pt-09",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "700 mil",
+          "quote": "A linha 4 do metró transporta cerca de 700 mil passageiros por dia.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:fd7ce006369f4128b7128cd0698e5372"
+          ],
+          "wall_s": 0.47,
+          "runtime_ms": 450.4
+        },
+        {
+          "id": "ex-pt-10",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Recife",
+          "quote": "A startup Nuvem Azul foi fundada por Renata Lima e Diego Souza em Recife.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3e5398979f3543799c2dcba5580fba5a"
+          ],
+          "wall_s": 0.449,
+          "runtime_ms": 435.5
+        },
+        {
+          "id": "ex-pt-11",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "julho de 2022",
+          "quote": "em julho de 2022",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:dc544ec9129b42f68019877578433272"
+          ],
+          "wall_s": 0.346,
+          "runtime_ms": 336.0
+        },
+        {
+          "id": "ex-pt-12",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "3",
+          "quote": "abastece três cidades",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:768c72d3b5b140e3ad888c53095fe45c"
+          ],
+          "wall_s": 0.261,
+          "runtime_ms": 252.2
+        },
+        {
+          "id": "vf-en-01",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:27d19e0103b146fb91b09b9569f675d2"
+          ],
+          "wall_s": 0.165,
+          "runtime_ms": 142.9
+        },
+        {
+          "id": "vf-en-02",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f799f5a6ae0043e9b9a471d9f7283c36"
+          ],
+          "wall_s": 0.157,
+          "runtime_ms": 148.4
+        },
+        {
+          "id": "vf-en-03",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:51b68e53c51141928872205b41271a99"
+          ],
+          "wall_s": 0.166,
+          "runtime_ms": 144.2
+        },
+        {
+          "id": "vf-en-04",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:68a1e2d557314f1887c9ce0308cd288e"
+          ],
+          "wall_s": 0.168,
+          "runtime_ms": 147.7
+        },
+        {
+          "id": "vf-en-05",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:887ea22d91a74a0a9730614ef16d5602"
+          ],
+          "wall_s": 0.163,
+          "runtime_ms": 140.3
+        },
+        {
+          "id": "vf-en-06",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ee0f0ff593ca48999a8726c7fab39c5e"
+          ],
+          "wall_s": 0.169,
+          "runtime_ms": 149.6
+        },
+        {
+          "id": "vf-en-07",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:351af7955f3f46b8845f2d12e774da82"
+          ],
+          "wall_s": 0.174,
+          "runtime_ms": 155.7
+        },
+        {
+          "id": "vf-en-08",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cfc04a145daf464f9cd38ded024e96d5"
+          ],
+          "wall_s": 0.181,
+          "runtime_ms": 161.4
+        },
+        {
+          "id": "vf-en-09",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:8ba927cfdb5f450794434ae081c2cdfe"
+          ],
+          "wall_s": 0.172,
+          "runtime_ms": 153.3
+        },
+        {
+          "id": "vf-en-10",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:06b0a736be944e509b59a2e3c8f626ad"
+          ],
+          "wall_s": 0.177,
+          "runtime_ms": 158.1
+        },
+        {
+          "id": "vf-en-11",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f1c64eb4cfb046d48423dbca6fff631d"
+          ],
+          "wall_s": 0.17,
+          "runtime_ms": 151.0
+        },
+        {
+          "id": "vf-en-12",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ae3cd7b14d004a409f22fdf41b36b356"
+          ],
+          "wall_s": 0.172,
+          "runtime_ms": 152.9
+        },
+        {
+          "id": "vf-pt-01",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:aa6e16a49ab34e34be373b2a72d901de"
+          ],
+          "wall_s": 0.167,
+          "runtime_ms": 145.6
+        },
+        {
+          "id": "vf-pt-02",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e81ef8e2d9334b0284eaad0f55dc0645"
+          ],
+          "wall_s": 0.165,
+          "runtime_ms": 146.7
+        },
+        {
+          "id": "vf-pt-03",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:79885f3acccb4e9785056f798be7c41f"
+          ],
+          "wall_s": 0.168,
+          "runtime_ms": 148.0
+        },
+        {
+          "id": "vf-pt-04",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:4b33de65e4724622883d0855f9c12902"
+          ],
+          "wall_s": 0.17,
+          "runtime_ms": 151.3
+        },
+        {
+          "id": "vf-pt-05",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0e6ff1d88b3546f395cad250da73372a"
+          ],
+          "wall_s": 0.17,
+          "runtime_ms": 147.8
+        },
+        {
+          "id": "vf-pt-06",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a5f8c61c577a448db2b67bef6e541db5"
+          ],
+          "wall_s": 0.158,
+          "runtime_ms": 148.6
+        },
+        {
+          "id": "vf-pt-07",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:8b6e6fd491304abe8c7dbde8a1f481a2"
+          ],
+          "wall_s": 0.162,
+          "runtime_ms": 153.5
+        },
+        {
+          "id": "vf-pt-08",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cf1c307ad4c84164bbf249faa478e093"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 157.1
+        },
+        {
+          "id": "vf-pt-09",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d1206dd2ee794f0999e4b74c44061b97"
+          ],
+          "wall_s": 0.174,
+          "runtime_ms": 155.7
+        },
+        {
+          "id": "vf-pt-10",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d927b26862b94187a15e9475df31aa3f"
+          ],
+          "wall_s": 0.181,
+          "runtime_ms": 161.8
+        },
+        {
+          "id": "vf-pt-11",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:57faa70bcf8c4fa2a47c13854da70cb8"
+          ],
+          "wall_s": 0.174,
+          "runtime_ms": 155.2
+        },
+        {
+          "id": "vf-pt-12",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:8c355417eaff48f6acb0834eaf728bc5"
+          ],
+          "wall_s": 0.175,
+          "runtime_ms": 156.8
+        }
+      ]
+    },
+    {
+      "model": "phi4-mini:latest",
+      "mode": "record",
+      "attempts_allowed": 2,
+      "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+      "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+      "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+      "tasks": 96,
+      "tasks_run": 96,
+      "accuracy": {
+        "all": {
+          "correct": 92,
+          "total": 96,
+          "accuracy": 0.9583
+        },
+        "en": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "pt": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "evidence": {
+          "all": {
+            "correct": 47,
+            "total": 48,
+            "accuracy": 0.9792
+          },
+          "en": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 23,
+            "total": 24,
+            "accuracy": 0.9583
+          }
+        },
+        "extraction": {
+          "all": {
+            "correct": 21,
+            "total": 24,
+            "accuracy": 0.875
+          },
+          "en": {
+            "correct": 10,
+            "total": 12,
+            "accuracy": 0.8333
+          },
+          "pt": {
+            "correct": 11,
+            "total": 12,
+            "accuracy": 0.9167
+          }
+        },
+        "verifiability": {
+          "all": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "structured": {
+        "first_attempt_valid": 96,
+        "no_valid_answer": 0,
+        "extra_attempts": 0
+      },
+      "latency_s": {
+        "p50": 0.174,
+        "p95": 0.499,
+        "mean": 0.255,
+        "total": 24.5
+      },
+      "memory": {
+        "ollama_rss_peak_bytes": 33890304,
+        "model": {
+          "loaded_bytes": 3628681133,
+          "vram_bytes": 3628681133,
+          "context_length": 8192
+        },
+        "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+      },
+      "rows": [
+        {
+          "id": "ev-en-01",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e0edfdd07c734876b3cc33c492ee50b7"
+          ],
+          "wall_s": 3.266,
+          "runtime_ms": 3237.0
+        },
+        {
+          "id": "ev-en-02",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:10a881bc3bd44c018ccdb8f3d4cdf852"
+          ],
+          "wall_s": 0.149,
+          "runtime_ms": 126.2
+        },
+        {
+          "id": "ev-en-03",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b1587f55bf4a4e1d89398e98ecd81be9"
+          ],
+          "wall_s": 0.139,
+          "runtime_ms": 112.9
+        },
+        {
+          "id": "ev-en-04",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5fbb812702cd4fbf953eeff2da10d632"
+          ],
+          "wall_s": 0.135,
+          "runtime_ms": 121.9
+        },
+        {
+          "id": "ev-en-05",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:fe1533cc55094e0b947d044ad8299fc3"
+          ],
+          "wall_s": 0.155,
+          "runtime_ms": 132.8
+        },
+        {
+          "id": "ev-en-06",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:43598d2007164a858c178f0dff3d636f"
+          ],
+          "wall_s": 0.143,
+          "runtime_ms": 123.3
+        },
+        {
+          "id": "ev-en-07",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:70efb91684194317960b96a89d1e2075"
+          ],
+          "wall_s": 0.178,
+          "runtime_ms": 150.3
+        },
+        {
+          "id": "ev-en-08",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:63ff8f6f580148169099f64419c3b492"
+          ],
+          "wall_s": 0.143,
+          "runtime_ms": 128.9
+        },
+        {
+          "id": "ev-en-09",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2a7e5c6a02594a0d9d697b3bb96cf454"
+          ],
+          "wall_s": 0.146,
+          "runtime_ms": 124.9
+        },
+        {
+          "id": "ev-en-10",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7b0a8ef173fb48e1b3346209b56f7b6d"
+          ],
+          "wall_s": 0.17,
+          "runtime_ms": 144.6
+        },
+        {
+          "id": "ev-en-11",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d1b8ba540578416495af69fdc3933a1a"
+          ],
+          "wall_s": 0.162,
+          "runtime_ms": 139.8
+        },
+        {
+          "id": "ev-en-12",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b96e1fd10037400fa91a436ac2bd2f7f"
+          ],
+          "wall_s": 0.149,
+          "runtime_ms": 128.7
+        },
+        {
+          "id": "ev-en-13",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:82cdd965c5b14c6fbc0dbc0485514dd9"
+          ],
+          "wall_s": 0.156,
+          "runtime_ms": 134.2
+        },
+        {
+          "id": "ev-en-14",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:de4d11211ab746de8535443dc005030b"
+          ],
+          "wall_s": 0.156,
+          "runtime_ms": 132.0
+        },
+        {
+          "id": "ev-en-15",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b41335727c3d4d11a4d71571d84ca5fa"
+          ],
+          "wall_s": 0.157,
+          "runtime_ms": 131.0
+        },
+        {
+          "id": "ev-en-16",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f5298aed249e4618a155ec6791cf3d7f"
+          ],
+          "wall_s": 0.166,
+          "runtime_ms": 139.8
+        },
+        {
+          "id": "ev-en-17",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:871bcc8ceb7840bdaf7a37df1afecdba"
+          ],
+          "wall_s": 0.149,
+          "runtime_ms": 128.6
+        },
+        {
+          "id": "ev-en-18",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:22dade0eae88443ca07cd7513ce14fcf"
+          ],
+          "wall_s": 0.155,
+          "runtime_ms": 134.5
+        },
+        {
+          "id": "ev-en-19",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b5480ef442514118bb76eab59b70e9be"
+          ],
+          "wall_s": 0.16,
+          "runtime_ms": 136.5
+        },
+        {
+          "id": "ev-en-20",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:fccf823a88724948a221074ec4e737a2"
+          ],
+          "wall_s": 0.155,
+          "runtime_ms": 132.1
+        },
+        {
+          "id": "ev-en-21",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:88aa0cc144ad4252ad4c50e5bde928b9"
+          ],
+          "wall_s": 0.142,
+          "runtime_ms": 121.5
+        },
+        {
+          "id": "ev-en-22",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:910d72925c7a4a8b93d37ad737b4d0f5"
+          ],
+          "wall_s": 0.153,
+          "runtime_ms": 129.0
+        },
+        {
+          "id": "ev-en-23",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e6cc66a5fa3144f6ae48cc3c718b3414"
+          ],
+          "wall_s": 0.156,
+          "runtime_ms": 132.3
+        },
+        {
+          "id": "ev-en-24",
+          "family": "evidence",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:929132e53e884004b953ef2250eaee9c"
+          ],
+          "wall_s": 0.168,
+          "runtime_ms": 142.4
+        },
+        {
+          "id": "ev-pt-01",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:270ba1dd88bb4b3fb1ff4c23d5654175"
+          ],
+          "wall_s": 0.168,
+          "runtime_ms": 146.5
+        },
+        {
+          "id": "ev-pt-02",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:82e46ff6ccf849ba9ac8b9c9f5d76990"
+          ],
+          "wall_s": 0.149,
+          "runtime_ms": 126.8
+        },
+        {
+          "id": "ev-pt-03",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": false,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:351b4260818a4e8496accf94e5f6ed8b"
+          ],
+          "wall_s": 0.148,
+          "runtime_ms": 125.9
+        },
+        {
+          "id": "ev-pt-04",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d272133210b04f998cc4f2eeb027f57e"
+          ],
+          "wall_s": 0.145,
+          "runtime_ms": 124.4
+        },
+        {
+          "id": "ev-pt-05",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5807c1eafdd9419a8c96c1c06e0bba0b"
+          ],
+          "wall_s": 0.17,
+          "runtime_ms": 146.4
+        },
+        {
+          "id": "ev-pt-06",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2f24e855d9a548ed8b529e43df98151b"
+          ],
+          "wall_s": 0.152,
+          "runtime_ms": 125.7
+        },
+        {
+          "id": "ev-pt-07",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c2591ebd1d3d4a68bb8f78a6f6fd7d94"
+          ],
+          "wall_s": 0.163,
+          "runtime_ms": 142.4
+        },
+        {
+          "id": "ev-pt-08",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:b469fa54d45f455fb4a102a13c329ea8"
+          ],
+          "wall_s": 0.147,
+          "runtime_ms": 125.7
+        },
+        {
+          "id": "ev-pt-09",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2653332f76ca4d8d8d8fdea0fd22e0a8"
+          ],
+          "wall_s": 0.138,
+          "runtime_ms": 114.8
+        },
+        {
+          "id": "ev-pt-10",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:69725906a53c42cd9682c99c37a95037"
+          ],
+          "wall_s": 0.165,
+          "runtime_ms": 143.8
+        },
+        {
+          "id": "ev-pt-11",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a7527be0b71c44c98ccb53d9ae59d835"
+          ],
+          "wall_s": 0.148,
+          "runtime_ms": 126.2
+        },
+        {
+          "id": "ev-pt-12",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c938fd5f5ea34c1b85fce1613b3b4ee8"
+          ],
+          "wall_s": 0.151,
+          "runtime_ms": 127.8
+        },
+        {
+          "id": "ev-pt-13",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:90c6396d653f49538e36dd7278f17811"
+          ],
+          "wall_s": 0.153,
+          "runtime_ms": 126.8
+        },
+        {
+          "id": "ev-pt-14",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2ddbce93d5404173afc9a599bd6ea022"
+          ],
+          "wall_s": 0.153,
+          "runtime_ms": 131.8
+        },
+        {
+          "id": "ev-pt-15",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0b3df04285c94f7ebff6311cdd224f39"
+          ],
+          "wall_s": 0.144,
+          "runtime_ms": 124.2
+        },
+        {
+          "id": "ev-pt-16",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d7c625c4c32f4c5dacbbe3a5815a1701"
+          ],
+          "wall_s": 0.146,
+          "runtime_ms": 125.3
+        },
+        {
+          "id": "ev-pt-17",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0cfb4809234b42a8807ceb8056788e4a"
+          ],
+          "wall_s": 0.144,
+          "runtime_ms": 132.4
+        },
+        {
+          "id": "ev-pt-18",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5a3d4f47ba5e43f0bae71cd084606c5e"
+          ],
+          "wall_s": 0.16,
+          "runtime_ms": 134.9
+        },
+        {
+          "id": "ev-pt-19",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6d11003d38ad4e23baf5af38763b901d"
+          ],
+          "wall_s": 0.156,
+          "runtime_ms": 135.6
+        },
+        {
+          "id": "ev-pt-20",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7b123463ef6e49bbb6f42e921450734c"
+          ],
+          "wall_s": 0.145,
+          "runtime_ms": 124.5
+        },
+        {
+          "id": "ev-pt-21",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:70a026c809184675bb1292a8186a1605"
+          ],
+          "wall_s": 0.143,
+          "runtime_ms": 119.8
+        },
+        {
+          "id": "ev-pt-22",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:47934c75d7fc46f8a6686dee4373a966"
+          ],
+          "wall_s": 0.165,
+          "runtime_ms": 144.3
+        },
+        {
+          "id": "ev-pt-23",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:a6797c8738ea47ae8d1abd887f4f9f07"
+          ],
+          "wall_s": 0.154,
+          "runtime_ms": 133.7
+        },
+        {
+          "id": "ev-pt-24",
+          "family": "evidence",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_SUPPORTED",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1c3fb57c580e48f791694a070e609ad5"
+          ],
+          "wall_s": 0.161,
+          "runtime_ms": 139.6
+        },
+        {
+          "id": "ex-en-01",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "1987",
+          "quote": "The Riverside library opened in 1987 and holds about 42,000 books.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:4d47b7630ee643ac81a472999c0827aa"
+          ],
+          "wall_s": 0.451,
+          "runtime_ms": 436.2
+        },
+        {
+          "id": "ex-en-02",
+          "family": "extraction",
+          "lang": "en",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "He employs 11,400 people.",
+          "quote": "He employs 11,400 people.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:93ccf911889d4375b7ab4995e2d4b4dd"
+          ],
+          "wall_s": 0.39,
+          "runtime_ms": 376.3
+        },
+        {
+          "id": "ex-en-03",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Tomas Varga",
+          "quote": "The bridge, designed by engineer Tomas Varga, spans 1.4 kilometres across the bay and was completed in 2011.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:6844d2be84bb4a87a00c599a84d3ace0"
+          ],
+          "wall_s": 0.577,
+          "runtime_ms": 562.2
+        },
+        {
+          "id": "ex-en-04",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "68 percent",
+          "quote": "In the 2022 election, turnout reached 68 percent, the highest since 1994.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c6591c3797824dac9933976ba6d5875c"
+          ],
+          "wall_s": 0.497,
+          "runtime_ms": 472.5
+        },
+        {
+          "id": "ex-en-05",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "2300",
+          "quote": "2,300 children",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:721164aad03f4582a1ad677b6c844603"
+          ],
+          "wall_s": 0.29,
+          "runtime_ms": 273.6
+        },
+        {
+          "id": "ex-en-06",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Andes Observatory Consortium",
+          "quote": "operated by the Andes Observatory Consortium.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c7d1101c993147799d80e9b5f29b30a0"
+          ],
+          "wall_s": 0.333,
+          "runtime_ms": 322.1
+        },
+        {
+          "id": "ex-en-07",
+          "family": "extraction",
+          "lang": "en",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "240",
+          "quote": "its fleet consists of 240 electric buses.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:32a733accdaf41009d0ded92d3c1befe"
+          ],
+          "wall_s": 0.343,
+          "runtime_ms": 322.2
+        },
+        {
+          "id": "ex-en-08",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Ines Carvalho",
+          "quote": "The novel 'Salt Roads' was written by Ines Carvalho and won the Northern Prize in 2019.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:9b5ee0358697451abbf87c117871610b"
+          ],
+          "wall_s": 0.499,
+          "runtime_ms": 486.9
+        },
+        {
+          "id": "ex-en-09",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Poznan",
+          "quote": "The factory in Leeds closed in March 2020, and production moved to a plant in Poznan.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1530a7a4337f4674abe19d74341e81e5"
+          ],
+          "wall_s": 0.475,
+          "runtime_ms": 452.2
+        },
+        {
+          "id": "ex-en-10",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "740 millimetres",
+          "quote": "Average rainfall in the valley is 740 millimetres per year,",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0403cd8689f3460f89be7ef4d51a1372"
+          ],
+          "wall_s": 0.441,
+          "runtime_ms": 420.1
+        },
+        {
+          "id": "ex-en-11",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "3 June 2021",
+          "quote": "The merger between Kappa Bank and Lumen Credit was approved by regulators on 3 June 2021.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d690ed33e8634e6ca604d1bcbffb3834"
+          ],
+          "wall_s": 0.517,
+          "runtime_ms": 506.3
+        },
+        {
+          "id": "ex-en-12",
+          "family": "extraction",
+          "lang": "en",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "#900",
+          "quote": "about 900 are on permanent display.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:144df69b8bd84306835af05d64ea8884"
+          ],
+          "wall_s": 0.318,
+          "runtime_ms": 304.2
+        },
+        {
+          "id": "ex-pt-01",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "1954",
+          "quote": "A escola municipal Santa Rita foi fundada em 1954 e atende hoje 820 alunos.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:c4e67905cfae49389034a31a9400fef5"
+          ],
+          "wall_s": 0.475,
+          "runtime_ms": 449.4
+        },
+        {
+          "id": "ex-pt-02",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "14 mil toneladas",
+          "quote": "14 mil toneladas",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:50da5254d2af4e0698be68cd9c50b256"
+          ],
+          "wall_s": 0.295,
+          "runtime_ms": 280.2
+        },
+        {
+          "id": "ex-pt-03",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": false,
+          "answer_ok": true,
+          "quote_literal": false,
+          "quote_contains_value": true,
+          "predicted": "Carla Nogueira",
+          "quote": "direcionada pela médica Carla Nogueira",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:44f76be7867b4e398331cc3f6296c225"
+          ],
+          "wall_s": 0.362,
+          "runtime_ms": 351.2
+        },
+        {
+          "id": "ex-pt-04",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "380",
+          "quote": "A ponte sobre o rio Tietê tem 380 metros de extensão e foi inaugurada em 1999.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cc0b600c30544cdcb740aa58bf283161"
+          ],
+          "wall_s": 0.508,
+          "runtime_ms": 487.9
+        },
+        {
+          "id": "ex-pt-05",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Média de desemprego da cidade caído para 7,2%",
+          "quote": "Segundo o relatório, a taxa de desemprego da cidade caiu para 7,2% no segundo trimestre.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ed29887fd530493f8f97b22cb0e20a82"
+          ],
+          "wall_s": 0.67,
+          "runtime_ms": 642.3
+        },
+        {
+          "id": "ex-pt-06",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Aurora",
+          "quote": "publicado pela editora Aurora.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:34520037a0db44db9bc7d8c4fbd5f07e"
+          ],
+          "wall_s": 0.311,
+          "runtime_ms": 294.8
+        },
+        {
+          "id": "ex-pt-07",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "12",
+          "quote": "exporta para 12 países.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2c0baffdef3c4c59b2746af640ea207a"
+          ],
+          "wall_s": 0.325,
+          "runtime_ms": 298.6
+        },
+        {
+          "id": "ex-pt-08",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "35",
+          "quote": "35 espécies de mamíferos.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:af9fde787dc040e3b2f7d8e5155cbb47"
+          ],
+          "wall_s": 0.325,
+          "runtime_ms": 314.6
+        },
+        {
+          "id": "ex-pt-09",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "700 mil",
+          "quote": "700 mil passageiros por dia.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:45a35043bc734bc586920ff7fcd387c3"
+          ],
+          "wall_s": 0.306,
+          "runtime_ms": 295.5
+        },
+        {
+          "id": "ex-pt-10",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "Recife",
+          "quote": "Nuvem Azul foi fundada por Renata Lima e Diego Souza em Recife.",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f9748272834a427f918d82c6cfd38792"
+          ],
+          "wall_s": 0.401,
+          "runtime_ms": 387.9
+        },
+        {
+          "id": "ex-pt-11",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "julho de 2022",
+          "quote": "julho de 2022",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:04f6d8daeadc4297a72d4c890a05d212"
+          ],
+          "wall_s": 0.352,
+          "runtime_ms": 332.0
+        },
+        {
+          "id": "ex-pt-12",
+          "family": "extraction",
+          "lang": "pt",
+          "correct": true,
+          "answer_ok": true,
+          "quote_literal": true,
+          "quote_contains_value": true,
+          "predicted": "3",
+          "quote": "três cidades",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ba6213cf7d814ad58181cd8fba34b2f2"
+          ],
+          "wall_s": 0.266,
+          "runtime_ms": 255.0
+        },
+        {
+          "id": "vf-en-01",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e1c7034836d84f01a6f4eb306695b906"
+          ],
+          "wall_s": 0.174,
+          "runtime_ms": 147.7
+        },
+        {
+          "id": "vf-en-02",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cc53b3bb80a54072a262acaa57100daf"
+          ],
+          "wall_s": 0.18,
+          "runtime_ms": 159.5
+        },
+        {
+          "id": "vf-en-03",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:5ebfa8ee80c94f9184fc82fed47e0fae"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 150.8
+        },
+        {
+          "id": "vf-en-04",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:cfa20fa727e04bfdbbd61e62347adcbe"
+          ],
+          "wall_s": 0.177,
+          "runtime_ms": 155.8
+        },
+        {
+          "id": "vf-en-05",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:0297dcdf5b73457584bc15d9fba7f1b2"
+          ],
+          "wall_s": 0.191,
+          "runtime_ms": 165.7
+        },
+        {
+          "id": "vf-en-06",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:3754cee770014d6ab2d86cfa56a24a39"
+          ],
+          "wall_s": 0.169,
+          "runtime_ms": 148.6
+        },
+        {
+          "id": "vf-en-07",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:51d656ecfe2448fca0111461f4cd093c"
+          ],
+          "wall_s": 0.184,
+          "runtime_ms": 163.9
+        },
+        {
+          "id": "vf-en-08",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:1ab9840e066d44e394cf982156a8e2df"
+          ],
+          "wall_s": 0.184,
+          "runtime_ms": 163.9
+        },
+        {
+          "id": "vf-en-09",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:9973e09589af4bd0b40959cf9c20e68b"
+          ],
+          "wall_s": 0.18,
+          "runtime_ms": 159.7
+        },
+        {
+          "id": "vf-en-10",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:ced0c9b2308d4a00a7a3d09313383980"
+          ],
+          "wall_s": 0.187,
+          "runtime_ms": 167.1
+        },
+        {
+          "id": "vf-en-11",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:916530faada94d0fb7253e43efe98d46"
+          ],
+          "wall_s": 0.174,
+          "runtime_ms": 154.5
+        },
+        {
+          "id": "vf-en-12",
+          "family": "verifiability",
+          "lang": "en",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:571dc95c2849440e8c99e89f23d7a657"
+          ],
+          "wall_s": 0.175,
+          "runtime_ms": 154.7
+        },
+        {
+          "id": "vf-pt-01",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:52f13ff21b6845ffa19512d11c3749f6"
+          ],
+          "wall_s": 0.184,
+          "runtime_ms": 160.9
+        },
+        {
+          "id": "vf-pt-02",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:9d7c983814ab46c3bb35f5a3b188e52c"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 154.6
+        },
+        {
+          "id": "vf-pt-03",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:2978fa5942e645cd83c9cfa5b603a898"
+          ],
+          "wall_s": 0.181,
+          "runtime_ms": 156.5
+        },
+        {
+          "id": "vf-pt-04",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:d7f482362c0544edb98e059a8fd7a03d"
+          ],
+          "wall_s": 0.178,
+          "runtime_ms": 157.7
+        },
+        {
+          "id": "vf-pt-05",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:06f86f5040b647d1871802551083f171"
+          ],
+          "wall_s": 0.176,
+          "runtime_ms": 152.4
+        },
+        {
+          "id": "vf-pt-06",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:06e070056c18490ea7785c65a4490671"
+          ],
+          "wall_s": 0.178,
+          "runtime_ms": 158.0
+        },
+        {
+          "id": "vf-pt-07",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:16175ff0ab484176a4aa24b53005e523"
+          ],
+          "wall_s": 0.178,
+          "runtime_ms": 157.7
+        },
+        {
+          "id": "vf-pt-08",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e4baa5b168ca44f58a84561f26cb1c14"
+          ],
+          "wall_s": 0.18,
+          "runtime_ms": 159.9
+        },
+        {
+          "id": "vf-pt-09",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:e6990a8f46914b59a551cc8c84c43a10"
+          ],
+          "wall_s": 0.179,
+          "runtime_ms": 158.6
+        },
+        {
+          "id": "vf-pt-10",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:f1473bffd1d845828540a403159f49a4"
+          ],
+          "wall_s": 0.178,
+          "runtime_ms": 157.9
+        },
+        {
+          "id": "vf-pt-11",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7ae3b3dc609740309e87d8c2e62bf11a"
+          ],
+          "wall_s": 0.183,
+          "runtime_ms": 162.8
+        },
+        {
+          "id": "vf-pt-12",
+          "family": "verifiability",
+          "lang": "pt",
+          "correct": true,
+          "predicted": "NOT_VERIFIABLE",
+          "attempts": 1,
+          "first_attempt_valid": true,
+          "errors": [],
+          "call_ids": [
+            "inference:7086ad3fbc0d4229b7cde77a0b3c841f"
+          ],
+          "wall_s": 0.181,
+          "runtime_ms": 160.5
+        }
+      ]
+    }
+  ]
+}

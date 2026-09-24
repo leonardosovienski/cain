@@ -1,0 +1,36 @@
+# branch melhorias/p5-inferencia-reproduzivel head 4e2df0df69e67452c1570ac9e649677e3e5efd8c
+# python Python 3.13.15
+$ ruff check src tests
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain --junitxml=<runtime>/p5-junit.xml
+src/cain/inference/__init__.py                  0      0   100%
+src/cain/inference/cli.py                      98      4    96%
+src/cain/inference/harness.py                 105     10    90%
+src/cain/inference/recorder.py                341     42    88%
+src/cain/inference/structured.py               82     18    78%
+src/cain/llm/__init__.py                      108      3    97%
+src/cain/llm/llamacpp.py                       63     14    78%
+src/cain/providers.py                          28     10    64%
+src/cain/settings.py                          145     19    87%
+TOTAL                                       10030   1324    87%
+1232 passed, 2 skipped, 63 warnings in 63.66s (0:01:03)
+[exit 0]
+# testcases in junit: 1234
+$ pytest tests/integration/test_inference_recorder.py -v
+tests/integration/test_inference_recorder.py::test_every_call_gets_a_complete_manifest PASSED [  6%]
+tests/integration/test_inference_recorder.py::test_twenty_identical_calls_counted_and_replay_is_identical PASSED [ 13%]
+tests/integration/test_inference_recorder.py::test_the_counter_sees_nondeterminism PASSED [ 20%]
+tests/integration/test_inference_recorder.py::test_replay_miss_fails_closed_and_model_change_misses PASSED [ 26%]
+tests/integration/test_inference_recorder.py::test_offline_replay_serves_the_recording_and_says_identity_was_not_rechecked PASSED [ 33%]
+tests/integration/test_inference_recorder.py::test_cache_mode_calls_once_then_serves PASSED [ 40%]
+tests/integration/test_inference_recorder.py::test_record_mode_on_a_store_whose_directory_does_not_exist_yet PASSED [ 46%]
+tests/integration/test_inference_recorder.py::test_record_mode_sends_one_request_at_a_time PASSED [ 53%]
+tests/integration/test_inference_recorder.py::test_record_mode_refuses_unseeded_sampling PASSED [ 60%]
+tests/integration/test_inference_recorder.py::test_structured_output_keeps_every_invalid_attempt PASSED [ 66%]
+tests/integration/test_inference_recorder.py::test_schema_subset_checker_fails_closed_on_unknown_keywords PASSED [ 73%]
+tests/integration/test_inference_recorder.py::test_inference_records_are_append_only PASSED [ 80%]
+tests/integration/test_inference_recorder.py::test_settings_section_and_configured_llm PASSED [ 86%]
+tests/integration/test_inference_recorder.py::test_harness_is_frozen_and_scores_citations_literally PASSED [ 93%]
+tests/integration/test_inference_recorder.py::test_cli_repeat_replay_audit_and_harness PASSED [100%]
+============================== 15 passed in 8.27s ==============================

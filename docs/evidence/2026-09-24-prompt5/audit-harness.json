@@ -1,0 +1,15 @@
+{
+  "store": "state/harness.db",
+  "calls": 576,
+  "by_status": {
+    "called": {
+      "calls": 288,
+      "complete": 288
+    },
+    "replayed": {
+      "calls": 288,
+      "complete": 288
+    }
+  },
+  "missing": {}
+}

@@ -1,0 +1,287 @@
+{
+  "store": "state/harness.db",
+  "models": [
+    {
+      "model": "qwen3.5:4b",
+      "mode": "replay",
+      "attempts_allowed": 2,
+      "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+      "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+      "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+      "tasks": 96,
+      "tasks_run": 96,
+      "accuracy": {
+        "all": {
+          "correct": 93,
+          "total": 96,
+          "accuracy": 0.9688
+        },
+        "en": {
+          "correct": 47,
+          "total": 48,
+          "accuracy": 0.9792
+        },
+        "pt": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "evidence": {
+          "all": {
+            "correct": 48,
+            "total": 48,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          }
+        },
+        "extraction": {
+          "all": {
+            "correct": 21,
+            "total": 24,
+            "accuracy": 0.875
+          },
+          "en": {
+            "correct": 11,
+            "total": 12,
+            "accuracy": 0.9167
+          },
+          "pt": {
+            "correct": 10,
+            "total": 12,
+            "accuracy": 0.8333
+          }
+        },
+        "verifiability": {
+          "all": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "structured": {
+        "first_attempt_valid": 96,
+        "no_valid_answer": 0,
+        "extra_attempts": 0
+      },
+      "latency_s": {
+        "p50": 0.006,
+        "p95": 0.008,
+        "mean": 0.006,
+        "total": 0.6
+      },
+      "memory": {
+        "ollama_rss_peak_bytes": 33288192,
+        "model": null,
+        "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+      }
+    },
+    {
+      "model": "granite4:micro",
+      "mode": "replay",
+      "attempts_allowed": 2,
+      "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+      "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+      "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+      "tasks": 96,
+      "tasks_run": 96,
+      "accuracy": {
+        "all": {
+          "correct": 93,
+          "total": 96,
+          "accuracy": 0.9688
+        },
+        "en": {
+          "correct": 47,
+          "total": 48,
+          "accuracy": 0.9792
+        },
+        "pt": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "evidence": {
+          "all": {
+            "correct": 47,
+            "total": 48,
+            "accuracy": 0.9792
+          },
+          "en": {
+            "correct": 23,
+            "total": 24,
+            "accuracy": 0.9583
+          },
+          "pt": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          }
+        },
+        "extraction": {
+          "all": {
+            "correct": 22,
+            "total": 24,
+            "accuracy": 0.9167
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 10,
+            "total": 12,
+            "accuracy": 0.8333
+          }
+        },
+        "verifiability": {
+          "all": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "structured": {
+        "first_attempt_valid": 96,
+        "no_valid_answer": 0,
+        "extra_attempts": 0
+      },
+      "latency_s": {
+        "p50": 0.006,
+        "p95": 0.007,
+        "mean": 0.006,
+        "total": 0.6
+      },
+      "memory": {
+        "ollama_rss_peak_bytes": 33288192,
+        "model": null,
+        "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+      }
+    },
+    {
+      "model": "phi4-mini:latest",
+      "mode": "replay",
+      "attempts_allowed": 2,
+      "harness_sha256": "765ae314093bfd49bf385148cd767b940e6f3971354eee049746bf829e3eb332",
+      "golden_sha256": "2258a9826e9621628f06661c63ae78ce7aef26e61badd6ba422aaf8e5ff1cf05",
+      "labels": "written by the agent that built the harness; human review pending (DECLARED, not PROVEN ground truth)",
+      "tasks": 96,
+      "tasks_run": 96,
+      "accuracy": {
+        "all": {
+          "correct": 92,
+          "total": 96,
+          "accuracy": 0.9583
+        },
+        "en": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "pt": {
+          "correct": 46,
+          "total": 48,
+          "accuracy": 0.9583
+        },
+        "evidence": {
+          "all": {
+            "correct": 47,
+            "total": 48,
+            "accuracy": 0.9792
+          },
+          "en": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 23,
+            "total": 24,
+            "accuracy": 0.9583
+          }
+        },
+        "extraction": {
+          "all": {
+            "correct": 21,
+            "total": 24,
+            "accuracy": 0.875
+          },
+          "en": {
+            "correct": 10,
+            "total": 12,
+            "accuracy": 0.8333
+          },
+          "pt": {
+            "correct": 11,
+            "total": 12,
+            "accuracy": 0.9167
+          }
+        },
+        "verifiability": {
+          "all": {
+            "correct": 24,
+            "total": 24,
+            "accuracy": 1.0
+          },
+          "en": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          },
+          "pt": {
+            "correct": 12,
+            "total": 12,
+            "accuracy": 1.0
+          }
+        }
+      },
+      "structured": {
+        "first_attempt_valid": 96,
+        "no_valid_answer": 0,
+        "extra_attempts": 0
+      },
+      "latency_s": {
+        "p50": 0.006,
+        "p95": 0.007,
+        "mean": 0.006,
+        "total": 0.6
+      },
+      "memory": {
+        "ollama_rss_peak_bytes": 33288192,
+        "model": null,
+        "method": "ollama_rss: sum of VmRSS of processes named ollama, sampled after each task (a model offloaded to the GPU is not in it); model: Ollama /api/ps after the run"
+      }
+    }
+  ]
+}

@@ -69,6 +69,8 @@ class OllamaLLM:
     think: bool | None = None
     num_batch: int | None = None
     last_metadata: dict = field(default_factory=dict, init=False)
+    # Optional callable with the urlopen signature (cain.inference.Recorder); None means urlopen.
+    transport: object = field(default=None, repr=False, compare=False)
 
     def __post_init__(self):
         validate_llm_options(vars(self))
@@ -123,7 +125,7 @@ class OllamaLLM:
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with (self.transport or urlopen)(request, timeout=self.timeout) as response:
                 raw = response.read(4 * 1024 * 1024 + 1)
             if len(raw) > 4 * 1024 * 1024:
                 raise LLMError("Resposta HTTP do modelo excedeu 4 MiB; sem truncamento")

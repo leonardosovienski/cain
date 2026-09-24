@@ -86,6 +86,9 @@ class Settings:
     search_mode: str = "lexical"
     embedding_model: str = "qwen3-embedding:0.6b"
     embedding_digest: str = ""
+    # Inference manifest/record/replay (cain.inference). "disabled" attaches nothing.
+    inference_mode: str = "manifest"
+    inference_db: Path | None = None
 
     def validate(self):
         validate_llm_options(vars(self))
@@ -93,6 +96,8 @@ class Settings:
             raise ValueError("Provedor inválido. Escolha fake ou ollama.")
         if type(self.allow_remote) is not bool:
             raise ValueError("llm.allow_remote deve ser booleano")
+        if self.inference_mode not in {"disabled", "manifest", "record", "cache", "replay"}:
+            raise ValueError("inference.mode deve ser disabled, manifest, record, cache ou replay")
         if self.provider == "ollama" and not self.allow_remote and not is_loopback_url(self.base_url):
             host = urlsplit(self.base_url).hostname or self.base_url
             raise ValueError(
@@ -117,7 +122,7 @@ def load_settings(config_path: Path | None = None) -> Settings:
         data, base = {}, Path.cwd()
     sections = {"llm": LLM_FIELDS, "storage": {"path"},
                 "search": {"paths", "allow_public_urls", "mode", "embedding_model", "embedding_digest"},
-                "orchestration": {"llm_routing"}}
+                "orchestration": {"llm_routing"}, "inference": {"mode", "store"}}
     if set(data) - set(sections):
         raise ValueError("Seção desconhecida na configuração")
     for name, fields in sections.items():
@@ -153,6 +158,16 @@ def load_settings(config_path: Path | None = None) -> Settings:
     settings.llm_routing = data.get("orchestration", {}).get("llm_routing", True)
     if type(settings.llm_routing) is not bool:
         raise ValueError("orchestration.llm_routing deve ser booleano")
+    inference = data.get("inference", {})
+    settings.inference_mode = os.getenv("CAIN_INFERENCE_MODE", inference.get("mode", "manifest"))
+    store = os.getenv("CAIN_INFERENCE_DB", inference.get("store"))
+    if store is not None:
+        if type(store) is not str or not store.strip():
+            raise ValueError("inference.store deve ser texto não vazio")
+        store = Path(store)
+        settings.inference_db = store if store.is_absolute() else base / store
+    else:
+        settings.inference_db = settings.db_path.with_name("inference.db")
     settings.provider = os.getenv("CAIN_PROVIDER", settings.provider)
     settings.model = os.getenv("CAIN_MODEL", settings.model)
     settings.base_url = os.getenv("CAIN_OLLAMA_URL", settings.base_url)

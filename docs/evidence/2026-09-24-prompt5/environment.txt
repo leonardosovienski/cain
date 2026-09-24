@@ -1,0 +1,6 @@
+# 2026-09-24T17:05:43Z P5 runtime evidence
+# ollama ollama version is 0.34.4
+# gpu NVIDIA GeForce RTX 2060, 6144 MiB, 610.47
+# model name	: 12th Gen Intel(R) Core(TM) i7-12700F
+# MemTotal:       16278184 kB
+# OLLAMA_NUM_PARALLEL=1 OLLAMA_MAX_LOADED_MODELS=1 (tools/ollama/serve.sh)

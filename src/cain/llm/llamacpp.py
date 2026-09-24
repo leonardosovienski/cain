@@ -46,7 +46,7 @@ class LocalLlamaCppLLM(OllamaLLM):
     def _generate(self, prompt, context, schema=None):
         self.last_metadata = {}
         try:
-            with urlopen(
+            with (self.transport or urlopen)(
                 Request(self.base_url.rstrip("/") + "/props"),
                 timeout=min(self.timeout, 15),
             ) as response:
@@ -86,7 +86,7 @@ class LocalLlamaCppLLM(OllamaLLM):
             method="POST",
         )
         try:
-            with urlopen(request, timeout=self.timeout) as response:
+            with (self.transport or urlopen)(request, timeout=self.timeout) as response:
                 raw = response.read(4 * 1024 * 1024 + 1)
             if len(raw) > 4 * 1024 * 1024:
                 raise LLMError("Response exceeds 4 MiB")
