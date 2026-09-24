@@ -496,9 +496,18 @@ function renderResearch(result) {
       UNSUPPORTED_SYNTHESIS: 'O modelo acrescentou uma interpretação que não pôde ser verificada; a resposta foi recusada.',
       UNSUPPORTED_QUOTE: 'O modelo alterou o texto citado; a resposta foi recusada.',
       GENERATION_TRUNCATED: 'A geração terminou incompleta; a resposta foi recusada.',
+      INVALID_JSON: 'O modelo não devolveu a estrutura esperada (JSON inválido); a resposta foi recusada. Um provider fake ou um modelo sem suporte a este formato produz este erro.',
+      UNKNOWN_CITATION: 'O modelo citou uma evidência que não foi recebida; a resposta foi recusada.',
+      INVALID_CLAIMS: 'As afirmações geradas não seguem o contrato esperado; a resposta foi recusada.',
+      INVALID_SYNTHESIS: 'A síntese gerada não segue o contrato esperado; a resposta foi recusada.',
+      EMPTY_OR_OVERSIZED_RESPONSE: 'O modelo devolveu uma resposta vazia ou grande demais; a resposta foi recusada.',
+      GENERATION_PERMISSION_REVOKED: 'A permissão de geração foi revogada durante a inferência; a resposta foi recusada.',
+      INCOMPATIBLE_FIELDS: 'O modelo devolveu campos inesperados ou ausentes; a resposta foi recusada.',
+      GENERATION_REJECTED: 'A geração foi recusada pela validação; nenhuma saída parcial foi aceita.',
+      PROVIDER_ERROR: 'O provider local falhou ao gerar; confira o serviço do modelo e tente novamente.',
     };
     explanation.append(node('summary', statusMessages[result.status] ?? (extractive ? 'Explicação por trechos da fonte' : `Explicação opcional: ${result.status} · suporte semântico não certificado`)));
-    if (errorMessages[result.error_code]) explanation.append(node('p', errorMessages[result.error_code]));
+    if (result.error_code) explanation.append(node('p', errorMessages[result.error_code] ?? `Erro ${result.error_code}${result.error ? ` (${result.error})` : ''}; a resposta foi recusada.`));
     if (extractive) {
       if (fields) explanation.append(node('p', result.explanation.proposed_synthesis));
       for (const quote of result.explanation.source_quotes ?? []) {
