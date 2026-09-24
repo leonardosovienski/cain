@@ -1,0 +1,99 @@
+# Research world of the CAIN loop over the Brasileirão research worker (Prompt 6).
+# Machine-specific: absolute paths of PC 2 (WSL). Every evaluator file is pinned by sha256 and
+# re-hashed before each attempt; the loop never edits them and never reads the holdout.
+
+[world]
+id = "brasileirao-elo-1x2-dev2022"
+version = 2
+predictor = "brasileirao"
+hypothesis = "CAIN-LOOP:BR-ELO-TUNING-DEV2022"
+description = "Retuning the Elo feature horizon and the goal-model calibration window lowers the 1X2 RPS against climatology on the 2022 development season"
+
+[data]
+# The loop passes these to the evaluator; it never opens them itself.
+allowed = [
+  {role = "snapshot", path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/obj/31/31f30a4dcf33867d1f3aa3d12337a9a66047e6bff10b9a3fa86aae9ef06c9e43", sha256 = "31f30a4dcf33867d1f3aa3d12337a9a66047e6bff10b9a3fa86aae9ef06c9e43"},
+  {role = "objects", path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2"},
+]
+# 2025 is sealed by the Brasileirão policy. The loop only asks a human; the adapter refuses to run it.
+holdout = [{role = "sealed-season", path = "season:2025 (sealed by brasileirao policy)"}]
+
+[metric]
+primary = "rps"
+direction = "minimize"
+min_improvement = 0.0005
+
+[editable]
+files = []
+[editable.parameters.elo_home_advantage]
+kind = "features"
+type = "int"
+min = 0
+max = 200
+step = 10
+baseline = 100
+[editable.parameters.elo_form_half_life_years]
+kind = "features"
+type = "float"
+min = 0.5
+max = 8.0
+step = 0.5
+baseline = 4.0
+[editable.parameters.elo_window_years]
+kind = "features"
+type = "int"
+min = 2
+max = 10
+step = 1
+baseline = 6
+[editable.parameters.model_calibration_window_years]
+kind = "model"
+type = "int"
+min = 1
+max = 8
+step = 1
+baseline = 4
+[editable.parameters.model_max_goals]
+kind = "model"
+type = "int"
+min = 8
+max = 15
+step = 1
+baseline = 12
+
+[budget]
+attempt_seconds = 180
+total_attempts = 12
+total_seconds = 1800
+max_variants_per_hypothesis = 4
+
+[stagnation]
+attempts_without_improvement = 5
+
+[gates]
+human = ["holdout"]
+
+[cascade]
+stages = ["sanity", "in_sample", "walk_forward", "holdout"]
+
+[novelty]
+threshold = 0.85
+
+[redundancy]
+# v2 (2026-09-24): v1 used correlation >= 0.99, which discarded every parameter variant of this one model
+# (half-life 4 -> 5 gave 0.999996; cycle 1 in docs/evidence/2026-09-24-prompt6). Here redundant means
+# near-identical predictions: max |p_home - p_away| difference on the sanity matches <= 0.001.
+measure = "max_abs_diff"
+threshold = 0.001
+
+[evaluator]
+python = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/bin/python"
+entrypoint = "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py"
+files = [
+  {path = "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py", sha256 = "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"},
+  {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/brasileirao_predictor/research_runtime/worker.py", sha256 = "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"},
+  {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/predictor_core/measurement/replay.py", sha256 = "f4a2854e8a68c9532c8256ab94d6e9d7c68fac6d50fcf5298980d6b4830accec"},
+  {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json", sha256 = "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"},
+  {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2021-1X2-climatology.json", sha256 = "5f7f29846c94d25f2467b37611b04ee399d981dbeb92ce0adb726becb247619e"},
+  {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2022-1X2-climatology.json", sha256 = "11bcff4906104430c011416ada7e17bd8c7b5c9e538980b4d50de872d339c947"},
+]

@@ -1,0 +1,379 @@
+{
+  "loop_id": "loop:brasileirao-dev2022-2",
+  "started": {
+    "budget": {
+      "attempt_seconds": 180,
+      "max_variants_per_hypothesis": 4,
+      "total_attempts": 12,
+      "total_seconds": 1800
+    },
+    "cascade": [
+      "sanity",
+      "in_sample",
+      "walk_forward",
+      "holdout"
+    ],
+    "evaluator": {
+      "files": 6,
+      "mismatches": [],
+      "status": "intact"
+    },
+    "evaluator_files": [
+      {
+        "path": "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py",
+        "sha256": "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/brasileirao_predictor/research_runtime/worker.py",
+        "sha256": "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/predictor_core/measurement/replay.py",
+        "sha256": "f4a2854e8a68c9532c8256ab94d6e9d7c68fac6d50fcf5298980d6b4830accec"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json",
+        "sha256": "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2021-1X2-climatology.json",
+        "sha256": "5f7f29846c94d25f2467b37611b04ee399d981dbeb92ce0adb726becb247619e"
+      },
+      {
+        "path": "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/req/2022-1X2-climatology.json",
+        "sha256": "11bcff4906104430c011416ada7e17bd8c7b5c9e538980b4d50de872d339c947"
+      }
+    ],
+    "gates": [
+      "holdout"
+    ],
+    "hypothesis": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+    "predictor": "brasileirao",
+    "proposer": "local-model/1",
+    "stagnation": {
+      "attempts_without_improvement": 5
+    },
+    "world_id": "brasileirao-elo-1x2-dev2022",
+    "world_sha256": "d11b6f605cc0a6d1840b540a4f1c81a3c51022b9cfb07da056a786df74fc69bc",
+    "world_version": 2
+  },
+  "attempts": 6,
+  "outcomes": {
+    "experiment.finished": 4,
+    "experiment.discarded": 2
+  },
+  "hypotheses": [
+    {
+      "closest": null,
+      "description": "Retuning the Elo feature horizon and the goal-model calibration window lowers the 1X2 RPS against climatology on the 2022 development season",
+      "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+      "similarity_to_closest": null,
+      "source": "world file",
+      "variant_of": null,
+      "variants": 0
+    },
+    {
+      "attempt": 2,
+      "closest": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+      "description": "Extending the half-life of form data will smooth out short-term noise, potentially revealing more stable underlying performance trends that better predict future results.",
+      "hypothesis_id": "hyp:0dab10f44b33",
+      "similarity_to_closest": 0.5232,
+      "source": "proposal",
+      "variant_of": null,
+      "variants": 0
+    },
+    {
+      "attempt": 3,
+      "closest": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+      "description": "Increasing the maximum goals considered in the goal model will allow the system to account for higher-scoring match outcomes, potentially reducing the overestimation of expected points against climatc",
+      "hypothesis_id": "hyp:c6e31b384c61",
+      "similarity_to_closest": 0.649,
+      "source": "proposal",
+      "variant_of": null,
+      "variants": 0
+    },
+    {
+      "attempt": 4,
+      "closest": "hyp:0dab10f44b33",
+      "description": "Shortening the form half-life will make player ratings react more quickly to recent performance changes, potentially capturing better short-term momentum.",
+      "hypothesis_id": "hyp:91efa082721a",
+      "similarity_to_closest": 0.7149,
+      "source": "proposal",
+      "variant_of": null,
+      "variants": 0
+    },
+    {
+      "attempt": 5,
+      "closest": "hyp:c6e31b384c61",
+      "description": "Increasing the maximum goals considered in the model calibration window allows for more granular adjustments to the goal distribution, potentially reducing overfitting to extreme outcomes and yielding",
+      "hypothesis_id": "hyp:ab6f413ca62b",
+      "similarity_to_closest": 0.7598,
+      "source": "proposal",
+      "variant_of": null,
+      "variants": 0
+    },
+    {
+      "attempt": 6,
+      "closest": "hyp:91efa082721a",
+      "description": "Shortening the form half-life will make the Elo rating more sensitive to recent performance, better capturing the rapid changes in team strength that occur over a single season.",
+      "hypothesis_id": "hyp:b7e8ec5f3443",
+      "similarity_to_closest": 0.8311,
+      "source": "proposal",
+      "variant_of": null,
+      "variants": 0
+    }
+  ],
+  "best": {
+    "attempt": 1,
+    "best_before": null,
+    "decided_on": "walk_forward",
+    "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+    "improved": true,
+    "params": {
+      "elo_form_half_life_years": 4,
+      "elo_home_advantage": 100,
+      "elo_window_years": 6,
+      "model_calibration_window_years": 4,
+      "model_max_goals": 12
+    },
+    "results": {
+      "in_sample": {
+        "checks": {
+          "max_used_minus_cutoff_seconds": -1800,
+          "result_state": "INCONCLUSIVE",
+          "rule": "SUPPORTED if ci_hi < 0; REFUTED if ci_lo > 0; else INCONCLUSIVE (lower score is better)",
+          "season": "2021"
+        },
+        "metrics": {
+          "baseline_rps": 0.213922811468,
+          "ci_delta": [
+            -0.010743808713,
+            0.002867199215
+          ],
+          "log_loss": 1.042418001664,
+          "mean_delta": -0.004092697032,
+          "n": 250,
+          "rps": 0.209830114435
+        },
+        "ok": true
+      },
+      "sanity": {
+        "checks": {
+          "information_rows": 2156,
+          "max_used_minus_cutoff_seconds": -52200,
+          "no_lookahead": true,
+          "predicted": 60,
+          "snapshot_matches_world": true,
+          "snapshot_sha256": "31f30a4dcf33867d1f3aa3d12337a9a66047e6bff10b9a3fa86aae9ef06c9e43",
+          "targets": 60
+        },
+        "metrics": {},
+        "ok": true
+      },
+      "walk_forward": {
+        "checks": {
+          "max_used_minus_cutoff_seconds": -1800,
+          "result_state": "NO_EDGE",
+          "rule": "SUPPORTED if ci_hi < 0; REFUTED if ci_lo > 0; else INCONCLUSIVE (lower score is better)",
+          "season": "2022"
+        },
+        "metrics": {
+          "baseline_rps": 0.223369669384,
+          "ci_delta": [
+            -0.021412832505,
+            -0.006833520083
+          ],
+          "log_loss": 1.03337650143,
+          "mean_delta": -0.014029631333,
+          "n": 380,
+          "rps": 0.209340038051
+        },
+        "ok": true
+      }
+    },
+    "seconds": 5.773,
+    "step_kind": "baseline",
+    "value": 0.209340038051
+  },
+  "gates": [],
+  "finished": [
+    {
+      "attempt": 1,
+      "step_kind": "baseline",
+      "params": {
+        "elo_form_half_life_years": 4,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "value": 0.209340038051,
+      "improved": true
+    },
+    {
+      "attempt": 2,
+      "step_kind": "features",
+      "params": {
+        "elo_form_half_life_years": 5,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "value": 0.209319264278,
+      "improved": false
+    },
+    {
+      "attempt": 4,
+      "step_kind": "features",
+      "params": {
+        "elo_form_half_life_years": 3.5,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "value": 0.209355712531,
+      "improved": false
+    },
+    {
+      "attempt": 6,
+      "step_kind": "features",
+      "params": {
+        "elo_form_half_life_years": 3,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "value": 0.209377639828,
+      "improved": false
+    }
+  ],
+  "attempt_log": [
+    {
+      "attempt": 1,
+      "step_kind": "baseline",
+      "changes": {
+        "elo_form_half_life_years": 4,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "params": {
+        "elo_form_half_life_years": 4,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "outcome": "finished",
+      "reason": null,
+      "value": 0.209340038051
+    },
+    {
+      "attempt": 2,
+      "step_kind": "features",
+      "changes": {
+        "elo_form_half_life_years": 5
+      },
+      "params": {
+        "elo_form_half_life_years": 5,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "outcome": "finished",
+      "reason": null,
+      "value": 0.209319264278
+    },
+    {
+      "attempt": 3,
+      "step_kind": "model",
+      "changes": {
+        "model_max_goals": 13
+      },
+      "params": {
+        "elo_form_half_life_years": 4,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 13
+      },
+      "outcome": "discarded",
+      "reason": "REDUNDANT",
+      "value": null
+    },
+    {
+      "attempt": 4,
+      "step_kind": "features",
+      "changes": {
+        "elo_form_half_life_years": 3.5
+      },
+      "params": {
+        "elo_form_half_life_years": 3.5,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "outcome": "finished",
+      "reason": null,
+      "value": 0.209355712531
+    },
+    {
+      "attempt": 5,
+      "step_kind": "model",
+      "changes": {
+        "model_max_goals": 14
+      },
+      "params": {
+        "elo_form_half_life_years": 4,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 14
+      },
+      "outcome": "discarded",
+      "reason": "REDUNDANT",
+      "value": null
+    },
+    {
+      "attempt": 6,
+      "step_kind": "features",
+      "changes": {
+        "elo_form_half_life_years": 3
+      },
+      "params": {
+        "elo_form_half_life_years": 3,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "outcome": "finished",
+      "reason": null,
+      "value": 0.209377639828
+    }
+  ],
+  "stopped": {
+    "attempts": 6,
+    "best": {
+      "attempt": 1,
+      "hypothesis_id": "CAIN-LOOP:BR-ELO-TUNING-DEV2022",
+      "params": {
+        "elo_form_half_life_years": 4,
+        "elo_home_advantage": 100,
+        "elo_window_years": 6,
+        "model_calibration_window_years": 4,
+        "model_max_goals": 12
+      },
+      "value": 0.209340038051
+    },
+    "elapsed_seconds": 69.116,
+    "reason": "stagnation"
+  },
+  "events": 20
+}
