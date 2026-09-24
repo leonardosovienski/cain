@@ -47,3 +47,10 @@ extend-exclude = ["docs"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]
+
+[tool.mypy]
+# Informational only (CI job "typecheck" never blocks). Debt recorded on 2026-09-24:
+# 49 errors in 13 files, mostly var-annotated (15), arg-type (10), assignment (6).
+python_version = "3.11"
+ignore_missing_imports = true
+files = ["src/cain"]

@@ -50,6 +50,21 @@ jobs:
       - run: uv sync --locked --extra dev --extra vision
       - run: uv run --locked pytest -q --cov=cain --cov-report=term --cov-fail-under=84
 
+  # Type checker, informational: reports the current debt without blocking merges.
+  # Debt at introduction: 49 mypy errors in 13 files (see [tool.mypy] in pyproject.toml).
+  # Turn it blocking only after the debt is paid down in dedicated PRs.
+  typecheck:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: '3.12'
+      - run: uv sync --locked --extra dev --extra vision
+      - name: mypy (informational; the debt is printed, never fails the job)
+        run: uv run --locked --with mypy mypy || echo "::warning::mypy reported type debt; see the log (informational)"
+
   # Windows smoke: the documented launcher flow on a fresh checkout, without Ollama.
   # scripts/start-cain.ps1 installs from uv.lock (uv on PATH) when .venv is absent and
   # then runs `cain doctor`. Without an Ollama service, doctor exits 1 after printing
