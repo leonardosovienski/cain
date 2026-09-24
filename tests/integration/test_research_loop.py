@@ -291,3 +291,55 @@ def test_redundancy_measure_for_parameter_variants(tmp_path):
     bad = '\n[redundancy]\nmeasure = "vibes"\n'
     with pytest.raises(WorldError, match="redundancy.measure"):
         write_world(tmp_path, extra=bad)
+
+
+def test_local_model_proposer_sees_attempts_and_its_proposals_go_through_the_guard(tmp_path):
+    from dataclasses import dataclass, field
+
+    from cain.loop.proposers import LocalModelProposer
+
+    @dataclass
+    class FakeStructured:
+        answers: list
+        seed: int = 42
+        last_metadata: dict = field(default_factory=dict)
+        prompts: list = field(default_factory=list)
+
+        def generate_json(self, prompt, context, schema):
+            self.prompts.append(json.loads(prompt))
+            return json.dumps(self.answers.pop(0))
+
+    answers = [{"parameter": "window", "value": "6", "hypothesis": "a smoother window", "rationale": "less noise"},
+               {"parameter": "l2", "value": "7.5", "hypothesis": "much stronger shrinkage", "rationale": "overfit"},
+               {"parameter": "window", "value": "six", "hypothesis": "a smoother window", "rationale": "typo"}]
+    provider = FakeStructured(answers)
+    world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=4)
+    ledger = LoopLedger(tmp_path / "ledger.db")
+    status = ResearchLoop(world, ledger, LocalModelProposer(provider)).run(loop_id="loop:llm")
+    log = status["attempt_log"]
+    assert [(a["changes"], a["outcome"]) for a in log[1:]] == [
+        ({"window": 6}, "finished"), ({"l2": 7.5}, "blocked"), ({"window": "six"}, "blocked")]
+    # The model saw every earlier attempt with its outcome, including the blocked one.
+    seen = provider.prompts[2]["attempts_so_far"]
+    assert [(a["changes"], a["outcome"]) for a in seen] == [(a["changes"], a["outcome"]) for a in log[:3]]
+    assert provider.prompts[0]["editable_parameters"].keys() == {"window"}  # features turn first
+
+
+def test_cli_decide_holdout_and_verify(tmp_path, capsys):
+    from cain.cli import main
+
+    world, _ = write_world(tmp_path, attempts=10)
+    db = str(tmp_path / "gate.db")
+    assert main(["loop", "--db", db, "run", "--predictor", "fixture", "--world", world["_path"],
+                 "--loop-id", "loop:gate-cli"]) == 0
+    assert json.loads(capsys.readouterr().out)["stopped"]["gate"] == "holdout"
+    assert main(["loop", "--db", db, "holdout", "loop:gate-cli", "--world", world["_path"]]) == 1
+    capsys.readouterr()
+    assert main(["loop", "--db", db, "decide", "loop:gate-cli", "--decision", "APPROVE", "--by", "leo"]) == 0
+    capsys.readouterr()
+    assert main(["loop", "--db", db, "holdout", "loop:gate-cli", "--world", world["_path"]]) == 0
+    assert json.loads(capsys.readouterr().out)["ok"] is True
+    assert main(["loop", "--db", db, "verify"]) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "intact"
+    assert main(["loop", "--db", db, "status"]) == 0
+    assert [loop["loop_id"] for loop in json.loads(capsys.readouterr().out)["loops"]] == ["loop:gate-cli"]
