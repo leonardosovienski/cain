@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import ipaddress
 import socket
 from threading import Thread
 
@@ -143,3 +144,83 @@ def test_auto_retriever_never_turns_a_web_failure_into_local_result():
     with pytest.raises(SearchError, match="desativada"):
         provider.search("Consulte https://example.com")
     assert provider.search("falha")[0].source == "doc"
+
+
+def test_dns_rebinding_between_resolution_and_connect_cannot_reach_private_hosts(text_server, monkeypatch):
+    """Protected behaviour: the address validated at resolution time is the one connected to.
+
+    A resolver that answers a public address first and a loopback address afterwards
+    (DNS rebinding) must not move the connection: the retriever resolves once, validates,
+    pins the address and never asks the resolver again for the same fetch.
+    """
+    _, handler, server = text_server
+    original_connect = socket.create_connection
+    original_resolve = socket.getaddrinfo
+    answers = {"public.test": ["93.184.216.34", "127.0.0.1", "127.0.0.1"]}
+    looked_up, connected = [], []
+
+    def resolve(host, port, **kwargs):
+        looked_up.append(host)
+        address = answers[host].pop(0) if host in answers else "127.0.0.1"
+        return [(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", (address, port))]
+
+    def connect(address, timeout, source_address=None):
+        connected.append(address)
+        assert address[0] != "127.0.0.1", "rebinding reached the loopback address"
+        monkeypatch.setattr(socket, "getaddrinfo", original_resolve)
+        try:  # fixture transport only; the approved address is what matters
+            return original_connect(("127.0.0.1", server.server_port), timeout, source_address)
+        finally:
+            monkeypatch.setattr(socket, "getaddrinfo", resolve)
+
+    monkeypatch.setattr(socket, "getaddrinfo", resolve)
+    monkeypatch.setattr(socket, "create_connection", connect)
+    result = PublicURLRetriever().search("http://public.test/page")[0]
+    assert "SQLite" in result.text
+    assert connected == [("93.184.216.34", 80)]
+    assert looked_up == ["public.test"], "the host must be resolved exactly once per fetch"
+    assert answers["public.test"] == ["127.0.0.1", "127.0.0.1"], "later (private) answers were never consumed"
+    assert handler.calls == ["/page"]
+
+
+@pytest.mark.parametrize("location", [
+    "http://127.0.0.1/secret", "http://[::1]/secret", "http://169.254.169.254/latest/meta-data/",
+    "http://10.0.0.8/", "http://public.test:8080/", "ftp://public.test/",
+])
+def test_redirects_to_private_ports_or_schemes_are_blocked(text_server, monkeypatch, location):
+    """Protected behaviour: every redirect target is revalidated like the first URL."""
+    _, handler, server = text_server
+    original_connect = socket.create_connection
+    original_resolve = socket.getaddrinfo
+    connected = []
+
+    def resolve(host, port, **kwargs):
+        # Only the public name is faked; IP literals resolve to themselves, as a real resolver does.
+        try:
+            address = str(ipaddress.ip_address(host))
+        except ValueError:
+            address = "93.184.216.34"
+        family = socket.AF_INET6 if ":" in address else socket.AF_INET
+        return [(family, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", (address, port))]
+
+    def connect(address, timeout, source_address=None):
+        connected.append(address)
+        monkeypatch.setattr(socket, "getaddrinfo", original_resolve)
+        try:
+            return original_connect(("127.0.0.1", server.server_port), timeout, source_address)
+        finally:
+            monkeypatch.setattr(socket, "getaddrinfo", resolve)
+
+    class Redirecting(handler):
+        def do_GET(self):
+            self.calls.append(self.path)
+            self.send_response(302)
+            self.send_header("Location", location)
+            self.end_headers()
+
+    server.RequestHandlerClass = Redirecting
+    monkeypatch.setattr(socket, "getaddrinfo", resolve)
+    monkeypatch.setattr(socket, "create_connection", connect)
+    with pytest.raises(SearchError):
+        PublicURLRetriever().search("http://public.test/bounce")
+    assert connected == [("93.184.216.34", 80)], "only the first, validated hop was connected"
