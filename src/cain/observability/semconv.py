@@ -22,6 +22,7 @@ TOOL_CALL_ID = "gen_ai.tool.call.id"
 OPERATION_TEXT_COMPLETION = "text_completion"
 OPERATION_CHAT = "chat"
 OPERATION_EXECUTE_TOOL = "execute_tool"
+OPERATION_EMBEDDINGS = "embeddings"
 
 # cain.* (ours; stable)
 CAIN_CALL_ID = "cain.inference.call_id"

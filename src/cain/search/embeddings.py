@@ -73,6 +73,7 @@ class OllamaEmbedding:
         self.max_input_chars, self.max_batch_size = max_input_chars, max_batch_size
         self.dimensions = dimensions
         self._observed_dimension = dimensions
+        self.transport = None  # the inference recorder, when attached (cain.inference.recorder.attach)
         self._opener = build_opener(_NoRedirect(), ProxyHandler({})
                                    if parsed.hostname in {"127.0.0.1", "localhost", "::1"}
                                    else ProxyHandler())
@@ -98,7 +99,7 @@ class OllamaEmbedding:
             request = Request(self.base_url + "/api/embed", data=json.dumps(body).encode("utf-8"),
                               headers={"Content-Type": "application/json"}, method="POST")
             try:
-                with self._opener.open(request, timeout=self.timeout) as response:
+                with (self.transport or self._opener.open)(request, timeout=self.timeout) as response:
                     raw = response.read(4 * 1024 * 1024 + 1)
                 if len(raw) > 4 * 1024 * 1024:
                     raise SearchError("Resposta de embedding excedeu 4 MiB")
