@@ -45,7 +45,8 @@ def test_invalidating_an_evidence_flags_every_dependent_and_deletes_nothing(worl
     result = graph.invalidate(e1, by="leo", reason="the quote was taken from a draft")
     flagged = {f["node"]: f["kind"] for f in result["flagged"]}
     assert flagged[claims["c1"]] == "claim" and flagged[claims["c2"]] == "claim"
-    assert flagged["decision:publish-report"] == "other" and flagged[verifier] == "assessment"
+    # a "decision:" node is a decision (it was "other" before the graph knew decisions: 2026-09-25 review)
+    assert flagged["decision:publish-report"] == "decision" and flagged[verifier] == "assessment"
     now = memory.now()
     states = {c["id"]: (c["status"], c["review_state"]) for c in memory.claims(as_of=now, cubes=["stocks"])}
     assert states[claims["c1"]] == ("INCONCLUSIVE", "needs_human_review")
@@ -72,7 +73,6 @@ def test_why_returns_the_complete_chain_of_a_decision(world):
 
 
 def test_model_and_tool_calls_become_gen_ai_spans(tmp_path):
-    pytest.importorskip("opentelemetry.sdk", reason="needs the observability extra")
     from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
     from cain.inference.recorder import InferenceStore, attach
@@ -112,7 +112,6 @@ def test_model_and_tool_calls_become_gen_ai_spans(tmp_path):
 
 def test_span_duration_survives_a_wall_clock_step_back(monkeypatch):
     # Found in MLflow: an evaluator span with a negative duration (the WSL2 wall clock stepped back).
-    pytest.importorskip("opentelemetry.sdk", reason="needs the observability extra")
     from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
     from cain.observability import tracing

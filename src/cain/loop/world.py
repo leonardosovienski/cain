@@ -7,6 +7,15 @@ immutable evaluator (every file pinned by sha256).
 
 TOML rather than the YAML the prompt names: CAIN already reads ``cain.toml`` with the standard
 library, and a YAML parser would be a new runtime dependency for the same content.
+
+Every threshold the loop decides with lives here, with the measure it applies to (``metric.
+min_improvement``, ``redundancy.measure/threshold``, ``novelty.measure/threshold``, budgets,
+stagnation): there is no default in the code. ``policy_sha256`` fingerprints these rules (not the
+machine paths), and the engine keeps a hypothesis bound to the policy it was first run under: a
+changed threshold applies only to a hypothesis registered after the change.
+
+Relative paths (evaluator files, data) are resolved against the world file's directory, so a world
+kept next to its evaluator in the repository works from any checkout.
 """
 
 from __future__ import annotations
@@ -16,8 +25,14 @@ import math
 from pathlib import Path
 import tomllib
 
+from cain.memory.jcs import canonicalize
+
 STAGES = ("sanity", "in_sample", "walk_forward", "holdout")
 STEP_KINDS = ("features", "model")
+SIMILARITY_MEASURES = ("lexical", "embedding")
+REDUNDANCY_MEASURES = ("correlation", "max_abs_diff")
+# The sections whose content is policy (thresholds and rules), fingerprinted as ``policy_sha256``.
+POLICY_SECTIONS = ("metric", "editable", "budget", "stagnation", "gates", "cascade", "novelty", "redundancy")
 
 
 class WorldError(ValueError):
@@ -54,8 +69,9 @@ def load_world(path: str | Path) -> dict:
     _require(metric, "primary", str, "metric")
     if metric.get("direction") not in ("minimize", "maximize"):
         raise WorldError("metric.direction must be minimize or maximize")
-    if not isinstance(metric.get("min_improvement", 0), (int, float)) or metric.get("min_improvement", 0) < 0:
-        raise WorldError("metric.min_improvement must be a non-negative number")
+    if not isinstance(metric.get("min_improvement"), (int, float)) or isinstance(metric.get("min_improvement"), bool) \
+            or metric["min_improvement"] < 0:
+        raise WorldError("metric.min_improvement is required (a non-negative number; 0 is a policy too)")
     parameters = world["editable"].get("parameters")
     if not isinstance(parameters, dict) or not parameters:
         raise WorldError("[editable.parameters] must declare at least one parameter")
@@ -91,10 +107,27 @@ def load_world(path: str | Path) -> dict:
     stages = world["cascade"].get("stages")
     if not isinstance(stages, list) or stages != [s for s in STAGES if s in stages] or stages[:1] != ["sanity"]:
         raise WorldError(f"cascade.stages must start at sanity and follow the order {STAGES}")
-    redundancy = world.get("redundancy", {})
-    if redundancy.get("measure", "correlation") not in ("correlation", "max_abs_diff"):
-        raise WorldError("redundancy.measure must be correlation or max_abs_diff")
+    for section, measures in (("redundancy", REDUNDANCY_MEASURES), ("novelty", SIMILARITY_MEASURES)):
+        rule = world.get(section)
+        if not isinstance(rule, dict) or rule.get("measure") not in measures:
+            raise WorldError(f"{section}.measure must be one of {measures}, with {section}.threshold "
+                             "(no default in the code)")
+        threshold = rule.get("threshold")
+        if not isinstance(threshold, (int, float)) or isinstance(threshold, bool) or not math.isfinite(threshold) \
+                or threshold < 0:
+            raise WorldError(f"{section}.threshold must be a finite non-negative number")
     evaluator = world["evaluator"]
+    base = path.resolve().parent
+    if isinstance(evaluator.get("entrypoint"), str):
+        evaluator["entrypoint"] = _resolve(base, evaluator["entrypoint"])
+    if isinstance(evaluator.get("python"), str) and ("/" in evaluator["python"] or "\\" in evaluator["python"]):
+        evaluator["python"] = _resolve(base, evaluator["python"])  # a bare command name stays as it is
+    for entry in evaluator.get("files") or []:
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str):
+            entry["path"] = _resolve(base, entry["path"])
+    for entry in world["data"].get("allowed", []) + world["data"].get("holdout", []):
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str) and ":" not in entry["path"]:
+            entry["path"] = _resolve(base, entry["path"])
     _require(evaluator, "python", str, "evaluator")
     _require(evaluator, "entrypoint", str, "evaluator")
     pinned = evaluator.get("files")
@@ -109,7 +142,18 @@ def load_world(path: str | Path) -> dict:
             raise WorldError("data.allowed / data.holdout entries are {path, sha256}")
     world["_path"] = str(path.resolve())
     world["_sha256"] = sha256(raw).hexdigest()
+    world["_policy_sha256"] = policy_sha256(world)
     return world
+
+
+def _resolve(base: Path, value: str) -> str:
+    """A path relative to the world file's directory, absolute paths unchanged."""
+    return value if Path(value).is_absolute() else str((base / value).resolve())
+
+
+def policy_sha256(world: dict) -> str:
+    """Fingerprint of the world's decision rules and thresholds (``POLICY_SECTIONS``), not of its paths."""
+    return sha256(canonicalize({section: world.get(section) for section in POLICY_SECTIONS})).hexdigest()
 
 
 def verify_evaluator(world: dict) -> dict:

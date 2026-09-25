@@ -1,6 +1,18 @@
 # Research world of the CAIN loop over the Brasileirão research worker (Prompt 6).
-# Machine-specific: absolute paths of PC 2 (WSL). Every evaluator file is pinned by sha256 and
-# re-hashed before each attempt; the loop never edits them and never reads the holdout.
+# Machine-specific: the predictor's runtime and data are absolute paths of PC 2 (WSL); the adapter
+# (evaluator.py, next to this file) is relative, so the world works from any checkout of this repo.
+# Every evaluator file is pinned by sha256 and re-hashed before each attempt; the loop never edits
+# them and never reads the holdout.
+#
+# Policy (thresholds and rules: metric, editable, budget, stagnation, gates, cascade, novelty,
+# redundancy) is fingerprinted as policy_sha256, and the loop keeps a hypothesis bound to the policy
+# it was first run under. Changing a threshold = a new world version merged by the owner, and it
+# applies only to a hypothesis registered after the change (a new [world].hypothesis).
+#
+# Correction (2026-09-25 review): version 2 below changed the redundancy rule of version 1
+# (correlation >= 0.99) and was then run on the SAME hypothesis (cycle 2 of Prompt 6) without a
+# recorded human approval. That broke the threshold rule; the owner merged it afterwards (PR #50),
+# which approves v2 from then on, but not the reuse of the hypothesis. The loop now refuses that reuse.
 
 [world]
 id = "brasileirao-elo-1x2-dev2022"
@@ -77,6 +89,8 @@ human = ["holdout"]
 stages = ["sanity", "in_sample", "walk_forward", "holdout"]
 
 [novelty]
+# Measure made explicit (2026-09-25): the Prompt 6 cycles ran with the embedding cosine (qwen3-embedding).
+measure = "embedding"
 threshold = 0.85
 
 [redundancy]
@@ -88,9 +102,9 @@ threshold = 0.001
 
 [evaluator]
 python = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/bin/python"
-entrypoint = "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py"
+entrypoint = "evaluator.py"
 files = [
-  {path = "/home/superleo13/predictors/work/cain-p6/loops/brasileirao/evaluator.py", sha256 = "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"},
+  {path = "evaluator.py", sha256 = "52b337a148db60027d4a83bbdb20434019a6dec1d9c3917ed48c57e4f6b2435c"},
   {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/brasileirao_predictor/research_runtime/worker.py", sha256 = "9b2b7a572ac547d1016e00f4f17d4a951145168246af18af77e299d89c768626"},
   {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/rt/lib/python3.13/site-packages/predictor_core/measurement/replay.py", sha256 = "f4a2854e8a68c9532c8256ab94d6e9d7c68fac6d50fcf5298980d6b4830accec"},
   {path = "/home/superleo13/predictors/runtime/brasileirao2/linux-rc3-real/work/r2/model-serving-baseline.json", sha256 = "b95d285016c791990196ecab4f73db7a528bd208749eaade69ce7eb551043b97"},

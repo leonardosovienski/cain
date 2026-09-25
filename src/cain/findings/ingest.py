@@ -9,6 +9,12 @@ loop ledger (Prompt 6). Files are read from a pinned git commit of the predictor
 
 None of these sources carries both an evaluation report and a governance transition, so they enter
 as DECLARED (quarantine). A registry status change supersedes the earlier finding (bitemporal).
+
+Registries without a status field (crypto ``trials.json``, and the CS, LoL and F1 predictors) keep
+the verdict in the notes. When the notes state it with an explicit marker, ``RESULTADO[ <qualifier>]:
+<VERDICT>`` or ``VEREDITO FINAL[ <qualifier>]: <VERDICT>``, the last such marker is read
+deterministically (a fixed pattern, no model), and the finding records that it came from the notes.
+Anything else stays UNLABELLED.
 """
 
 from __future__ import annotations
@@ -16,6 +22,7 @@ from __future__ import annotations
 from hashlib import sha256
 import json
 from pathlib import Path
+import re
 import subprocess
 
 from cain.findings.archive import FindingsArchive
@@ -26,6 +33,9 @@ STATUS_KIND = {
     "exploratoria": ("informative", "EXPLORATORY"), "informativa": ("informative", "INFORMATIVE"),
     "pre-registrada": ("informative", "PREREGISTERED"),
 }
+NOTES_VERDICT = re.compile(r"(?:RESULTADO|VEREDITO FINAL)(?:[ \t][^:\n]{0,60})?:[ \t]*"
+                           r"(COMPROVADA|REFUTADA|INCONCLUSIVA|NO[-_]GO)(?![\w-])")
+NOTES_STATUS = {"COMPROVADA": "comprovada", "REFUTADA": "refutada", "INCONCLUSIVA": "inconclusiva"}
 STATE_KIND = {
     "CLOSED_NO_GO": ("negative", "NO_GO"), "CLOSED_INSUFFICIENT_SAMPLE": ("negative", "CLOSED_INSUFFICIENT_SAMPLE"),
     "REGISTERED_NOT_ACTIVATED": ("informative", "REGISTERED_NOT_ACTIVATED"),
@@ -49,6 +59,15 @@ def _statement(row: dict) -> str:
     return " ".join(part for part in (identity, family, params, notes) if part)
 
 
+def notes_verdict(notes) -> dict | None:
+    """The last explicit verdict marker in a row's notes, or None."""
+    found = list(NOTES_VERDICT.finditer(str(notes or "")))
+    if not found:
+        return None
+    return {"verdict": found[-1].group(1).replace("_", "-"), "marker": found[-1].group(0)[:120],
+            "markers_found": len(found)}
+
+
 def ingest_trial_registry(archive: FindingsArchive, domain: str, raw: bytes, source: dict) -> dict:
     rows = json.loads(raw)
     if not isinstance(rows, list):
@@ -61,6 +80,10 @@ def ingest_trial_registry(archive: FindingsArchive, domain: str, raw: bytes, sou
             continue
         status = row.get("status")
         kind, verdict = STATUS_KIND.get(str(status), ("informative", "UNLABELLED" if status is None else str(status)))
+        from_notes = notes_verdict(row.get("notes") or row.get("legacy_notes")) if status is None else None
+        if from_notes is not None:
+            kind, verdict = (("negative", "NO_GO") if from_notes["verdict"] == "NO-GO"
+                             else STATUS_KIND[NOTES_STATUS[from_notes["verdict"]]])
         registered = row.get("registered_at")
         result = row.get("result") if isinstance(row.get("result"), dict) else (
             {"sharpe": row["sharpe"]} if "sharpe" in row else ({"legacy_sharpe": row["legacy_sharpe"]}
@@ -75,7 +98,8 @@ def ingest_trial_registry(archive: FindingsArchive, domain: str, raw: bytes, sou
                       "hypothesis_family": row.get("hypothesis_family") if row.get("hypothesis_family")
                       not in (None, "UNKNOWN") else None},
             details={"registered_at": registered, "status": status, "params": row.get("params"), "result": result,
-                     "hashes": hashes, "notes": row.get("notes") or row.get("legacy_notes")},
+                     "hashes": hashes, "notes": row.get("notes") or row.get("legacy_notes"),
+                     **({"verdict_from_notes": from_notes} if from_notes else {})},
             valid_from=registered if isinstance(registered, str) and registered.endswith("Z") else None)
         key = f"{outcome['status']}:{kind}"
         counts[key] = counts.get(key, 0) + 1

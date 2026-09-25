@@ -7,10 +7,14 @@ Each attempt, in order:
    ``max_variants_per_hypothesis``), otherwise a new hypothesis is registered (a human gate when the
    world says ``new_hypothesis``);
 4. the evaluator's pinned files are re-hashed; any change stops the loop (``evaluator_changed``);
-5. cascade: sanity and leakage checks → redundancy filter (|correlation| ≥ threshold with an
-   earlier candidate's signal = **discarded** before any backtest) → in-sample → walk-forward;
+5. cascade: sanity and leakage checks → redundancy filter (the world's measure and threshold against
+   an earlier candidate's signal = **discarded** before any backtest) → in-sample → walk-forward;
 6. feedback against the best so far (primary metric of the last stage run, with ``min_improvement``).
 A crash or timeout at any stage is recorded and counts as an attempt.
+
+Every threshold comes from the world (no default here), and a hypothesis stays bound to the policy it
+was first run under (``policy_sha256``): a loop over a hypothesis already run under other thresholds
+stops before any attempt (``policy_changed_for_hypothesis``); a changed policy needs a new hypothesis.
 
 The loop stops on: attempt budget, time budget, stagnation, or a human gate. A candidate that beats
 the baseline in walk-forward asks for the holdout gate and the loop stops there; the holdout stage
@@ -29,10 +33,6 @@ from cain.observability import semconv as sc
 from cain.observability.tracing import active_span, record_span, start
 from cain.loop.ledger import LoopLedger
 from cain.loop.world import baseline, surface_violations, verify_evaluator
-
-REDUNDANCY_THRESHOLD = 0.99
-NOVELTY_THRESHOLD = 0.9
-
 
 def lexical_similarity(a: str, b: str) -> float:
     left, right = set(a.casefold().split()), set(b.casefold().split())
@@ -56,27 +56,25 @@ class LoopState:
 def _redundant(world: dict, signal: list, earlier: list) -> tuple[bool, dict]:
     """Redundancy of a candidate's signal against an earlier one, by the measure the world names.
 
-    ``correlation`` (default; RD-Agent's rule for new factors): |corr| >= threshold (0.99).
+    ``correlation`` (RD-Agent's rule for new factors): |corr| >= threshold.
     ``max_abs_diff`` (for parameter variants of one model, whose predictions are always highly
     correlated): the largest absolute difference of the predictions is <= threshold.
     """
-    rule = world.get("redundancy", {})
-    measure = rule.get("measure", "correlation")
-    if measure == "max_abs_diff":
+    rule = world["redundancy"]
+    if rule["measure"] == "max_abs_diff":
         if len(signal) != len(earlier):
             return False, {}
         diff = max((abs(a - b) for a, b in zip(signal, earlier)), default=0.0)
-        return diff <= rule.get("threshold", 0.0), {"measure": measure, "max_abs_diff": round(diff, 9)}
+        return diff <= rule["threshold"], {"measure": "max_abs_diff", "max_abs_diff": round(diff, 9)}
     corr = correlation(signal, earlier)
-    threshold = rule.get("threshold", REDUNDANCY_THRESHOLD)
-    return corr is not None and abs(corr) >= threshold, {"measure": "correlation",
-                                                          "correlation": None if corr is None else round(corr, 6)}
+    return corr is not None and abs(corr) >= rule["threshold"], {
+        "measure": "correlation", "correlation": None if corr is None else round(corr, 6)}
 
 
 def _better(world: dict, value: float, reference: float | None) -> bool:
     if reference is None:
         return True
-    step = world["metric"].get("min_improvement", 0)
+    step = world["metric"]["min_improvement"]
     if world["metric"]["direction"] == "minimize":
         return value < reference - step
     return value > reference + step
@@ -110,10 +108,18 @@ class ResearchLoop:
             return "stagnation"
         return None
 
+    def _policy_conflicts(self, loop_id: str) -> list[dict]:
+        """Earlier loops over this world's hypothesis that ran under another policy (or an unrecorded one)."""
+        hypothesis, current = self.world["world"]["hypothesis"], self.world["_policy_sha256"]
+        return [{"loop_id": e["loop_id"], "policy_sha256": e["body"].get("policy_sha256"),
+                 "world_sha256": e["body"].get("world_sha256"), "world_version": e["body"].get("world_version")}
+                for e in self.ledger.events() if e["kind"] == "loop.started" and e["loop_id"] != loop_id
+                and e["body"].get("hypothesis") == hypothesis and e["body"].get("policy_sha256") != current]
+
     def _hypothesis_for(self, state: LoopState, description: str) -> tuple[dict, bool]:
         scored = [(self.similarity(description, h["description"]), h) for h in state.hypotheses]
         score, closest = max(scored, key=lambda item: item[0]) if scored else (0.0, None)
-        if closest is not None and score >= self.world.get("novelty", {}).get("threshold", NOVELTY_THRESHOLD):
+        if closest is not None and score >= self.world["novelty"]["threshold"]:
             return closest, False
         return {"hypothesis_id": "hyp:" + uuid4().hex[:12], "description": description,
                 "variant_of": None, "closest": closest["hypothesis_id"] if closest else None,
@@ -126,13 +132,19 @@ class ResearchLoop:
         check = verify_evaluator(world)
         self._event(state, "loop.started", {
             "world_id": world["world"]["id"], "world_version": world["world"]["version"],
-            "world_sha256": world["_sha256"], "predictor": world["world"]["predictor"],
-            "hypothesis": world["world"]["hypothesis"], "evaluator": check,
+            "world_sha256": world["_sha256"], "policy_sha256": world["_policy_sha256"],
+            "predictor": world["world"]["predictor"], "hypothesis": world["world"]["hypothesis"], "evaluator": check,
             "evaluator_files": world["evaluator"]["files"], "budget": world["budget"],
-            "stagnation": world["stagnation"], "gates": world["gates"]["human"],
+            "stagnation": world["stagnation"], "metric": world["metric"], "novelty": world["novelty"],
+            "redundancy": world["redundancy"], "gates": world["gates"]["human"],
             "cascade": world["cascade"]["stages"], "proposer": getattr(self.proposer, "name", "unknown")})
         if check["status"] != "intact":
             return self._stop(state, "evaluator_changed", evaluator=check)
+        conflicts = self._policy_conflicts(state.loop_id)
+        if conflicts:
+            # The thresholds changed since this hypothesis was first run: they apply only to a hypothesis
+            # registered after the change, so nothing runs; a new hypothesis id is needed.
+            return self._stop(state, "policy_changed_for_hypothesis", conflicts=conflicts)
         if self.closed_check is not None:
             identity = {"hypothesis_id": world["world"]["hypothesis"], "hypothesis_family": world["world"].get("family"),
                         "trial_id": world["world"].get("trial_id")}
@@ -144,7 +156,8 @@ class ResearchLoop:
         root = {"hypothesis_id": world["world"]["hypothesis"], "description": world["world"]["description"],
                 "variant_of": None, "closest": None, "similarity_to_closest": None, "variants": 0}
         state.hypotheses.append(root)
-        self._event(state, "hypothesis.registered", {**root, "source": "world file"})
+        self._event(state, "hypothesis.registered", {**root, "source": "world file",
+                                                     "policy_sha256": world["_policy_sha256"]})
         pending = [("baseline", {"params": baseline(world), "files": [],
                                  "description": world["world"]["description"], "rationale": "baseline"})]
         while True:
@@ -204,8 +217,8 @@ class ResearchLoop:
                     return None
             if new:
                 state.hypotheses.append(hypothesis)
-                self._event(state, "hypothesis.registered", {**hypothesis, "source": "proposal",
-                                                             "attempt": attempt})
+                self._event(state, "hypothesis.registered", {**hypothesis, "source": "proposal", "attempt": attempt,
+                                                             "policy_sha256": world["_policy_sha256"]})
                 if "new_hypothesis" in world["gates"]["human"]:
                     self._event(state, "gate.requested", {"gate": "new_hypothesis", "attempt": attempt,
                                                           "hypothesis_id": hypothesis["hypothesis_id"]})

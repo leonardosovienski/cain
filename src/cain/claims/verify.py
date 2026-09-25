@@ -9,6 +9,11 @@ Decision rule ``two-verifiers-agree/1`` for TEXTUAL_SUPPORT:
 * both below -> INCONCLUSIVE (the cited evidence does not support it; these verifiers score
   support, not contradiction, so CONTRADICTED is only ever set by a human review);
 * they disagree -> INCONCLUSIVE with ``review_state = needs_human_review`` (the review queue).
+
+The thresholds come from the versioned verifier policy in force when the claim was **registered**
+(``cain.policy``): a later threshold change never re-decides an earlier claim, and the policy's own
+verifiers must carry its thresholds (``POLICY_MISMATCH`` otherwise), so a threshold cannot be moved
+at call time.
 """
 
 from __future__ import annotations
@@ -90,7 +95,7 @@ def assess_textual(memory: MemoryStore, claim_id: str, verifiers: Sequence[Verif
         windows.append((item["id"], item["char_start"], item["char_end"], item["quote"]))
         for start, end in chunks(document["text"], size=chunk_size):
             windows.append((item["id"], start, end, document["text"][start:end]))
-    scores = {"evidence_ids": [e["id"] for e in evidence], "policy": _policy_ref(verifiers)}
+    scores = {"evidence_ids": [e["id"] for e in evidence], "policy": _policy_ref(verifiers, claim["recorded_at"])}
     passed = []
     for verifier in verifiers:
         best = max(((float(verifier.score(text, claim["text"])), eid, start, end)
@@ -144,14 +149,21 @@ def review(memory: MemoryStore, claim_id: str, status: str, *, reviewer: str, no
                                review_state="reviewed", note=note)
 
 
-def _policy_ref(verifiers) -> dict | str:
-    """Which versioned threshold policy produced this decision ("custom" if thresholds differ from it)."""
+def _policy_ref(verifiers, registered_at: str) -> dict | str:
+    """The versioned threshold policy in force when the claim was registered, as recorded in the decision.
+
+    The policy's own verifiers must use its thresholds; verifiers the policy does not name (tests,
+    experiments) are labelled "custom" and never pass as the policy."""
+    from cain import policy as policies
     from cain.claims.verifiers import policy
 
-    rules = policy()
-    if all(rules["thresholds"].get(v.verifier_id) == v.threshold for v in verifiers):
-        return {"policy": rules["policy"], "version": rules["version"], "sha256": rules["sha256"]}
-    return "custom"
+    rules = policy(registered_at)
+    named = [v for v in verifiers if v.verifier_id in rules["thresholds"]]
+    moved = sorted(v.verifier_id for v in named if rules["thresholds"][v.verifier_id] != v.threshold)
+    if moved:
+        raise MemoryStoreError("POLICY_MISMATCH", f"{moved} must use the thresholds of {rules['policy']} "
+                                                  f"v{rules['version']}, in force when the claim was registered")
+    return policies.ref(rules) if len(named) == len(verifiers) else "custom"
 
 
 def _claim(memory: MemoryStore, claim_id: str, at: str) -> dict:
