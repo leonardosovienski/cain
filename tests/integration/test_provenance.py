@@ -72,6 +72,7 @@ def test_why_returns_the_complete_chain_of_a_decision(world):
 
 
 def test_model_and_tool_calls_become_gen_ai_spans(tmp_path):
+    pytest.importorskip("opentelemetry.sdk", reason="needs the observability extra")
     from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
     from cain.inference.recorder import InferenceStore, attach
@@ -111,6 +112,7 @@ def test_model_and_tool_calls_become_gen_ai_spans(tmp_path):
 
 def test_span_duration_survives_a_wall_clock_step_back(monkeypatch):
     # Found in MLflow: an evaluator span with a negative duration (the WSL2 wall clock stepped back).
+    pytest.importorskip("opentelemetry.sdk", reason="needs the observability extra")
     from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
     from cain.observability import tracing
