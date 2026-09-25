@@ -1,0 +1,26 @@
+# branch melhorias/p10-sandbox head 51827f8af1c740a1ccea1f9eaba5653e0af5d3a4 (+ working tree changes of this commit)
+$ ruff check src tests loops
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain
+src/cain/sandbox/__init__.py                    0      0   100%
+src/cain/sandbox/attacks.py                    63      0   100%
+src/cain/sandbox/attempt.py                    66      4    94%
+src/cain/sandbox/cli.py                        50     16    68%
+src/cain/sandbox/runner.py                     72      2    97%
+TOTAL                                       11778   1526    87%
+1275 passed, 3 skipped, 63 warnings in 88.06s (0:01:28)
+# testcases in junit: 1278
+$ pytest tests/integration/test_sandbox.py -v   (plumbing; the real-engine test is in real-engine-test.log)
+tests/integration/test_sandbox.py::test_every_attempt_runs_with_the_hardening_flags_and_only_its_workspace PASSED [  9%]
+tests/integration/test_sandbox.py::test_benign_attempt_is_valid_and_its_manifest_records_image_and_file_log PASSED [ 18%]
+tests/integration/test_sandbox.py::test_a_report_with_numbers_the_run_did_not_produce_is_rejected PASSED [ 27%]
+tests/integration/test_sandbox.py::test_a_planted_symlink_is_never_followed PASSED [ 36%]
+tests/integration/test_sandbox.py::test_timeout_kills_the_attempt_and_records_a_crash PASSED [ 45%]
+tests/integration/test_sandbox.py::test_an_evaluator_change_during_the_attempt_is_invalid_with_an_alert PASSED [ 54%]
+tests/integration/test_sandbox.py::test_an_attempt_without_output_proves_nothing PASSED [ 63%]
+tests/integration/test_sandbox.py::test_a_defence_is_judged_by_what_the_host_saw_not_by_the_candidate PASSED [ 72%]
+tests/integration/test_sandbox.py::test_cli_runs_a_candidate_and_prints_its_manifest PASSED [ 81%]
+tests/integration/test_sandbox.py::test_the_attack_suite_credits_no_defence_without_evidence PASSED [ 90%]
+tests/integration/test_sandbox.py::test_attacks_against_a_real_engine SKIPPED [100%]
+======================== 10 passed, 1 skipped in 2.02s =========================

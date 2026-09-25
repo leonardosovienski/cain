@@ -1,0 +1,5 @@
+.                                                                        [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/integration/test_sandbox.py::test_attacks_against_a_real_engine
+1 passed, 8 deselected in 36.14s
