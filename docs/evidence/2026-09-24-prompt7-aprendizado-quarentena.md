@@ -122,3 +122,12 @@ para revisão, e o limiar não foi mexido.
   core deveria carregar.
 - Os registros do cripto e de stocks não têm status estruturado por tentativa. Um campo de veredito tornaria a
   ingestão determinística completa.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- As NO-GO de **CS, LoL e F1**, citadas pelo prompt, tinham ficado de fora. Os repositórios não estavam neste PC.
+- Agora: 5 NO-GO do F1 e 2 do LoL, lidas das notas por marcador fixo (`RESULTADO…:`), mais 1 do cripto (`VEREDITO FINAL…:`). O CS não tem tentativa refutada.
+- A equivalência com hipótese encerrada segue a política versionada `findings-policy` (identidade, ou léxica ≥ 0,6). O embedding só ordena: ele casava todas as hipóteses do cripto.
+- Os encerramentos de capital de CS, F1 e LoL (formatos diferentes) ficam pendentes.

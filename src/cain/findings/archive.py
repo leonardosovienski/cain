@@ -9,7 +9,9 @@ Findings live in the bitemporal memory (Prompt 2) as facts of the domain's cube,
   explicit flag and is always labelled ``quarantine``;
 * negative findings (NO-GO, refuted, closed) are knowledge too: ``equivalent_closed`` finds a closed
   hypothesis equivalent to a new one, so the loop does not retest it under another name. Closed
-  findings are consulted even in quarantine: blocking a retest is the conservative side;
+  findings are consulted even in quarantine: blocking a retest is the conservative side. What counts
+  as equivalent is the versioned ``findings-policy`` (identity, or lexical similarity at its
+  threshold); an embedding similarity only ranks the matches, since it has no calibrated threshold;
 * the procedure library only admits a strategy/feature/pipeline with a passing test report and a
   walk-forward result (code, data and metric hashes); a procedure demoted at the source is marked
   DEMOTED (and hidden by default);
@@ -22,6 +24,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import re
 
+from cain import policy as policies
 from cain.memory.store import MemoryStore, MemoryStoreError
 
 EXTRACTOR = "deterministic:predictor-findings/1"
@@ -47,6 +50,11 @@ def _proven(report, transition) -> bool:
 def lexical_similarity(a: str, b: str) -> float:
     left, right = set(a.casefold().split()), set(b.casefold().split())
     return len(left & right) / len(left | right) if left | right else 1.0
+
+
+def equivalence_policy(at: str | None = None) -> dict:
+    """The closed-hypothesis equivalence policy in force at ``at`` (the latest when None)."""
+    return policies.effective(policies.versions("cain.findings", "findings-policy"), at)
 
 
 class FindingsArchive:
@@ -104,9 +112,13 @@ class FindingsArchive:
         return self.findings(domain, as_of=as_of, include_quarantine=True, kind="negative")
 
     def equivalent_closed(self, domain: str, statement: str, *, as_of, identity: dict | None = None,
-                          similarity=lexical_similarity, threshold: float = 0.6) -> list[dict]:
-        """Closed hypotheses of ``domain`` equivalent to a new one: same identity (trial id, hypothesis
-        id or frozen family) or a statement at least ``threshold`` similar."""
+                          rank=None) -> list[dict]:
+        """Closed hypotheses of ``domain`` equivalent to a new one, by the versioned equivalence policy:
+        same identity (trial id, hypothesis id or frozen family), or a lexical similarity at least the
+        policy's threshold. ``rank`` (e.g. the embedding cosine) is reported to order the matches for
+        review; it has no calibrated threshold, so it never decides. Matches best first."""
+        rules = equivalence_policy()
+        threshold = rules["thresholds"]["lexical"]
         identity = {k: v for k, v in (identity or {}).items() if v}
         matches = []
         for finding in self.closed(domain, as_of=as_of):
@@ -116,12 +128,16 @@ class FindingsArchive:
             family = identity.get("hypothesis_family")
             if family and family in (known.get("frozen_families") or []):
                 shared.append("frozen_families")
-            score = similarity(statement, finding["statement"])
+            score = lexical_similarity(statement, finding["statement"])
             if shared or score >= threshold:
-                matches.append({"finding_id": finding["finding_id"], "verdict": finding["verdict"],
-                                "status": finding["status"], "quarantine": finding["quarantine"],
-                                "same_identity": shared, "similarity": round(score, 4),
-                                "statement": finding["statement"][:300]})
+                match = {"finding_id": finding["finding_id"], "verdict": finding["verdict"],
+                         "status": finding["status"], "quarantine": finding["quarantine"],
+                         "same_identity": shared, "similarity": round(score, 4), "measure": "lexical",
+                         "policy": policies.ref(rules), "statement": finding["statement"][:300]}
+                if rank is not None:
+                    match["rank_similarity"] = round(rank(statement, finding["statement"]), 4)
+                matches.append(match)
+        matches.sort(key=lambda m: (-bool(m["same_identity"]), -m.get("rank_similarity", m["similarity"])))
         return matches
 
     # ------------------------------------------------------------------ domain isolation

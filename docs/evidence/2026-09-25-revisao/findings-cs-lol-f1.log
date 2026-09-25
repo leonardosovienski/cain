@@ -1,0 +1,41 @@
+# 2026-09-25T16:35:48Z cain 74c533b + working tree
+$ cain findings ingest-registry --domain cs --repo cs-predictor --commit origin/main --path data/trials.json
+{"rows": 6, "counts": {"recorded:positive": 3, "recorded:informative": 3}, "commit": "0dc945413fbecb6902095de1e4695d39d924a1dd", "sha256": "6af5975cb5937edbf3b4f5e2c314ea9f36eb62b2a7845d07ece96b78c9ca94c4"}
+$ cain findings ingest-registry --domain lol --repo lol-predictor --commit origin/main --path data/trials.json
+{"rows": 6, "counts": {"recorded:positive": 1, "recorded:negative": 2, "recorded:informative": 3}, "commit": "c8bc8709890936d436653f6fef6964e12a5f43c7", "sha256": "6b8cad7b555717c6ccf6b09ccaa80803f95b6444faf87759d9b90a32949ce24e"}
+$ cain findings ingest-registry --domain f1 --repo f1-predictor --commit origin/main --path data/trials.json
+{"rows": 11, "counts": {"recorded:negative": 5, "recorded:positive": 4, "recorded:informative": 2}, "commit": "5c6654a84ec9981cbc323a255787d0ee51357fa8", "sha256": "6ac27e8bd038d9869a0016a1e1e96faa69648a19bb9d6f642f7336d8581e150f"}
+$ cain findings ingest-registry --domain crypto --repo cripto-predictor --path GarimpoInvestimentos/trials.json
+{"rows": 26, "counts": {"recorded:informative": 25, "recorded:negative": 1}, "commit": "220e312f4158e5837f22230b2d0a43642740fed9"}
+$ cain findings list --domain cs --as-of now --include-quarantine --kind negative
+closed: 0
+$ cain findings list --domain cs --as-of now   (default: PROVEN only)
+proven: 0
+$ cain findings list --domain lol --as-of now --include-quarantine --kind negative
+closed: 2
+   lol:trial:h2-lol-kills-normal-por-liga REFUTED | quarantine | RESULTADO 2026-07-11: REFUTADA
+   lol:trial:h3-lol-elo-platt-prequential REFUTED | quarantine | RESULTADO 2026-07-11: REFUTADA
+$ cain findings list --domain lol --as-of now   (default: PROVEN only)
+proven: 0
+$ cain findings list --domain f1 --as-of now --include-quarantine --kind negative
+closed: 5
+   f1:trial:H1-F1-elo-pl-vs-grid-rps REFUTED | quarantine | RESULTADO: REFUTADA
+   f1:trial:H5-F1c-contexto-circuito REFUTED | quarantine | RESULTADO: REFUTADA
+   f1:trial:H6-F1c-reliability-dnf REFUTED | quarantine | RESULTADO: REFUTADA
+   f1:trial:H7-F1c-pit-efficiency REFUTED | quarantine | RESULTADO: REFUTADA
+   f1:trial:H8-F1-choque-transicao-regulamento REFUTED | quarantine | RESULTADO: REFUTADA
+$ cain findings list --domain f1 --as-of now   (default: PROVEN only)
+proven: 0
+$ cain findings list --domain crypto --as-of now --include-quarantine --kind negative
+closed: 1
+   crypto:trial:v3-hmm-funding-oi-fr90 NO_GO | quarantine | VEREDITO FINAL 2026-07-02 (com custos completos): NO-GO
+$ cain findings list --domain crypto --as-of now   (default: PROVEN only)
+proven: 0
+$ cain findings check --domain f1 --trial-id H5-F1c-contexto-circuito --statement 'circuit context'
+True [('f1:trial:H5-F1c-contexto-circuito', 'REFUTED', ['trial_id'], 1)]
+$ cain findings check --domain lol --statement 'Platt scaling over the map probability of the Elo'
+False []
+$ cain findings check --domain cs --statement 'a brand new idea: map veto order'
+False 0
+$ cain memory verify
+intact

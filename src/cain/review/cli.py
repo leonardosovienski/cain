@@ -16,8 +16,8 @@ def register(sub):
     generate.add_argument("--domain", required=True)
     generate.add_argument("hypothesis_id")
     generate.add_argument("--config", type=Path)
-    generate.add_argument("--closed-threshold", type=float, default=0.6)
-    generate.add_argument("--closed-similarity", choices=["lexical", "embedding"], default="lexical")
+    generate.add_argument("--closed-rank-embedding", action="store_true",
+                          help="order closed-archive matches by embedding similarity (never decides)")
     show = commands.add_parser("map", help="Question map: question → test/evidence → status")
     show.add_argument("--domain", required=True)
     show.add_argument("hypothesis_id")
@@ -69,8 +69,8 @@ def execute(args):
             raise ValueError("the review needs a local model with structured output")
         from cain.loop.cli import similarity_function
 
-        return board.generate(args.domain, args.hypothesis_id, provider, closed_threshold=args.closed_threshold,
-                              similarity=similarity_function(args.closed_similarity, args.config))
+        rank = similarity_function("embedding", args.config) if args.closed_rank_embedding else None
+        return board.generate(args.domain, args.hypothesis_id, provider, closed_rank=rank)
     if cmd == "map":
         return board.question_map(args.domain, args.hypothesis_id,
                                   as_of=memory.now() if args.as_of == "now" else args.as_of)

@@ -104,7 +104,7 @@ Em um ambiente de desenvolvimento separado:
 
 ```powershell
 uv lock --check
-uv sync --locked --extra dev --extra vision
+uv sync --locked --extra dev --extra vision --extra observability
 uv run ruff check .
 uv run pytest -q
 uv run python -m cain --help

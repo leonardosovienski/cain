@@ -22,6 +22,9 @@ from pathlib import Path
 import subprocess
 from uuid import uuid4
 
+# Bounded read of the output left after a timeout kill (see DockerSandbox.run).
+OUTPUT_GRACE_SECONDS = 10.0
+
 
 @dataclass(frozen=True)
 class SandboxPolicy:
@@ -89,13 +92,20 @@ class DockerSandbox:
         before = snapshot(workspace)
         args = self.command(name, workspace, argv, data_ro)
         status, stdout, stderr = "OK", "", ""
+        process = subprocess.Popen([*self.docker, *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         try:
-            done = subprocess.run([*self.docker, *args], capture_output=True, text=True, timeout=self.policy.timeout)
-            stdout, stderr = done.stdout, done.stderr
-        except subprocess.TimeoutExpired as exc:
+            stdout, stderr = process.communicate(timeout=self.policy.timeout)
+        except subprocess.TimeoutExpired:
             status = "TIMEOUT"
-            stdout = (exc.stdout or b"").decode("utf-8", "replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+            # Stop the container first (it holds the work), then the CLI. Reading what is left of the
+            # output is bounded: on Windows a pipe stays open while anything that inherited it lives,
+            # and an unbounded read after a kill (what subprocess.run does there) never returns.
             self._docker("kill", name, check=False)
+            process.kill()
+            try:
+                stdout, stderr = process.communicate(timeout=OUTPUT_GRACE_SECONDS)
+            except subprocess.TimeoutExpired:
+                stdout, stderr = "", "output not collected: the pipes were still held after the kill"
         state = {}
         inspected = self._docker("inspect", name, "--format", "{{json .State}}", check=False)
         if inspected.returncode == 0:

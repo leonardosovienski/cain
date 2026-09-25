@@ -40,5 +40,12 @@ def configured_embedding(settings):
         raise ValueError(f"Modelo de busca indisponível: {settings.embedding_model}")
     if settings.embedding_digest and settings.embedding_digest != found["digest"]:
         raise ValueError("Digest do modelo de busca mudou; revise a configuração antes de reutilizar o índice")
-    return OllamaEmbedding(settings.embedding_model, model_digest=found["digest"],
-                           base_url=settings.base_url, timeout=settings.timeout)
+    embedding = OllamaEmbedding(settings.embedding_model, model_digest=found["digest"],
+                                base_url=settings.base_url, timeout=settings.timeout)
+    mode = getattr(settings, "inference_mode", "disabled")
+    if mode != "disabled" and settings.inference_db is not None:
+        # Embedding calls are model calls too: same manifest store as the generation calls.
+        from cain.inference.recorder import InferenceStore, attach
+
+        attach(embedding, InferenceStore(settings.inference_db), mode=mode, base=embedding._opener.open)
+    return embedding

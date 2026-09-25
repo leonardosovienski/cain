@@ -117,6 +117,59 @@ def test_loop_flags_a_hypothesis_equivalent_to_a_closed_one_before_running(tmp_p
     assert matches and matches[0]["same_identity"] == ["frozen_families"]
 
 
+def test_equivalence_follows_the_versioned_policy_and_an_embedding_only_ranks(archive):
+    from cain.findings.archive import equivalence_policy
+
+    rules = equivalence_policy()
+    archive.record("f1", "f1:trial:H5", kind="negative", verdict="REFUTED",
+                   statement="circuit context weight lowers the race RPS", source=source("c"))
+    now = archive.memory.now()
+
+    def always_close(a, b):  # an uncalibrated measure that finds everything similar
+        return 0.99
+
+    # A different idea is not a match, however close the ranking measure says it is.
+    assert archive.equivalent_closed("f1", "pit stop efficiency model", as_of=now, rank=always_close) == []
+    matches = archive.equivalent_closed("f1", "circuit context weight lowers the RPS", as_of=now, rank=always_close)
+    assert len(matches) == 1 and matches[0]["measure"] == "lexical"
+    assert matches[0]["similarity"] >= rules["thresholds"]["lexical"] and matches[0]["rank_similarity"] == 0.99
+    assert matches[0]["policy"] == {"policy": "findings-equivalence-policy", "version": 1, "sha256": rules["sha256"]}
+
+
+def test_verdicts_stated_in_the_notes_are_read_deterministically(tmp_path, archive):
+    from cain.findings.ingest import notes_verdict
+
+    rows = [  # the CS / LoL / F1 / crypto registries: no status field, the verdict in the notes
+        {"name": "H1-F1-elo", "registered_at": "2026-07-12T10:25:02Z", "notes": "RESULTADO: REFUTADA — RPS 0.1399"},
+        {"name": "h2-lol-kills", "registered_at": "2026-07-11T06:15:34Z",
+         "notes": "COMPROVADA = Brier menor com DM p<0.05. RESULTADO 2026-07-11: REFUTADA — 0/3 linhas"},
+        {"name": "h1-cs-elo", "registered_at": "2026-07-11T06:19:59Z",
+         "notes": "RESULTADO 2026-07-11: REFUTADA. RESULTADO protocolo corrigido 2026-07-16: COMPROVADA — Brier"},
+        {"name": "v3-hmm", "registered_at": "2026-07-01T00:00:00Z",
+         "notes": "VEREDITO FINAL 2026-07-02 (com custos completos): NO-GO. BTCUSDT"},
+        {"name": "h4-lol-shadow", "registered_at": "2026-07-20T06:20:41Z",
+         "notes": "Pré-registro. COMPROVADA, REFUTADA ou INCONCLUSIVA conforme o gate."},
+        {"name": "G0-F1-market", "registered_at": "2026-07-21T00:00:00Z",
+         "notes": "RESULTADO: MARKET_H2H_NOT_FEASIBLE — zero fontes"},
+    ]
+    assert notes_verdict(rows[2]["notes"])["verdict"] == "COMPROVADA"  # the last marker wins
+    assert notes_verdict(rows[4]["notes"]) is None and notes_verdict(rows[5]["notes"]) is None
+    raw = json.dumps(rows).encode()
+    ingest_trial_registry(archive, "sports", raw, {**source("r"), "sha256": sha256(raw).hexdigest()})
+    found = {f["finding_id"]: (f["kind"], f["verdict"])
+             for f in archive.findings("sports", as_of=archive.memory.now(), include_quarantine=True)}
+    assert found == {"sports:trial:H1-F1-elo": ("negative", "REFUTED"),
+                     "sports:trial:h2-lol-kills": ("negative", "REFUTED"),
+                     "sports:trial:h1-cs-elo": ("positive", "SUPPORTED"),
+                     "sports:trial:v3-hmm": ("negative", "NO_GO"),
+                     "sports:trial:h4-lol-shadow": ("informative", "UNLABELLED"),
+                     "sports:trial:G0-F1-market": ("informative", "UNLABELLED")}
+    closed = archive.closed("sports", as_of=archive.memory.now())
+    assert {f["finding_id"] for f in closed} == {"sports:trial:H1-F1-elo", "sports:trial:h2-lol-kills",
+                                                 "sports:trial:v3-hmm"}
+    assert all(f["quarantine"] and f["details"]["verdict_from_notes"]["marker"] for f in closed)
+
+
 def test_a_procedure_demoted_at_the_source_is_demoted_in_the_library(archive):
     spec = dict(code_sha256=H, data_sha256=H, metrics={"rps": 0.2093},
                 tests={"report": "junit.xml", "sha256": H, "passed": 40, "failed": 0},

@@ -1,0 +1,9 @@
+{
+  "policy": "findings-equivalence-policy",
+  "version": 1,
+  "rule": "identity-or-lexical/1",
+  "thresholds": {
+    "lexical": 0.6
+  },
+  "note": "Initial policy value (word-overlap Jaccard of the statements), not calibrated. A closed hypothesis is equivalent to a new one when they share an identity (trial id, hypothesis id, frozen family) or when the lexical similarity reaches the threshold. Embedding similarity has no calibrated threshold (Prompt 7 measured 0.65-0.75 between a new statement and every closed crypto hypothesis), so it only ranks matches for review and never decides. Changing a threshold is a new version file, merged by the owner."
+}

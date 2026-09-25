@@ -43,7 +43,7 @@ explicit = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-cain = ["web/*.html", "web/*.css", "web/*.js", "evaluation/data/scenarios/*.json", "evaluation/data/probes/*.json", "evaluation/data/rubrics/*.md", "claims/data/*.json", "inference/data/*.json", "review/data/*.toml"]
+cain = ["web/*.html", "web/*.css", "web/*.js", "evaluation/data/scenarios/*.json", "evaluation/data/probes/*.json", "evaluation/data/rubrics/*.md", "claims/data/*.json", "inference/data/*.json", "review/data/*.toml", "findings/data/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

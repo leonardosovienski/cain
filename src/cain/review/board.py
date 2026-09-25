@@ -92,7 +92,7 @@ class ReviewBoard:
         return obj
 
     def generate(self, domain: str, hypothesis_id: str, provider, *, perspectives: dict | None = None,
-                 closed_threshold: float = 0.6, similarity=None) -> dict:
+                 closed_rank=None) -> dict:
         from cain.inference.structured import StructuredOutputError, generate_structured
 
         draft = self.draft(domain, hypothesis_id)
@@ -137,18 +137,17 @@ class ReviewBoard:
                 self._put(domain, item["item_id"], "review_item", item)
                 created.append(item["item_id"])
         if self.archive is not None:
-            created.append(self._closed_item(domain, draft, closed_threshold, similarity))
+            created.append(self._closed_item(domain, draft, closed_rank))
         return {"hypothesis_id": hypothesis_id, "items": created, "failures": failures,
                 "perspectives_sha256": perspectives["sha256"]}
 
-    def _closed_item(self, domain, draft, threshold, similarity) -> str:
-        kwargs = {"threshold": threshold} if similarity is None else {"threshold": threshold, "similarity": similarity}
+    def _closed_item(self, domain, draft, rank) -> str:
         # A draft that declares its lineage (derived_from a trial finding) is checked by that identity too.
         parent = str(draft.get("derived_from") or "")
         trial = draft.get("trial_id") or (parent.split(":trial:", 1)[1] if ":trial:" in parent else None)
         matches = self.archive.equivalent_closed(domain, draft["statement"], as_of=self.memory.now(),
                                                  identity={"hypothesis_family": draft.get("family"),
-                                                           "trial_id": trial}, **kwargs)
+                                                           "trial_id": trial}, rank=rank)
         item = {"item_id": f"{draft['hypothesis_id']}:closed-archive:1", "hypothesis_id": draft["hypothesis_id"],
                 "perspective": "closed-archive", "perspective_name": "Already closed? (findings archive)",
                 "mandatory": True,

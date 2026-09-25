@@ -1,0 +1,27 @@
+# branch melhorias/revisao-final head 74c533b5222e17197a4b4e360f11af58c2b63a9b (+ working tree of the review)
+$ uv lock --check (uv.lock unchanged by the review)
+uv.lock identical to origin/main
+$ ruff check src tests loops
+All checks passed!
+[exit 0]
+$ pytest -q -p no:cacheprovider --cov=cain   (venv from uv.lock with --extra dev --extra vision --extra observability)
+src/cain/claims/verify.py                     110      9    92%
+src/cain/findings/__init__.py                   0      0   100%
+src/cain/findings/archive.py                  123      6    95%
+src/cain/findings/cli.py                       95     19    80%
+src/cain/findings/ingest.py                    88      4    95%
+src/cain/inference/recorder.py                383     51    87%
+src/cain/loop/__init__.py                       0      0   100%
+src/cain/loop/cli.py                           80     27    66%
+src/cain/loop/engine.py                       224     25    89%
+src/cain/loop/evaluator.py                     51      9    82%
+src/cain/loop/ledger.py                        82      2    98%
+src/cain/loop/proposers.py                     59      4    93%
+src/cain/loop/world.py                        143     21    85%
+src/cain/policy.py                             40      1    98%
+src/cain/provenance/__init__.py                 0      0   100%
+src/cain/provenance/cli.py                     42      2    95%
+src/cain/provenance/graph.py                  176     25    86%
+TOTAL                                       11952   1536    87%
+1287 passed, 3 skipped, 63 warnings in 86.21s (0:01:26)
+# testcases in junit: 1290

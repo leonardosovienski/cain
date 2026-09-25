@@ -169,3 +169,11 @@ e sem as flags. Vale o medido; a discrepância fica registrada.
 - `%LOCALAPPDATA%\Docker\run.stale-20260924` e `run.stale-20260925` podem ser apagadas depois de um reboot, que
   solta os sockets. Se o Docker Desktop não subir com "removing stale socket", é o mesmo caso: renomear a `run`.
 - O Docker Desktop está parado, como estava antes do trabalho.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- **O `windows-tests` travava** (PR #54 e `main`). No timeout, o `subprocess.run` do Windows lia os pipes sem limite, e o processo neto do `docker` falso os mantinha abertos.
+- O PR foi mergeado com o check pendente. `DockerSandbox.run` agora mata o container, depois o CLI, e lê as saídas com prazo.
+- O teste de engine real passou de novo com esse caminho (`2026-09-25-revisao/sandbox-real-engine.log`).

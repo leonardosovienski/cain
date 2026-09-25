@@ -160,6 +160,41 @@ def test_fork_reuses_earlier_steps_and_reexecutes_only_from_the_fork_point(setup
     assert all(e["run_id"] == "child" for e in jobs.events(scope, "child"))
 
 
+def test_provenance_reads_human_approvals_and_forks(setup, tmp_path):
+    from cain.memory.store import MemoryStore
+    from cain.provenance.graph import ProvenanceGraph
+
+    service, scope, _ = _prepared(setup)
+    jobs, model = Workflows(service), FixtureModel()
+    jobs.create(scope, "What does A support?", model, source_id="A", run_id="parent")
+    for _ in range(6):
+        jobs.advance(scope, "parent", model, approve_generation=True)
+    jobs.fork(scope, "parent", 3, OtherModel(), new_run_id="child")
+    child_model = OtherModel()
+    jobs.advance(scope, "child", child_model)
+    jobs.decide(scope, "child", "APPROVE", by="leo")
+    jobs.advance(scope, "child", child_model)
+    memory = MemoryStore(tmp_path / "memory.db")
+    graph = ProvenanceGraph(memory, workflow_db=service.path)
+    now = memory.now()
+    child_decision = next(f"decision:{e['event_id']}" for e in jobs.events(scope, "child")
+                          if e["kind"] == "approval.decided")
+    parent_decisions = {e["body"]["position"]: f"decision:{e['event_id']}" for e in jobs.events(scope, "parent")
+                        if e["kind"] == "approval.decided"}
+    why = graph.why("run:child", as_of=now)
+    # The child rests on its own approval and on the steps it inherited (step 2 was generated under the
+    # parent's approval of position 2), never on the parent's later steps or their approvals.
+    assert sorted(why["decisions"]) == sorted([child_decision, parent_decisions[2]])
+    assert {"step:child#0", "step:parent#0", "step:parent#2", "step:child#3"} <= {n["node"] for n in why["nodes"]}
+    assert "step:parent#3" not in {n["node"] for n in why["nodes"]}
+    assert not {parent_decisions[p] for p in (3, 4, 5)} & set(why["decisions"])
+    assert any(e["origin"].endswith("by leo") for e in why["edges"] if e["from"] == child_decision)
+    # The step the approval released depends on that approval only, never on the parent's approvals.
+    released = {n["node"] for n in graph.trace("step:child#3", as_of=now)["nodes"]}
+    assert child_decision in released and not set(parent_decisions.values()) & released
+    assert {n["node"] for n in graph.impact(child_decision, as_of=now)["nodes"]} == {"step:child#3", "run:child"}
+
+
 def test_fork_refuses_a_changed_corpus(setup):
     service, scope, _ = _prepared(setup)
     _, _, ingest, _, _ = setup

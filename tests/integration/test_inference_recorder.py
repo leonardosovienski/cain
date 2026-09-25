@@ -27,6 +27,7 @@ class FakeOllama:
     def __init__(self):
         self.blob = BLOB
         self.generate_calls = 0
+        self.embed_calls = 0
         self.nondeterministic = False
         self.invalid_first = 0
         self.active = 0
@@ -65,6 +66,12 @@ class FakeOllama:
                                        "parameters": 'stop "<|im_end|>"\ntemperature 0.6',
                                        "details": {"format": "gguf", "family": "fixture", "parameter_size": "1B",
                                                    "quantization_level": "Q4_K_M"}})
+                if self.path == "/api/embed":
+                    with fake.lock:
+                        fake.embed_calls += 1
+                    vectors = [[round(len(text) / 100, 4), 0.5, -0.25] for text in body["input"]]
+                    return self._send({"model": body["model"], "embeddings": vectors, "total_duration": 900,
+                                       "load_duration": 1, "prompt_eval_count": 3 * len(vectors)})
                 if self.path != "/api/generate":
                     return self.send_error(404)
                 with fake.lock:
@@ -113,6 +120,27 @@ def ollama():
 def _llm(fake, store, mode="manifest", **kw):
     llm = OllamaLLM(model="fixture:1", base_url=fake.url, think=False, timeout=10, **kw)
     return attach(llm, store, mode=mode)
+
+
+def test_embedding_calls_get_their_own_complete_manifest_and_replay(ollama, tmp_path):
+    from cain.search import OllamaEmbedding
+
+    store = InferenceStore(tmp_path / "inference.db")
+    embedding = OllamaEmbedding("fixture:1", model_digest="cd" * 32, base_url=ollama.url, timeout=10)
+    attach(embedding, store, mode="record", base=embedding._opener.open)
+    vectors = embedding.embed(["funding rate regime", "weekend liquidity"])
+    assert len(vectors) == 2 and ollama.embed_calls == 1
+    manifest = store.calls(5)[0]["manifest"]
+    assert missing_fields(manifest, "/api/embed") == []
+    assert manifest["output"]["vectors"] == 2 and manifest["output"]["dimensions"] == 3
+    assert manifest["input"]["prompt_sha256"] == sha256(b'["funding rate regime","weekend liquidity"]').hexdigest()
+    assert manifest["model"]["gguf_sha256"] == BLOB and manifest["parameters"]["requested"] == {"truncate": False}
+    # A generation-only field is still required of a generation call: nothing was relaxed for those.
+    assert "output.text_sha256" in missing_fields({**manifest, "output": {**manifest["output"], "text_sha256": None}},
+                                                  "/api/generate")
+    assert store.audit()["missing"] == {}
+    attach(embedding, store, mode="replay", base=embedding._opener.open)
+    assert embedding.embed(["funding rate regime", "weekend liquidity"]) == vectors and ollama.embed_calls == 1
 
 
 def test_every_call_gets_a_complete_manifest(ollama, tmp_path):

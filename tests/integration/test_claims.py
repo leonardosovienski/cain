@@ -181,6 +181,31 @@ def test_agreement_decides_and_long_documents_use_the_best_chunk(memory, clock):
     assert assess_textual(memory, no_evidence["id"], [Overlap("a"), Overlap("b")])["status"] == "UNVERIFIABLE"
 
 
+def test_the_policy_thresholds_decide_and_cannot_be_moved_at_call_time(memory, clock):
+    from cain.claims.verifiers import HHEM_REPO, MINICHECK_REPO, policy
+
+    text = "The confirmed hit rate was 61 percent in the holdout."
+    doc = memory.record_document("crypto", "doc", text, published_at=T0, source="fixture:p")
+    clock.tick()
+    evidence = memory.record_evidence("crypto", doc["id"], 0, len(text), text)
+    claim = memory.record_claim("crypto", text, source_document_id=doc["id"], char_start=0, char_end=len(text),
+                                evidence_ids=[evidence["id"]])
+    clock.tick()
+    rules = policy(claim["recorded_at"])
+    # The policy's own verifiers with another threshold: refused before any scoring.
+    moved = [Overlap(HHEM_REPO, threshold=0.3), Overlap(MINICHECK_REPO, threshold=rules["thresholds"][MINICHECK_REPO])]
+    with pytest.raises(MemoryStoreError) as refused:
+        assess_textual(memory, claim["id"], moved)
+    assert refused.value.code == "POLICY_MISMATCH"
+    assert memory.claims(as_of=memory.now(), cubes=["crypto"], ids=[claim["id"]])[0]["rule"] is None  # nothing decided
+    # With the policy's thresholds, the decision records the policy (id, version, sha256).
+    pair = [Overlap(HHEM_REPO, threshold=rules["thresholds"][HHEM_REPO]),
+            Overlap(MINICHECK_REPO, threshold=rules["thresholds"][MINICHECK_REPO])]
+    decided = assess_textual(memory, claim["id"], pair)
+    assert decided["verifier_scores"]["policy"] == {"policy": rules["policy"], "version": rules["version"],
+                                                    "sha256": rules["sha256"]}
+
+
 def test_textual_support_and_empirical_proof_are_never_mixed(memory, clock, tmp_path):
     _, report = _setup(memory, clock)
     with pytest.raises(MemoryStoreError) as exc:

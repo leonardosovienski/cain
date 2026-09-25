@@ -1,9 +1,10 @@
 """Inference manifest, record mode and replay cache for local model calls.
 
-The recorder sits on the HTTP transport of the local providers (Ollama ``/api/generate`` and
-``/api/chat``, llama.cpp ``/completion``), so it sees the exact request and response bytes. Every
-generation call gets a manifest (model, runtime, parameters, input, output, context) stored in
-SQLite with those bytes.
+The recorder sits on the HTTP transport of the local providers (Ollama ``/api/generate``,
+``/api/chat`` and ``/api/embed``, llama.cpp ``/completion``), so it sees the exact request and
+response bytes. Every model call, generation or embedding, gets a manifest (model, runtime,
+parameters, input, output, context) stored in SQLite with those bytes. An embedding has no sampling,
+no generated text and no chat template: its manifest records the input and the vectors instead.
 
 Modes:
 * ``manifest`` call the model; store the manifest (the default: every call is documented);
@@ -43,6 +44,8 @@ from cain.memory.jcs import canonicalize
 MANIFEST_SCHEMA = "cain-inference-manifest/1"
 MODES = ("manifest", "record", "cache", "replay")
 GENERATION_PATHS = {"/api/generate", "/api/chat", "/completion"}
+EMBED_PATH = "/api/embed"
+MODEL_PATHS = GENERATION_PATHS | {EMBED_PATH}
 MAX_BODY = 4 * 1024 * 1024 + 1
 _CONTEXT = contextvars.ContextVar("cain_inference_context", default=None)
 _PROCESS_LOCK = threading.Lock()
@@ -228,12 +231,17 @@ REQUIRED_FIELDS = (
 )
 OLLAMA_FIELDS = ("model.ollama_digest", "model.quantization", "model.template_sha256", "model.default_parameters",
                  "runtime.backend")
+# An embedding call: no generated text or token count and no chat template; the vectors are the output.
+EMBED_NOT_APPLICABLE = ("output.text_sha256", "output.output_tokens", "model.template_sha256")
+EMBED_FIELDS = ("output.vectors", "output.vectors_sha256")
 
 
 def missing_fields(manifest: dict, endpoint: str) -> list[str]:
     """Manifest fields that are absent or empty for a call that returned an answer. A replay did not
     run the model, so where it would have run (``runtime.backend``) is not asked of it."""
     required = REQUIRED_FIELDS + (OLLAMA_FIELDS if endpoint != "/completion" else ())
+    if endpoint == EMBED_PATH:
+        required = tuple(name for name in required if name not in EMBED_NOT_APPLICABLE) + EMBED_FIELDS
     if manifest.get("status") == "replayed":
         required = tuple(name for name in required if name != "runtime.backend")
     missing = []
@@ -411,7 +419,7 @@ class Recorder:
     def __call__(self, request, timeout=None):
         url = request.full_url if isinstance(request, Request) else str(request)
         parts = urlsplit(url)
-        if parts.path not in GENERATION_PATHS or not isinstance(request, Request) or request.data is None:
+        if parts.path not in MODEL_PATHS or not isinstance(request, Request) or request.data is None:
             return self.base(request, timeout=timeout)
         from cain.observability.tracing import start
 
@@ -436,7 +444,8 @@ class Recorder:
         requested = (manifest.get("parameters") or {}).get("requested") or {}
         model = (manifest.get("model") or {}).get("name") or (manifest.get("model") or {}).get("model_path")
         output = manifest.get("output") or {}
-        operation = sc.OPERATION_CHAT if manifest["input"]["endpoint"] == "/api/chat" else sc.OPERATION_TEXT_COMPLETION
+        operation = {"/api/chat": sc.OPERATION_CHAT, EMBED_PATH: sc.OPERATION_EMBEDDINGS}.get(
+            manifest["input"]["endpoint"], sc.OPERATION_TEXT_COMPLETION)
         record_span(f"{operation} {model}", started, {
             sc.OPERATION_NAME: operation, sc.PROVIDER_NAME: (manifest.get("runtime") or {}).get("name"),
             sc.REQUEST_MODEL: model, sc.REQUEST_TEMPERATURE: requested.get("temperature"),
@@ -459,8 +468,8 @@ class Recorder:
                                   "endpoint": parts.path, "request_sha256": request_sha}))
         request_key = _hash(canonicalize({"endpoint": parts.path, "request_sha256": request_sha}))
         options = body.get("options") or {}
-        if self.mode == "record" and not (options.get("temperature", body.get("temperature")) == 0
-                                          or "seed" in options or "seed" in body):
+        if self.mode == "record" and parts.path != EMBED_PATH and not (
+                options.get("temperature", body.get("temperature")) == 0 or "seed" in options or "seed" in body):
             raise ValueError("record mode requires temperature 0 or an explicit seed")
         call = {"id": "inference:" + uuid4().hex, "recorded_at": _now(), "mode": self.mode, "endpoint": parts.path,
                 "cache_key": key, "request_key": request_key, "cache_hit": False, "status": "pending",
@@ -519,9 +528,11 @@ class Recorder:
         if self._cain is None:
             self._cain = _cain_identity()
         options = dict(body.get("options") or {})
-        for key in ("temperature", "seed", "n_predict", "top_p", "top_k", "min_p", "repeat_penalty"):
+        for key in ("temperature", "seed", "n_predict", "top_p", "top_k", "min_p", "repeat_penalty", "truncate",
+                    "dimensions"):
             if key in body:
                 options.setdefault(key, body[key])
+        embed = call["endpoint"] == EMBED_PATH
         parsed = None
         if raw is not None:
             try:
@@ -539,6 +550,11 @@ class Recorder:
             "durations_ns": {k: (parsed or {}).get(k) for k in ("total_duration", "load_duration",
                                                                  "prompt_eval_duration", "eval_duration")},
         }
+        if output is not None and embed:
+            vectors = (parsed or {}).get("embeddings")
+            vectors = vectors if isinstance(vectors, list) else []
+            output.update(vectors=len(vectors), dimensions=len(vectors[0]) if vectors else None,
+                          vectors_sha256=_hash(canonicalize(vectors)) if vectors else None)
         context = _CONTEXT.get() or {}
         return {
             "schema": MANIFEST_SCHEMA, "call_id": call["id"], "recorded_at": call["recorded_at"], "mode": call["mode"],
@@ -555,7 +571,8 @@ class Recorder:
             },
             "input": {
                 "endpoint": call["endpoint"], "request_sha256": call["request_sha256"],
-                "prompt_sha256": _hash(body.get("prompt")), "system_sha256": _hash(body.get("system")),
+                "prompt_sha256": _hash(canonicalize(body["input"])) if embed and "input" in body
+                else _hash(body.get("prompt")), "system_sha256": _hash(body.get("system")),
                 "messages_sha256": _hash(canonicalize(body["messages"])) if "messages" in body else None,
                 "schema_sha256": _hash(canonicalize(body.get("format") or body.get("json_schema")))
                 if (body.get("format") or body.get("json_schema")) is not None else None,
@@ -591,8 +608,9 @@ class _FileLock:
         self.handle.close()
 
 
-def attach(provider, store: InferenceStore, *, mode: str = "manifest", server_parallel=None):
-    """Route a local provider's model calls through a recorder (no-op for providers without transport)."""
+def attach(provider, store: InferenceStore, *, mode: str = "manifest", server_parallel=None, base=None):
+    """Route a local provider's model calls through a recorder (no-op for providers without transport).
+    ``base`` is the provider's own opener, kept underneath the recorder (e.g. no proxy, no redirects)."""
     if hasattr(provider, "transport"):
-        provider.transport = Recorder(store, mode=mode, server_parallel=server_parallel)
+        provider.transport = Recorder(store, mode=mode, server_parallel=server_parallel, base=base)
     return provider

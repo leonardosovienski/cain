@@ -110,3 +110,11 @@ rótulo é grande, como mostra o teste. É uma demonstração do estimador, não
 - Rotular à mão a amostra mensal (`cain claims faithfulness-sample --month 2026-09 --n 30`) para a primeira medida
   real de fidelidade.
 - Ligar `CAIN_OTEL_ENDPOINT` no ambiente em que o CAIN roda, se quiser traces contínuos no MLflow.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- A linha "parcial" foi resolvida: o grafo lê o ledger do loop (tentativas, chamadas do proponente, estágios do avaliador com o mesmo id dos spans, gates, holdout) e os eventos dos workflows (aprovações, forks).
+- `cain trace | why | impact | invalidate --loop-db --workflow-db`. O `why` agora lista decisões, chamadas de modelo e de ferramenta.
+- A correção de CI deste PR (extra `observability`) usava `importorskip`, que mascara a falta do extra. Ele saiu e o README instala o mesmo que o CI.

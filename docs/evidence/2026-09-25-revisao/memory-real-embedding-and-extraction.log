@@ -1,0 +1,24 @@
+# 2026-09-25T16:48:59Z cain 74c533b + working tree; Ollama {"version":"0.34.4"}
+## 1. vector index with the real embedding (qwen3-embedding:0.6b)
+{"id": "fact:9081acf8592d4f25b0c8b2ac69d545fd", "status": "DECLARED"}
+{"id": "fact:6ce7025629844872b8a2bf84e1e8402d", "status": "DECLARED"}
+T1 = 2026-09-25T16:49:00.451289Z
+{"id": "fact:7e46d1083cfe4034941a3caa77cd1d1b", "status": "DECLARED", "recorded_at": "2026-09-25T16:49:01.541149Z"}
+$ search 'funding rate regime edge' --as-of T1   (the later H10 is the best match; must be invisible)
+{"mode": "hybrid", "hits": [["H1 verdict funding rate regime model: NO", "2026-09-25T16:48:59.303586Z", 0.7708], ["H9 verdict open interest to volume ratio", "2026-09-25T16:48:59.414301Z", 0.3152]]}
+$ search 'funding rate regime edge' --as-of now
+{"mode": "hybrid", "hits": [["H10 verdict weekend liquidity of stablec", 0.8255], ["H1 verdict funding rate regime model: NO", 0.7708], ["H9 verdict open interest to volume ratio", 0.3152]]}
+$ rebuild-index (projections and vectors from the log), then the same search
+{"events_replayed": 3, "vectors": 3, "head": "7e7beceb6f7820426815c998c127901d6044c5954672acbe099fb3a9a4bd4c79"}
+identical after rebuild: True
+## 2. extraction by the local model (qwen3.5:4b): every fact DECLARED, literal quote, model digest
+{"status": "DECLARED", "facts_created": 4, "rejected_without_literal_support": 0, "extractor_model": "qwen3.5:4b@2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd", "extractor_prompt_hash": "ea8a417e520dce88e6550c53124af305cb5a4b7c9a0e07732367ea7a13945416"}
+$ facts --as-of now --cube crypto --status DECLARED   (the extracted facts: extractor model, literal source)
+   DECLARED | Its net return per signal | was | {'quote': 'Its net return per signal was -0.37 basis points' | qwen3.5:4b@2a654d98e
+   DECLARED | The H1 funding regime model | was evaluated | {'quote': 'The H1 funding regime model was evaluated with fu | qwen3.5:4b@2a654d98e
+   DECLARED | The H9 open interest model | remains registered | {'quote': 'The H9 open interest model remains registered but | qwen3.5:4b@2a654d98e
+   DECLARED | the hypothesis | was closed | {'quote': 'so the hypothesis was closed as NO-GO', 'value':  | qwen3.5:4b@2a654d98e
+$ memory verify
+{"status": "intact"}
+$ inference audit (every model call has a complete manifest)
+{"store": "/home/superleo13/predictors/runtime/cain-revisao/memory-demo/state/inference.db", "calls": 7, "by_status": {"called": {"calls": 7, "complete": 7}}, "missing": {}}

@@ -1,0 +1,50 @@
+# 2026-09-25T16:38:20Z cain 74c533b + working tree; ledger = copy of the Prompt 6 ledger
+$ cain loop verify
+{
+  "status": "intact",
+  "broken_at": null,
+  "entries": 37,
+  "head": "bdce4824b221ceda7d230500406da8454c417cd1eb065bf9f37c51488d96cdb8"
+}
+$ python: load_world (relative evaluator path, policy fingerprint)
+{
+ "world_sha256": "8e76ff2aa73cde1edd36e5b46e8e5554fe5d2c2948a791c873d5586dcc72e481",
+ "policy_sha256": "15f4319d42654fb86d165a97c5451e9767fa6e063e0d39c9e2be4789f3c0ee88",
+ "entrypoint": "/home/superleo13/predictors/work/cain-revisao/loops/brasileirao/evaluator.py",
+ "novelty": {
+  "measure": "embedding",
+  "threshold": 0.85
+ },
+ "redundancy": {
+  "measure": "max_abs_diff",
+  "threshold": 0.001
+ },
+ "evaluator": "intact"
+}
+$ cain loop run --predictor brasileirao --world loops/brasileirao/research_world.toml --loop-id loop:review-rerun
+{
+ "attempts": 0,
+ "stopped": "policy_changed_for_hypothesis",
+ "conflicts": [
+  {
+   "loop_id": "loop:brasileirao-dev2022-1",
+   "policy_sha256": null,
+   "world_sha256": "08949ca83c1ef296884159a9d2370bb188cd602502bf01c2cb5c2c1eae50a56a",
+   "world_version": 1
+  },
+  {
+   "loop_id": "loop:brasileirao-dev2022-2",
+   "policy_sha256": null,
+   "world_sha256": "d11b6f605cc0a6d1840b540a4f1c81a3c51022b9cfb07da056a786df74fc69bc",
+   "world_version": 2
+  }
+ ],
+ "policy_sha256": "15f4319d42654fb86d165a97c5451e9767fa6e063e0d39c9e2be4789f3c0ee88"
+}
+$ cain loop verify
+{
+  "status": "intact",
+  "broken_at": null,
+  "entries": 39,
+  "head": "7a32aface986367f16635beddf59bbe1b652d1f00d346e7d4ef0eec3ba44e28a"
+}

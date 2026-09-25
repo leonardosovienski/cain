@@ -1,0 +1,28 @@
+# provenance over the copy of the real Prompt 6 ledger (memory empty: only loop edges)
+$ cain why loop:brasileirao-dev2022-2 --loop-db loop.db --as-of now
+{
+ "runs": [
+  "attempt:loop:brasileirao-dev2022-2#1",
+  "attempt:loop:brasileirao-dev2022-2#2",
+  "attempt:loop:brasileirao-dev2022-2#3",
+  "attempt:loop:brasileirao-dev2022-2#4",
+  "attempt:loop:brasileirao-dev2022-2#5",
+  "attempt:loop:brasileirao-dev2022-2#6"
+ ],
+ "model_calls": [
+  "inference:047398cce9244bcf9c53e4c43901ee58",
+  "inference:8d791e0b43544b3f941179d91f940851",
+  "inference:220e12969e914f75a15e22344e1c2d50",
+  "inference:41a51f18e44348a1aac8a824a0296904",
+  "inference:5b72b92b6f4d46ea851f45eb6104139e"
+ ],
+ "tool_calls": 12,
+ "tool_call_examples": [
+  "tool:loop:brasileirao-dev2022-2#1:in_sample",
+  "tool:loop:brasileirao-dev2022-2#1:sanity",
+  "tool:loop:brasileirao-dev2022-2#1:walk_forward"
+ ],
+ "decisions": [],
+ "nodes": 24,
+ "edges": 24
+}

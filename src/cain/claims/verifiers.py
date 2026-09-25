@@ -8,16 +8,16 @@
   ``"predict: " + premise + </s> + hypothesis`` (max 2048 tokens), one decoder step from token 0,
   softmax over the logits of token ids 3 and 209; index 1 is the support probability.
 
-Thresholds are policy, not code: ``claims/data/verifier-policy.json`` (versioned, hashed in every
-assessment). Both checkpoints are trained on English; see the golden set report for Portuguese.
+Thresholds are policy, not code: ``claims/data/verifier-policy.json`` and its later versions
+``verifier-policy-v<N>.json`` (``cain.policy``), hashed in every assessment. Both checkpoints are
+trained on English; see the golden set report for Portuguese.
 """
 
 from __future__ import annotations
 
-from hashlib import sha256
-from importlib.resources import files
-import json
 from pathlib import Path
+
+from cain import policy as policies
 
 HHEM_REPO, HHEM_REVISION = "vectara/hallucination_evaluation_model", "8e4a2e6e96c708cc76c2344f7e4757df2515292c"
 FLAN_T5_BASE_REPO, FLAN_T5_BASE_REVISION = "google/flan-t5-base", "7bcac572ce56db69c1ea7c8af255c5d7c9672fc2"
@@ -27,11 +27,9 @@ HHEM_PROMPT = ("<pad> Determine if the hypothesis is true given the premise?\n\n
 DEFAULT_MODELS_DIR = Path.home() / "predictors" / "tools" / "hf" / "models"
 
 
-def policy() -> dict:
-    raw = files("cain.claims").joinpath("data/verifier-policy.json").read_bytes()
-    value = json.loads(raw)
-    value["sha256"] = sha256(raw).hexdigest()
-    return value
+def policy(at: str | None = None) -> dict:
+    """The verifier threshold policy in force at ``at`` (the latest when None)."""
+    return policies.effective(policies.versions("cain.claims", "verifier-policy"), at)
 
 
 def _snapshot(models_dir, repo: str) -> Path:

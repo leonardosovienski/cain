@@ -12,11 +12,9 @@ def register(sub):
     run.add_argument("--predictor", required=True)
     run.add_argument("--world", type=Path, required=True)
     run.add_argument("--proposer", choices=["neighbor", "local-model"], default="neighbor")
-    run.add_argument("--novelty", choices=["lexical", "embedding"], default="lexical")
     run.add_argument("--config", type=Path, help="cain.toml for the local model / embedding")
     run.add_argument("--loop-id")
     run.add_argument("--memory-db", type=Path, help="findings archive (Prompt 7): stop on a closed hypothesis")
-    run.add_argument("--closed-threshold", type=float, default=0.6)
     status = commands.add_parser("status", help="What a loop did, from its ledger events")
     status.add_argument("loop_id", nargs="?")
     decide = commands.add_parser("decide", help="Human decision on the pending gate of a loop")
@@ -30,12 +28,11 @@ def register(sub):
     commands.add_parser("verify", help="Recompute the ledger hash chain")
 
 
-def _similarity(args):
-    return similarity_function(args.novelty, args.config)
-
-
 def similarity_function(kind: str, config=None):
-    """Lexical overlap, or cosine of the configured local embedding model (qwen3-embedding)."""
+    """Lexical overlap, or cosine of the configured local embedding model (qwen3-embedding).
+
+    The embedding model is reached only on first use, so a loop that stops before comparing anything
+    (evaluator changed, policy changed, closed hypothesis) does not need the model server."""
     from cain.loop.engine import lexical_similarity
 
     if kind == "lexical":
@@ -45,14 +42,15 @@ def similarity_function(kind: str, config=None):
     from cain.providers import configured_embedding
     from cain.settings import load_settings
 
-    settings = load_settings(config)
-    settings.search_mode = "hybrid"
-    embedding = configured_embedding(settings)
-    cache = {}
+    cache, model = {}, []
 
     def vector(text):
+        if not model:
+            settings = load_settings(config)
+            settings.search_mode = "hybrid"
+            model.append(configured_embedding(settings))
         if text not in cache:
-            cache[text] = embedding.embed([text])[0]
+            cache[text] = model[0].embed([text])[0]
         return cache[text]
 
     def cosine(a, b):
@@ -102,7 +100,8 @@ def execute(args):
         domain = world["world"]["predictor"]
 
         def closed_check(statement, identity):
-            return archive.equivalent_closed(domain, statement, as_of=archive.memory.now(), identity=identity,
-                                             threshold=args.closed_threshold)
-    return ResearchLoop(world, ledger, proposer, similarity=_similarity(args),
+            return archive.equivalent_closed(domain, statement, as_of=archive.memory.now(), identity=identity)
+    # The novelty measure and threshold are the world's policy, not a command-line choice.
+    return ResearchLoop(world, ledger, proposer, similarity=similarity_function(world["novelty"]["measure"],
+                                                                            args.config),
                         closed_check=closed_check).run(loop_id=args.loop_id)

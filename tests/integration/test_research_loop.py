@@ -10,7 +10,7 @@ import pytest
 from cain.loop.engine import ResearchLoop, decide_gate, run_holdout
 from cain.loop.ledger import LoopLedger
 from cain.loop.proposers import NeighborProposer
-from cain.loop.world import WorldError, file_sha256, load_world
+from cain.loop.world import WorldError, file_sha256, load_world, verify_evaluator
 
 EVALUATOR = '''
 import json, math, sys, time
@@ -32,16 +32,22 @@ print(json.dumps(out))
 
 
 def write_world(tmp_path, *, gates='["holdout"]', stages='["sanity", "in_sample", "walk_forward", "holdout"]',
-                attempts=12, stagnation=4, evaluator_text=EVALUATOR, extra=""):
+                attempts=12, stagnation=4, evaluator_text=EVALUATOR, extra="",
+                redundancy='measure = "correlation"\nthreshold = 0.99', novelty='measure = "lexical"\nthreshold = 0.9',
+                hypothesis="H-fixture", min_improvement=0.001, version=1, relative=False):
+    # The thresholds the engine used to default to (redundancy: correlation 0.99; novelty: lexical 0.9)
+    # live in the world now, as the threshold rule requires; every test keeps the same semantics.
+    tmp_path.mkdir(parents=True, exist_ok=True)
     script = tmp_path / "evaluator.py"
     script.write_text(evaluator_text, encoding="utf-8")
+    pinned = "evaluator.py" if relative else script
     world = tmp_path / "research_world.toml"
     world.write_text(f'''
 [world]
 id = "fixture-world"
-version = 1
+version = {version}
 predictor = "fixture"
-hypothesis = "H-fixture"
+hypothesis = "{hypothesis}"
 description = "a smoother window and moderate l2 lower the loss"
 
 [data]
@@ -51,7 +57,7 @@ holdout = [{{path = "holdout.csv", sha256 = "{'1' * 64}"}}]
 [metric]
 primary = "loss"
 direction = "minimize"
-min_improvement = 0.001
+min_improvement = {min_improvement}
 
 [editable]
 files = []
@@ -85,10 +91,16 @@ human = {gates}
 [cascade]
 stages = {stages}
 
+[redundancy]
+{redundancy}
+
+[novelty]
+{novelty}
+
 [evaluator]
 python = '{sys.executable}'
-entrypoint = '{script}'
-files = [{{path = '{script}', sha256 = "{file_sha256(script)}"}}]
+entrypoint = '{pinned}'
+files = [{{path = '{pinned}', sha256 = "{file_sha256(script)}"}}]
 {extra}
 ''', encoding="utf-8")
     return load_world(world), script
@@ -136,12 +148,58 @@ def test_stagnation_and_budget_stop_the_loop(tmp_path):
                       {"params": {"window": 2}, "description": "features: tune window"}])
     status = ResearchLoop(world, ledger, worse).run(loop_id="loop:stagnant")
     assert status["stopped"]["reason"] == "stagnation" and status["attempts"] == 3
+    # Other budgets are another policy: a separate experiment with its own ledger (the same hypothesis under
+    # other thresholds in one ledger is refused, see test_a_hypothesis_stays_bound_to_its_policy).
     world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=4, stagnation=10)
+    ledger = LoopLedger(tmp_path / "ledger-budget.db")
     status = ResearchLoop(world, ledger, NeighborProposer()).run(loop_id="loop:budget")
     assert status["stopped"]["reason"] == "budget_attempts" and status["attempts"] == 4
     ticks = iter(range(0, 10_000, 100))
     status = ResearchLoop(world, ledger, NeighborProposer(), clock=lambda: next(ticks)).run(loop_id="loop:time")
     assert status["stopped"]["reason"] == "budget_time"
+
+
+def test_a_hypothesis_stays_bound_to_its_policy(tmp_path):
+    """A changed threshold applies only to a hypothesis registered after the change (the threshold rule)."""
+    stages = '["sanity", "in_sample", "walk_forward"]'
+    ledger = LoopLedger(tmp_path / "ledger.db")
+    first, _ = write_world(tmp_path / "a", stages=stages, attempts=2)
+    status = ResearchLoop(first, ledger, NeighborProposer()).run(loop_id="loop:first")
+    assert status["stopped"]["reason"] == "budget_attempts"
+    assert status["started"]["policy_sha256"] == first["_policy_sha256"]
+    assert all(h["policy_sha256"] == first["_policy_sha256"] for h in status["hypotheses"])
+    # Same rules in another directory and another world version: paths and versions are not policy.
+    moved, _ = write_world(tmp_path / "b", stages=stages, attempts=2, version=7)
+    assert moved["_policy_sha256"] == first["_policy_sha256"] and moved["_sha256"] != first["_sha256"]
+    assert ResearchLoop(moved, ledger, NeighborProposer()).run(loop_id="loop:moved")["attempts"] == 2
+    # A looser min_improvement on the same hypothesis: nothing runs.
+    calls = []
+
+    def counting(*args, **kwargs):
+        calls.append(args[1])
+        raise AssertionError("the evaluator must not run")
+
+    looser, _ = write_world(tmp_path / "c", stages=stages, attempts=2, min_improvement=0.0)
+    assert looser["_policy_sha256"] != first["_policy_sha256"]
+    status = ResearchLoop(looser, ledger, NeighborProposer(), runner=counting).run(loop_id="loop:looser")
+    assert status["stopped"]["reason"] == "policy_changed_for_hypothesis" and status["attempts"] == 0 and calls == []
+    assert {c["loop_id"] for c in status["stopped"]["conflicts"]} == {"loop:first", "loop:moved"}
+    # The same change under a new hypothesis registered after it runs.
+    renamed, _ = write_world(tmp_path / "d", stages=stages, attempts=2, min_improvement=0.0, hypothesis="H-fixture-2")
+    assert ResearchLoop(renamed, ledger, NeighborProposer()).run(loop_id="loop:renamed")["attempts"] == 2
+
+
+def test_the_world_carries_every_threshold_and_resolves_relative_paths(tmp_path):
+    world, script = write_world(tmp_path / "rel", relative=True)
+    assert world["evaluator"]["entrypoint"] == str(script.resolve())
+    assert verify_evaluator(world)["status"] == "intact"
+    for missing in ('novelty=""', 'redundancy=""'):
+        with pytest.raises(WorldError, match="measure must be one of"):
+            write_world(tmp_path / "bad", **{missing.split("=")[0]: ""})
+    with pytest.raises(WorldError, match="novelty.threshold"):
+        write_world(tmp_path / "bad", novelty='measure = "embedding"')
+    with pytest.raises(WorldError, match="min_improvement is required"):
+        write_world(tmp_path / "bad", min_improvement='"small"')
 
 
 def test_crash_and_timeout_are_in_the_ledger_and_in_the_attempt_count(tmp_path):
@@ -206,6 +264,34 @@ def test_holdout_only_after_a_recorded_human_approval(tmp_path):
     with pytest.raises(ValueError, match="spent once"):
         run_holdout(world, ledger, "loop:gate")
     assert ledger.verify()["status"] == "intact"
+
+
+def test_provenance_reads_the_loop_ledger_decisions_attempts_and_tool_calls(tmp_path):
+    from cain.memory.store import MemoryStore
+    from cain.provenance.graph import ProvenanceGraph
+
+    world, _ = write_world(tmp_path, attempts=10)
+    ledger = LoopLedger(tmp_path / "ledger.db")
+    ResearchLoop(world, ledger, NeighborProposer()).run(loop_id="loop:gate")
+    decided = decide_gate(ledger, "loop:gate", decision="APPROVE", by="leo", note="worth one look")
+    run_holdout(world, ledger, "loop:gate")
+    memory = MemoryStore(tmp_path / "memory.db")
+    graph = ProvenanceGraph(memory, loop_ledger=ledger)
+    why = graph.why("holdout:loop:gate", as_of=memory.now())
+    # The holdout rests on the human decision, the gate it answered, the attempt and its evaluator stages.
+    assert why["decisions"] == [f"decision:{decided['event_id']}"]
+    gate = next(e for e in ledger.events("loop:gate") if e["kind"] == "gate.requested")
+    assert f"gate:{gate['event_id']}" in [n["node"] for n in why["nodes"]]
+    attempt = f"attempt:loop:gate#{gate['body']['attempt']}"
+    assert attempt in why["runs"]
+    assert set(why["tool_calls"]) == {f"tool:loop:gate#{gate['body']['attempt']}:{s}"
+                                      for s in ("sanity", "in_sample", "walk_forward")}
+    assert any(e["origin"].endswith("by leo") for e in why["edges"] if e["from"].startswith("decision:"))
+    # Invalidating one evaluator stage flags the attempt, the gate, the decision, the holdout and the loop.
+    flagged = {f["node"] for f in graph.invalidate(why["tool_calls"][0], by="leo", reason="stage rerun needed")
+               ["flagged"]}
+    assert {attempt, f"gate:{gate['event_id']}", f"decision:{decided['event_id']}", "holdout:loop:gate",
+            "loop:gate"} <= flagged
 
 
 def test_new_hypothesis_gate_and_variants(tmp_path):
@@ -276,8 +362,8 @@ def test_repeated_proposal_is_a_duplicate_and_never_reaches_the_evaluator(tmp_pa
 
 
 def test_redundancy_measure_for_parameter_variants(tmp_path):
-    extra = '\n[redundancy]\nmeasure = "max_abs_diff"\nthreshold = 0.001\n'
-    world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=3, extra=extra)
+    world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=3,
+                           redundancy='measure = "max_abs_diff"\nthreshold = 0.001')
     ledger = LoopLedger(tmp_path / "ledger.db")
     # l2 leaves the signal identical (max diff 0) → redundant; window 5 changes it → evaluated.
     proposer = Scripted([{"params": {"l2": 0.5}, "description": "model: tune l2"},
@@ -288,9 +374,8 @@ def test_redundancy_measure_for_parameter_variants(tmp_path):
     assert discarded[0]["reason"] == "REDUNDANT" and discarded[0]["measure"] == "max_abs_diff"
     assert discarded[0]["max_abs_diff"] == 0
     assert [e["body"]["attempt"] for e in events if e["kind"] == "experiment.finished"] == [1, 3]
-    bad = '\n[redundancy]\nmeasure = "vibes"\n'
     with pytest.raises(WorldError, match="redundancy.measure"):
-        write_world(tmp_path, extra=bad)
+        write_world(tmp_path, redundancy='measure = "vibes"\nthreshold = 0.5')
 
 
 def test_local_model_proposer_sees_attempts_and_its_proposals_go_through_the_guard(tmp_path):

@@ -34,8 +34,9 @@ def register(sub):
     check.add_argument("--as-of", required=True)
     for key in ("trial-id", "hypothesis-id", "hypothesis-family"):
         check.add_argument("--" + key)
-    check.add_argument("--threshold", type=float, default=0.6)
-    check.add_argument("--similarity", choices=["lexical", "embedding"], default="lexical")
+    # What counts as equivalent is the versioned findings-policy; no flag moves its threshold.
+    check.add_argument("--rank-embedding", action="store_true",
+                       help="order the matches by embedding similarity (never decides; not calibrated)")
     check.add_argument("--config", type=Path, help="cain.toml for the embedding model")
     pre = commands.add_parser("preregister", help="Pre-register a hypothesis in a domain")
     pre.add_argument("--domain", required=True)
@@ -99,9 +100,9 @@ def execute(args):
                     "hypothesis_family": args.hypothesis_family}
         from cain.loop.cli import similarity_function
 
+        rank = similarity_function("embedding", args.config) if args.rank_embedding else None
         matches = archive.equivalent_closed(args.domain, args.statement, as_of=at(args.as_of), identity=identity,
-                                            threshold=args.threshold,
-                                            similarity=similarity_function(args.similarity, args.config))
+                                            rank=rank)
         return {"equivalent_to_closed": bool(matches), "matches": matches}
     if cmd == "preregister":
         return archive.preregister(args.domain, args.hypothesis_id, statement=args.statement,

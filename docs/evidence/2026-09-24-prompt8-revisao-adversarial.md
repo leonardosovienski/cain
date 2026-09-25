@@ -122,3 +122,10 @@ critério fraco (ICC < 0,8). Foi por isso que o teste proposto pelo modelo deixo
 | Mapa na interface web | **PROVEN** | teste da API + página renderizada no navegador real (DOM lido) |
 | Qualidade das perguntas do modelo | **DECLARED** | não medida; revisão humana obrigatória |
 | Pré-registro no `predictor_core` | **não existe no core** | fica no CAIN, com o sha256 do checklist |
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- O item "já encerrada?" usa a política versionada de equivalência. `--closed-threshold` saiu; `--closed-rank-embedding` só ordena.
+- Cada item gerado pelo modelo agora é aresta de proveniência para a chamada que o gerou.

@@ -41,7 +41,9 @@ def calls(tmp_path):
 
 
 def test_every_attempt_runs_with_the_hardening_flags_and_only_its_workspace():
-    box = DockerSandbox(SandboxPolicy(image=IMAGE, memory="256m", runtime="runsc"), path_mapper=lambda p: f"/mapped{p}")
+    # The mapper sees host paths; as_posix keeps the expected strings the same on Windows and POSIX.
+    box = DockerSandbox(SandboxPolicy(image=IMAGE, memory="256m", runtime="runsc"),
+                        path_mapper=lambda p: f"/mapped{Path(p).as_posix()}")
     args = box.command("c1", Path("/ws/a1"), ["python", "candidate.py"], data_ro=[(Path("/allowed"), "/data")])
     joined = " ".join(args)
     for flag in ("--network none", "--read-only", "--user 65534:65534", "--cap-drop ALL",
@@ -95,6 +97,33 @@ def test_timeout_kills_the_attempt_and_records_a_crash(fake):
     assert manifest["run"]["status"] == "TIMEOUT" and manifest["verdict"] == "CRASH"
     assert manifest["run"]["exit_code"] == 137
     assert any(c[0] == "kill" for c in calls(tmp_path)) and any(c[0] == "rm" for c in calls(tmp_path))
+
+
+def test_a_timeout_never_waits_forever_on_pipes_a_leftover_process_holds(fake, monkeypatch):
+    # The Windows CI hang of the first version: subprocess.run reads the pipes without a bound after
+    # killing the CLI there, and a process that inherited them kept them open forever.
+    import signal
+    import time
+
+    import cain.sandbox.runner as runner
+
+    tmp_path, evaluator = fake
+    monkeypatch.setenv("FAKE_DOCKER_KILL_NOOP", "1")  # the kill leaves the candidate alive, pipes held
+    monkeypatch.setattr(runner, "OUTPUT_GRACE_SECONDS", 1.0)
+    started = time.monotonic()
+    try:
+        manifest = run_attempt(sandbox(timeout=1.0), candidate(tmp_path, "import time\ntime.sleep(30)\n"),
+                               evaluator_files=[evaluator], workspace_root=tmp_path)
+        assert time.monotonic() - started < 15
+        assert manifest["run"]["status"] == "TIMEOUT" and manifest["verdict"] == "CRASH"
+    finally:
+        for state in (tmp_path / "docker-state").glob("*.json"):
+            pid = json.loads(state.read_text()).get("pid")
+            if pid:
+                try:
+                    os.kill(pid, signal.SIGKILL if hasattr(signal, "SIGKILL") else signal.SIGTERM)
+                except OSError:
+                    pass
 
 
 def test_an_evaluator_change_during_the_attempt_is_invalid_with_an_alert(fake):
