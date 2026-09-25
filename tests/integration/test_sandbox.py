@@ -124,10 +124,98 @@ def test_an_attempt_without_output_proves_nothing(fake):
     assert manifest["verdict"] == "INVALID" and manifest["problems"] == ["output.json missing"]
 
 
+def test_a_defence_is_judged_by_what_the_host_saw_not_by_the_candidate():
+    from cain.sandbox.attacks import held
+
+    def item(attack, **kw):
+        base = {"attack": attack, "verdict": "VALID", "status": "OK", "problems": [], "alerts": [],
+                "evaluator_unchanged": True, "inside": None}
+        return {**base, **kw}
+
+    # the link was planted (the candidate "succeeded") but the host refused it: the defence held
+    assert held(item("symlink_report", verdict="INVALID", inside={"succeeded": True},
+                     problems=["report.md is a symlink (to /x); refused"]))[0]
+    # an attack that crashed before writing anything proves nothing
+    assert not held(item("network_socket", status="EXIT_NONZERO", inside=None))[0]
+    assert held(item("network_socket", inside={"succeeded": False, "error": "unreachable"}))[0]
+    assert not held(item("network_socket", inside={"succeeded": True}))[0]
+    # a memory hog that finished instead of being killed is a failed defence
+    assert not held(item("memory_hog", inside={"succeeded": True}))[0]
+    assert not held(item("fabricated_report"))[0]
+    # any attack that leaves the evaluator changed fails, whatever else it reports
+    assert not held(item("write_evaluator", inside={"succeeded": False}, evaluator_unchanged=False))[0]
+    probe = {"uid": "65534", "cap_eff": "0" * 16, "cap_bnd": "0" * 16, "no_new_privs": "1", "seccomp": "2",
+             "data_read_only": True, "writable_mounts": ["/dev", "/dev/shm", "/tmp", "/workspace"]}
+    assert held(item("isolation_probe", inside=probe))[0]
+    assert not held(item("isolation_probe", inside={**probe, "writable_mounts": ["/", "/workspace"]}))[0]
+    assert not held(item("isolation_probe", inside={**probe, "uid": "0"}))[0]
+
+
+def test_cli_runs_a_candidate_and_prints_its_manifest(fake, monkeypatch, capsys):
+    import cain.sandbox.runner as runner
+    from cain.cli import main
+
+    tmp_path, evaluator = fake
+    real = runner.DockerSandbox
+    monkeypatch.setattr(runner, "DockerSandbox", lambda policy, docker, path_mapper: real(
+        policy, docker=[sys.executable, str(HERE / "fake_docker.py")], path_mapper=path_mapper))
+    data = tmp_path / "allowed"
+    data.mkdir()
+    source = 'import json\njson.dump({"mean": 2.5}, open("output.json", "w"))\n'
+    assert main(["sandbox", "--image", IMAGE, "--timeout", "20", "--memory", "256m", "--workspace-root",
+                 str(tmp_path), "run", "--candidate", str(candidate(tmp_path, source)),
+                 "--evaluator-file", str(evaluator), "--data", str(data)]) == 0
+    manifest = json.loads(capsys.readouterr().out)
+    assert manifest["verdict"] == "VALID" and manifest["run"]["policy"]["memory"] == "256m"
+    assert f"{data}:/data:ro" in manifest["run"]["docker_args"]
+
+
+class Inert:
+    """Runs nothing (the attacks must never run on the host): every attempt ends OK with no output."""
+
+    def image_identity(self):
+        return {"reference": IMAGE, "id": "sha256:" + "f" * 64, "repo_digests": []}
+
+    def run(self, workspace, argv, data_ro=()):
+        return {"container": "inert", "status": "OK", "exit_code": 0, "oom_killed": False, "stdout": "",
+                "stderr": "", "file_log": {"created": [], "deleted": [], "modified": [], "symlinks": []},
+                "container_diff": [], "policy": {}, "argv": argv, "docker_args": ["run", "inert", *argv]}
+
+
+def test_the_attack_suite_credits_no_defence_without_evidence(tmp_path):
+    from cain.sandbox.attacks import ATTACKS, dumps, run_attacks, summarize
+
+    evaluator = tmp_path / "evaluator.py"
+    evaluator.write_text("def score(x):\n    return x\n", encoding="utf-8")
+    allowed = tmp_path / "allowed" / "allowed.csv"
+    allowed.parent.mkdir()
+    allowed.write_text("value\n1\n", encoding="utf-8")
+    report = run_attacks(Inert(), evaluator_files=[evaluator], holdout_files=[tmp_path / "holdout.csv"],
+                         allowed_data=allowed, workspace_root=tmp_path,
+                         tamper_hook=lambda: evaluator.write_text("def score(x):\n    return 1.0\n", encoding="utf-8"))
+    rows = {r["attack"]: r for r in summarize(report)}
+    assert list(rows) == [*ATTACKS, "benign_candidate", "evaluator_changed_out_of_band"]
+    # nothing ran, so the only defence with evidence is the evaluator hash check
+    assert [name for name, r in rows.items() if r["blocked"]] == ["evaluator_changed_out_of_band"]
+    assert rows["benign_candidate"]["verdict"] == "INVALID"  # its output is missing
+    assert all(a["image"]["id"] and a["docker_args"] for a in report["attacks"])
+    write = next(a for a in report["attacks"] if a["attack"] == "write_evaluator")
+    assert write["evaluator_unchanged"] and json.loads(dumps(report))["evaluator_start"]
+
+
 @pytest.mark.skipif(not os.getenv("CAIN_TEST_DOCKER"), reason="needs a real docker engine (CAIN_TEST_DOCKER)")
 def test_attacks_against_a_real_engine(tmp_path):
+    # CAIN_TEST_DOCKER: the docker CLI; CAIN_TEST_DOCKER_IMAGE: a pinned image; with Docker Desktop's
+    # docker.exe called from WSL, set CAIN_TEST_DOCKER_WSLPATH=1 and a --basetemp on the Windows drive.
+    import subprocess
+
     from cain.sandbox.attacks import run_attacks, summarize
 
+    mapper = None
+    if os.getenv("CAIN_TEST_DOCKER_WSLPATH"):
+        def mapper(path):
+            return subprocess.run(["wslpath", "-w", str(path)], capture_output=True, text=True,
+                                  check=True).stdout.strip()
     evaluator = tmp_path / "evaluator.py"
     evaluator.write_text("def score(x):\n    return x\n", encoding="utf-8")
     holdout = tmp_path / "holdout.csv"
@@ -136,11 +224,11 @@ def test_attacks_against_a_real_engine(tmp_path):
     allowed.parent.mkdir()
     allowed.write_text("value\n1\n2\n3\n", encoding="utf-8")
     box = DockerSandbox(SandboxPolicy(image=os.environ["CAIN_TEST_DOCKER_IMAGE"], timeout=20.0),
-                        docker=os.environ["CAIN_TEST_DOCKER"])
+                        docker=os.environ["CAIN_TEST_DOCKER"], path_mapper=mapper)
     report = run_attacks(box, evaluator_files=[evaluator], holdout_files=[holdout], allowed_data=allowed,
                          workspace_root=tmp_path)
     rows = {r["attack"]: r for r in summarize(report)}
-    assert all(r["blocked"] for r in rows.values())
+    assert [name for name, r in rows.items() if not r["blocked"]] == []
     assert rows["benign_candidate"]["verdict"] == "VALID"
-    assert rows["infinite_loop"]["status"] == "TIMEOUT"
+    assert rows["infinite_loop"]["status"] == "TIMEOUT" and rows["memory_hog"]["status"] == "OOM_KILLED"
     assert evaluator.read_text() == "def score(x):\n    return x\n"

@@ -3,6 +3,10 @@
 Each candidate is a small Python program that tries one thing inside the sandbox and writes what
 happened to ``output.json`` (when it still can). ``run_attacks`` runs every one through
 ``run_attempt`` and records the real outcome next to the expected one.
+
+Whether a defence held is judged by what the host observed (status, verdict, problems, alerts, the
+evaluator hashes), never by the candidate's word alone: an attack that reports its own failure counts
+only when it ran to the end and wrote that failure, so a crash that leaves no output proves nothing.
 """
 
 from __future__ import annotations
@@ -114,7 +118,61 @@ import json
 json.dump({"rps": 0.2093, "baseline_rps": 0.2234}, open("output.json", "w"))
 open("report.md", "w").write("The new model reaches RPS 0.1812, far below the baseline 0.2234.\\n")
 '''),
+    "isolation_probe": ("uid nobody, no capabilities, no_new_privs, seccomp filter, /data read-only",
+                        _REPORT + '''
+status = dict(line.split(":", 1) for line in open("/proc/self/status").read().splitlines() if ":" in line)
+mounts = {}
+for line in open("/proc/self/mounts"):
+    device, target, kind, options = line.split()[:4]
+    mounts[target] = {"type": kind, "writable": "rw" in options.split(",")}
+done(uid=status["Uid"].split()[0], cap_eff=status["CapEff"].strip(), cap_bnd=status["CapBnd"].strip(),
+     no_new_privs=status["NoNewPrivs"].strip(), seccomp=status["Seccomp"].strip(),
+     # /proc and /sys entries are Docker's masked paths (bind mounts of /dev/null), not storage
+     writable_mounts=sorted(t for t, m in mounts.items()
+                            if m["writable"] and not t.startswith(("/proc", "/sys"))
+                            and m["type"] not in ("cgroup", "cgroup2", "devpts", "mqueue")),
+     data_read_only=("/data" in mounts and not mounts["/data"]["writable"]))
+'''),
 }
+
+# Writable mounts a container may have: its workspace and the noexec tmpfs, plus Docker's own /dev
+# (root-owned 0755 tmpfs, not writable by nobody) and /dev/shm (64 MB, noexec).
+ALLOWED_WRITABLE = {"/workspace", "/tmp", "/dev", "/dev/shm"}
+
+
+def _probe_held(inside: dict) -> bool:
+    return (inside.get("uid") == "65534" and set(inside.get("cap_eff", "x")) == {"0"}
+            and set(inside.get("cap_bnd", "x")) == {"0"} and inside.get("no_new_privs") == "1"
+            and inside.get("seccomp") == "2" and inside.get("data_read_only") is True
+            and set(inside.get("writable_mounts", ["?"])) <= ALLOWED_WRITABLE)
+
+
+# How the host sees that each defence held.
+EXPECTED = {
+    "memory_hog": ("killed out of memory", lambda item, inside: item["status"] == "OOM_KILLED"),
+    "infinite_loop": ("killed at the timeout", lambda item, inside: item["status"] == "TIMEOUT"),
+    "symlink_report": ("INVALID, the link refused", lambda item, inside: item["verdict"] == "INVALID"
+                       and any("symlink" in p for p in item["problems"])),
+    "fabricated_report": ("INVALID by the integrity check", lambda item, inside: item["verdict"] == "INVALID"
+                          and "report has numbers the run did not produce" in item["problems"]),
+    "isolation_probe": ("probe values as expected", lambda item, inside: item["status"] == "OK"
+                        and _probe_held(inside)),
+    "benign_candidate": ("VALID", lambda item, inside: item["verdict"] == "VALID"),
+    "evaluator_changed_out_of_band": ("INVALID with EVALUATOR_CHANGED", lambda item, inside:
+                                      item["verdict"] == "INVALID"
+                                      and any(a["alert"] == "EVALUATOR_CHANGED" for a in item["alerts"])),
+}
+_SELF_REPORTED = ("ran to the end and reported its own failure",
+                  lambda item, inside: item["status"] == "OK" and inside.get("succeeded") is False)
+
+
+def held(item: dict) -> tuple[bool, str]:
+    """(defence held, what was required)."""
+    inside = item.get("inside") or {}
+    expected, check = EXPECTED.get(item["attack"], _SELF_REPORTED)
+    if item["attack"] != "evaluator_changed_out_of_band" and not item["evaluator_unchanged"]:
+        return False, "evaluator unchanged"
+    return bool(check(item, inside)), expected
 
 
 def benign_candidate() -> str:
@@ -177,18 +235,18 @@ def _one(sandbox, name, defence, source, evaluator_files, data_ro, workspace_roo
             "inside": inside, "problems": manifest["problems"], "alerts": manifest["alerts"],
             "evaluator_unchanged": manifest["evaluator"]["unchanged"], "file_log": manifest["run"]["file_log"],
             "container_diff": manifest["run"]["container_diff"], "image": manifest["image"],
-            "stderr_tail": manifest["run"]["stderr"][-300:]}
+            "docker_args": manifest["run"]["docker_args"], "stderr_tail": manifest["run"]["stderr"][-300:]}
 
 
 def summarize(report: dict) -> list[dict]:
     rows = []
     for item in report["attacks"]:
         inside = item.get("inside") or {}
-        blocked = item["attack"] == "benign_candidate" or not inside.get("succeeded", False)
+        blocked, required = held(item)
         rows.append({"attack": item["attack"], "defence": item["defence"], "verdict": item["verdict"],
-                     "status": item["status"], "blocked": blocked,
+                     "status": item["status"], "blocked": blocked, "required": required,
                      "evidence": (inside.get("error") or inside.get("results") or inside.get("children")
-                                  or item["problems"] or item["alerts"] or item["status"])})
+                                  or item["problems"] or item["alerts"] or inside or item["status"])})
     return rows
 
 
