@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: uv lock --check
-      - run: uv sync --locked --extra dev --extra vision
+      - run: uv sync --locked --extra dev --extra vision --extra observability
       - run: uv run --locked ruff check .
       - run: uv run --locked pytest -q
       - run: uv run --locked python -m cain --help
@@ -47,7 +47,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
-      - run: uv sync --locked --extra dev --extra vision
+      - run: uv sync --locked --extra dev --extra vision --extra observability
       - run: uv run --locked pytest -q --cov=cain --cov-report=term --cov-fail-under=86
 
   # Type checker, informational: reports the current debt without blocking merges.
@@ -61,7 +61,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
-      - run: uv sync --locked --extra dev --extra vision
+      - run: uv sync --locked --extra dev --extra vision --extra observability
       - name: mypy (informational; the debt is printed, never fails the job)
         run: uv run --locked --with mypy mypy || echo "::warning::mypy reported type debt; see the log (informational)"
 
@@ -76,7 +76,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
         with:
           python-version: '3.12'
-      - run: uv sync --locked --extra dev --extra vision
+      - run: uv sync --locked --extra dev --extra vision --extra observability
       - run: uv run --locked pytest -q -p no:cacheprovider
 
   # Windows smoke: the documented launcher flow on a fresh checkout, without Ollama.

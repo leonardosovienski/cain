@@ -1,0 +1,45 @@
+{
+  "claims": 48,
+  "labelled": 16,
+  "unlabelled": 32,
+  "proxy_agreement_on_sample": 0.875,
+  "classical": {
+    "estimate": 0.3125,
+    "ci95": [
+      0.141646,
+      0.555956
+    ],
+    "method": "Wilson"
+  },
+  "ppi": {
+    "estimate": 0.59375,
+    "ci95": [
+      0.35112,
+      0.83638
+    ],
+    "method": "prediction-powered mean (normal approximation)",
+    "proxy_mean_unlabelled": 0.46875,
+    "rectifier_mean": 0.125
+  },
+  "all_48_labels_share": 0.5,
+  "proxy_share_all_48": 0.375,
+  "sample_2026_09": [
+    "pt-03",
+    "pt-13",
+    "pt-23",
+    "pt-08",
+    "en-15",
+    "en-03",
+    "en-16",
+    "pt-05",
+    "pt-18",
+    "en-04",
+    "pt-11",
+    "pt-07",
+    "en-24",
+    "pt-02",
+    "en-13",
+    "en-17"
+  ],
+  "caveat": "the 'human' labels are the golden set labels written by the agent; this demonstrates the estimator, it is not a measurement of faithfulness"
+}

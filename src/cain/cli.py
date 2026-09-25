@@ -107,6 +107,10 @@ def main(argv=None) -> int:
     register_findings(sub)
     from cain.review.cli import register as register_review
     register_review(sub)
+    from cain.provenance.cli import register as register_provenance
+    register_provenance(sub)
+    from cain.sandbox.cli import register as register_sandbox
+    register_sandbox(sub)
     run = sub.add_parser("run", help="Processa um pedido")
     run.add_argument("payload")
     run.add_argument("--intent", choices=["busca", "codigo", "resumo", "conversa"])
@@ -142,6 +146,14 @@ def main(argv=None) -> int:
             result = execute_claims(args)
             _write(result)
             return 1 if isinstance(result, dict) and result.get("status") == "blocked" else 0
+        if args.command == "sandbox":
+            from cain.sandbox.cli import execute as execute_sandbox
+            _write(execute_sandbox(args))
+            return 0
+        if args.command in ("trace", "why", "impact", "invalidate", "relate"):
+            from cain.provenance.cli import execute as execute_provenance
+            _write(execute_provenance(args))
+            return 0
         if args.command == "review":
             from cain.review.cli import execute as execute_review
             _write(execute_review(args))

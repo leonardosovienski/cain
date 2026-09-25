@@ -67,6 +67,17 @@ def register(sub):
     lint.add_argument("--cube", action="append", required=True)
     lint.add_argument("--cross-cube", action="store_true")
     lint.add_argument("--root", type=Path, default=Path("."))
+    sample = commands.add_parser("faithfulness-sample", help="Claims to hand-label this month (deterministic)")
+    sample.add_argument("--month", required=True)
+    sample.add_argument("--n", type=int, default=30)
+    sample.add_argument("--as-of", required=True)
+    sample.add_argument("--cube", action="append", required=True)
+    sample.add_argument("--cross-cube", action="store_true")
+    faithful = commands.add_parser("faithfulness", help="Faithfulness with CI (classical and prediction-powered)")
+    faithful.add_argument("--labels", type=Path, required=True, help="JSON {claim_id: 1 supported | 0 not}")
+    faithful.add_argument("--as-of", required=True)
+    faithful.add_argument("--cube", action="append", required=True)
+    faithful.add_argument("--cross-cube", action="store_true")
     golden = commands.add_parser("golden", help="Measure the verifiers on the frozen golden set")
     golden.add_argument("--models-dir", type=Path, default=os.getenv("CAIN_VERIFIER_MODELS"))
     golden.add_argument("--output", type=Path)
@@ -125,6 +136,20 @@ def execute(args):
 
         return lint_report(memory, args.report.read_text(encoding="utf-8"), as_of=_as_of(memory, args.as_of),
                            cubes=args.cube, cross_cube=args.cross_cube, root=args.root)
+    if cmd in ("faithfulness-sample", "faithfulness"):
+        from cain.claims.faithfulness import estimate, monthly_sample
+
+        at = _as_of(memory, args.as_of)
+        textual = [c for c in memory.claims(as_of=at, cubes=args.cube, cross_cube=args.cross_cube)
+                   if c["kind"] == "TEXTUAL_SUPPORT" and c["status"] not in ("AMBIGUOUS", "UNVERIFIABLE")]
+        if cmd == "faithfulness-sample":
+            return {"month": args.month, "as_of": at, "population": len(textual),
+                    "sample": monthly_sample([c["id"] for c in textual], args.month, args.n)}
+        import json
+
+        automatic = {c["id"]: int(c["status"] == "SUPPORTED") for c in textual}
+        human = {k: int(v) for k, v in json.loads(args.labels.read_text(encoding="utf-8")).items()}
+        return {"as_of": at, **estimate(automatic, human)}
     if cmd == "golden":
         from cain.claims.golden import run_golden
         from cain.claims.verifiers import load_default_pair

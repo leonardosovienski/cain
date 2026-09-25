@@ -25,6 +25,8 @@ import time
 from uuid import uuid4
 
 from cain.loop.evaluator import EvaluatorCrash, correlation, run_stage
+from cain.observability import semconv as sc
+from cain.observability.tracing import active_span, record_span, start
 from cain.loop.ledger import LoopLedger
 from cain.loop.world import baseline, surface_violations, verify_evaluator
 
@@ -162,7 +164,9 @@ class ResearchLoop:
                     self._event(state, "experiment.crashed", {"attempt": state.attempts, "stage": "proposal",
                                                               "reason": type(exc).__name__, "detail": str(exc)[:500]})
                     continue
-            outcome = self._attempt(state, kind, proposal)
+            with active_span(f"loop attempt {state.attempts + 1}", {sc.CAIN_LOOP_ID: state.loop_id,
+                                                                   sc.CAIN_LOOP_ATTEMPT: state.attempts + 1}):
+                outcome = self._attempt(state, kind, proposal)
             if outcome is not None:
                 return outcome
 
@@ -224,11 +228,19 @@ class ResearchLoop:
         started = self.clock()
         for stage in [s for s in world["cascade"]["stages"] if s != "holdout"]:
             remaining = timeout - (self.clock() - started)
+            tool = {sc.OPERATION_NAME: sc.OPERATION_EXECUTE_TOOL, sc.TOOL_NAME: f"evaluator.{stage}",
+                    sc.TOOL_CALL_ID: f"{state.loop_id}#{attempt}:{stage}", sc.CAIN_LOOP_ID: state.loop_id,
+                    sc.CAIN_LOOP_ATTEMPT: attempt}
+            stage_started = start()
             try:
                 if remaining <= 0:
                     raise EvaluatorCrash("TIMEOUT", f"attempt budget of {timeout}s spent before {stage}")
                 result = self.runner(world, stage, params, timeout=remaining)
+                record_span(f"execute_tool evaluator.{stage}", stage_started,
+                            {**tool, sc.CAIN_OUTCOME: "ok" if result["ok"] else "not_ok"}, kind="internal")
             except EvaluatorCrash as exc:
+                record_span(f"execute_tool evaluator.{stage}", stage_started, {**tool, sc.CAIN_OUTCOME: "crash"},
+                            error=f"{exc.reason}: {exc.detail}"[:500], kind="internal")
                 state.since_improvement += 1
                 self._event(state, "experiment.crashed", {"attempt": attempt, "stage": stage, "reason": exc.reason,
                                                           "detail": exc.detail, "hypothesis_id": hypothesis_id})

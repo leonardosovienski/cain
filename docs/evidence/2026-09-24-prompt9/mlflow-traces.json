@@ -1,0 +1,321 @@
+{
+  "experiment_id": "1",
+  "traces": [
+    {
+      "trace_id": "tr-90603f14bc056d525398007f5d3743bb",
+      "spans": [
+        {
+          "name": "loop attempt 6",
+          "parent_id": null,
+          "span_id": "d59776cb62c47c5d",
+          "duration_ms": 1069.0,
+          "attributes": {
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 6
+          }
+        },
+        {
+          "name": "execute_tool evaluator.sanity",
+          "parent_id": "d59776cb62c47c5d",
+          "span_id": "2a06fe8e9d0910f7",
+          "duration_ms": 1049.1,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.sanity",
+            "gen_ai.tool.call.id": "loop:otel-demo#6:sanity",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 6,
+            "cain.outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-fcff1430ea42c355a543b4e93325bf09",
+      "spans": [
+        {
+          "name": "loop attempt 5",
+          "parent_id": null,
+          "span_id": "900200ed59f841bf",
+          "duration_ms": 1009.8,
+          "attributes": {
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 5
+          }
+        },
+        {
+          "name": "execute_tool evaluator.sanity",
+          "parent_id": "900200ed59f841bf",
+          "span_id": "5f94cffdfc8b5b2f",
+          "duration_ms": 990.7,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.sanity",
+            "gen_ai.tool.call.id": "loop:otel-demo#5:sanity",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 5,
+            "cain.outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-3782ef17902ada19334cf215a9180016",
+      "spans": [
+        {
+          "name": "loop attempt 4",
+          "parent_id": null,
+          "span_id": "d5ba3a0f4c5dda0c",
+          "duration_ms": 5849.7,
+          "attributes": {
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 4
+          }
+        },
+        {
+          "name": "execute_tool evaluator.sanity",
+          "parent_id": "d5ba3a0f4c5dda0c",
+          "span_id": "3670fed5ad640556",
+          "duration_ms": 1064.7,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.sanity",
+            "gen_ai.tool.call.id": "loop:otel-demo#4:sanity",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 4,
+            "cain.outcome": "ok"
+          }
+        },
+        {
+          "name": "execute_tool evaluator.in_sample",
+          "parent_id": "d5ba3a0f4c5dda0c",
+          "span_id": "712ffb94809d0206",
+          "duration_ms": 1574.5,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.in_sample",
+            "gen_ai.tool.call.id": "loop:otel-demo#4:in_sample",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 4,
+            "cain.outcome": "ok"
+          }
+        },
+        {
+          "name": "execute_tool evaluator.walk_forward",
+          "parent_id": "d5ba3a0f4c5dda0c",
+          "span_id": "f19866c624f2d50b",
+          "duration_ms": 3190.3,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.walk_forward",
+            "gen_ai.tool.call.id": "loop:otel-demo#4:walk_forward",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 4,
+            "cain.outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-4d020461f7941c5e3e256baaf4cf4cfc",
+      "spans": [
+        {
+          "name": "loop attempt 3",
+          "parent_id": null,
+          "span_id": "24c3f28c11608a8e",
+          "duration_ms": 1078.9,
+          "attributes": {
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 3
+          }
+        },
+        {
+          "name": "execute_tool evaluator.sanity",
+          "parent_id": "24c3f28c11608a8e",
+          "span_id": "7809321447f38650",
+          "duration_ms": 1068.7,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.sanity",
+            "gen_ai.tool.call.id": "loop:otel-demo#3:sanity",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 3,
+            "cain.outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-1e7fdd5198f95a7590b3b6f64f357465",
+      "spans": [
+        {
+          "name": "loop attempt 2",
+          "parent_id": null,
+          "span_id": "0603f95711842c58",
+          "duration_ms": 4518.4,
+          "attributes": {
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 2
+          }
+        },
+        {
+          "name": "execute_tool evaluator.sanity",
+          "parent_id": "0603f95711842c58",
+          "span_id": "e2e1c9a3dec6693a",
+          "duration_ms": 971.7,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.sanity",
+            "gen_ai.tool.call.id": "loop:otel-demo#2:sanity",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 2,
+            "cain.outcome": "ok"
+          }
+        },
+        {
+          "name": "execute_tool evaluator.in_sample",
+          "parent_id": "0603f95711842c58",
+          "span_id": "0211da97846d0889",
+          "duration_ms": 1742.8,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.in_sample",
+            "gen_ai.tool.call.id": "loop:otel-demo#2:in_sample",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 2,
+            "cain.outcome": "ok"
+          }
+        },
+        {
+          "name": "execute_tool evaluator.walk_forward",
+          "parent_id": "0603f95711842c58",
+          "span_id": "3a225d8abc70fc9e",
+          "duration_ms": 3187.8,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.walk_forward",
+            "gen_ai.tool.call.id": "loop:otel-demo#2:walk_forward",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 2,
+            "cain.outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-de578794129840fd788e41eaeef566ae",
+      "spans": [
+        {
+          "name": "loop attempt 1",
+          "parent_id": null,
+          "span_id": "f8ad7750bb465e0c",
+          "duration_ms": 6135.8,
+          "attributes": {
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 1
+          }
+        },
+        {
+          "name": "execute_tool evaluator.sanity",
+          "parent_id": "f8ad7750bb465e0c",
+          "span_id": "5ef7c40cfba5b87a",
+          "duration_ms": 1132.2,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.sanity",
+            "gen_ai.tool.call.id": "loop:otel-demo#1:sanity",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 1,
+            "cain.outcome": "ok"
+          }
+        },
+        {
+          "name": "execute_tool evaluator.in_sample",
+          "parent_id": "f8ad7750bb465e0c",
+          "span_id": "0bb96561684a2c88",
+          "duration_ms": 1654.5,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.in_sample",
+            "gen_ai.tool.call.id": "loop:otel-demo#1:in_sample",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 1,
+            "cain.outcome": "ok"
+          }
+        },
+        {
+          "name": "execute_tool evaluator.walk_forward",
+          "parent_id": "f8ad7750bb465e0c",
+          "span_id": "963e24cbff034ef7",
+          "duration_ms": 3318.5,
+          "attributes": {
+            "gen_ai.operation.name": "execute_tool",
+            "gen_ai.tool.name": "evaluator.walk_forward",
+            "gen_ai.tool.call.id": "loop:otel-demo#1:walk_forward",
+            "cain.loop.id": "loop:otel-demo",
+            "cain.loop.attempt": 1,
+            "cain.outcome": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-a14cb8fb74e95b467565380c51055c27",
+      "spans": [
+        {
+          "name": "text_completion qwen3.5:4b",
+          "parent_id": null,
+          "span_id": "e4f4658f2a740f47",
+          "duration_ms": 401.7,
+          "attributes": {
+            "gen_ai.operation.name": "text_completion",
+            "gen_ai.provider.name": "ollama",
+            "gen_ai.request.model": "qwen3.5:4b",
+            "gen_ai.request.temperature": 0.0,
+            "gen_ai.request.seed": 42,
+            "gen_ai.request.max_tokens": 768,
+            "gen_ai.response.finish_reasons": [
+              "stop"
+            ],
+            "gen_ai.usage.input_tokens": 55,
+            "gen_ai.usage.output_tokens": 23,
+            "cain.inference.call_id": "inference:f45db8a3952646c28e1391a2ef3fd4fa",
+            "cain.inference.cache_key": "178c9158da16deb12458fb45396d0448d401c609c35e638b9fb663056f90d8be",
+            "cain.inference.cache_hit": false,
+            "cain.inference.mode": "record",
+            "cain.model.gguf_sha256": "81fb60c7daa80fc1123380b98970b320ae233409f0f71a72ed7b9b0d62f40490"
+          }
+        }
+      ]
+    },
+    {
+      "trace_id": "tr-4acef268cccce7f3965189db946592a1",
+      "spans": [
+        {
+          "name": "text_completion qwen3.5:4b",
+          "parent_id": null,
+          "span_id": "2d043898a8a7ab9c",
+          "duration_ms": 786.0,
+          "attributes": {
+            "gen_ai.operation.name": "text_completion",
+            "gen_ai.provider.name": "ollama",
+            "gen_ai.request.model": "qwen3.5:4b",
+            "gen_ai.request.temperature": 0.0,
+            "gen_ai.request.seed": 42,
+            "gen_ai.request.max_tokens": 768,
+            "gen_ai.response.finish_reasons": [
+              "stop"
+            ],
+            "gen_ai.usage.input_tokens": 55,
+            "gen_ai.usage.output_tokens": 23,
+            "cain.inference.call_id": "inference:f6be4562eaa94dafb813b1d507d682fa",
+            "cain.inference.cache_key": "178c9158da16deb12458fb45396d0448d401c609c35e638b9fb663056f90d8be",
+            "cain.inference.cache_hit": false,
+            "cain.inference.mode": "record",
+            "cain.model.gguf_sha256": "81fb60c7daa80fc1123380b98970b320ae233409f0f71a72ed7b9b0d62f40490"
+          }
+        }
+      ]
+    }
+  ]
+}

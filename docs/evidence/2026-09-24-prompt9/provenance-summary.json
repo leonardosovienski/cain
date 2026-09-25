@@ -1,0 +1,146 @@
+{
+  "why_review": {
+    "decision": "event:b3920942396741659b5933596b17c8d1",
+    "claims": [
+      "claim:bde88a6b835841029fbe93f89328ced2"
+    ],
+    "evidence": [
+      "evidence:a1b51e5421064015b888cef6948b4d3a"
+    ],
+    "documents": [
+      "doc:43752919cd914051a3c50e93eefa6089"
+    ],
+    "edges": 8
+  },
+  "impact_evidence": {
+    "evidence": "evidence:73f43020ab66440a81fcac4ea385611b",
+    "quote": "The backtest covered 49 rebalance periods between July 2022 and August 2025.",
+    "dependents": [
+      [
+        "claim:ebface50600a4656b97be95449959c88",
+        "claim"
+      ],
+      [
+        "event:aa798c41876e4e649d58501805926b59",
+        "assessment"
+      ],
+      [
+        "event:2c3501bb4fc34fcfaef247f2175bab5f",
+        "assessment"
+      ],
+      [
+        "event:2d05b53c37254474829c6e50c1904dd9",
+        "assessment"
+      ],
+      [
+        "event:ed33272fa867486c8d832221446762dd",
+        "assessment"
+      ],
+      [
+        "event:b17e60b61b194efc84dbce16d55b716b",
+        "assessment"
+      ],
+      [
+        "event:41ce4f4ab2be45fdabc464004e2eca09",
+        "assessment"
+      ],
+      [
+        "claim:1130f6a2a256496cb47fffb03189d10e",
+        "claim"
+      ],
+      [
+        "claim:defbaa5be85b4be7a1872461b9a687d0",
+        "claim"
+      ],
+      [
+        "claim:9916f567fe0241cc92856c6165be2681",
+        "claim"
+      ],
+      [
+        "claim:2772d32e2b634dc2b4ba57138cc57a76",
+        "claim"
+      ],
+      [
+        "claim:1ac05541c22841ea8a370a42ceec8310",
+        "claim"
+      ]
+    ]
+  },
+  "why_decision": {
+    "claims": [
+      "claim:ebface50600a4656b97be95449959c88"
+    ],
+    "evidence": [
+      "evidence:73f43020ab66440a81fcac4ea385611b"
+    ],
+    "documents": [
+      "doc:43752919cd914051a3c50e93eefa6089"
+    ]
+  },
+  "invalidated": {
+    "flagged": [
+      [
+        "claim:ebface50600a4656b97be95449959c88",
+        "claim"
+      ],
+      [
+        "event:aa798c41876e4e649d58501805926b59",
+        "assessment"
+      ],
+      [
+        "event:2c3501bb4fc34fcfaef247f2175bab5f",
+        "assessment"
+      ],
+      [
+        "event:2d05b53c37254474829c6e50c1904dd9",
+        "assessment"
+      ],
+      [
+        "event:ed33272fa867486c8d832221446762dd",
+        "assessment"
+      ],
+      [
+        "event:b17e60b61b194efc84dbce16d55b716b",
+        "assessment"
+      ],
+      [
+        "event:41ce4f4ab2be45fdabc464004e2eca09",
+        "assessment"
+      ],
+      [
+        "decision:p3-backtest-report-published",
+        "other"
+      ],
+      [
+        "claim:1130f6a2a256496cb47fffb03189d10e",
+        "claim"
+      ],
+      [
+        "claim:defbaa5be85b4be7a1872461b9a687d0",
+        "claim"
+      ],
+      [
+        "claim:9916f567fe0241cc92856c6165be2681",
+        "claim"
+      ],
+      [
+        "claim:2772d32e2b634dc2b4ba57138cc57a76",
+        "claim"
+      ],
+      [
+        "claim:1ac05541c22841ea8a370a42ceec8310",
+        "claim"
+      ]
+    ]
+  },
+  "needs_review_after": [
+    "claim:1130f6a2a256496cb47fffb03189d10e",
+    "claim:1ac05541c22841ea8a370a42ceec8310",
+    "claim:2772d32e2b634dc2b4ba57138cc57a76",
+    "claim:9916f567fe0241cc92856c6165be2681",
+    "claim:defbaa5be85b4be7a1872461b9a687d0",
+    "claim:ebface50600a4656b97be95449959c88"
+  ],
+  "trace_decision_has_invalidation": true,
+  "memory_verify": "intact"
+}
