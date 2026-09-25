@@ -86,3 +86,12 @@ adulteração do evento 1 fora da API → `verify` diz `broken broken_at=1` → 
 - A memória de conversa do chat (`/run`, `chat`) não passa pela memória nova. Ligar as duas é mudança de comportamento do
   chat e fica para quando o loop (Prompt 6/7) precisar.
 - Sem Ollama no PC 2: o índice vetorial real e a extração por LLM ficam DECLARED até rodarem numa máquina com modelo.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- Os dois itens DECLARED por falta de modelo agora estão **PROVEN** com o Ollama deste PC (`2026-09-25-revisao/memory-real-embedding-and-extraction.log`).
+- Índice vetorial com `qwen3-embedding:0.6b`: a busca `as_of` não vê um fato posterior que é o melhor casamento, e `rebuild-index` reproduz a busca de forma idêntica.
+- `cain memory extract` com `qwen3.5:4b`: 4 fatos, todos DECLARED, com citação literal e digest.
+- O `as_of` no acervo L0 continua pendente: é mudança de contrato para API, CLI, web e workflows.

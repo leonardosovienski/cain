@@ -188,3 +188,11 @@ Logs brutos:
 - A verificação numérica (o claim contém um número que a evidência contradiz) poderia ter um checador determinístico
   próprio, como o do linter. Não entrou: é uma decisão de regra (muda o que vira CONTRADICTED) e fica para o dono.
 - Os rótulos do golden set precisam de revisão humana antes de os números acima virarem referência.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- A frase "mudá-los exige aprovação humana registrada e só vale para hipóteses novas" descrevia uma regra que o código **não aplicava**: com limiar diferente, a decisão saía como `"custom"`.
+- Agora a decisão usa a versão da política em vigor no registro do claim (`cain.policy`), e os verificadores da política com outro limiar são recusados (`POLICY_MISMATCH`).
+- Uma mudança é um arquivo `verifier-policy-v<N>.json` novo, mergeado pelo dono.

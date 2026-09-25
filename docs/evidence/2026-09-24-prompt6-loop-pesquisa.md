@@ -163,3 +163,13 @@ Arquivos e hashes:
   pins; o sha256 confere a identidade.
 - O limiar de novidade (0,85) e a escolha `max_abs_diff ≤ 0,001` são valores de política do world, e mudá-los segue
   a regra dos limiares: aprovação humana registrada.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- **Correção:** a troca v1 → v2 da regra de redundância foi feita por mim e rodada na **mesma hipótese** sem aprovação humana registrada, contra a regra dos limiares.
+- O merge do dono (#50) aprova a v2 dali em diante, mas não a reutilização da hipótese.
+- Agora o world tem `policy_sha256` (limiares e regras, não caminhos), e o loop recusa, com 0 tentativas, uma hipótese já rodada sob outra política (`policy_changed_for_hypothesis`).
+- Os limiares saíram do código: `[redundancy]` e `[novelty]` declaram medida e limiar, e a CLI não escolhe mais a medida. O world usa caminho relativo para o avaliador (antes apontava para o worktree `cain-p6`).
+- A proveniência agora lê este ledger (`2026-09-25-revisao/provenance-loop.log`).

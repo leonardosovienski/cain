@@ -111,3 +111,11 @@ Logs brutos:
 - As aprovações não expiram. Um run pode esperar indefinidamente, e é isso que se quer de uma espera durável.
 - A etapa `entities` com modelos pequenos precisa de outra estratégia (prompt ou modelo). É assunto do Prompt 5
   (escolha de modelo por medição), não deste.
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- "Botões de aprovação e 'ramificar daqui' na interface web" passou de DECLARED para **PROVEN**, no navegador do app contra a API real (`2026-09-25-revisao/web-ui-approval-fork.log`).
+- A sequência: aprovar, executar com o qwen3.5:4b, ramificar da etapa 2; o filho pede aprovação própria.
+- As aprovações e os forks agora também são arestas da proveniência (Prompt 9).

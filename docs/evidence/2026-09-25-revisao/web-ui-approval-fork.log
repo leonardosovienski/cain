@@ -1,0 +1,9 @@
+# workflow events recorded by the real API while the UI was driven in the in-app browser
+2026-09-25T16:45:54.211739Z web-demo approval.requested {"position": 2, "step": "support"}
+2026-09-25T16:46:28.686975Z web-demo approval.decided {"position": 2, "step": "support", "decision": "APPROVE", "by": "leo", "note": null}
+2026-09-25T16:47:20.623207Z aa0e96c518da4d28ae60545bd891753c run.forked {"parent_run_id": "web-demo", "fork_point": 2, "inherited_positions": [0, 1]}
+2026-09-25T16:47:32.268847Z aa0e96c518da4d28ae60545bd891753c approval.requested {"position": 2, "step": "support"}
+verify_events: {"entries": 4, "status": "intact", "broken_at": null, "head": "a9f6452fb01a9a5fa560162bccfc3871d8b5fdd6bfc22c20e7445a3ca03242fd"}
+run web-demo: status=ready model_calls=1 steps=[('inspect', None), ('search', None), ('support', None)]
+run aa0e96c518da4d28ae60545bd891753c: status=awaiting_generation_approval model_calls=0 steps=[('inspect', 'web-demo:0'), ('search', 'web-demo:1')]
+why run:aa0e96c518da4d28ae60545bd891753c: decisions=[] runs=['step:aa0e96c518da4d28ae60545bd891753c#0', 'step:aa0e96c518da4d28ae60545bd891753c#1', 'step:web-demo#0', 'step:web-demo#1']

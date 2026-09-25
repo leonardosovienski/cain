@@ -163,3 +163,11 @@ ficam fora do repositório. O replay offline depende deles.
 | Streaming (`cain.llm.streaming`) com manifesto | **não coberto** | o streaming não passa pelo gravador; fica para um PR próprio |
 | Versões de ferramentas/servidores MCP no contexto | **DECLARED** | o mecanismo (`inference_context`) existe; nenhum chamador o preenche ainda |
 | Invariância a batch / mais de um slot | **não testado** | medido só em série |
+
+## Adendo da revisão final (2026-09-25)
+
+Detalhes em `2026-09-25-revisao.md`.
+
+- "Manifesto completo em toda chamada ao Ollama" **não valia para embeddings**: as chamadas `/api/embed` (vetores da memória e novidade do loop) não passavam pelo gravador.
+- Agora passam, com campos próprios: vetores, dimensões e sha256. Na demo da revisão, 7 chamadas (6 de embedding e 1 de geração), todas completas.
+- O playground de streaming segue fora do gravador, por desenho ("no archive or memory writes"). É decisão do dono.

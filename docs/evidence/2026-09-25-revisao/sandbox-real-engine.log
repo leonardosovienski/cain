@@ -1,0 +1,6 @@
+# 2026-09-25T16:56:07Z cain review branch + working tree; Docker Desktop via docker.exe from WSL
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/integration/test_sandbox.py::test_attacks_against_a_real_engine
+1 passed, 11 deselected in 40.51s
+leftover containers: 0
