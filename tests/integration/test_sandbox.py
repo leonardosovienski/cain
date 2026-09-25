@@ -41,7 +41,9 @@ def calls(tmp_path):
 
 
 def test_every_attempt_runs_with_the_hardening_flags_and_only_its_workspace():
-    box = DockerSandbox(SandboxPolicy(image=IMAGE, memory="256m", runtime="runsc"), path_mapper=lambda p: f"/mapped{p}")
+    # The mapper sees host paths; as_posix keeps the expected strings the same on Windows and POSIX.
+    box = DockerSandbox(SandboxPolicy(image=IMAGE, memory="256m", runtime="runsc"),
+                        path_mapper=lambda p: f"/mapped{Path(p).as_posix()}")
     args = box.command("c1", Path("/ws/a1"), ["python", "candidate.py"], data_ro=[(Path("/allowed"), "/data")])
     joined = " ".join(args)
     for flag in ("--network none", "--read-only", "--user 65534:65534", "--cap-drop ALL",
