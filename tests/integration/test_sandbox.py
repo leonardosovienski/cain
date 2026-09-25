@@ -97,6 +97,33 @@ def test_timeout_kills_the_attempt_and_records_a_crash(fake):
     assert any(c[0] == "kill" for c in calls(tmp_path)) and any(c[0] == "rm" for c in calls(tmp_path))
 
 
+def test_a_timeout_never_waits_forever_on_pipes_a_leftover_process_holds(fake, monkeypatch):
+    # The Windows CI hang of the first version: subprocess.run reads the pipes without a bound after
+    # killing the CLI there, and a process that inherited them kept them open forever.
+    import signal
+    import time
+
+    import cain.sandbox.runner as runner
+
+    tmp_path, evaluator = fake
+    monkeypatch.setenv("FAKE_DOCKER_KILL_NOOP", "1")  # the kill leaves the candidate alive, pipes held
+    monkeypatch.setattr(runner, "OUTPUT_GRACE_SECONDS", 1.0)
+    started = time.monotonic()
+    try:
+        manifest = run_attempt(sandbox(timeout=1.0), candidate(tmp_path, "import time\ntime.sleep(30)\n"),
+                               evaluator_files=[evaluator], workspace_root=tmp_path)
+        assert time.monotonic() - started < 15
+        assert manifest["run"]["status"] == "TIMEOUT" and manifest["verdict"] == "CRASH"
+    finally:
+        for state in (tmp_path / "docker-state").glob("*.json"):
+            pid = json.loads(state.read_text()).get("pid")
+            if pid:
+                try:
+                    os.kill(pid, signal.SIGKILL if hasattr(signal, "SIGKILL") else signal.SIGTERM)
+                except OSError:
+                    pass
+
+
 def test_an_evaluator_change_during_the_attempt_is_invalid_with_an_alert(fake):
     tmp_path, evaluator = fake
     inner = sandbox()
