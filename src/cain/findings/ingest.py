@@ -2,10 +2,17 @@
 
 ``predictor_core`` has no TrialLedger yet, so the sources are what each predictor actually keeps:
 its trial registry (``trials.json`` / ``trials.v2.json``: one row per attempt, with identity,
-``registered_at``, params, result, status, notes), the crypto scientific state (``charters/
-scientific_state.json``: closed hypotheses, trial mapping, frozen families) and CAIN's own research
-loop ledger (Prompt 6). Files are read from a pinned git commit of the predictor repository
-(read-only, ``git show``), and every finding keeps the repository, commit, path and sha256.
+``registered_at``, params, result, status, notes), its scientific state (crypto ``charters/
+scientific_state.json``, stocks ``research/scientific_state.json``: hypothesis states, trial mapping,
+frozen families), the stocks evaluation ledger index (``stocks-trial-ledger-index/1``: runs,
+decisions, reassessments, sealed holdouts) and CAIN's own research loop ledger (Prompt 6). Files are
+read from a pinned git commit of the predictor repository (read-only, ``git show``), and every
+finding keeps the repository, commit, path and sha256.
+
+How a producer's hypothesis state is read (closed or not) is the versioned ``state-vocabulary``
+policy, per domain. A state it does not list, a domain it does not cover, a file declaring another
+domain or an unknown schema is refused before anything is recorded: a new state never becomes
+"informative" (and so never stops blocking a retest) by default.
 
 None of these sources carries both an evaluation report and a governance transition, so they enter
 as DECLARED (quarantine). A registry status change supersedes the earlier finding (bitemporal).
@@ -19,12 +26,14 @@ Anything else stays UNLABELLED.
 
 from __future__ import annotations
 
+from collections import Counter
 from hashlib import sha256
 import json
 from pathlib import Path
 import re
 import subprocess
 
+from cain import policy as policies
 from cain.findings.archive import FindingsArchive
 
 STATUS_KIND = {
@@ -36,10 +45,24 @@ STATUS_KIND = {
 NOTES_VERDICT = re.compile(r"(?:RESULTADO|VEREDITO FINAL)(?:[ \t][^:\n]{0,60})?:[ \t]*"
                            r"(COMPROVADA|REFUTADA|INCONCLUSIVA|NO[-_]GO)(?![\w-])")
 NOTES_STATUS = {"COMPROVADA": "comprovada", "REFUTADA": "refutada", "INCONCLUSIVA": "inconclusiva"}
-STATE_KIND = {
-    "CLOSED_NO_GO": ("negative", "NO_GO"), "CLOSED_INSUFFICIENT_SAMPLE": ("negative", "CLOSED_INSUFFICIENT_SAMPLE"),
-    "REGISTERED_NOT_ACTIVATED": ("informative", "REGISTERED_NOT_ACTIVATED"),
-}
+# Self-describing producer files name their schema; each schema belongs to exactly one domain.
+STATE_SCHEMAS = {"stocks-scientific-state/1": "stocks"}
+LEDGER_INDEX_SCHEMAS = {"stocks-trial-ledger-index/1": "stocks"}
+LEDGER_OUTCOMES = ("COMPLETED", "FAILED", "ABANDONED")
+
+
+def state_vocabulary(at: str | None = None) -> dict:
+    """How each domain's hypothesis states are read, in force at ``at`` (the latest when None)."""
+    return policies.effective(policies.versions("cain.findings", "state-vocabulary"), at)
+
+
+def _owned(value: dict, domain: str, schemas: dict, what: str) -> None:
+    schema = value.get("schema")
+    if schema is not None and schemas.get(schema) is None:
+        raise ValueError(f"{what}: unknown schema {schema!r}")
+    owner = value.get("domain", schemas.get(schema))
+    if owner is not None and owner != domain:
+        raise ValueError(f"{what} of domain {owner!r} cannot be ingested as {domain!r}")
 
 
 def read_source(repo: str | Path, commit: str, path: str) -> tuple[bytes, dict]:
@@ -109,19 +132,33 @@ def ingest_trial_registry(archive: FindingsArchive, domain: str, raw: bytes, sou
 def ingest_scientific_state(archive: FindingsArchive, domain: str, raw: bytes, source: dict,
                             registry_rows: list[dict] | None = None) -> dict:
     state = json.loads(raw)
+    _owned(state, domain, STATE_SCHEMAS, "scientific state")
+    vocabulary = state_vocabulary()
+    reading = vocabulary["domains"].get(domain)
+    if reading is None:
+        raise ValueError(f"no state vocabulary for domain {domain!r}: add it in a new policy version first")
+    unknown = sorted(set(state.get("hypotheses", {}).values()) - set(reading))
+    if unknown:
+        raise ValueError(f"{domain}: states without a declared reading {unknown} (state-vocabulary "
+                         f"v{vocabulary['version']}); nothing was recorded")
+    used = policies.ref(vocabulary)
     trials = state.get("hypothesis_trials", {})
+    reassessments = state.get("reassessment", {})
     by_name = {str(r.get("name") or r.get("trial_id")): r for r in registry_rows or []}
     counts: dict[str, int] = {}
     for hypothesis, value in sorted(state.get("hypotheses", {}).items()):
-        kind, verdict = STATE_KIND.get(value, ("informative", value))
+        kind, verdict = reading[value]["kind"], reading[value]["verdict"]
         trial = trials.get(hypothesis)
         row = by_name.get(trial, {})
         statement = " ".join(p for p in (hypothesis, trial or "", _statement(row) if row else "") if p)
+        details = {"state": value, "as_of_commit": state.get("as_of_commit"), "notes": state.get("notes"),
+                   "vocabulary": used}
+        if hypothesis in reassessments:
+            details["reassessment"] = reassessments[hypothesis]
         outcome = archive.record(
             domain, f"{domain}:hypothesis:{hypothesis}", kind=kind, verdict=verdict, statement=statement,
             source={**source, "key": f"hypotheses.{hypothesis}"},
-            identity={"hypothesis_id": hypothesis, "trial_id": trial},
-            details={"state": value, "as_of_commit": state.get("as_of_commit"), "notes": state.get("notes")})
+            identity={"hypothesis_id": hypothesis, "trial_id": trial}, details=details)
         key = f"{outcome['status']}:{kind}"
         counts[key] = counts.get(key, 0) + 1
     # A frozen family is a domain-level rule (not a property of each hypothesis): one finding per family.
@@ -133,7 +170,94 @@ def ingest_scientific_state(archive: FindingsArchive, domain: str, raw: bytes, s
             details={"as_of_commit": state.get("as_of_commit"), "notes": state.get("notes")})
         key = f"{outcome['status']}:negative"
         counts[key] = counts.get(key, 0) + 1
-    return {"domain": domain, "source": source, "hypotheses": len(state.get("hypotheses", {})), "counts": counts}
+    # The producer's rule for reopening a closed family, kept literally for whoever drafts a reopening.
+    reopen = state.get("reopen_policy")
+    if isinstance(reopen, dict) and reopen.get("text"):
+        outcome = archive.record(
+            domain, f"{domain}:reopen-policy", kind="informative", verdict="REOPEN_POLICY",
+            statement=" ".join(str(reopen["text"]).split())[:400], source={**source, "key": "reopen_policy"},
+            details=reopen)
+        counts[f"{outcome['status']}:informative"] = counts.get(f"{outcome['status']}:informative", 0) + 1
+    return {"domain": domain, "source": source, "hypotheses": len(state.get("hypotheses", {})), "counts": counts,
+            "vocabulary": used}
+
+
+def ingest_ledger_index(archive: FindingsArchive, domain: str, raw: bytes, source: dict) -> dict:
+    """A producer's evaluation ledger index: every run (with its outcome), decision, reassessment,
+    pre-registration and holdout, plus one summary finding. The hash chain of the index is checked
+    (contiguous ``seq``, each ``prev`` the previous ``hash``, ``head``, ``counts``) before anything is
+    recorded. Everything enters as informative and DECLARED: an index row is not an evaluation report."""
+    index = json.loads(raw)
+    if index.get("schema") not in LEDGER_INDEX_SCHEMAS:
+        raise ValueError(f"ledger index: unknown schema {index.get('schema')!r}")
+    _owned(index, domain, LEDGER_INDEX_SCHEMAS, "ledger index")
+    rows, previous = index.get("rows") or [], None
+    for number, row in enumerate(rows, 1):
+        if row.get("seq") != number or row.get("prev") != previous or not isinstance(row.get("hash"), str):
+            raise ValueError(f"ledger index: hash chain broken at seq {number}; nothing was recorded")
+        previous = row["hash"]
+    if index.get("head") != previous or index.get("records") != len(rows) \
+            or dict(Counter(r["kind"] for r in rows)) != index.get("counts"):
+        raise ValueError("ledger index: head, record count or counts do not match the rows; nothing was recorded")
+    outcomes = {r["run_id"]: r["kind"] for r in rows if r["kind"] in LEDGER_OUTCOMES}
+    digests = {r["run_id"]: r.get("result_digest") for r in rows if r["kind"] == "COMPLETED"}
+    holdouts: dict[str, dict] = {}
+    counts: Counter = Counter()
+
+    def put(finding_id, row, **kwargs):
+        stamp = row.get("recorded_at")
+        outcome = archive.record(domain, finding_id, kind="informative",
+                                 source={**source, "seq": row["seq"], "hash": row["hash"]},
+                                 valid_from=stamp if isinstance(stamp, str) and stamp.endswith("Z") else None,
+                                 **kwargs)
+        counts[f"{outcome['status']}:{row['kind']}"] += 1
+
+    for row in rows:
+        kind = row["kind"]
+        if kind == "STARTED":
+            interval = row.get("interval") or {}
+            put(f"{domain}:run:{row['run_id']}", row, verdict=outcomes.get(row["run_id"], "OPEN"),
+                statement=f"run {row['trial_number']} {row.get('model')} family {row.get('family')} "
+                          f"{interval.get('start')}..{interval.get('end')}",
+                identity={"trial_id": row["run_id"], "hypothesis_id": row.get("preregistration"),
+                          "hypothesis_family": row.get("family")},
+                details={k: row.get(k) for k in ("trial_number", "model", "family", "git", "dataset_hash", "interval",
+                                                 "decision_policy_sha256", "holdout_access")}
+                | {"result_digest": digests.get(row["run_id"])})
+        elif kind == "DECISION":
+            put(f"{domain}:decision:{row['seq']}", row, verdict=row["decision"],
+                statement=f"policy decision {row['decision']} over {len(row['evaluated_run_ids'])} run(s)",
+                details={k: row.get(k) for k in ("decision_if_approved", "policy_sha256", "evaluated_run_ids")})
+        elif kind == "REASSESSMENT":
+            put(f"{domain}:reassessment:{row['hypothesis']}", row, verdict=row["status_after"],
+                statement=f"{row['hypothesis']} reassessed: {row['status_after']}",
+                identity={"hypothesis_id": row["hypothesis"]}, details={"status_after": row["status_after"]})
+        elif kind == "PREREGISTERED":
+            put(f"{domain}:preregistration:{row['hypothesis_id']}", row, verdict="PREREGISTERED",
+                statement=f"{row['hypothesis_id']} pre-registered", identity={"hypothesis_id": row["hypothesis_id"]},
+                details={"record_sha256": row.get("record_sha256")})
+        elif kind in ("HOLDOUT_SEALED", "HOLDOUT_OPENED"):
+            # One finding per holdout, in its latest state (recording the seal and then the opening would
+            # supersede back and forth on every re-ingestion).
+            merged = holdouts.setdefault(row["holdout_id"], {"row": row, "interval": None, "seal_sha256": None})
+            merged["row"] = row
+            merged["interval"] = row.get("interval") or merged["interval"]
+            merged["seal_sha256"] = row.get("seal_sha256") or merged["seal_sha256"]
+        elif kind not in LEDGER_OUTCOMES:
+            counts[f"skipped:{kind}"] += 1
+    for holdout_id, merged in holdouts.items():
+        row = merged["row"]
+        put(f"{domain}:holdout:{holdout_id}", row, verdict=row["kind"],
+            statement=f"holdout {holdout_id} {row['kind']} interval {merged['interval']}",
+            identity={}, details={"interval": merged["interval"], "seal_sha256": merged["seal_sha256"]})
+    summary = {"schema": index["schema"], "records": index["records"], "head": index["head"],
+               "counts": index["counts"], "trials_started": index.get("trials_started")}
+    outcome = archive.record(domain, f"{domain}:ledger-index", kind="informative", verdict="LEDGER_INDEX",
+                             statement=f"{index['records']} ledger records, {index.get('trials_started')} runs, "
+                                       f"head {str(index['head'])[:12]}",
+                             source=source, details=summary)
+    counts[f"{outcome['status']}:LEDGER_INDEX"] += 1
+    return {"domain": domain, "source": source, "records": len(rows), "counts": dict(counts)}
 
 
 def ingest_loop(archive: FindingsArchive, domain: str, ledger, loop_id: str) -> dict:
