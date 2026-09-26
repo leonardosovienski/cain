@@ -11,6 +11,7 @@ def register(sub):
     commands = findings.add_subparsers(dest="findings_command", required=True)
     for name, helptext in (("ingest-registry", "Trial registry rows of a predictor (read at a git commit)"),
                            ("ingest-state", "Scientific state of a predictor (closed hypotheses)"),
+                           ("ingest-ledger-index", "Evaluation ledger index of a predictor (runs, decisions, holdouts)"),
                            ("sync-demotions", "Demote library procedures whose source trial was demoted")):
         command = commands.add_parser(name, help=helptext)
         command.add_argument("--domain", required=True)
@@ -63,8 +64,8 @@ def execute(args):
     from hashlib import sha256
 
     from cain.findings.archive import FindingsArchive
-    from cain.findings.ingest import (ingest_loop, ingest_scientific_state, ingest_trial_registry,
-                                      read_source)
+    from cain.findings.ingest import (ingest_ledger_index, ingest_loop, ingest_scientific_state,
+                                      ingest_trial_registry, read_source)
     from cain.memory.store import MemoryStore
 
     memory = MemoryStore(args.db)
@@ -83,6 +84,9 @@ def execute(args):
         if args.registry_path:
             rows = json.loads(read_source(args.repo, args.commit, args.registry_path)[0])
         return ingest_scientific_state(archive, args.domain, raw, source, rows)
+    if cmd == "ingest-ledger-index":
+        raw, source = read_source(args.repo, args.commit, args.path)
+        return ingest_ledger_index(archive, args.domain, raw, source)
     if cmd == "sync-demotions":
         raw, source = read_source(args.repo, args.commit, args.path)
         return {"demoted": archive.sync_demotions(args.domain, json.loads(raw), source=source)}

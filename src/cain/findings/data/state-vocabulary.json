@@ -1,0 +1,21 @@
+{
+  "policy": "findings-state-vocabulary",
+  "version": 1,
+  "domains": {
+    "crypto": {
+      "CLOSED_NO_GO": {"kind": "negative", "verdict": "NO_GO"},
+      "CLOSED_INSUFFICIENT_SAMPLE": {"kind": "negative", "verdict": "CLOSED_INSUFFICIENT_SAMPLE"},
+      "REGISTERED_NOT_ACTIVATED": {"kind": "informative", "verdict": "REGISTERED_NOT_ACTIVATED"}
+    },
+    "stocks": {
+      "CLOSED_JUDGED": {"kind": "negative", "verdict": "CLOSED_JUDGED"},
+      "CLOSED_EMBARGO_ORIGINAL": {"kind": "negative", "verdict": "CLOSED_EMBARGO_ORIGINAL"},
+      "CLOSED_HISTORICAL": {"kind": "negative", "verdict": "CLOSED_HISTORICAL"},
+      "CLOSED_HISTORICAL_CONDITIONAL": {"kind": "negative", "verdict": "CLOSED_HISTORICAL_CONDITIONAL"},
+      "CLOSED_REJECTED": {"kind": "negative", "verdict": "CLOSED_REJECTED"},
+      "PAUSED": {"kind": "informative", "verdict": "PAUSED"},
+      "PAUSED_INCONCLUSIVE_DATA_QUALITY": {"kind": "informative", "verdict": "PAUSED_INCONCLUSIVE_DATA_QUALITY"}
+    }
+  },
+  "note": "How CAIN reads the hypothesis states of each producer's scientific state. kind 'negative' means closed: it blocks a retest, even in quarantine. The verdict keeps the producer's literal state; crypto CLOSED_NO_GO keeps the NO_GO label it had before this file existed. Stocks: every CLOSED_* is closed; PAUSED* is not a negative result (H17 observed INCONCLUSIVE_DATA_QUALITY, H18/H19 not observed), so it does not block by itself, although the stocks admission never opens a trial for any historical H<n>. A state missing for its domain is refused (fail closed), and a domain without an entry cannot ingest a scientific state. Changing a reading is a new version file, merged by the owner."
+}

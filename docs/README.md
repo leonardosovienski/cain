@@ -1,5 +1,7 @@
 # Documentação corrente
 
+- [Achados do stocks lidos num commit fixado (26/09)](evidence/2026-09-26-stocks-findings.md)
+
 - [Revisão de respostas fundamentadas e memória aprovada](CRYPTO_GROUNDED_REVIEW_20260919.md)
 
 - [Retomada após encerramento do chat Stocks/CAIN](STOCKS_CHAT_HANDOFF_20260916.md)
