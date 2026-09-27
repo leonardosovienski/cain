@@ -1,0 +1,329 @@
+"""Orchestration of the crypto domain end to end with the real transport consumer and a stand-in domain adapter.
+
+The stand-in only replaces the domain circuit (outside the CAIN); the CAIN side (policy, outbox, spool, inbox,
+memory) is the real code. The qualification E2E runs the real cripto-predictor instead.
+"""
+
+import copy
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+
+import pytest
+from research_protocol import v2
+from research_transport.consumer import Consumer
+from research_transport.spool import Spool
+
+from cain.orchestration import policy
+from cain.orchestration.faults import ENV, EXIT_CODE
+from cain.orchestration.service import OrchestrationError, Orchestrator
+
+AS_OF = "2030-01-01T10:00:00Z"
+REQUEST = {
+    "schema_version": "crypto-research-request/1",
+    "request_id": "crypto:REQ-I-0001",
+    "request_type": "BACKTEST_EXISTING_HYPOTHESIS",
+    "research_id": "crypto:RESEARCH-I",
+    "hypothesis_id": "crypto:QUAL-SHADOW-REAL-001",
+    "references": {"protocol": {"name": "fixed-shadow", "version": "v1"},
+                   "dataset": {"name": "real-in-sample", "version": "v1"},
+                   "baseline": {"name": "flat", "version": "v1"},
+                   "cost_model": {"name": "v3-frozen", "version": "v1"},
+                   "evidence": {"name": "none", "version": "v1"}},
+    "data_cutoff": "2026-08-31T00:00:00Z",
+    "parameters": {"symbol": "BTCUSDT", "horizon_days": 7, "max_observations": 100, "fee_bps": 10,
+                   "slippage_bps": 5, "placebo_seed": 1},
+    "priority_hint": "NORMAL",
+}
+
+
+def sha(raw: bytes) -> str:
+    return hashlib.sha256(raw).hexdigest()
+
+
+def proposal(n: int, **changes) -> dict:
+    request = copy.deepcopy(REQUEST)
+    request["request_id"] = f"crypto:REQ-I-{n:04d}"
+    request["parameters"]["placebo_seed"] = n
+    request.update(changes)
+    return {"schema": "cain-proposal/1", "proposal_id": f"cain:PROP-{n}", "domain": "crypto", "request": request,
+            "based_on": [], "rationale": "integration test", "source": "agenda"}
+
+
+class StandInDomain:
+    """Idempotent by request_id; scripted statuses; never used by the qualification gates."""
+
+    DOMAIN = "crypto"
+
+    def __init__(self):
+        self.results, self.script, self.states = {}, [], {}
+
+    def identity(self):
+        return {"distribution": "cripto-predictor", "version": "stand-in", "module": "tests.stand_in"}
+
+    def submit_task(self, task, config):
+        raw = v2.canonical(task["payload"])
+        request = json.loads(raw)
+        out = {"submission_sha256": sha(raw), "request_id": request["request_id"], "client_ref": request["client_ref"]}
+        status = self.script.pop(0) if self.script else None
+        if status in ("OPS_FAILED_RETRYABLE", "TEMPORAL_INTEGRITY_VIOLATION", "RECONCILIATION_REQUIRED"):
+            code = {"OPS_FAILED_RETRYABLE": 3, "TEMPORAL_INTEGRITY_VIOLATION": 4, "RECONCILIATION_REQUIRED": 5}[status]
+            return out | {"status": status, "exit_code": code, "reason": status}
+        duplicate = request["request_id"] in self.results
+        state, scientific = self.states.get(request["request_id"], ("NO_EDGE", "INCONCLUSIVE"))
+        result = self.results.setdefault(request["request_id"], {
+            "schema_version": "crypto-research-result/1",
+            "result_id": "crypto:RESULT-" + sha(request["request_id"].encode())[:32],
+            "request_id": request["request_id"], "admission_id": "crypto:ADM-" + "b" * 32,
+            "experiment_id": "crypto:EXP-" + sha(request["request_id"].encode())[:32],
+            "research_id": request["research_id"], "hypothesis_id": request["hypothesis_id"],
+            "result_state": state, "operational_state": "SUCCEEDED", "scientific_state": scientific,
+            "economic_state": "WATCH" if state == "WATCH_NO_CAPITAL" else "NO_EDGE", "capital_permission": False,
+            "produced_at": "2026-09-27T09:00:00Z", "core_facts": {"ci": [-0.25, 0.3]}, "ops_facts": {},
+            "domain_facts": {}, "provenance": {}})
+        return out | {"status": "DUPLICATE" if duplicate else "RESULT", "exit_code": 0, "result": result}
+
+    def reread(self, request_id, config):
+        return 0, {"result_sha256": sha(v2.domain_canonical(self.results[request_id]))}
+
+
+@pytest.fixture
+def world(tmp_path):
+    domain = StandInDomain()
+    spool = Spool(tmp_path / "spool")
+    orchestrator = Orchestrator("crypto", tmp_path / "state")
+    consumer = Consumer("crypto", spool, tmp_path / "consumer.sqlite", domain, {"state": "unused"})
+
+    class World:
+        pass
+
+    w = World()
+    w.domain, w.spool, w.orch, w.consumer, w.tmp = domain, spool, orchestrator, consumer, tmp_path
+    return w
+
+
+def cycle(w, n, as_of=AS_OF, **changes):
+    out = w.orch.propose(proposal(n, **changes), as_of=as_of)
+    w.orch.dispatch(w.spool)
+    w.consumer.run_once()
+    w.orch.ingest(w.spool)
+    return out
+
+
+def test_full_cycle_remembers_the_result_in_the_domain_cube_only(world):
+    out = cycle(world, 1)
+    assert out["receipt"]["decision"] == "ALLOW"
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert len(facts) == 1 and facts[0]["object"]["result_state"] == "NO_EDGE"
+    assert facts[0]["object"]["capital_permission"] is False
+    assert world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["stocks"]) == []
+    assert world.orch.store.memory.verify()["status"] == "intact"
+    nxt = world.orch.propose(proposal(2), as_of="2030-01-01T11:00:00Z")
+    assert nxt["receipt"]["decision"] == "ALLOW"
+    assert nxt["receipt"]["task"]["previous_task_id"] == out["receipt"]["task"]["task_id"]
+
+
+def test_duplicate_deliveries_never_create_a_second_effect(world):
+    cycle(world, 1)
+    assert world.orch.dispatch(world.spool, resend=True)[0]["spool"] == "EXISTS"
+    assert world.consumer.run_once()[0]["action"] == "skipped"
+    (original,) = world.spool.result_files("crypto")
+    shutil.copy(original, original.with_name("redelivered-copy.json"))
+    report = world.orch.ingest(world.spool) + world.orch.ingest(world.spool)
+    assert [r["action"] for r in report] == ["duplicate", "duplicate", "duplicate", "duplicate"]
+    again = world.orch.propose(dict(proposal(1), proposal_id="cain:PROP-1-again"), as_of="2030-01-01T12:00:00Z")
+    assert again["receipt"]["decision"] == "DUPLICATE"
+    with world.orch.store.db() as db:
+        assert db.execute("SELECT count(*) FROM outbox").fetchone()[0] == 1
+        assert db.execute("SELECT count(*) FROM inbox").fetchone()[0] == 1
+    assert len(world.domain.results) == 1
+
+
+def test_same_proposal_returns_the_recorded_episode_and_conflicting_id_is_refused(world):
+    first = world.orch.propose(proposal(1), as_of=AS_OF)
+    again = world.orch.propose(proposal(1), as_of="2030-01-01T12:00:00Z")
+    assert again["status"] == "EXISTING" and again["receipt_sha256"] == first["receipt_sha256"]
+    with pytest.raises(OrchestrationError, match="PROPOSAL_ID_CONFLICT"):
+        world.orch.propose(proposal(1, priority_hint="LOW"), as_of=AS_OF)
+
+
+def test_foreign_unknown_and_tampered_results_are_rejected(world):
+    cycle(world, 1)
+    other = v2.build_task("stocks", {
+        "schema_version": "stocks-research-request/1", "request_id": "stocks:REQ-1",
+        "request_type": "BACKTEST_PIT_FACTOR", "research_id": "stocks:R", "hypothesis_id": "stocks:H9",
+        "references": {k: {"name": "x", "version": "v1"} for k in
+                       ("dataset", "universe", "features", "model", "baseline", "cost_model", "readiness")},
+        "as_of": "2026-09-24T03:00:00Z",
+        "pit": {"availability_rule": "AVAILABLE_AT_LE_DECISION_TIME", "minimum_pit_class": "PIT_RECONSTRUCTED"},
+        "parameters": {"target": "NEXT_REBALANCE_RETURN", "fee_bps": 10, "slippage_bps": 5, "max_securities": 50,
+                       "external_intelligence": {"mode": "NONE", "families": []}},
+        "priority_hint": "NORMAL"}, episode_id="stocks:episode-1", proposal_id="cain:X", created_at=AS_OF)
+    stranger = v2.build_task("crypto", dict(REQUEST, request_id="crypto:REQ-STRANGER"),
+                             episode_id="crypto:episode-9", proposal_id="cain:X", created_at=AS_OF)
+    results_dir = world.spool.root / "crypto" / "results"
+    for name, task in (("foreign.json", other), ("stranger.json", stranger)):
+        domain = task["domain"]
+        outcome = {"status": "REJECTED", "exit_code": 2, "reason": "x", "request_id": task["request_id"],
+                   "client_ref": None}
+        raw = v2.dumps_result(v2.build_result(task, outcome, adapter={"distribution": f"{domain}-p", "module": "m",
+                                                                       "version": "1"},
+                                              produced_at=AS_OF))
+        (results_dir / name).write_bytes(raw)
+    (results_dir / "old.json").write_bytes(b'{"schema":"research-result/1"}')
+    genuine = next(p for p in results_dir.iterdir() if p.name.startswith("TASK-"))
+    tampered = json.loads(genuine.read_bytes())
+    tampered["episode_id"] = "crypto:episode-7"
+    (results_dir / "tampered.json").write_bytes(v2.canonical(tampered))
+    codes = {r["file"]: r.get("code") for r in world.orch.ingest(world.spool) if r["action"] == "rejected"}
+    assert codes == {"foreign.json": "DOMAIN_MISMATCH", "stranger.json": "TASK_NOT_FOUND",
+                     "old.json": "VERSION_UNSUPPORTED", "tampered.json": "CORRELATION_MISMATCH"}
+    with world.orch.store.db() as db:
+        assert db.execute("SELECT count(*) FROM inbox").fetchone()[0] == 1
+
+
+def test_retryable_then_retry_then_result(world):
+    world.domain.script = ["OPS_FAILED_RETRYABLE"]
+    out = cycle(world, 1)
+    task_id = out["receipt"]["task"]["task_id"]
+    assert world.orch.propose(proposal(2), as_of="2030-01-01T11:00:00Z")["receipt"]["reason_code"] == "OPEN_TASK_PENDING"
+    world.orch.retry(world.spool, task_id)
+    world.consumer.run_once()
+    world.orch.ingest(world.spool)
+    with pytest.raises(OrchestrationError, match="NOT_RETRYABLE"):
+        world.orch.retry(world.spool, task_id)
+    assert world.orch.propose(proposal(3), as_of="2030-01-01T12:00:00Z")["receipt"]["decision"] == "ALLOW"
+
+
+def test_refusal_is_remembered_and_requires_human_stops_the_domain(world):
+    world.domain.script = ["TEMPORAL_INTEGRITY_VIOLATION"]
+    cycle(world, 1)
+    assert world.orch.propose(proposal(2), as_of="2030-01-01T11:00:00Z")["receipt"]["decision"] == "ALLOW"
+    world.orch.dispatch(world.spool)
+    world.domain.script = ["RECONCILIATION_REQUIRED"]
+    world.consumer.run_once()
+    world.orch.ingest(world.spool)
+    out = world.orch.propose(proposal(3), as_of="2030-01-01T12:00:00Z")
+    assert (out["receipt"]["decision"], out["receipt"]["reason_code"]) == ("REQUIRE_HUMAN",
+                                                                            "DOMAIN_RECONCILIATION_PENDING")
+
+
+def test_contradiction_is_preserved_not_decided_by_majority(world):
+    world.domain.states = {"crypto:REQ-I-0001": ("WATCH_NO_CAPITAL", "SUPPORTED"),
+                           "crypto:REQ-I-0002": ("REFUTED", "REFUTED"),
+                           "crypto:REQ-I-0003": ("REFUTED", "REFUTED")}
+    cycle(world, 1, as_of="2030-01-01T10:00:00Z")
+    cycle(world, 2, as_of="2030-01-01T11:00:00Z")
+    out = world.orch.propose(proposal(3), as_of="2030-01-01T12:00:00Z")
+    assert out["receipt"]["reason_code"] == "CONTRADICTION_UNRESOLVED"
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert sorted(f["object"]["scientific_state"] for f in facts) == ["REFUTED", "SUPPORTED"]
+
+
+def run_cain(*args, env=None):
+    return subprocess.run([sys.executable, "-m", "cain", *map(str, args)], capture_output=True, env=env,
+                          cwd=os.getcwd())
+
+
+def test_decision_receipt_is_byte_identical_in_three_new_processes(world, tmp_path):
+    cycle(world, 1)
+    candidate = tmp_path / "candidate.json"
+    candidate.write_text(json.dumps(proposal(2)), encoding="utf-8")
+    outputs = [run_cain("research", "decision-receipt", "--domain", "crypto", "--state", world.tmp / "state",
+                        "--proposal", candidate, "--as-of", "2030-01-01T11:00:00Z") for _ in range(3)]
+    assert all(o.returncode == 0 for o in outputs), outputs[0].stderr
+    assert len({o.stdout for o in outputs}) == 1
+    receipt = json.loads(outputs[0].stdout)
+    assert receipt["decision"] == "ALLOW" and receipt["policy"]["code_sha256"] == policy.code_sha256()
+    with world.orch.store.db() as db:
+        assert db.execute("SELECT count(*) FROM episodes").fetchone()[0] == 1
+
+
+@pytest.mark.parametrize("point", ["after_decision_before_episode_commit", "after_outbox_commit"])
+def test_process_death_during_proposal_recovers_with_the_same_receipt(tmp_path, point):
+    state, candidate = tmp_path / "state", tmp_path / "p.json"
+    candidate.write_text(json.dumps(proposal(1)), encoding="utf-8")
+    args = ("research", "propose", "--domain", "crypto", "--state", state, "--proposal", candidate, "--as-of", AS_OF)
+    died = run_cain(*args, env=os.environ | {ENV: point})
+    assert died.returncode == EXIT_CODE
+    again = run_cain(*args)
+    assert again.returncode == 0
+    clean = tmp_path / "clean"
+    reference = run_cain("research", "propose", "--domain", "crypto", "--state", clean, "--proposal", candidate,
+                         "--as-of", AS_OF)
+    assert json.loads(again.stdout)["receipt_sha256"] == json.loads(reference.stdout)["receipt_sha256"]
+    with Orchestrator("crypto", state).store.db() as db:
+        assert db.execute("SELECT count(*) FROM episodes").fetchone()[0] == 1
+        assert db.execute("SELECT count(*) FROM outbox").fetchone()[0] == 1
+
+
+@pytest.mark.parametrize("point", ["after_spool_write_before_ack", "after_inbox_commit_before_memory",
+                                   "after_memory_commit"])
+def test_process_death_in_dispatch_or_ingest_recovers_exactly_once(world, point):
+    world.orch.propose(proposal(1), as_of=AS_OF)
+    state, spool = world.tmp / "state", world.tmp / "spool"
+    if point == "after_spool_write_before_ack":
+        assert run_cain("research", "dispatch", "--domain", "crypto", "--state", state, "--spool", spool,
+                        env=os.environ | {ENV: point}).returncode == EXIT_CODE
+        assert run_cain("research", "dispatch", "--domain", "crypto", "--state", state, "--spool", spool).returncode == 0
+        world.consumer.run_once()
+    else:
+        world.orch.dispatch(world.spool)
+        world.consumer.run_once()
+        assert run_cain("research", "ingest", "--domain", "crypto", "--state", state, "--spool", spool,
+                        env=os.environ | {ENV: point}).returncode == EXIT_CODE
+    assert run_cain("research", "ingest", "--domain", "crypto", "--state", state, "--spool", spool).returncode == 0
+    assert run_cain("research", "ingest", "--domain", "crypto", "--state", state, "--spool", spool).returncode == 0
+    assert len(world.domain.results) == 1 and len(world.spool.task_files("crypto")) == 1
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert len(facts) == 1
+    with world.orch.store.db() as db:
+        assert db.execute("SELECT count(*) FROM inbox WHERE fact_id IS NOT NULL").fetchone()[0] == 1
+
+
+def test_cli_refuses_unknown_domain_configuration(tmp_path):
+    candidate = tmp_path / "p.json"
+    candidate.write_text(json.dumps(proposal(1)), encoding="utf-8")
+    done = run_cain("research", "propose", "--domain", "stocks", "--state", tmp_path / "s", "--proposal", candidate)
+    assert done.returncode == 1 and b"CONFIG_INVALID" in done.stdout
+
+
+def test_no_capital_anywhere(world):
+    cycle(world, 1)
+    for path in (world.tmp / "state").iterdir():
+        assert b'"capital_permission":true' not in path.read_bytes().replace(b" ", b"")
+
+
+def test_cli_in_process_covers_every_orchestration_command(world, tmp_path, capsys):
+    from cain.cli import main
+
+    state, spool = world.tmp / "state", world.tmp / "spool"
+    good, bad = tmp_path / "good.json", tmp_path / "bad.json"
+    good.write_text(json.dumps(proposal(1)), encoding="utf-8")
+    bad.write_text('{"a": 1, "a": 2}', encoding="utf-8")
+    base = ["research"]
+    assert main([*base, "propose", "--domain", "crypto", "--state", str(state), "--proposal", str(good),
+                 "--as-of", AS_OF]) == 0
+    assert json.loads(capsys.readouterr().out)["decision"] == "ALLOW"
+    assert main([*base, "propose", "--domain", "crypto", "--state", str(state), "--proposal", str(bad)]) == 2
+    assert json.loads(capsys.readouterr().out)["error"] == "SCHEMA_INVALID"  # duplicate key, fail closed
+    assert main([*base, "dispatch", "--domain", "crypto", "--state", str(state), "--spool", str(spool)]) == 0
+    capsys.readouterr()
+    world.consumer.run_once()
+    assert main([*base, "ingest", "--domain", "crypto", "--state", str(state), "--spool", str(spool)]) == 0
+    assert json.loads(capsys.readouterr().out)["action"] == "ingested"
+    task_id = world.orch.episodes()[0]["episodes"][0]["task_id"]
+    assert main([*base, "retry", "--domain", "crypto", "--state", str(state), "--spool", str(spool),
+                 "--task-id", task_id]) == 2
+    assert json.loads(capsys.readouterr().out)["error"] == "NOT_RETRYABLE"
+    assert main([*base, "episodes", "--domain", "crypto", "--state", str(state)]) == 0
+    episodes = json.loads(capsys.readouterr().out)
+    assert [e["decision"] for e in episodes["episodes"]] == ["ALLOW"] and episodes["memory"]["status"] == "intact"
+    assert main([*base, "decision-receipt", "--domain", "crypto", "--state", str(state), "--proposal", str(good),
+                 "--as-of", AS_OF]) == 0
+    assert json.loads(capsys.readouterr().out)["decision"] == "ALLOW"
+    (spool / "crypto" / "results" / "junk.json").write_bytes(b"not json")
+    assert main([*base, "ingest", "--domain", "crypto", "--state", str(state), "--spool", str(spool)]) == 2

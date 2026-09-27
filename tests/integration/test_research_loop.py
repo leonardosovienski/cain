@@ -325,7 +325,13 @@ def test_world_file_is_validated_and_ledger_is_append_only(tmp_path):
 
 
 def test_cli_run_and_status(tmp_path, capsys):
-    from cain.cli import main
+    # The loop runs the predictor's evaluator directly: it left the `cain` console script and is a lab tool
+    # (`python -m cain.loop`, integration-crypto fence); same arguments and outputs.
+    from cain.loop.__main__ import main as lab_main
+
+    def main(argv):
+        assert argv[0] == "loop"
+        return lab_main(argv[1:])
 
     world, _ = write_world(tmp_path, stages='["sanity", "in_sample", "walk_forward"]', attempts=3)
     db = str(tmp_path / "cli-ledger.db")
@@ -411,7 +417,11 @@ def test_local_model_proposer_sees_attempts_and_its_proposals_go_through_the_gua
 
 
 def test_cli_decide_holdout_and_verify(tmp_path, capsys):
-    from cain.cli import main
+    from cain.loop.__main__ import main as lab_main
+
+    def main(argv):
+        assert argv[0] == "loop"
+        return lab_main(argv[1:])
 
     world, _ = write_world(tmp_path, attempts=10)
     db = str(tmp_path / "gate.db")

@@ -15,6 +15,9 @@ def register(sub):
     research.add_argument("--session")
     research.add_argument("--collection", default="crypto")
     commands = research.add_subparsers(dest="research_command", required=True)
+    from cain.orchestration.cli import register as register_orchestration
+
+    register_orchestration(commands)
     bundle = commands.add_parser("bundle", help="Explicitly authorized records, resources and lineage")
     bundle.add_argument("--objects", type=Path)
     actions = bundle.add_subparsers(dest="bundle_command", required=True)

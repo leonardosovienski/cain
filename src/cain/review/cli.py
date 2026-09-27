@@ -67,7 +67,7 @@ def execute(args):
         provider = configured_llm(load_settings(args.config))
         if not hasattr(provider, "generate_json"):
             raise ValueError("the review needs a local model with structured output")
-        from cain.loop.cli import similarity_function
+        from cain.loop.similarity import similarity_function
 
         rank = similarity_function("embedding", args.config) if args.closed_rank_embedding else None
         return board.generate(args.domain, args.hypothesis_id, provider, closed_rank=rank)

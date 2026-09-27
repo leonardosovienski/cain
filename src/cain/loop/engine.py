@@ -33,10 +33,7 @@ from cain.observability import semconv as sc
 from cain.observability.tracing import active_span, record_span, start
 from cain.loop.ledger import LoopLedger
 from cain.loop.world import baseline, surface_violations, verify_evaluator
-
-def lexical_similarity(a: str, b: str) -> float:
-    left, right = set(a.casefold().split()), set(b.casefold().split())
-    return len(left & right) / len(left | right) if left | right else 1.0
+from cain.loop.similarity import lexical_similarity
 
 
 @dataclass
