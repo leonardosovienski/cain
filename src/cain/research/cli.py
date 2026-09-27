@@ -71,6 +71,13 @@ def register(sub):
         if name == "explain":
             query.add_argument("question")
             query.add_argument("--config", type=Path)
+            # Orchestration (soak only, C9): a local model writes a cain-proposal/1 file, audited; the proposal then
+            # goes through `cain research propose` like any other.
+            query.add_argument("--propose-for-domain")
+            query.add_argument("--state", type=Path)
+            query.add_argument("--proposal-out", type=Path)
+            query.add_argument("--proposal-id")
+            query.add_argument("--as-of")
     evidence = commands.add_parser("evidence")
     evidence.add_argument("reference")
     history = commands.add_parser("history")

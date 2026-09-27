@@ -165,6 +165,9 @@ def main(argv=None) -> int:
             from cain.inference.cli import execute as execute_inference
             _write(execute_inference(args))
             return 0
+        if args.command == "research" and args.research_command == "explain" and args.propose_for_domain:
+            from cain.orchestration.cli import execute_llm
+            return execute_llm(args)
         if args.command == "research" and args.research_command in ORCHESTRATION_COMMANDS:
             from cain.orchestration.cli import execute as execute_orchestration
             return execute_orchestration(args)

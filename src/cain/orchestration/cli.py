@@ -58,6 +58,32 @@ def _proposal(path: Path):
     return v2.loads_strict(raw)
 
 
+def execute_llm(args) -> int:
+    """`cain research explain QUESTION --propose-for-domain D --state S --proposal-out F --proposal-id cain:…`."""
+    from cain.llm import LLMError
+    from cain.orchestration.config import ConfigError
+    from cain.orchestration.llm import propose
+    from cain.orchestration.service import Orchestrator
+    from cain.providers import configured_llm
+    from cain.settings import load_settings
+
+    if not (args.state and args.proposal_out and args.proposal_id):
+        _line({"error": "INPUT_INVALID", "detail": "--state, --proposal-out and --proposal-id are required"})
+        return 2
+    try:
+        orchestrator = Orchestrator(args.propose_for_domain, args.state)
+        result = propose(orchestrator, configured_llm(load_settings(args.config)), question=args.question,
+                         as_of=args.as_of or _now(), proposal_id=args.proposal_id, out=args.proposal_out)
+    except ConfigError as exc:
+        _line({"error": exc.code, "detail": str(exc)})
+        return 1
+    except (ValueError, OSError, LLMError) as exc:
+        _line({"error": "LLM_PROPOSAL_FAILED", "detail": str(exc)[:300]})
+        return 2
+    _line(result)
+    return 0
+
+
 def execute(args) -> int:
     from research_protocol import v2
     from research_transport.spool import Spool, SpoolConflict

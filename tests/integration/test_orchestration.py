@@ -336,3 +336,51 @@ def test_memory_never_keeps_the_domain_free_text_reason(world):
     assert [f["object"]["status"] for f in facts] == ["TEMPORAL_INTEGRITY_VIOLATION"]
     assert all("reason" not in f["object"] for f in facts)
     assert b"TEMPORAL_INTEGRITY_VIOLATION" in (world.tmp / "state" / "memory.sqlite").read_bytes()
+
+
+class StubModel:
+    model = "stub"
+
+    def __init__(self, answer):
+        self.answer, self.calls = answer, []
+
+    def generate_json(self, prompt, context, schema):
+        self.calls.append((prompt, context, schema))
+        return json.dumps(self.answer)
+
+
+def test_llm_proposal_is_audited_and_still_goes_through_the_policy(world, tmp_path):
+    from cain.orchestration import llm
+
+    cycle(world, 1)
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "placebo_seed": 4242, "rationale": "x"})
+    out = tmp_path / "llm" / "p1.json"
+    info = llm.propose(world.orch, model, question="próximo", as_of="2030-01-01T11:00:00Z",
+                       proposal_id="cain:LLM-1", out=out)
+    (prompt, _context, schema), = model.calls
+    assert schema["properties"]["hypothesis_id"]["enum"] == sorted(world.orch.config["proposable_hypotheses"])
+    assert "crypto:H9" not in schema["properties"]["hypothesis_id"]["enum"]
+    assert "stocks" not in prompt and "capital" not in json.loads(prompt)
+    proposal = json.loads(out.read_text(encoding="utf-8"))
+    audit = json.loads(out.with_suffix(".audit.json").read_text(encoding="utf-8"))
+    assert proposal["source"] == "llm" and audit["response"] == json.dumps(model.answer)
+    assert audit["proposal_sha256"] == policy.safe_digest(proposal) and info["model"]["model"] == "stub"
+    decision = world.orch.propose(proposal, as_of="2030-01-01T11:00:00Z")["receipt"]
+    assert decision["decision"] == "ALLOW" and decision["task"] is not None
+    bad = StubModel({"hypothesis_id": "crypto:H9", "placebo_seed": 1})
+    with pytest.raises(ValueError, match="LLM_ANSWER_INVALID"):
+        llm.propose(world.orch, bad, question="x", as_of="2030-01-01T12:00:00Z", proposal_id="cain:LLM-2",
+                    out=tmp_path / "llm" / "p2.json")
+    closed = StubModel({"hypothesis_id": "crypto:H9", "placebo_seed": 1, "rationale": "tenta reabrir"})
+    llm.propose(world.orch, closed, question="x", as_of="2030-01-01T12:00:00Z", proposal_id="cain:LLM-3",
+                out=tmp_path / "llm" / "p3.json")
+    reopened = json.loads((tmp_path / "llm" / "p3.json").read_text(encoding="utf-8"))
+    assert world.orch.propose(reopened, as_of="2030-01-01T12:00:00Z")["receipt"]["reason_code"] in (
+        "HYPOTHESIS_CLOSED", "OPEN_TASK_PENDING")
+
+
+def test_llm_proposal_cli_requires_state_and_output(tmp_path, capsys):
+    from cain.cli import main
+
+    assert main(["research", "explain", "q", "--propose-for-domain", "crypto"]) == 2
+    assert json.loads(capsys.readouterr().out)["error"] == "INPUT_INVALID"
