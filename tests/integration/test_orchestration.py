@@ -327,3 +327,12 @@ def test_cli_in_process_covers_every_orchestration_command(world, tmp_path, caps
     assert json.loads(capsys.readouterr().out)["decision"] == "ALLOW"
     (spool / "crypto" / "results" / "junk.json").write_bytes(b"not json")
     assert main([*base, "ingest", "--domain", "crypto", "--state", str(state), "--spool", str(spool)]) == 2
+
+
+def test_memory_never_keeps_the_domain_free_text_reason(world):
+    world.domain.script = ["TEMPORAL_INTEGRITY_VIOLATION"]
+    cycle(world, 1)
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert [f["object"]["status"] for f in facts] == ["TEMPORAL_INTEGRITY_VIOLATION"]
+    assert all("reason" not in f["object"] for f in facts)
+    assert b"TEMPORAL_INTEGRITY_VIOLATION" in (world.tmp / "state" / "memory.sqlite").read_bytes()

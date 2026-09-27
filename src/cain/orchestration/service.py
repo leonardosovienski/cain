@@ -194,6 +194,9 @@ class Orchestrator:
                 "class": klass, "fact": fact.get("fact_id")}
 
     def _complete_memory(self, digest: str) -> dict:
+        # The memory (and so the retrieval) keeps states, IDs and hashes only. The domain's free-text reason stays in
+        # the inbox record for audit: a temporal refusal names the instant of a post-cutoff event, which must never
+        # reach what later decisions or a model can read (FUTURE_CANARY).
         with self.store.db() as db:
             row = db.execute("SELECT * FROM inbox WHERE domain=? AND result_sha256=?", (self.domain, digest)).fetchone()
         result = v2.loads_result(bytes(row["raw"]))
@@ -205,7 +208,7 @@ class Orchestrator:
             "task_id": result["task_id"], "episode": v2.episode_number(result["episode_id"]),
             "request_id": result["request_id"], "research_id": result["research_id"],
             "hypothesis_id": result["hypothesis_id"], "status": result["outcome"]["status"], "class": klass,
-            "reason": result["outcome"]["reason"], "result_id": body.get("result_id"),
+            "result_id": body.get("result_id"),
             "result_state": body.get("result_state"), "operational_state": body.get("operational_state"),
             "scientific_state": body.get("scientific_state"), "economic_state": body.get("economic_state"),
             "payload_sha256": body.get("payload_sha256"), "capital_permission": False,
