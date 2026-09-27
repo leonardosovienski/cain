@@ -1,0 +1,108 @@
+{
+ "allowed_references": {
+  "baseline": [
+   "flat v1"
+  ],
+  "cost_model": [
+   "v3-frozen v1"
+  ],
+  "dataset": [
+   "future-canary v1",
+   "positive v1",
+   "real-future-canary v1",
+   "real-in-sample v1"
+  ],
+  "evidence": [
+   "none v1"
+  ],
+  "protocol": [
+   "fixed-shadow v1"
+  ]
+ },
+ "allowed_request_types": [
+  "BACKTEST_EXISTING_HYPOTHESIS"
+ ],
+ "allowed_symbols": [
+  "BTCUSDT"
+ ],
+ "budget": {
+  "max_open_tasks": 1,
+  "max_tasks_per_research": 64,
+  "max_tasks_total": 512
+ },
+ "closed_hypotheses": {
+  "crypto:H1": "CLOSED_NO_GO",
+  "crypto:H2": "CLOSED_NO_GO",
+  "crypto:H3": "CLOSED_NO_GO",
+  "crypto:H4": "CLOSED_INSUFFICIENT_SAMPLE",
+  "crypto:H5": "CLOSED_NO_GO",
+  "crypto:H6": "CLOSED_INSUFFICIENT_SAMPLE",
+  "crypto:H7": "REGISTERED_NOT_ACTIVATED",
+  "crypto:H8": "REGISTERED_NOT_ACTIVATED",
+  "crypto:H9": "CLOSED_INSUFFICIENT_SAMPLE"
+ },
+ "config_version": 1,
+ "contract": {
+  "commit": "0276b9130a07c589f57009bdc9f035c0c2054777",
+  "path": "qualification/crypto/DOMAIN_RESEARCH_CONTRACT.json",
+  "repository": "leonardosovienski/predictor-qualification",
+  "request_schema_id": "crypto-research-request/1",
+  "result_schema_id": "crypto-research-result/1",
+  "sha256": "0831fe3db2b7ca41a26ff7665f93c07b0edda3c937ac4ce83fe0e96720a9eb55"
+ },
+ "contradiction_pairs": [
+  [
+   "REFUTED",
+   "SUPPORTED"
+  ]
+ ],
+ "cooldown": {
+  "after_consecutive_negative": 3,
+  "episodes": 2
+ },
+ "costs": {
+  "fee_bps": 10,
+  "slippage_bps": 5
+ },
+ "domain": "crypto",
+ "frozen_families": [
+  "funding_oi_hmm_v3"
+ ],
+ "frozen_parameters": {
+  "commit": "e8c9e9db7cc0e7585535469279a62ee49f41bd5f",
+  "path": "qualification/integration-crypto/FROZEN_PARAMETERS.json",
+  "repository": "leonardosovienski/predictor-qualification",
+  "sha256": "c428e4b769e3a6f932bda166d54f92d76b95680d8e689a612dbf4f3426dae760"
+ },
+ "max_priority_hint": "NORMAL",
+ "negative_result_states": [
+  "NO_EDGE",
+  "INCONCLUSIVE",
+  "REFUTED",
+  "CLOSED_INSUFFICIENT_SAMPLE",
+  "INCONCLUSIVE_DATA_QUALITY"
+ ],
+ "proposable_hypotheses": [
+  "crypto:QUAL-SHADOW-001",
+  "crypto:QUAL-SHADOW-REAL-001",
+  "crypto:QUAL-SHADOW-REAL-002",
+  "crypto:QUAL-SHADOW-REAL-003"
+ ],
+ "schema": "cain-domain-config/1",
+ "source": {
+  "commit": "341d270e4d709150c581c3cd93f4518d483009eb",
+  "files": [
+   {
+    "git_blob": "fb18172bba8df2ef3815782a935529c214055566",
+    "path": "charters/scientific_state.json",
+    "sha256": "4d2a7d7bbfcc0264ac1d0f30b76ecd20fd883b8a2cb6732c00fc502499793636"
+   },
+   {
+    "git_blob": "cb84802592514ea2c1aec7819690f99b8b072b81",
+    "path": "GarimpoInvestimentos/v3/costs.py",
+    "sha256": "bff9b4985c6cd9397309ddc6a5f2e6999e12a5ce6e5c56c64ed793340d3660de"
+   }
+  ],
+  "repository": "leonardosovienski/cripto-predictor"
+ }
+}

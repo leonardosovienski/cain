@@ -2,7 +2,12 @@
 
 import json
 import os
+import re
 from pathlib import Path
+
+# Domains whose registry may be read only at a full commit SHA (integration-crypto: the crypto state comes
+# only from its pinned base commit, never from a moving ref such as origin/main).
+PINNED_SHA_DOMAINS = frozenset({"crypto"})
 
 
 def register(sub):
@@ -68,9 +73,13 @@ def execute(args):
                                       ingest_trial_registry, read_source)
     from cain.memory.store import MemoryStore
 
+    cmd = args.findings_command
+    if (cmd in {"ingest-registry", "ingest-state", "ingest-ledger-index", "sync-demotions"}
+            and args.domain in PINNED_SHA_DOMAINS and not re.fullmatch(r"[0-9a-f]{40}", args.commit)):
+        # The crypto registry is read only at a full commit SHA, never at a moving ref.
+        raise ValueError(f"--commit must be a full 40-hex commit SHA for domain {args.domain!r}, not {args.commit!r}")
     memory = MemoryStore(args.db)
     archive = FindingsArchive(memory)
-    cmd = args.findings_command
 
     def at(value):
         return memory.now() if value == "now" else value
@@ -102,7 +111,7 @@ def execute(args):
     if cmd == "check":
         identity = {"trial_id": args.trial_id, "hypothesis_id": args.hypothesis_id,
                     "hypothesis_family": args.hypothesis_family}
-        from cain.loop.cli import similarity_function
+        from cain.loop.similarity import similarity_function
 
         rank = similarity_function("embedding", args.config) if args.rank_embedding else None
         matches = archive.equivalent_closed(args.domain, args.statement, as_of=at(args.as_of), identity=identity,

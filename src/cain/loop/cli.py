@@ -3,6 +3,8 @@
 import os
 from pathlib import Path
 
+from cain.loop.similarity import similarity_function  # noqa: F401 (re-exported)
+
 
 def register(sub):
     loop = sub.add_parser("loop", help="Governed research loop over a predictor's frozen evaluator")
@@ -26,39 +28,6 @@ def register(sub):
     holdout.add_argument("loop_id")
     holdout.add_argument("--world", type=Path, required=True)
     commands.add_parser("verify", help="Recompute the ledger hash chain")
-
-
-def similarity_function(kind: str, config=None):
-    """Lexical overlap, or cosine of the configured local embedding model (qwen3-embedding).
-
-    The embedding model is reached only on first use, so a loop that stops before comparing anything
-    (evaluator changed, policy changed, closed hypothesis) does not need the model server."""
-    from cain.loop.engine import lexical_similarity
-
-    if kind == "lexical":
-        return lexical_similarity
-    import math
-
-    from cain.providers import configured_embedding
-    from cain.settings import load_settings
-
-    cache, model = {}, []
-
-    def vector(text):
-        if not model:
-            settings = load_settings(config)
-            settings.search_mode = "hybrid"
-            model.append(configured_embedding(settings))
-        if text not in cache:
-            cache[text] = model[0].embed([text])[0]
-        return cache[text]
-
-    def cosine(a, b):
-        left, right = vector(a), vector(b)
-        dot = sum(x * y for x, y in zip(left, right))
-        return dot / (math.sqrt(sum(x * x for x in left)) * math.sqrt(sum(y * y for y in right)))
-
-    return cosine
 
 
 def execute(args):

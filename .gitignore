@@ -17,6 +17,8 @@ data/
 !src/cain/review/data/**
 !src/cain/findings/data/
 !src/cain/findings/data/**
+!src/cain/orchestration/data/
+!src/cain/orchestration/data/**
 build/
 dist/
 *.db

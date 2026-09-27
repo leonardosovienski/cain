@@ -13,6 +13,7 @@ from uuid import uuid4
 
 from cain.llm import FakeLLM
 from cain.runtime import build_cain, build_retriever, build_profile
+from cain.orchestration.cli import COMMANDS as ORCHESTRATION_COMMANDS
 from cain.orchestrator.routing import RuleRouter
 from cain.settings import is_loopback_url, load_settings
 
@@ -101,8 +102,6 @@ def main(argv=None) -> int:
     register_claims(sub)
     from cain.inference.cli import register as register_inference
     register_inference(sub)
-    from cain.loop.cli import register as register_loop
-    register_loop(sub)
     from cain.findings.cli import register as register_findings
     register_findings(sub)
     from cain.review.cli import register as register_review
@@ -162,14 +161,16 @@ def main(argv=None) -> int:
             from cain.findings.cli import execute as execute_findings
             _write(execute_findings(args))
             return 0
-        if args.command == "loop":
-            from cain.loop.cli import execute as execute_loop
-            _write(execute_loop(args))
-            return 0
         if args.command == "inference":
             from cain.inference.cli import execute as execute_inference
             _write(execute_inference(args))
             return 0
+        if args.command == "research" and args.research_command == "explain" and args.propose_for_domain:
+            from cain.orchestration.cli import execute_llm
+            return execute_llm(args)
+        if args.command == "research" and args.research_command in ORCHESTRATION_COMMANDS:
+            from cain.orchestration.cli import execute as execute_orchestration
+            return execute_orchestration(args)
         if args.command == "research":
             from cain.research.cli import execute
             result = execute(args)
