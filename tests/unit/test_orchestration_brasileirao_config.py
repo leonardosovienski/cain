@@ -73,6 +73,21 @@ def test_allow_a_qualification_probe_when_nothing_blocks():
     assert (out["decision"], out["rule"]) == ("ALLOW", "R14")
 
 
+def test_one_soak_hypothesis_per_cycle_is_proposable_and_not_held_by_another_hypothesis_contradiction():
+    # integration-brasileirao, cycle 4 (owner decision): QUAL-SOAK-001..024, one experiment each
+    soak = [f"brasileirao:QUAL-SOAK-{n:03d}" for n in range(1, 25)]
+    assert set(soak) <= set(CONFIG["proposable_hypotheses"])
+    assert {CONFIG["proposable_request_types"][h] for h in soak} == {"WALKFORWARD_FORECAST_EVALUATION"}
+    conflicting = [{"task_id": f"brasileirao:TASK-{n:032d}", "episode": n, "hypothesis_id": REQUEST["hypothesis_id"],
+                    "status": "RESULT", "class": "TERMINAL_RESULT", "result_state": state, "scientific_state": state,
+                    "economic_state": "NO_EDGE", "payload_sha256": "a" * 64}
+                   for n, state in ((1, "SUPPORTED"), (2, "REFUTED"))]
+    view = dict(EMPTY, results=conflicting, episodes=2)
+    assert decide(proposal(), view, 3)["reason_code"] == "CONTRADICTION_UNRESOLVED"
+    out = decide(proposal(hypothesis_id=soak[0], request_id="brasileirao:REQ-P-SOAK", season=2021), view, 3)
+    assert (out["decision"], out["rule"]) == ("ALLOW", "R14")
+
+
 def test_closed_protected_and_loop_hypotheses_and_the_loop_family_are_never_reopened():
     for hypothesis in [*(f"brasileirao:{t}" for t in REFUTED), *(f"brasileirao:{h}" for h in PROTECTED), LOOP]:
         out = decide(proposal(hypothesis_id=hypothesis))
