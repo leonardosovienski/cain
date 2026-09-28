@@ -133,7 +133,54 @@ def test_equivalence_follows_the_versioned_policy_and_an_embedding_only_ranks(ar
     matches = archive.equivalent_closed("f1", "circuit context weight lowers the RPS", as_of=now, rank=always_close)
     assert len(matches) == 1 and matches[0]["measure"] == "lexical"
     assert matches[0]["similarity"] >= rules["thresholds"]["lexical"] and matches[0]["rank_similarity"] == 0.99
-    assert matches[0]["policy"] == {"policy": "findings-equivalence-policy", "version": 1, "sha256": rules["sha256"]}
+    assert matches[0]["policy"] == {"policy": "findings-equivalence-policy", "version": rules["version"],
+                                    "sha256": rules["sha256"]}
+
+
+def test_a_frozen_family_or_trial_named_in_the_statement_is_the_same_hypothesis(archive):
+    # utility round 2 with the stocks: "momentum 12-1 cross-sectional long-only B3" passed as new although
+    # momentum_12_1 is a frozen family; version 2 of the policy matches a name written in the statement (normalized,
+    # at least two tokens), never a paraphrase without the name
+    from cain.findings.archive import equivalence_policy
+
+    assert equivalence_policy()["version"] == 2 and equivalence_policy()["rule"] == "identity-name-or-lexical/2"
+    archive.record("stocks", "stocks:frozen-family:momentum_12_1", kind="negative", verdict="FROZEN_FAMILY",
+                   statement="frozen family momentum_12_1: cannot be reopened or reparameterized silently",
+                   source=source("sf"), identity={"hypothesis_family": "momentum_12_1"})
+    archive.record("stocks", "stocks:trial:h14-near-52w-high", kind="negative", verdict="NO_GO",
+                   statement="H14 h14-near-52w-high", source=source("st"), identity={"trial_id": "h14-near-52w-high"})
+    archive.record("stocks", "stocks:frozen-family:momentum_12_1_total_return", kind="negative",
+                   verdict="FROZEN_FAMILY", statement="frozen family momentum_12_1_total_return",
+                   source=source("sr"), identity={"hypothesis_family": "momentum_12_1_total_return"})
+    now = archive.memory.now()
+    found = archive.equivalent_closed("stocks", "momentum 12-1 cross-sectional long-only B3", as_of=now)
+    assert [m["finding_id"] for m in found] == ["stocks:frozen-family:momentum_12_1"]
+    assert found[0]["same_identity"] == ["name_in_statement"] and found[0]["names_in_statement"] == ["momentum_12_1"]
+    trial = archive.equivalent_closed("stocks", "Reteste do H14-near-52w-high com outro universo", as_of=now)
+    assert [m["finding_id"] for m in trial] == ["stocks:trial:h14-near-52w-high"]
+    # a name inside a longer word, a one-token name or a paraphrase without the name is not a match
+    for statement in ("momentum 12-10 skip-month", "comprar ações com maior retorno em 12 meses excluindo o último mês"):
+        assert archive.equivalent_closed("stocks", statement, as_of=now) == []
+
+
+def test_review_candidates_come_from_the_embedding_and_never_decide(archive, tmp_path):
+    archive.record("stocks", "stocks:frozen-family:low_vol_252", kind="negative", verdict="FROZEN_FAMILY",
+                   statement="frozen family low_vol_252", source=source("lv"), identity={"hypothesis_family": "low_vol_252"})
+    archive.record("stocks", "stocks:frozen-family:near_52w_high", kind="negative", verdict="FROZEN_FAMILY",
+                   statement="frozen family near_52w_high", source=source("nh"),
+                   identity={"hypothesis_family": "near_52w_high"})
+    now = archive.memory.now()
+
+    def rank(a, b):  # a stand-in for the embedding cosine
+        return 0.9 if "low_vol" in b else 0.4
+
+    statement = "carteira das ações de menor volatilidade dos últimos 252 pregões"
+    assert archive.equivalent_closed("stocks", statement, as_of=now, rank=rank) == []
+    candidates = archive.review_candidates("stocks", statement, as_of=now, rank=rank)
+    assert [c["finding_id"] for c in candidates] == ["stocks:frozen-family:low_vol_252",
+                                                     "stocks:frozen-family:near_52w_high"]
+    assert archive.review_candidates("stocks", statement, as_of=now, rank=rank,
+                                     exclude={"stocks:frozen-family:low_vol_252"})[0]["rank_similarity"] == 0.4
 
 
 def test_verdicts_stated_in_the_notes_are_read_deterministically(tmp_path, archive):

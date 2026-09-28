@@ -10,8 +10,9 @@ Findings live in the bitemporal memory (Prompt 2) as facts of the domain's cube,
 * negative findings (NO-GO, refuted, closed) are knowledge too: ``equivalent_closed`` finds a closed
   hypothesis equivalent to a new one, so the loop does not retest it under another name. Closed
   findings are consulted even in quarantine: blocking a retest is the conservative side. What counts
-  as equivalent is the versioned ``findings-policy`` (identity, or lexical similarity at its
-  threshold); an embedding similarity only ranks the matches, since it has no calibrated threshold;
+  as equivalent is the versioned ``findings-policy`` (identity, a frozen family or trial id named in the statement
+  from version 2, or lexical similarity at its threshold); an embedding similarity only ranks the matches and lists
+  review candidates, since it has no calibrated threshold;
 * the procedure library only admits a strategy/feature/pipeline with a passing test report and a
   walk-forward result (code, data and metric hashes); a procedure demoted at the source is marked
   DEMOTED (and hidden by default);
@@ -31,6 +32,27 @@ EXTRACTOR = "deterministic:predictor-findings/1"
 KINDS = ("positive", "negative", "informative")
 PROCEDURE_STATES = ("ACTIVE", "DEMOTED")
 _SHA = re.compile(r"[0-9a-f]{64}\Z")
+_SEPARATOR = re.compile(r"[\W_]+")
+
+
+def _normalized(text: str) -> str:
+    """Lowercase words separated by single spaces, padded so a whole-name search needs word boundaries."""
+    return " " + " ".join(_SEPARATOR.sub(" ", text.lower()).split()) + " "
+
+
+def names_in_statement(rules: dict, known: dict, statement: str) -> list[str]:
+    """Frozen family / trial id names (policy ``name_match``) that appear whole in the normalized statement."""
+    spec = rules.get("name_match")
+    if not spec:
+        return []
+    text, found = _normalized(statement), []
+    for field in spec["fields"]:
+        value = known.get(field)
+        for name in value if isinstance(value, list) else [value]:
+            if isinstance(name, str) and len(_normalized(name).split()) >= spec["min_tokens"] \
+                    and _normalized(name) in text:
+                found.append(name)
+    return sorted(set(found))
 
 
 def _now() -> str:
@@ -122,9 +144,10 @@ class FindingsArchive:
     def equivalent_closed(self, domain: str, statement: str, *, as_of, identity: dict | None = None,
                           rank=None) -> list[dict]:
         """Closed hypotheses of ``domain`` equivalent to a new one, by the versioned equivalence policy:
-        same identity (trial id, hypothesis id or frozen family), or a lexical similarity at least the
-        policy's threshold. ``rank`` (e.g. the embedding cosine) is reported to order the matches for
-        review; it has no calibrated threshold, so it never decides. Matches best first."""
+        same identity (trial id, hypothesis id or frozen family), from version 2 a frozen family or trial id
+        named in the statement, or a lexical similarity at least the policy's threshold. ``rank`` (e.g. the
+        embedding cosine) is reported to order the matches for review; it has no calibrated threshold, so it
+        never decides. Matches best first."""
         rules = equivalence_policy()
         threshold = rules["thresholds"]["lexical"]
         identity = {k: v for k, v in (identity or {}).items() if v}
@@ -141,17 +164,33 @@ class FindingsArchive:
             family = identity.get("hypothesis_family")
             if family and family in (known.get("frozen_families") or []):
                 shared.append("frozen_families")
+            named = names_in_statement(rules, known, statement)
+            if named:
+                shared.append("name_in_statement")
             score = lexical_similarity(statement, finding["statement"])
             if shared or score >= threshold:
                 match = {"finding_id": finding["finding_id"], "verdict": finding["verdict"],
                          "status": finding["status"], "quarantine": finding["quarantine"],
                          "same_identity": shared, "similarity": round(score, 4), "measure": "lexical",
                          "policy": policies.ref(rules), "statement": finding["statement"][:300]}
+                if named:
+                    match["names_in_statement"] = named
                 if rank is not None:
                     match["rank_similarity"] = round(rank(statement, finding["statement"]), 4)
                 matches.append(match)
         matches.sort(key=lambda m: (-bool(m["same_identity"]), -m.get("rank_similarity", m["similarity"])))
         return matches
+
+    def review_candidates(self, domain: str, statement: str, *, as_of, rank, exclude: set[str] = frozenset(),
+                          limit: int = 3) -> list[dict]:
+        """Closed hypotheses closest to the statement by ``rank`` (e.g. the embedding cosine), for a human to look
+        at: never a decision (``equivalent_to_closed`` does not use them) and not calibrated. ``exclude``: finding
+        IDs already matched by the policy."""
+        scored = [{"finding_id": f["finding_id"], "verdict": f["verdict"], "statement": f["statement"][:300],
+                   "rank_similarity": round(rank(statement, f["statement"]), 4)}
+                  for f in self.closed(domain, as_of=as_of) if f["finding_id"] not in exclude]
+        scored.sort(key=lambda c: -c["rank_similarity"])
+        return scored[:limit]
 
     # ------------------------------------------------------------------ domain isolation
     def preregister(self, domain: str, hypothesis_id: str, *, statement: str, derived_from: str | None = None,

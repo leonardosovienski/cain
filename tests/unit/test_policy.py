@@ -9,9 +9,10 @@ from cain import policy as policies
 
 
 def test_the_shipped_policies_are_versioned_and_hashed():
-    for package, stem in (("cain.claims", "verifier-policy"), ("cain.findings", "findings-policy")):
+    # findings-policy v2 (2026-09-28): a frozen family or trial id named in the statement is an identity match
+    for package, stem, versions in (("cain.claims", "verifier-policy", [1]), ("cain.findings", "findings-policy", [1, 2])):
         found = policies.versions(package, stem)
-        assert [v["version"] for v in found] == [1] and len(found[0]["sha256"]) == 64
+        assert [v["version"] for v in found] == versions and all(len(v["sha256"]) == 64 for v in found)
         assert policies.ref(found[0]) == {"policy": found[0]["policy"], "version": 1, "sha256": found[0]["sha256"]}
 
 

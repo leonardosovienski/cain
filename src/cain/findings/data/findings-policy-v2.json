@@ -1,0 +1,14 @@
+{
+  "policy": "findings-equivalence-policy",
+  "version": 2,
+  "effective_from": "2026-09-28T00:00:00Z",
+  "rule": "identity-name-or-lexical/2",
+  "thresholds": {
+    "lexical": 0.6
+  },
+  "name_match": {
+    "fields": ["hypothesis_family", "trial_id"],
+    "min_tokens": 2
+  },
+  "note": "Version 1 plus one identity route: a closed hypothesis is also equivalent when its frozen family or trial id appears whole in the new statement, both normalized (lowercase; every run of non-alphanumeric characters, underscore included, is one separator) and the name having at least two tokens. The second utility round with the stocks (2026-09-28) passed 'momentum 12-1 cross-sectional long-only B3' as new although momentum_12_1 is a frozen family. A paraphrase without any name is still not decided: there is no calibrated semantic measure, so the embedding only lists review candidates (never a decision). The lexical threshold is unchanged. Merged by the owner."
+}
