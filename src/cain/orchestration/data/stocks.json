@@ -1,0 +1,162 @@
+{
+ "allowed_references": {
+  "baseline": [
+   "ew-universe v1"
+  ],
+  "cost_model": [
+   "h1-frozen v1"
+  ],
+  "dataset": [
+   "b3-cvm-real v1",
+   "b3-cvm-real-canary v1",
+   "positive v1"
+  ],
+  "features": [
+   "momentum v1",
+   "momentum-12-1 v1"
+  ],
+  "model": [
+   "quintile v1",
+   "quintile-real v1"
+  ],
+  "readiness": [
+   "matrix-20260921 v1"
+  ],
+  "source": [
+   "vlmo-real v1"
+  ],
+  "universe": [
+   "conformance v1",
+   "real v1"
+  ]
+ },
+ "allowed_request_types": [
+  "BACKTEST_PIT_FACTOR",
+  "COLLECT_EXTERNAL_INTELLIGENCE"
+ ],
+ "allowed_symbols": [],
+ "budget": {
+  "max_open_tasks": 1,
+  "max_tasks_per_research": 64,
+  "max_tasks_total": 512
+ },
+ "closed_hypotheses": {
+  "stocks:H1": "CLOSED_JUDGED",
+  "stocks:H10": "CLOSED_EMBARGO_ORIGINAL",
+  "stocks:H11": "CLOSED_JUDGED",
+  "stocks:H12": "CLOSED_EMBARGO_ORIGINAL",
+  "stocks:H13": "CLOSED_EMBARGO_ORIGINAL",
+  "stocks:H14": "CLOSED_JUDGED",
+  "stocks:H15": "CLOSED_JUDGED",
+  "stocks:H16": "CLOSED_JUDGED",
+  "stocks:H17": "PAUSED_INCONCLUSIVE_DATA_QUALITY",
+  "stocks:H18": "PAUSED",
+  "stocks:H19": "PAUSED",
+  "stocks:H2": "CLOSED_JUDGED",
+  "stocks:H20": "CLOSED_HISTORICAL",
+  "stocks:H21": "CLOSED_HISTORICAL_CONDITIONAL",
+  "stocks:H22": "CLOSED_REJECTED",
+  "stocks:H3": "CLOSED_JUDGED",
+  "stocks:H4": "CLOSED_JUDGED",
+  "stocks:H5": "CLOSED_JUDGED",
+  "stocks:H6": "CLOSED_JUDGED",
+  "stocks:H7": "CLOSED_EMBARGO_ORIGINAL",
+  "stocks:H8": "CLOSED_JUDGED",
+  "stocks:H9": "CLOSED_EMBARGO_ORIGINAL"
+ },
+ "config_version": 1,
+ "contract": {
+  "commit": "6af1e328e4ce92681c962ea10f797591a6ffe1a7",
+  "path": "qualification/stocks/DOMAIN_RESEARCH_CONTRACT.json",
+  "repository": "leonardosovienski/predictor-qualification",
+  "request_schema_id": "stocks-research-request/1",
+  "result_schema_id": "stocks-research-result/1",
+  "sha256": "76fa8227dd83eb9a9e74697caa73e4d61c68d207f1df5f94135c76508192d66c"
+ },
+ "contradiction_pairs": [
+  [
+   "REFUTED",
+   "SUPPORTED"
+  ]
+ ],
+ "cooldown": {
+  "after_consecutive_negative": 3,
+  "episodes": 2
+ },
+ "costs": {
+  "fee_bps": 3,
+  "slippage_bps": 15
+ },
+ "domain": "stocks",
+ "frozen_families": [
+  "low_vol_252",
+  "momentum_12_1",
+  "momentum_12_1_total_return",
+  "momentum_6_1",
+  "momentum_lowvol_intersection",
+  "near_52w_high",
+  "net_margin",
+  "quality_leverage",
+  "quality_roe",
+  "quality_roe_leverage_intersection",
+  "revenue_growth_yoy",
+  "reversal_21d",
+  "turn_of_month",
+  "vol_target_sizing",
+  "volume_surge"
+ ],
+ "frozen_parameters": {
+  "commit": "1eb146b6bd5e362e2edbabee31358662dd56264e",
+  "path": "qualification/integration-stocks/FROZEN_PARAMETERS.json",
+  "repository": "leonardosovienski/predictor-qualification",
+  "sha256": "771b8a23e9b9bde7a0e2a92b8ae92ccc01748ac9511b787cdbafdd7fcd8a7bfd"
+ },
+ "max_priority_hint": "NORMAL",
+ "negative_result_states": [
+  "NO_EDGE",
+  "INCONCLUSIVE",
+  "REFUTED",
+  "NOT_READY",
+  "CLOSED_INSUFFICIENT_SAMPLE",
+  "INCONCLUSIVE_DATA_QUALITY"
+ ],
+ "proposable_hypotheses": [
+  "stocks:QUAL-EI-COLLECTION-001",
+  "stocks:QUAL-PIT-MOM-001",
+  "stocks:QUAL-PIT-MOM-REAL-001",
+  "stocks:QUAL-PIT-MOM-REAL-002",
+  "stocks:QUAL-PIT-MOM-REAL-003"
+ ],
+ "schema": "cain-domain-config/1",
+ "source": {
+  "commit": "61fc017256ffea815ae96bbe02b847dccdb395cc",
+  "files": [
+   {
+    "git_blob": "de6d259fc25da706cd0a01bfef7d1732c26f108a",
+    "path": "stocks_predictor/research_admission.py",
+    "sha256": "d29bd40ccdb376b993b5eb090b1c8f7a4f8035322e93517a31f77cfd8e270213"
+   },
+   {
+    "git_blob": "10caf2af4b986e508baf69305e217287f2e296c3",
+    "path": "trials_v2.json",
+    "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+   },
+   {
+    "git_blob": "977bdac89565d9ced823b2b9e9fc71097786df38",
+    "path": "trials.json",
+    "sha256": "98401a82b961bcf89809e8c69acf44f3cedaec8ad3323f48196433f6768df316"
+   },
+   {
+    "git_blob": "3d131dc386353825e28fcd1642a954796af501fe",
+    "path": "config.yaml",
+    "sha256": "15d7605cf70e70ef1549a100e4e8a8d87f4c1c60f1e937b92adb7f395d8ae832"
+   },
+   {
+    "git_blob": "7fd3a45dfa94f176bec6552eae04f99954558438",
+    "path": "EXTERNAL_INTELLIGENCE_TRIAL_READINESS_MATRIX.json",
+    "sha256": "c37a81a644642c92de2fb3e6bf1eb800c7b400f6e94310fdeb34427f76bbdcfc"
+   }
+  ],
+  "repository": "leonardosovienski/stocks-predictor"
+ }
+}

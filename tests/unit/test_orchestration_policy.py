@@ -175,4 +175,4 @@ def test_configuration_rejects_closed_hypothesis_made_proposable():
     with pytest.raises(domain_config.ConfigError):
         domain_config.validate(broken)
     with pytest.raises(domain_config.ConfigError):
-        domain_config.load("stocks")
+        domain_config.load("brasileirao")
