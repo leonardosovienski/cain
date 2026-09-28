@@ -230,6 +230,13 @@ def main() -> int:
         "proposable_request_types": request_types(allowed_types, sorted(frozen_config["proposable_hypotheses"]),
                                                   a.qualification, a.frozen_commit, spec["frozen"]),
     }
+    # sobreposição de parâmetros por hipótese no molde do LLM (ex.: controle negativo com semente própria no stocks);
+    # chave opcional, emitida só quando não é vazia (crypto.json e brasileirao.json ficam com os mesmos bytes)
+    overlays = frozen_config.get("proposal_overlays", {})
+    if not set(overlays) <= set(frozen_config["proposable_hypotheses"]):
+        raise SystemExit("proposal_overlays of hypotheses that are not proposable")
+    if overlays:
+        config["proposal_overlays"] = {h: overlays[h] for h in sorted(overlays)}
     a.out.write_text(json.dumps(config, indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
     print(a.out, hashlib.sha256(a.out.read_bytes()).hexdigest())
     return 0

@@ -207,6 +207,40 @@ def test_rationale_counts_and_eligibility_are_checked_against_the_view():
     assert llm.rationale_check(text, CONFIG, EMPTY)["count_mismatches"] == []
 
 
+def test_overlaid_hypotheses_ask_for_their_own_experiment():
+    # cycle 2 of integration-stocks: hypotheses only for the LLM, each a negative control with its own seed (with R17
+    # the real backtest, which has no seed, is one experiment: without them the model is never asked)
+    extra = ["stocks:QUAL-LLM-CTRL-001", "stocks:QUAL-LLM-CTRL-002"]
+    config = copy.deepcopy(CONFIG)
+    config["proposable_hypotheses"] = sorted(config["proposable_hypotheses"] + extra)
+    config["proposable_request_types"] = dict(config["proposable_request_types"],
+                                              **{h: "BACKTEST_PIT_FACTOR" for h in extra})
+    config["proposal_overlays"] = {h: {"negative_control": {"kind": "SHUFFLED_LABELS", "seed": 9000 + k}}
+                                   for k, h in enumerate(extra, 1)}
+    assert domain_config.validate(config) is config
+    t = llm.templates(config, [REQUEST])
+    assert t["stocks:QUAL-LLM-CTRL-001"]["parameters"]["negative_control"] == {"kind": "SHUFFLED_LABELS", "seed": 9001}
+    assert "negative_control" not in t["stocks:QUAL-PIT-MOM-REAL-002"]["parameters"]
+    # after the real run only the overlaid hypotheses are new experiments
+    eligible = llm.eligibility(config, _ran(REQUEST, "stocks:TASK-" + "1" * 32), t, [], 2)
+    assert {h for h, d in eligible.items() if d["decision"] == "ALLOW"} == set(extra)
+    request = llm._request(t[extra[0]], "stocks", extra[0], 0, "stocks:REQ-LLM-0009")
+    assert policy.decide(proposal(request), EMPTY, config, episode_number=1)["reason_code"] == "ALLOWED"
+    # a template borrowed from an overlaid task drops that overlay (newest first: the control task)
+    borrowed = llm.templates(config, [request, REQUEST])
+    assert "negative_control" not in borrowed["stocks:QUAL-PIT-MOM-REAL-002"]["parameters"]
+    assert borrowed[extra[1]]["parameters"]["negative_control"]["seed"] == 9002
+    assert borrowed[extra[0]] == request  # its own last task
+    # costs and the placebo seed are never overlaid; overlays only for proposable hypotheses
+    for bad in ({extra[0]: {"fee_bps": 0}}, {extra[0]: {"placebo_seed": 1}}, {extra[0]: {}},
+                {"stocks:QUAL-NEW-001": {"negative_control": {"kind": "SHUFFLED_LABELS", "seed": 1}}}):
+        with pytest.raises(domain_config.ConfigError):
+            domain_config.validate(dict(config, proposal_overlays=bad))
+    # optional key: domains without overlays keep their bytes
+    assert "proposal_overlays" not in domain_config.load("crypto")
+    assert "proposal_overlays" not in domain_config.load("brasileirao")
+
+
 def test_economic_watch_never_raises_priority_or_budget():
     results = [{"task_id": f"stocks:TASK-{n:032d}", "episode": n, "hypothesis_id": "stocks:QUAL-PIT-MOM-REAL-001",
                 "status": "RESULT", "class": "TERMINAL_RESULT", "result_state": "WATCH_NO_CAPITAL",

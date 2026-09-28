@@ -19,6 +19,10 @@ KEYS = frozenset(
         "contradiction_pairs", "sealed_scopes", "proposable_request_types",
     }
 )
+# optional: absent means empty, so a domain without it keeps the same bytes (crypto.json and brasileirao.json of rc10)
+OPTIONAL_KEYS = frozenset({"proposal_overlays"})
+# parameters an overlay never sets: the costs are the frozen configuration's, the placebo seed is the CAIN's
+NOT_OVERLAID = frozenset({"fee_bps", "slippage_bps", "placebo_seed"})
 PRIORITIES = ("LOW", "NORMAL", "HIGH")
 
 
@@ -37,7 +41,7 @@ def load(domain: str) -> dict:
 
 
 def validate(config: dict) -> dict:
-    if not isinstance(config, dict) or set(config) != KEYS or config["schema"] != SCHEMA:
+    if not isinstance(config, dict) or not KEYS <= set(config) <= KEYS | OPTIONAL_KEYS or config["schema"] != SCHEMA:
         raise ConfigError("configuration fields differ from cain-domain-config/1")
     domain = config["domain"]
     if domain not in v2.DOMAINS:
@@ -55,6 +59,11 @@ def validate(config: dict) -> dict:
     if not isinstance(types, dict) or set(types) != set(config["proposable_hypotheses"]) or not set(
             types.values()) <= set(config["allowed_request_types"]):
         raise ConfigError("every proposable hypothesis needs exactly one allowed request type")
+    overlays = config.get("proposal_overlays", {})
+    if not isinstance(overlays, dict) or not set(overlays) <= set(config["proposable_hypotheses"]) or not all(
+            isinstance(o, dict) and o and not set(o) & NOT_OVERLAID for o in overlays.values()):
+        raise ConfigError("proposal_overlays: non-empty parameter objects of proposable hypotheses, never costs or "
+                          "the placebo seed")
     try:
         policy.check_sealed_scopes(config["sealed_scopes"])
     except ValueError as exc:

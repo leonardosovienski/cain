@@ -94,14 +94,28 @@ def templates(config: dict, emitted: list[dict]) -> dict:
     """Request template of each proposable hypothesis, from the CAIN's own emitted tasks (newest first, without
     ``client_ref``): the hypothesis's own last task, else the last task of the request type the configuration fixes
     for it (``proposable_request_types``). Never a task of another type: a collection hypothesis never borrows a
-    backtest. A hypothesis with neither has no template (it is not offered to the model)."""
+    backtest. A hypothesis with neither has no template (it is not offered to the model).
+
+    ``proposal_overlays`` (optional) gives a hypothesis parameters of its own (e.g. a negative control with its own
+    seed): a template borrowed from another hypothesis drops every overlaid parameter and takes the hypothesis's
+    overlay, so each such hypothesis asks for its own experiment (R17 would hold a borrowed one as the same)."""
+    overlays = config.get("proposal_overlays", {})
+    overlaid = set().union(*overlays.values()) if overlays else set()
     out = {}
     for hypothesis in sorted(config["proposable_hypotheses"]):
         kind = config["proposable_request_types"][hypothesis]
         own = next((p for p in emitted if p["hypothesis_id"] == hypothesis and p["request_type"] == kind), None)
-        same_type = next((p for p in emitted if p["request_type"] == kind), None)
-        if own or same_type:
-            out[hypothesis] = own or same_type
+        if own is not None:
+            template = own
+        else:
+            base = next((p for p in emitted if p["request_type"] == kind), None)
+            if base is None:
+                continue
+            params = {k: v for k, v in base["parameters"].items() if k not in overlaid}
+            template = dict(base, parameters=params)
+        if hypothesis in overlays:
+            template = dict(template, parameters=dict(template["parameters"], **overlays[hypothesis]))
+        out[hypothesis] = template
     return out
 
 
