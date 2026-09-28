@@ -107,6 +107,12 @@ fica de fora. Assim a memória continua sem texto livre (FUTURE_CANARY). A Decis
 prioridade e escopo continuam constantes (NEGATIVE_RESULT_NEUTRALITY). Sem a chave, fato, visão, prompt e instrução
 ficam iguais aos de antes.
 
+O contexto cabe no orçamento de entrada do provider (`effective_input_byte_budget`: o menor entre `max_input_bytes`
+e `num_ctx − num_predict − 256`). Os resultados mais antigos saem primeiro, o `hypothesis_summary` mantém todas as
+contagens e `results_omitted` diz quantos resultados não foram listados, inclusive os que passam do teto de 50. Dentro
+do orçamento, o prompt não muda. Na rc11, com as métricas, uns 25 resultados passavam dos 7680 bytes de um modelo de
+contexto 8k, e toda proposta do soak falhava antes de chegar ao modelo.
+
 ## Interface da configuração de domínio (`cain-domain-config/1`)
 
 Um arquivo `src/cain/orchestration/data/<domínio>.json`, gerado por `tools/build_domain_config.py` a partir de

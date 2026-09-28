@@ -574,3 +574,42 @@ def test_without_declared_numbers_the_fact_the_view_and_the_prompt_stay_as_befor
                 out=tmp_path / "llm" / "m2.json")
     (prompt, context, _schema), = model.calls
     assert all("metrics" not in r for r in json.loads(prompt)["results"]) and context == llm.INSTRUCTION
+
+
+class BudgetModel(StubModel):
+    """A provider with an input byte budget, like OllamaClient.effective_input_byte_budget."""
+
+    def __init__(self, answer, budget):
+        super().__init__(answer)
+        self.effective_input_byte_budget = budget
+
+
+def test_the_model_context_fits_the_provider_budget_dropping_the_oldest_results(world, tmp_path):
+    from cain.orchestration import llm
+
+    hypotheses = ["crypto:QUAL-SHADOW-REAL-001", "crypto:QUAL-SHADOW-REAL-002", "crypto:QUAL-SHADOW-REAL-003"]
+    for n in range(1, 7):
+        world.domain.facts[f"crypto:REQ-I-{n:04d}"] = {"metrics": {
+            "net_return_bps": -100 - n, "net_ci_low_bps": -300, "net_ci_high_bps": 40 + n, "sample_size": 50 + n}}
+        cycle(world, n, as_of=f"2030-01-01T1{n}:00:00Z", hypothesis_id=hypotheses[n % 3])
+    answer = {"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "rationale": "x"}
+    free = StubModel(answer)  # no budget: every result, the prompt of before
+    llm.propose(world.orch, free, question="próximo", as_of="2030-01-01T17:00:00Z", proposal_id="cain:LLM-B0",
+                out=tmp_path / "llm" / "b0.json")
+    (full, full_instruction, _), = free.calls
+    assert len(json.loads(full)["results"]) == 6 and "results_omitted" not in json.loads(full)
+    size = len((full_instruction + full).encode("utf-8"))
+    roomy = BudgetModel(answer, size)  # a budget that holds everything changes nothing
+    llm.propose(world.orch, roomy, question="próximo", as_of="2030-01-01T17:00:00Z", proposal_id="cain:LLM-B0",
+                out=tmp_path / "llm" / "b1.json")
+    assert roomy.calls[0][:2] == (full, full_instruction)
+    tight = BudgetModel(answer, size - 1)
+    llm.propose(world.orch, tight, question="próximo", as_of="2030-01-01T17:00:00Z", proposal_id="cain:LLM-B0",
+                out=tmp_path / "llm" / "b2.json")
+    (prompt, instruction, _), = tight.calls
+    shown = json.loads(prompt)
+    assert len((instruction + prompt).encode("utf-8")) <= size - 1
+    assert shown["results_omitted"] == 6 - len(shown["results"]) >= 1
+    assert [r["episode"] for r in shown["results"]] == [r["episode"] for r in json.loads(full)["results"]][-len(
+        shown["results"]):]  # the newest stay
+    assert shown["hypothesis_summary"] == json.loads(full)["hypothesis_summary"]  # the counts never shrink

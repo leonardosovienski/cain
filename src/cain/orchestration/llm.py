@@ -217,6 +217,28 @@ def rationale_check(rationale: str, config: dict, view: dict, *, chosen: str | N
             "count_mismatches": counts, "eligibility_mismatches": eligibility}
 
 
+MAX_RESULTS = 50
+
+
+def _fitted(domain: str, question: str, as_of: str, allowed: list, summary: dict, results: list, total: int,
+            budget) -> tuple[str, str]:
+    """Prompt and instruction within the provider's input budget (``effective_input_byte_budget``). The oldest
+    results leave first; the hypothesis_summary keeps every count, and ``results_omitted`` says how many results are
+    not listed. With nothing omitted the prompt is the one of before. Validation of 2026-09-28 (rc11 soak): with
+    result_metrics, about 25 results passed the 7680-byte budget of an 8k-context model and every proposal failed
+    before the model was asked. A provider without a budget gets the last MAX_RESULTS results."""
+    while True:
+        context = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
+                   "hypothesis_summary": summary, "results": results}
+        if total > len(results):
+            context["results_omitted"] = total - len(results)
+        instruction = INSTRUCTION + (METRICS_NOTE if any("metrics" in r for r in results) else "")
+        prompt = json.dumps(context, ensure_ascii=False, sort_keys=True)
+        if type(budget) is not int or not results or len((instruction + prompt).encode("utf-8")) <= budget:
+            return prompt, instruction
+        results = results[1:]
+
+
 def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: str, out: Path) -> dict:
     domain, config = orchestrator.domain, orchestrator.config
     with orchestrator.store.db() as db:
@@ -235,13 +257,11 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
         held = sorted({f"{d['decision']} {d['reason_code']}" for d in decisions.values()})
         raise ValueError(f"NO_ELIGIBLE_HYPOTHESIS: the policy holds every proposable hypothesis now: {held}")
     summary = hypothesis_summary(config, view, decisions)
-    context = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
-               "hypothesis_summary": summary,
-               "results": [{k: r[k] for k in ("episode", "hypothesis_id", "status", "result_state", "scientific_state",
-                                              "reason_code")} | ({"metrics": r["metrics"]} if r.get("metrics") else {})
-                           for r in view["results"][-50:]]}
-    instruction = INSTRUCTION + (METRICS_NOTE if any("metrics" in r for r in context["results"]) else "")
-    prompt = json.dumps(context, ensure_ascii=False, sort_keys=True)
+    shown = [{k: r[k] for k in ("episode", "hypothesis_id", "status", "result_state", "scientific_state",
+                                "reason_code")} | ({"metrics": r["metrics"]} if r.get("metrics") else {})
+             for r in view["results"][-MAX_RESULTS:]]
+    prompt, instruction = _fitted(domain, question, as_of, allowed, summary, shown, len(view["results"]),
+                                  getattr(provider, "effective_input_byte_budget", None))
     if callable(getattr(provider, "generate_json", None)):
         raw = provider.generate_json(prompt, instruction, _schema(allowed))
     else:
