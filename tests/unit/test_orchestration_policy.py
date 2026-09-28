@@ -190,4 +190,4 @@ def test_configuration_rejects_closed_hypothesis_made_proposable():
     with pytest.raises(domain_config.ConfigError):
         domain_config.validate(broken)
     with pytest.raises(domain_config.ConfigError):
-        domain_config.load("brasileirao")
+        domain_config.load("football")  # a domain outside the frozen V2 registry never loads
