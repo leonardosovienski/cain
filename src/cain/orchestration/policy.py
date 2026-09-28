@@ -31,6 +31,9 @@ Rules, first match wins (FROZEN_PARAMETERS.json → decision_policy.rule_order):
                                                     (refusal code HYPOTHESIS_NOT_ADMITTED): proposing it again only
                                                     wastes a task; a human aligns the configuration or the admission
   R11 REQUIRE_HUMAN NEW_HYPOTHESIS   hypothesis outside the configured proposable list
+  R17 DUPLICATE EQUIVALENT_REQUEST   the same experiment (the request without its request, hypothesis and research
+                                     IDs) already ran or is pending in the domain under another ID: it would add no
+                                     information (a task the domain refused does not count; it never ran)
   R12 ABSTAIN OPEN_TASK_PENDING / BUDGET_EXHAUSTED
   R13 COOLDOWN NEGATIVE_STREAK       N negative results in a row for the hypothesis: K episodes without a new task
   R14 ALLOW
@@ -155,6 +158,15 @@ def _sealed(request: dict, rules: list) -> str | None:
                 if low <= value < high:
                     return f"{rule['field']} = {value} within sealed [{low}, {high})"
     return None
+
+
+IDENTITY_FIELDS = ("request_id", "hypothesis_id", "research_id", "client_ref")
+
+
+def experiment_digest(request: dict) -> str:
+    """sha256 of the canonical request without its identifiers: the experiment the domain is asked to run. Two
+    requests that differ only in request, hypothesis or research ID ask for the same experiment."""
+    return hashlib.sha256(v2.canonical({k: v for k, v in request.items() if k not in IDENTITY_FIELDS})).hexdigest()
 
 
 def code_sha256() -> str:
@@ -313,6 +325,13 @@ def decide(proposal, view: dict, config: dict, *, episode_number: int) -> dict:
                         "domain's admission")
     if hypothesis not in config["proposable_hypotheses"]:
         return _outcome("REQUIRE_HUMAN", "NEW_HYPOTHESIS", "R11", f"{hypothesis} needs the owner")
+    experiment = experiment_digest(request)
+    ran = {r["task_id"] for r in view["results"] if r["class"] == "TERMINAL_RESULT"} | set(view["open_task_ids"])
+    equivalent = [t for t in tasks if t.get("experiment_sha256") == experiment and t["task_id"] in ran]
+    if equivalent:
+        return _outcome("DUPLICATE", "EQUIVALENT_REQUEST", "R17",
+                        f"same experiment as {equivalent[0]['task_id']} ({equivalent[0]['hypothesis_id']}); only the "
+                        "identifiers differ")
     budget = config["budget"]
     if len(view["open_task_ids"]) >= budget["max_open_tasks"]:
         return _outcome("ABSTAIN", "OPEN_TASK_PENDING", "R12", f"open: {view['open_task_ids'][:3]}")

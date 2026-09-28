@@ -156,6 +156,36 @@ def test_a_collection_hypothesis_is_never_sent_as_a_backtest():
     assert decide(proposal(request))["reason_code"] == "ALLOWED"
 
 
+def _ran(request, task_id, klass="TERMINAL_RESULT", open_task=False):
+    task = {"task_id": task_id, "episode": 1, "request_id": request["request_id"],
+            "research_id": request["research_id"], "hypothesis_id": request["hypothesis_id"],
+            "payload_sha256": "f" * 64, "experiment_sha256": policy.experiment_digest(request)}
+    results = [] if open_task else [{"task_id": task_id, "episode": 1, "hypothesis_id": request["hypothesis_id"],
+                                     "status": "RESULT", "class": klass, "result_state": "INCONCLUSIVE",
+                                     "scientific_state": "INCONCLUSIVE", "economic_state": "NO_EDGE",
+                                     "payload_sha256": "e" * 64, "reason_code": None}]
+    return dict(EMPTY, tasks=[task], results=results, open_task_ids=[task_id] if open_task else [])
+
+
+def test_the_same_experiment_under_another_id_adds_no_information():
+    # the utility round: QUAL-PIT-MOM-REAL-001/002/003 are one experiment; 12 backtests gave the same number
+    view = _ran(REQUEST, "stocks:TASK-" + "1" * 32)
+    alias = proposal(hypothesis_id="stocks:QUAL-PIT-MOM-REAL-002", request_id="stocks:REQ-P-0009")
+    out = decide(alias, view, 2)
+    assert (out["decision"], out["reason_code"], out["rule"]) == ("DUPLICATE", "EQUIVALENT_REQUEST", "R17")
+    # a task the domain refused never ran: it does not count
+    refused = _ran(REQUEST, "stocks:TASK-" + "2" * 32, klass="TERMINAL_REFUSAL")
+    assert decide(alias, refused, 2)["reason_code"] == "ALLOWED"
+    # a pending task of the same experiment does count
+    assert decide(alias, _ran(REQUEST, "stocks:TASK-" + "3" * 32, open_task=True), 2)["reason_code"] == "EQUIVALENT_REQUEST"
+    # new data (another as_of) is another experiment
+    assert decide(proposal(hypothesis_id="stocks:QUAL-PIT-MOM-REAL-002", request_id="stocks:REQ-P-0009",
+                           as_of="2026-10-05T03:00:00Z"), view, 2)["reason_code"] == "ALLOWED"
+    # a new hypothesis still goes to a human first (R11 before R17)
+    new = decide(proposal(hypothesis_id="stocks:QUAL-NEW-001", request_id="stocks:REQ-P-0010"), view, 2)
+    assert new["reason_code"] == "NEW_HYPOTHESIS"
+
+
 def test_economic_watch_never_raises_priority_or_budget():
     results = [{"task_id": f"stocks:TASK-{n:032d}", "episode": n, "hypothesis_id": "stocks:QUAL-PIT-MOM-REAL-001",
                 "status": "RESULT", "class": "TERMINAL_RESULT", "result_state": "WATCH_NO_CAPITAL",
