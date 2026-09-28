@@ -3,14 +3,16 @@
 The configuration says what exists in the domain; the generic DecisionPolicy (cain.orchestration.policy) is the
 same for every domain. Values come only from:
   * the domain repository at a pinned commit, read with ``git show <full sha>:<path>`` (crypto:
-    341d270e4d709150c581c3cd93f4518d483009eb; stocks: 61fc017256ffea815ae96bbe02b847dccdb395cc), with the blob hash and
-    sha256 of every file read;
+    341d270e4d709150c581c3cd93f4518d483009eb; stocks: 61fc017256ffea815ae96bbe02b847dccdb395cc; brasileirao:
+    25cdf4d9bb309d33f066fbc6a379f5d98c69f08a), with the blob hash and sha256 of every file read;
+  * brasileirao only: CAIN's own research-loop ledger of PR #50 (docs/evidence/2026-09-24-prompt6/ledger-events.jsonl),
+    read with ``git show`` at the pinned CAIN commit deccaaa0a0e2cb2b5f292614659eb4bf2e943e50;
   * the domain contract (DOMAIN_RESEARCH_CONTRACT.json) from the main of predictor-qualification;
   * the frozen mission parameters (FROZEN_PARAMETERS.json → decision_policy.<domain>_config).
 Nothing from later commits of the domain enters the configuration.
 
 Usage:
-  python tools/build_domain_config.py {crypto,stocks} --repo <domain repository clone> \
+  python tools/build_domain_config.py {crypto,stocks,brasileirao} --repo <domain repository clone> \
       --qualification <predictor-qualification clone> --contract-commit <sha on main> \n      --frozen-commit <sha of the mission's frozen parameters> --out <json>
 """
 
@@ -40,7 +42,16 @@ SOURCES = {
         "contract": "qualification/stocks/DOMAIN_RESEARCH_CONTRACT.json",
         "frozen": "qualification/integration-stocks/FROZEN_PARAMETERS.json",
     },
+    "brasileirao": {
+        "repository": "leonardosovienski/brasileirao-predictor",
+        "commit": "25cdf4d9bb309d33f066fbc6a379f5d98c69f08a",
+        "files": ["data/trials.json"],
+        "contract": "qualification/brasileirao/DOMAIN_RESEARCH_CONTRACT.json",
+        "frozen": "qualification/integration-brasileirao/FROZEN_PARAMETERS.json",
+    },
 }
+CAIN_ROOT = Path(__file__).resolve().parents[1]
+BRASILEIRAO_LOOP = ("deccaaa0a0e2cb2b5f292614659eb4bf2e943e50", "docs/evidence/2026-09-24-prompt6/ledger-events.jsonl")
 
 
 def git(repo: Path, *args: str) -> bytes:
@@ -82,6 +93,38 @@ def read_stocks(domain: str, raw_files: dict[str, bytes]) -> tuple[dict, list, f
     return closed, sorted(families), round(fee, 6), round(slippage * 10000, 6)
 
 
+def read_brasileirao(domain: str, raw_files: dict[str, bytes], contract: dict) -> tuple[dict, list, dict]:
+    """Closed hypotheses of the Brasileirão (D-25): the trials with status ``refutada`` of data/trials.json at the base
+    (negative per cain.findings.ingest.STATUS_KIND), the hypotheses the contract protects (the admission refuses them)
+    and the hypothesis of CAIN's research loop (PR #50) that stopped without improvement, with its world as a frozen
+    family. The request has no parameters, so there are no costs to compare (the cost model is an operator reference)."""
+    closed = {}
+    for row in json.loads(raw_files["data/trials.json"]):
+        if row.get("status") == "refutada":
+            identity = row.get("trial_id") or row.get("name")
+            closed[f"{domain}:{identity}"] = "REFUTED (data/trials.json status refutada em 25cdf4d; PR #51: negativo)"
+    for hypothesis in contract["admission_policy"]["protected_hypotheses_required"]:
+        closed[hypothesis] = "PROTECTED_BY_ADMISSION (contrato: protected_hypotheses_required)"
+    loops: dict[str, dict] = {}
+    for line in git(CAIN_ROOT, "show", ":".join(BRASILEIRAO_LOOP)).decode("utf-8").splitlines():
+        event = json.loads(line)
+        body, loop = event.get("body") or {}, event.get("loop_id") or event.get("stream")
+        if event["kind"] == "loop.started" and body["world_id"].startswith(f"{domain}-"):
+            loops[loop] = {"hypothesis": body["hypothesis"], "world_id": body["world_id"], "improved": False}
+        elif loop in loops and event["kind"] == "experiment.finished":
+            loops[loop]["improved"] |= bool(body.get("improved")) and body.get("step_kind") != "baseline"
+        elif loop in loops and event["kind"] == "loop.stopped":
+            loops[loop]["stop"] = body["reason"]
+    families = set()
+    for loop in loops.values():
+        if loop.get("stop") and not loop["improved"]:
+            name = f"{domain}:" + loop["hypothesis"].replace(":", ".")
+            closed[name] = ("NO_IMPROVEMENT_OVER_BASELINE (loop do PR #50: 2 ciclos, estagnação; hipótese "
+                            f"{loop['hypothesis']} do ledger, com ':' trocado por '.' para o padrão brasileirao:<id>)")
+            families.add(loop["world_id"])
+    return dict(sorted(closed.items())), sorted(families), {}
+
+
 READERS = {"crypto": read_crypto, "stocks": read_stocks}
 
 
@@ -107,11 +150,17 @@ def main() -> int:
     frozen_raw = git(a.qualification, "show", f"{a.frozen_commit}:{spec['frozen']}")
     contract, frozen = json.loads(contract_raw), json.loads(frozen_raw)
     frozen_config = frozen["decision_policy"][f"{a.domain}_config"]
-    closed, families, fee, slippage = READERS[a.domain](a.domain, raw_files)
+    if a.domain == "brasileirao":
+        closed, families, costs = read_brasileirao(a.domain, raw_files, contract)
+        if costs != frozen_config["costs"]:
+            raise SystemExit("frozen costs differ from the domain's request (no parameters, no costs)")
+    else:
+        closed, families, fee, slippage = READERS[a.domain](a.domain, raw_files)
+        if (fee, slippage) != (frozen_config["costs"]["fee_bps"], frozen_config["costs"]["slippage_bps"]):
+            raise SystemExit("frozen costs differ from the domain's cost source at the pinned commit")
+        costs = {"fee_bps": int(fee), "slippage_bps": int(slippage)}
     if closed != frozen_config["closed_hypotheses"] or families != frozen_config["frozen_families"]:
         raise SystemExit("scientific state at the pinned commit differs from the frozen parameters")
-    if (fee, slippage) != (frozen_config["costs"]["fee_bps"], frozen_config["costs"]["slippage_bps"]):
-        raise SystemExit("frozen costs differ from the domain's cost source at the pinned commit")
     allowed_types = sorted(contract["handler_allowlist"])
     if allowed_types != sorted(frozen_config["allowed_request_types"]):
         raise SystemExit("allowed request types differ from the contract handler_allowlist")
@@ -132,7 +181,7 @@ def main() -> int:
         "frozen_families": families,
         "proposable_hypotheses": sorted(frozen_config["proposable_hypotheses"]),
         "allowed_symbols": frozen_config["allowed_symbols"],
-        "costs": {"fee_bps": int(fee), "slippage_bps": int(slippage)},
+        "costs": costs,
         "allowed_references": {k: sorted(v) for k, v in frozen_config["allowed_references"].items()},
         "max_priority_hint": frozen_config["max_priority_hint"],
         "budget": frozen_config["budget"],
