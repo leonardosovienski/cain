@@ -1,4 +1,4 @@
-"""The packaged stocks configuration of the (unchanged) generic DecisionPolicy (integration-stocks).
+"""The packaged stocks configuration of the generic DecisionPolicy (integration-stocks).
 
 Pure functions, no I/O: the configuration comes from the pinned stocks base 61fc017 (closed hypotheses, their
 families and the [H1-FROZEN] costs) and the contract; the policy is the same code as for crypto.
@@ -7,7 +7,7 @@ families and the [H1-FROZEN] costs) and the contract; the policy is the same cod
 import copy
 
 from cain.orchestration import config as domain_config
-from cain.orchestration import policy
+from cain.orchestration import llm, policy
 
 CONFIG = domain_config.load("stocks")
 REQUEST = {
@@ -96,10 +96,31 @@ def test_costs_references_priority_and_domain_are_enforced():
     assert decide(proposal(hypothesis_id="stocks:QUAL-NEW-001"))["reason_code"] == "NEW_HYPOTHESIS"
 
 
-def test_known_framework_limits_fail_closed_for_stocks():
-    # IS-F002: the generic R06 compares costs on every request; a collection carries none.
-    assert decide(proposal(COLLECTION))["reason_code"] == "COST_MODEL_MISMATCH"
-    # IS-F003: the LLM proposal path writes the crypto placebo_seed, which the stocks schema refuses.
+def test_costs_are_compared_only_where_the_contract_declares_them():
+    # IS-F002: the stocks contract has two parameter shapes; a collection declares no cost keys.
+    assert policy.declared_parameters("stocks", COLLECTION["parameters"]) == {"collector", "period", "observed_at"}
+    assert {"fee_bps", "slippage_bps"} <= policy.declared_parameters("stocks", REQUEST["parameters"])
+    out = decide(proposal(COLLECTION))
+    assert (out["decision"], out["rule"]) == ("ALLOW", "R14")
+    # a backtest still carries the frozen [H1-FROZEN] costs, and a collection cannot smuggle costs in
+    assert decide(proposal(parameters=dict(REQUEST["parameters"], slippage_bps=0)))["reason_code"] == "COST_MODEL_MISMATCH"
+    smuggled = decide(proposal(COLLECTION, parameters=dict(COLLECTION["parameters"], fee_bps=0)))
+    assert (smuggled["decision"], smuggled["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
+    # parameters no variant accepts: the policy stays conservative (schema first, then costs)
+    assert policy.declared_parameters("stocks", {"unknown": 1}) is None
+
+
+def test_llm_requests_carry_the_placebo_seed_only_where_the_contract_declares_it():
+    # IS-F003: the stocks contract has no placebo_seed; the CAIN no longer writes one into stocks requests.
+    request = llm._request(REQUEST, "stocks", "stocks:QUAL-PIT-MOM-REAL-002", 7, "stocks:REQ-LLM-0001")
+    assert "placebo_seed" not in request["parameters"]
+    assert request["parameters"] == REQUEST["parameters"]
+    out = decide(proposal(request))
+    assert (out["decision"], out["rule"]) == ("ALLOW", "R14")
+    # every proposable hypothesis is eligible on an empty view (before: all SCHEMA_INVALID, NO_ELIGIBLE_HYPOTHESIS)
+    decisions = llm.eligibility(CONFIG, EMPTY, REQUEST, [], 1)
+    assert {h: d["decision"] for h, d in decisions.items()} == {h: "ALLOW" for h in CONFIG["proposable_hypotheses"]}
+    # the contract itself still refuses a placebo_seed in a stocks request
     out = decide(proposal(parameters=dict(REQUEST["parameters"], placebo_seed=7)))
     assert (out["decision"], out["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
 

@@ -15,6 +15,8 @@ Rules, first match wins (FROZEN_PARAMETERS.json → decision_policy.rule_order):
   R04 BLOCK REQUEST_TYPE_NOT_ALLOWED request_type outside the contract's handler_allowlist keys
   R05 BLOCK HYPOTHESIS_CLOSED        closed hypothesis of the domain's scientific state, or frozen family
   R06 BLOCK SYMBOL_NOT_ALLOWED / COST_MODEL_MISMATCH / REFERENCE_NOT_ALLOWED / PRIORITY_ABOVE_CAP
+                                     (costs are compared when the request's parameters variant in the domain's
+                                     frozen request_schema declares the cost keys: a collection carries none)
   R07 BLOCK REQUEST_ID_CONFLICT      request_id already emitted with other content
   R08 DUPLICATE                      same request content already emitted in the domain
   R09 REQUIRE_HUMAN DOMAIN_RECONCILIATION_PENDING   a REQUIRES_HUMAN outcome of the domain is unresolved
@@ -77,6 +79,29 @@ def _qualified(value, domain: str) -> str | None:
     if not value.startswith(domain + ":"):
         return f"ID of domain {value.split(':', 1)[0][:20]!r}"
     return None
+
+
+def declared_parameters(domain: str, params) -> frozenset[str] | None:
+    """Parameter names the domain's frozen request_schema declares for ``params``.
+
+    The ``parameters`` of a contract can have one shape or several (``oneOf``: a stocks backtest carries costs, a
+    collection does not). The answer is the union of the properties of every variant ``params`` validates against;
+    None when the contract has no ``parameters`` or no variant accepts them (callers then stay conservative).
+    """
+    schema = v2.REGISTRY["domains"][domain]["request_schema"]
+    spec = schema.get("properties", {}).get("parameters")
+    if not isinstance(spec, dict) or not isinstance(params, dict):
+        return None
+    declared: set[str] = set()
+    matched = False
+    for variant in spec.get("oneOf", [spec]):
+        try:
+            v2.validate(params, variant, root=schema)
+        except v2.InstanceError:
+            continue
+        matched = True
+        declared |= set(variant.get("properties", {}))
+    return frozenset(declared) if matched else None
 
 
 def _outcome(decision: str, reason: str, rule: str, detail: str = "") -> dict:
@@ -152,7 +177,9 @@ def decide(proposal, view: dict, config: dict, *, episode_number: int) -> dict:
     if "symbol" in params and params["symbol"] not in config["allowed_symbols"]:
         return _outcome("BLOCK", "SYMBOL_NOT_ALLOWED", "R06", str(params["symbol"])[:20])
     costs = config["costs"]
-    if any(params.get(key) != value for key, value in costs.items()):
+    declared = declared_parameters(domain, params)
+    costed = declared is None or bool(set(costs) & declared)
+    if costed and any(params.get(key) != value for key, value in costs.items()):
         return _outcome("BLOCK", "COST_MODEL_MISMATCH", "R06", f"costs must be the frozen {costs}")
     for kind, ref in sorted(request.get("references", {}).items()):
         if f"{ref.get('name')} {ref.get('version')}" not in config["allowed_references"].get(kind, []):

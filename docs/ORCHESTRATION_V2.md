@@ -40,12 +40,19 @@ da recusa só quando é um código fechado (`[A-Z][A-Z0-9_]{2,63}`); texto livre
 Achado na primeira campanha com modelo local: o CAIN propôs três vezes uma hipótese que a admissão do operador não
 aceita.
 
+Custos na **R06**: o CAIN compara `costs` só quando a variante de `parameters` do pedido, no `request_schema`
+congelado do domínio, declara as chaves de custo. No cripto, a única variante declara, então nada muda. No stocks, o
+backtest declara e continua preso aos custos [H1-FROZEN]; a coleta de External Intelligence não declara e deixa de ser
+bloqueada com `COST_MODEL_MISMATCH` (IS-F002 da integration-stocks). Se nenhuma variante aceitar os parâmetros, a
+política é conservadora e compara os custos (a R02 já recusa o formato).
+
 ## Propostas por modelo local (`cain research explain --propose-for-domain`)
 
 O modelo escolhe só a hipótese e a justificativa; não escolhe semente, handler, budget, prioridade, custos, dados nem
 capital, e a proposta passa pela mesma DecisionPolicy. A semente do placebo é do CAIN: derivada do ID da proposta,
 nunca uma já usada no domínio (na primeira campanha o modelo repetia sementes, e a mesma semente repete o mesmo
-placebo). Antes de perguntar, o CAIN testa cada hipótese configurada na própria política sobre a visão atual:
+placebo). O CAIN só grava `placebo_seed` onde o contrato do domínio declara esse parâmetro para o pedido. O cripto
+declara; o stocks não, e antes toda proposta por modelo do stocks virava `SCHEMA_INVALID` (IS-F003). Antes de perguntar, o CAIN testa cada hipótese configurada na própria política sobre a visão atual:
 só as que seriam `ALLOW` entram no enum do schema (as em `COOLDOWN`, recusadas pelo domínio ou retidas ficam de fora),
 e sem nenhuma elegível ele responde `NO_ELIGIBLE_HYPOTHESIS` em vez de chamar o modelo. O prompt leva um resumo por
 hipótese (resultados, estados científicos, códigos de recusa, por que não é elegível). A auditoria
@@ -70,7 +77,8 @@ parâmetros congelados da missão), com sha256 de cada fonte:
 | `contradiction_pairs` | estados científicos em conflito → REQUIRE_HUMAN, nunca maioria |
 
 Acrescentar `stocks` ou `brasileirao` = um arquivo de configuração novo + o adapter do domínio (no repositório do
-domínio) + a entrada do adapter na allowlist do transporte. O framework não muda.
+domínio) + a entrada do adapter na allowlist do transporte. O framework não muda. As variantes de `parameters` do
+contrato (custos, semente) vêm do `request_schema` congelado no registro V2, não da configuração.
 
 ## Loop do PR #50 (execução direta do avaliador)
 

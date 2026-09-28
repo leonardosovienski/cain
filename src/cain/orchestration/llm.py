@@ -8,7 +8,8 @@ domain as not admitted or otherwise held never reaches the model's choices (and 
 instead of asking). The prompt carries a per-hypothesis summary (results, scientific states, refusal codes, why it is
 not eligible) so the rationale can cite facts; the audit records which hypotheses the rationale mentions without any
 result or refusal behind them. The placebo seed is not a research choice: the CAIN assigns it (derived from the
-proposal ID, never one already used in the domain). In the first local-model campaign the model repeated listed seeds
+proposal ID, never one already used in the domain), and only where the domain's contract declares ``placebo_seed`` for
+the request's parameters (crypto; not stocks). In the first local-model campaign the model repeated listed seeds
 and, at temperature 0, kept repeating a refused one; the same seed repeats the same placebo. The CAIN fills the rest
 of the request from its last emitted task of the domain and writes a ``cain-proposal/1`` file with ``source = "llm"``; the proposal then goes through the same DecisionPolicy as
 any other (``cain research propose``). Every call is audited next to the proposal: prompt, response, provider, model
@@ -74,8 +75,13 @@ def model_identity(provider) -> dict:
 
 
 def _request(template: dict, domain: str, hypothesis: str, seed: int, request_id: str) -> dict:
+    """The template request with the chosen hypothesis; the placebo seed only where the domain's contract declares
+    ``placebo_seed`` for these parameters (crypto does; a stocks request would be refused as SCHEMA_INVALID)."""
     request = dict(template, hypothesis_id=hypothesis, request_id=request_id)
-    request["parameters"] = dict(template["parameters"], placebo_seed=seed)
+    params = dict(template["parameters"])
+    if "placebo_seed" in (policy.declared_parameters(domain, params) or ()):
+        params["placebo_seed"] = seed
+    request["parameters"] = params
     return request
 
 
