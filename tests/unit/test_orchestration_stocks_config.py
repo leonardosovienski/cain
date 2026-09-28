@@ -262,6 +262,51 @@ def test_packaged_llm_only_hypotheses_are_negative_controls_with_their_own_seeds
     assert again[LLM_ONLY[0]] == control  # its own task: the same experiment again (R17), never re-offered
 
 
+def test_a_refused_task_is_never_a_request_template():
+    # utility round 2 (rc12): REAL-003's only task was the future-canary dataset (refused by the domain with
+    # TEMPORAL_INTEGRITY_VIOLATION); REAL-002 borrowed it and the policy let the same refused request through again
+    canary = copy.deepcopy(REQUEST)
+    canary.update(request_id="stocks:REQ-P-CANARY", hypothesis_id="stocks:QUAL-PIT-MOM-REAL-003")
+    canary["references"] = dict(canary["references"], dataset={"name": "b3-cvm-real-canary", "version": "v1"})
+    before = llm.templates(CONFIG, [canary, REQUEST])
+    assert before["stocks:QUAL-PIT-MOM-REAL-002"]["references"]["dataset"]["name"] == "b3-cvm-real-canary"
+    after = llm.templates(CONFIG, [canary, REQUEST], refused={"stocks:REQ-P-CANARY"})
+    for hypothesis in ("stocks:QUAL-PIT-MOM-REAL-002", "stocks:QUAL-PIT-MOM-REAL-003"):
+        assert after[hypothesis]["references"]["dataset"]["name"] == "b3-cvm-real"
+    # with the real run done, both are the same experiment again (R17): nothing refused comes back to the model
+    eligible = llm.eligibility(CONFIG, _ran(REQUEST, "stocks:TASK-" + "1" * 32), after, [], 2)
+    assert eligible["stocks:QUAL-PIT-MOM-REAL-003"]["reason_code"] == "EQUIVALENT_REQUEST"
+
+
+def test_the_model_sees_what_each_allowed_hypothesis_would_request_never_costs():
+    t = llm.templates(CONFIG, [REQUEST, COLLECTION])
+    shown = llm.allowed_requests(t, ["stocks:QUAL-LLM-CTRL-001", "stocks:QUAL-EI-COLLECTION-001"])
+    control = shown["stocks:QUAL-LLM-CTRL-001"]
+    assert control["request_type"] == "BACKTEST_PIT_FACTOR"
+    assert control["parameters"]["negative_control"] == {"kind": "SHUFFLED_LABELS", "seed": 9001}
+    assert not {"fee_bps", "slippage_bps", "placebo_seed"} & set(control["parameters"])
+    assert control["references"]["dataset"] == REQUEST["references"]["dataset"]["name"]
+    assert shown["stocks:QUAL-EI-COLLECTION-001"]["request_type"] == "COLLECT_EXTERNAL_INTELLIGENCE"
+
+
+def test_a_false_refusal_claim_in_the_rationale_is_reported():
+    # utility round 2, cycles 3 and 4: "As hipóteses 001 e 002 foram recusadas por serem equivalentes" when both had
+    # run and returned results; a bare "001" may be several hypotheses, and the claim is false for all of them
+    row = {"results": 1, "scientific_states": {"INCONCLUSIVE": 1}, "refusals": [], "eligible_now": False,
+           "not_eligible_reason": "EQUIVALENT_REQUEST"}
+    summary = {h: dict(row) for h in CONFIG["proposable_hypotheses"]}
+    text = "As hipóteses 001 e 002 foram recusadas por serem equivalentes. A 003 é a próxima."
+    check = llm.rationale_check(text, CONFIG, EMPTY, chosen="stocks:QUAL-LLM-CTRL-003", summary=summary)
+    assert len(check["refusal_mismatches"]) == 1
+    assert "stocks:QUAL-LLM-CTRL-001" in check["refusal_mismatches"][0]["hypotheses"]
+    # one of the candidates really was refused: the claim may be true, nothing is reported
+    refused = dict(summary, **{"stocks:QUAL-PIT-MOM-001": dict(row, refusals=["HYPOTHESIS_NOT_ADMITTED"])})
+    assert llm.rationale_check(text, CONFIG, EMPTY, summary=refused)["refusal_mismatches"] == []
+    # a negated claim is not a refusal claim
+    negated = "A QUAL-LLM-CTRL-001 não foi recusada; rodou e deu INCONCLUSIVE."
+    assert llm.rationale_check(negated, CONFIG, EMPTY, summary=summary)["refusal_mismatches"] == []
+
+
 def test_economic_watch_never_raises_priority_or_budget():
     results = [{"task_id": f"stocks:TASK-{n:032d}", "episode": n, "hypothesis_id": "stocks:QUAL-PIT-MOM-REAL-001",
                 "status": "RESULT", "class": "TERMINAL_RESULT", "result_state": "WATCH_NO_CAPITAL",

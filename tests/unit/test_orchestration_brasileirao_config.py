@@ -142,6 +142,22 @@ def test_same_h9_in_three_domains_never_mixes_in_the_brasileirao_orchestration()
     assert reasons == {"crypto": "DOMAIN_MISMATCH", "stocks": "DOMAIN_MISMATCH", "brasileirao": "HYPOTHESIS_CLOSED"}
 
 
+def test_llm_template_probe_and_summary_of_a_request_without_parameters():
+    # the brasileirao request_schema has no parameters (additionalProperties false): template, probe request and the
+    # summary the model sees keep the request without them; a refused task is never a template
+    from cain.orchestration import llm
+
+    hypothesis = "brasileirao:QUAL-SERVING-REAL-001"
+    t = llm.templates(CONFIG, [copy.deepcopy(REQUEST)])
+    request = llm._request(t[hypothesis], "brasileirao", hypothesis, 7, "brasileirao:REQ-LLM-0001")
+    assert "parameters" not in request
+    assert decide(proposal(request=request))["decision"] == "ALLOW"
+    summary = llm.allowed_requests(t, [hypothesis])[hypothesis]
+    assert summary == {"request_type": "WALKFORWARD_FORECAST_EVALUATION",
+                       "references": {k: v["name"] for k, v in sorted(REQUEST["references"].items())}}
+    assert llm.templates(CONFIG, [copy.deepcopy(REQUEST)], refused={REQUEST["request_id"]}) == {}
+
+
 def test_three_configurations_are_distinct_and_hashed():
     others = [domain_config.load("crypto"), domain_config.load("stocks")]
     assert len({domain_config.digest(c) for c in (CONFIG, *others)}) == 3
