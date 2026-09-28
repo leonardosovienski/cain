@@ -140,6 +140,28 @@ def sealed_scopes(frozen_config: dict) -> list:
     raise SystemExit("sealed_scopes do FROZEN_PARAMETERS não está em formato de máquina (lista)")
 
 
+def request_types(allowed_types: list, proposable: list, qualification: Path, frozen_commit: str, frozen: str) -> dict:
+    """Request type of each proposable hypothesis: the LLM request template and R04 bind a hypothesis to it (the
+    utility round showed a collection hypothesis sent as a backtest). With one allowed type every proposable
+    hypothesis has it. With several (stocks), the mission's frozen proposal fixtures at the frozen commit decide
+    (``git show``); each proposable hypothesis must appear there with exactly one allowed type."""
+    if len(allowed_types) == 1:
+        return {h: allowed_types[0] for h in proposable}
+    folder = frozen.rsplit("/", 1)[0] + "/fixtures/proposals/"
+    seen: dict[str, set] = {}
+    for name in git(qualification, "ls-tree", "-r", "--name-only", frozen_commit, folder).decode().split():
+        if name.endswith(".json"):
+            request = json.loads(git(qualification, "show", f"{frozen_commit}:{name}"))["request"]
+            seen.setdefault(request["hypothesis_id"], set()).add(request["request_type"])
+    out = {}
+    for hypothesis in proposable:
+        types = seen.get(hypothesis, set())
+        if len(types) != 1 or not types <= set(allowed_types):
+            raise SystemExit(f"request type of {hypothesis} is not fixed by the frozen fixtures: {sorted(types)}")
+        out[hypothesis] = next(iter(types))
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("domain", choices=sorted(SOURCES))
@@ -204,6 +226,9 @@ def main() -> int:
         # R16: escopos lacrados (ex.: holdout) em formato de máquina no FROZEN_PARAMETERS da integração; sem a
         # chave, nenhum lacre (cripto e stocks).
         "sealed_scopes": sealed_scopes(frozen_config),
+        # tipo de pedido de cada hipótese proponível (molde do LLM e R04); um tipo só: todas; vários: fixtures congeladas
+        "proposable_request_types": request_types(allowed_types, sorted(frozen_config["proposable_hypotheses"]),
+                                                  a.qualification, a.frozen_commit, spec["frozen"]),
     }
     a.out.write_text(json.dumps(config, indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
     print(a.out, hashlib.sha256(a.out.read_bytes()).hexdigest())

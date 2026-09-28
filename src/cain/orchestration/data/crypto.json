@@ -88,6 +88,12 @@
   "crypto:QUAL-SHADOW-REAL-002",
   "crypto:QUAL-SHADOW-REAL-003"
  ],
+ "proposable_request_types": {
+  "crypto:QUAL-SHADOW-001": "BACKTEST_EXISTING_HYPOTHESIS",
+  "crypto:QUAL-SHADOW-REAL-001": "BACKTEST_EXISTING_HYPOTHESIS",
+  "crypto:QUAL-SHADOW-REAL-002": "BACKTEST_EXISTING_HYPOTHESIS",
+  "crypto:QUAL-SHADOW-REAL-003": "BACKTEST_EXISTING_HYPOTHESIS"
+ },
  "schema": "cain-domain-config/1",
  "sealed_scopes": [],
  "source": {

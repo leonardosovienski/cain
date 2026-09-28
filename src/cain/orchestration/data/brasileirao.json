@@ -89,6 +89,12 @@
   "brasileirao:QUAL-SERVING-REAL-002",
   "brasileirao:QUAL-SERVING-REAL-003"
  ],
+ "proposable_request_types": {
+  "brasileirao:HQ-SERVING-BASELINE": "WALKFORWARD_FORECAST_EVALUATION",
+  "brasileirao:QUAL-SERVING-REAL-001": "WALKFORWARD_FORECAST_EVALUATION",
+  "brasileirao:QUAL-SERVING-REAL-002": "WALKFORWARD_FORECAST_EVALUATION",
+  "brasileirao:QUAL-SERVING-REAL-003": "WALKFORWARD_FORECAST_EVALUATION"
+ },
  "schema": "cain-domain-config/1",
  "sealed_scopes": [
   {

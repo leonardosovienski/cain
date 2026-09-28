@@ -6,6 +6,8 @@ families and the [H1-FROZEN] costs) and the contract; the policy is the same cod
 
 import copy
 
+import pytest
+
 from cain.orchestration import config as domain_config
 from cain.orchestration import llm, policy
 
@@ -118,11 +120,40 @@ def test_llm_requests_carry_the_placebo_seed_only_where_the_contract_declares_it
     out = decide(proposal(request))
     assert (out["decision"], out["rule"]) == ("ALLOW", "R14")
     # every proposable hypothesis is eligible on an empty view (before: all SCHEMA_INVALID, NO_ELIGIBLE_HYPOTHESIS)
-    decisions = llm.eligibility(CONFIG, EMPTY, REQUEST, [], 1)
+    decisions = llm.eligibility(CONFIG, EMPTY, llm.templates(CONFIG, [REQUEST, COLLECTION]), [], 1)
     assert {h: d["decision"] for h, d in decisions.items()} == {h: "ALLOW" for h in CONFIG["proposable_hypotheses"]}
     # the contract itself still refuses a placebo_seed in a stocks request
     out = decide(proposal(parameters=dict(REQUEST["parameters"], placebo_seed=7)))
     assert (out["decision"], out["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
+
+
+def test_each_proposable_hypothesis_has_one_request_type_from_the_frozen_fixtures():
+    assert CONFIG["proposable_request_types"] == {
+        "stocks:QUAL-EI-COLLECTION-001": "COLLECT_EXTERNAL_INTELLIGENCE",
+        "stocks:QUAL-PIT-MOM-001": "BACKTEST_PIT_FACTOR", "stocks:QUAL-PIT-MOM-REAL-001": "BACKTEST_PIT_FACTOR",
+        "stocks:QUAL-PIT-MOM-REAL-002": "BACKTEST_PIT_FACTOR", "stocks:QUAL-PIT-MOM-REAL-003": "BACKTEST_PIT_FACTOR"}
+    broken = dict(CONFIG, proposable_request_types={})
+    with pytest.raises(domain_config.ConfigError):
+        domain_config.validate(broken)
+
+
+def test_a_collection_hypothesis_is_never_sent_as_a_backtest():
+    # the utility round: the model chose the collection hypothesis and the CAIN copied the last task (a backtest)
+    out = decide(proposal(hypothesis_id="stocks:QUAL-EI-COLLECTION-001"))
+    assert (out["decision"], out["reason_code"], out["rule"]) == ("BLOCK", "REQUEST_TYPE_NOT_ALLOWED", "R04")
+    out = decide(proposal(COLLECTION, hypothesis_id="stocks:QUAL-PIT-MOM-REAL-001"))
+    assert (out["decision"], out["reason_code"], out["rule"]) == ("BLOCK", "REQUEST_TYPE_NOT_ALLOWED", "R04")
+    # templates come from the hypothesis's own task, else a task of its request type, never another type
+    only_backtest = llm.templates(CONFIG, [REQUEST])
+    assert "stocks:QUAL-EI-COLLECTION-001" not in only_backtest
+    assert only_backtest["stocks:QUAL-PIT-MOM-REAL-002"]["request_type"] == "BACKTEST_PIT_FACTOR"
+    held = llm.eligibility(CONFIG, EMPTY, only_backtest, [], 1)["stocks:QUAL-EI-COLLECTION-001"]
+    assert (held["decision"], held["reason_code"]) == ("ABSTAIN", "NO_REQUEST_TEMPLATE")
+    both = llm.templates(CONFIG, [COLLECTION, REQUEST])
+    assert both["stocks:QUAL-EI-COLLECTION-001"]["request_type"] == "COLLECT_EXTERNAL_INTELLIGENCE"
+    request = llm._request(both["stocks:QUAL-EI-COLLECTION-001"], "stocks", "stocks:QUAL-EI-COLLECTION-001", 7,
+                           "stocks:REQ-LLM-0002")
+    assert decide(proposal(request))["reason_code"] == "ALLOWED"
 
 
 def test_economic_watch_never_raises_priority_or_budget():

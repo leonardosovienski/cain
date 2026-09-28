@@ -127,6 +127,13 @@
   "stocks:QUAL-PIT-MOM-REAL-002",
   "stocks:QUAL-PIT-MOM-REAL-003"
  ],
+ "proposable_request_types": {
+  "stocks:QUAL-EI-COLLECTION-001": "COLLECT_EXTERNAL_INTELLIGENCE",
+  "stocks:QUAL-PIT-MOM-001": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-PIT-MOM-REAL-001": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-PIT-MOM-REAL-002": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-PIT-MOM-REAL-003": "BACKTEST_PIT_FACTOR"
+ },
  "schema": "cain-domain-config/1",
  "sealed_scopes": [],
  "source": {

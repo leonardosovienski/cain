@@ -11,7 +11,9 @@ result or refusal behind them. The placebo seed is not a research choice: the CA
 proposal ID, never one already used in the domain), and only where the domain's contract declares ``placebo_seed`` for
 the request's parameters (crypto; not stocks). In the first local-model campaign the model repeated listed seeds
 and, at temperature 0, kept repeating a refused one; the same seed repeats the same placebo. The CAIN fills the rest
-of the request from its last emitted task of the domain and writes a ``cain-proposal/1`` file with ``source = "llm"``; the proposal then goes through the same DecisionPolicy as
+of the request from a template of the chosen hypothesis (its own last emitted task, else the last emitted task of the
+request type the configuration fixes for it; never another type: the utility round sent a collection hypothesis as a
+backtest) and writes a ``cain-proposal/1`` file with ``source = "llm"``; the proposal then goes through the same DecisionPolicy as
 any other (``cain research propose``). Every call is audited next to the proposal: prompt, response, provider, model
 and model digest, eligibility, the rationale check and the proposal's sha256. The model never chooses a handler, a
 budget, a priority, costs or capital, and nothing it writes is trusted before the policy.
@@ -85,13 +87,37 @@ def _request(template: dict, domain: str, hypothesis: str, seed: int, request_id
     return request
 
 
-def eligibility(config: dict, view: dict, template: dict, used_seeds: list[int], episode_number: int) -> dict:
-    """Decision of the policy for each proposable hypothesis on the current view (a fresh seed, a probe request)."""
+NO_TEMPLATE = {"decision": "ABSTAIN", "reason_code": "NO_REQUEST_TEMPLATE", "rule": "LLM"}
+
+
+def templates(config: dict, emitted: list[dict]) -> dict:
+    """Request template of each proposable hypothesis, from the CAIN's own emitted tasks (newest first, without
+    ``client_ref``): the hypothesis's own last task, else the last task of the request type the configuration fixes
+    for it (``proposable_request_types``). Never a task of another type: a collection hypothesis never borrows a
+    backtest. A hypothesis with neither has no template (it is not offered to the model)."""
+    out = {}
+    for hypothesis in sorted(config["proposable_hypotheses"]):
+        kind = config["proposable_request_types"][hypothesis]
+        own = next((p for p in emitted if p["hypothesis_id"] == hypothesis and p["request_type"] == kind), None)
+        same_type = next((p for p in emitted if p["request_type"] == kind), None)
+        if own or same_type:
+            out[hypothesis] = own or same_type
+    return out
+
+
+def eligibility(config: dict, view: dict, templates_by_hypothesis: dict, used_seeds: list[int],
+                episode_number: int) -> dict:
+    """Decision of the policy for each proposable hypothesis on the current view (a fresh seed, a probe request built
+    from the hypothesis's own template); a hypothesis without template is held (``NO_REQUEST_TEMPLATE``)."""
     taken = set(used_seeds)
     seed = next(s for s in range(1_000_000) if s not in taken)
     domain = config["domain"]
     out = {}
     for hypothesis in sorted(config["proposable_hypotheses"]):
+        template = templates_by_hypothesis.get(hypothesis)
+        if template is None:
+            out[hypothesis] = dict(NO_TEMPLATE)
+            continue
         digest = hashlib.sha256(f"{hypothesis}|{seed}".encode()).hexdigest()[:16]
         probe = {"schema": policy.PROPOSAL_SCHEMA, "proposal_id": "cain:ELIGIBILITY-PROBE", "domain": domain,
                  "request": _request(template, domain, hypothesis, seed, f"{domain}:REQ-PROBE-{digest}"),
@@ -140,13 +166,14 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     with orchestrator.store.db() as db:
         view = orchestrator.store.view(db, domain, as_of)
         number = orchestrator.store.next_episode(db, domain)
-        last = db.execute("SELECT raw FROM outbox WHERE domain=? ORDER BY episode DESC LIMIT 1", (domain,)).fetchone()
-        seeds = sorted({json.loads(bytes(r["raw"]))["payload"]["parameters"].get("placebo_seed")
-                        for r in db.execute("SELECT raw FROM outbox WHERE domain=?", (domain,))} - {None})
-    if last is None:
-        raise ValueError("NO_TEMPLATE: the domain has no emitted task to use as the request template")
-    template = {k: v for k, v in v2.loads_task(bytes(last["raw"]))["payload"].items() if k != "client_ref"}
-    decisions = eligibility(config, view, template, seeds, number)
+        emitted = [{k: v for k, v in v2.loads_task(bytes(r["raw"]))["payload"].items() if k != "client_ref"}
+                   for r in db.execute("SELECT raw FROM outbox WHERE domain=? ORDER BY episode DESC", (domain,))]
+    seeds = sorted({p["parameters"].get("placebo_seed") for p in emitted} - {None})
+    by_hypothesis = templates(config, emitted)
+    if not by_hypothesis:
+        raise ValueError("NO_TEMPLATE: no emitted task of the domain can be a request template for a proposable "
+                         "hypothesis (same hypothesis or same request type)")
+    decisions = eligibility(config, view, by_hypothesis, seeds, number)
     allowed = sorted(h for h, d in decisions.items() if d["decision"] == "ALLOW")
     if not allowed:
         held = sorted({f"{d['decision']} {d['reason_code']}" for d in decisions.values()})
@@ -165,6 +192,9 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     if not isinstance(answer, dict) or set(answer) != {"hypothesis_id", "rationale"}:
         raise ValueError("LLM_ANSWER_INVALID: expected hypothesis_id, rationale")
     request_id = f"{domain}:REQ-LLM-{hashlib.sha256(proposal_id.encode()).hexdigest()[:16]}"
+    # a model that disobeys the enum (a closed or unknown hypothesis) still yields a proposal the policy refuses
+    # (R05/R11); its request borrows the newest emitted task, since such a hypothesis has no template of its own
+    template = by_hypothesis.get(answer["hypothesis_id"], emitted[0])
     request = _request(template, domain, answer["hypothesis_id"], assign_seed(proposal_id, seeds), request_id)
     proposal = {"schema": policy.PROPOSAL_SCHEMA, "proposal_id": proposal_id, "domain": domain, "request": request,
                 "based_on": [], "rationale": str(answer["rationale"])[:2000], "source": "llm"}
