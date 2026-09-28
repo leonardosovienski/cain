@@ -390,6 +390,63 @@ def test_llm_proposal_is_audited_and_still_goes_through_the_policy(world, tmp_pa
         "HYPOTHESIS_CLOSED", "OPEN_TASK_PENDING")
 
 
+BRASILEIRAO_REQUEST = {
+    "schema_version": "brasileirao-research-request/1",
+    "request_id": "brasileirao:REQ-I-0001",
+    "request_type": "WALKFORWARD_FORECAST_EVALUATION",
+    "research_id": "brasileirao:RESEARCH-INTEGRATION-QUALIFICATION",
+    "hypothesis_id": "brasileirao:QUAL-SERVING-REAL-001",
+    "competition": "Brasileirão Série A",
+    "season": 2024,
+    "target": "OU25",
+    "events": {"kickoff_from": "2024-07-01T00:00:00Z", "kickoff_to": "2024-10-01T00:00:00Z"},
+    "data_cutoff": "2026-09-08T19:31:32Z",
+    "decision_lead_minutes": 60,
+    "references": {"dataset": {"name": "real-20260908", "version": "1"},
+                   "model": {"name": "serving-baseline", "version": "1"},
+                   "features": {"name": "elo-home-advantage", "version": "1"},
+                   "baseline": {"name": "market", "version": "1"},
+                   "cost_model": {"name": "close-slippage-tax", "version": "1"},
+                   "odds": {"name": "sofascore-close", "version": "1"}},
+    "priority_hint": "NORMAL",
+}
+
+
+class RefusingBrasileirao(StandInDomain):
+    """Refuses every task (a terminal refusal): the task stops being open and never counts as an experiment that ran."""
+
+    DOMAIN = "brasileirao"
+
+    def submit_task(self, task, config):
+        raw = v2.canonical(task["payload"])
+        request = json.loads(raw)
+        return {"submission_sha256": sha(raw), "request_id": request["request_id"], "client_ref": request["client_ref"],
+                "status": "TEMPORAL_INTEGRITY_VIOLATION", "exit_code": 4, "reason": "TEMPORAL_INTEGRITY_VIOLATION"}
+
+
+def test_llm_proposal_for_a_domain_whose_request_has_no_parameters(tmp_path):
+    # the brasileirao request_schema has no parameters (additionalProperties false): the template, the probe and the
+    # proposal keep the request without them (rc10 died reading parameters of the emitted tasks)
+    from cain.orchestration import llm
+
+    spool = Spool(tmp_path / "spool")
+    orch = Orchestrator("brasileirao", tmp_path / "state")
+    consumer = Consumer("brasileirao", spool, tmp_path / "consumer.sqlite", RefusingBrasileirao(), {"state": "unused"})
+    seed = {"schema": "cain-proposal/1", "proposal_id": "cain:PROP-B1", "domain": "brasileirao",
+            "request": copy.deepcopy(BRASILEIRAO_REQUEST), "based_on": [], "rationale": "seed", "source": "agenda"}
+    assert orch.propose(seed, as_of=AS_OF)["receipt"]["decision"] == "ALLOW"
+    orch.dispatch(spool)
+    consumer.run_once()
+    orch.ingest(spool)
+    model = StubModel({"hypothesis_id": "brasileirao:QUAL-SERVING-REAL-001", "rationale": "x"})
+    out = tmp_path / "llm" / "b1.json"
+    llm.propose(orch, model, question="próximo", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-B1", out=out)
+    proposal = json.loads(out.read_text(encoding="utf-8"))
+    assert "parameters" not in proposal["request"]
+    decision = orch.propose(proposal, as_of="2030-01-01T11:00:00Z")["receipt"]
+    assert decision["decision"] == "ALLOW" and decision["task"] is not None
+
+
 def test_llm_proposal_cli_requires_state_and_output(tmp_path, capsys):
     from cain.cli import main
 

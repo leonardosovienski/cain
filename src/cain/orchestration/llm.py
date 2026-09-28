@@ -78,8 +78,11 @@ def model_identity(provider) -> dict:
 
 def _request(template: dict, domain: str, hypothesis: str, seed: int, request_id: str) -> dict:
     """The template request with the chosen hypothesis; the placebo seed only where the domain's contract declares
-    ``placebo_seed`` for these parameters (crypto does; a stocks request would be refused as SCHEMA_INVALID)."""
+    ``placebo_seed`` for these parameters (crypto does; a stocks request would be refused as SCHEMA_INVALID). A
+    request without parameters (brasileirao: the request_schema has no such key) stays without them."""
     request = dict(template, hypothesis_id=hypothesis, request_id=request_id)
+    if "parameters" not in template:
+        return request
     params = dict(template["parameters"])
     if "placebo_seed" in (policy.declared_parameters(domain, params) or ()):
         params["placebo_seed"] = seed
@@ -94,14 +97,28 @@ def templates(config: dict, emitted: list[dict]) -> dict:
     """Request template of each proposable hypothesis, from the CAIN's own emitted tasks (newest first, without
     ``client_ref``): the hypothesis's own last task, else the last task of the request type the configuration fixes
     for it (``proposable_request_types``). Never a task of another type: a collection hypothesis never borrows a
-    backtest. A hypothesis with neither has no template (it is not offered to the model)."""
+    backtest. A hypothesis with neither has no template (it is not offered to the model).
+
+    ``proposal_overlays`` (optional) gives a hypothesis parameters of its own (e.g. a negative control with its own
+    seed): a template borrowed from another hypothesis drops every overlaid parameter and takes the hypothesis's
+    overlay, so each such hypothesis asks for its own experiment (R17 would hold a borrowed one as the same)."""
+    overlays = config.get("proposal_overlays", {})
+    overlaid = set().union(*overlays.values()) if overlays else set()
     out = {}
     for hypothesis in sorted(config["proposable_hypotheses"]):
         kind = config["proposable_request_types"][hypothesis]
         own = next((p for p in emitted if p["hypothesis_id"] == hypothesis and p["request_type"] == kind), None)
-        same_type = next((p for p in emitted if p["request_type"] == kind), None)
-        if own or same_type:
-            out[hypothesis] = own or same_type
+        if own is not None:
+            template = own
+        else:
+            base = next((p for p in emitted if p["request_type"] == kind), None)
+            if base is None:
+                continue
+            params = {k: v for k, v in base.get("parameters", {}).items() if k not in overlaid}
+            template = dict(base, parameters=params) if "parameters" in base else base
+        if hypothesis in overlays:
+            template = dict(template, parameters=dict(template.get("parameters", {}), **overlays[hypothesis]))
+        out[hypothesis] = template
     return out
 
 
@@ -201,7 +218,7 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
         number = orchestrator.store.next_episode(db, domain)
         emitted = [{k: v for k, v in v2.loads_task(bytes(r["raw"]))["payload"].items() if k != "client_ref"}
                    for r in db.execute("SELECT raw FROM outbox WHERE domain=? ORDER BY episode DESC", (domain,))]
-    seeds = sorted({p["parameters"].get("placebo_seed") for p in emitted} - {None})
+    seeds = sorted({p.get("parameters", {}).get("placebo_seed") for p in emitted} - {None})
     by_hypothesis = templates(config, emitted)
     if not by_hypothesis:
         raise ValueError("NO_TEMPLATE: no emitted task of the domain can be a request template for a proposable "
