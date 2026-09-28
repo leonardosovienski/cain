@@ -13,7 +13,8 @@ Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, a
 ``h14-near-52w-high``) or a numeric compound joined by a hyphen or underscore (``12-1``). So `` `momentum 12-1` `` is a
 name (the utility rounds blocked an honest report on its "12"). A standalone number inside backticks is still a claim
 (`` `29` ``, `` `net 29` ``, `` `IC 95%` ``, `` `top 20` ``, `` `0,95` ``): backticks are not a way around provenance
-(reviews of the integration-brasileirao session on cain#77). A percentage is covered by the same fraction
+(reviews of the integration-brasileirao session on cain#77). A number glued to a unit suffix (``29bps``, ``2x``,
+anywhere in the sentence) is a number, not an identifier. A percentage is covered by the same fraction
 in the cited source (95% by 0.95: the stocks result stores the confidence as a fraction).
 Lexical only: the linter never judges whether a derived or rounded number is right.
 """
@@ -33,6 +34,7 @@ _SENTENCE = re.compile(r"(?<=[.!?;])\s+|\n+")
 _NUMBER = re.compile(r"(?<![\w.,])[-+]?\d+(?:[.,]\d+)*%?(?![\w])")
 _CODE = re.compile(r"`([^`\n]*)`")
 _IDENTIFIER = re.compile(r"\S*[^\W\d_]\S*|(?<!\S)\d+(?:[-_]\d+)+(?!\S)")
+_GLUED_UNIT = re.compile(r"(?<![\w.,])([-+]?\d+(?:[.,]\d+)*)(bps|bp|pb|pp|pct|x)(?![\w])", re.I)
 
 
 def _unname(match: re.Match) -> str:
@@ -55,7 +57,7 @@ def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: boo
     violations, checked, resolved = [], 0, set()
     for sentence in _SENTENCE.split(body):
         markers = MARKER.findall(sentence)
-        bare = _CODE.sub(_unname, MARKER.sub(" ", sentence))
+        bare = _CODE.sub(_unname, _GLUED_UNIT.sub(r"\1 \2", MARKER.sub(" ", sentence)))
         numbers = _NUMBER.findall(bare)
         if not numbers:
             continue

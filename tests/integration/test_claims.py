@@ -154,7 +154,8 @@ def test_names_in_code_are_not_claims_and_a_percentage_matches_its_fraction(memo
     # the integration-brasileirao session on cain#77)
     for sneaky in ("O retorno foi de `29` bps.", "O retorno foi `+29 bps` por período.", "A confiança foi `0,95`.",
                    "Foram `50 períodos`.", "O retorno de `net 29` bps.", "A confiança `IC 95%`.",
-                   "O excesso de `retorno 29 bps`.", "Os `top 20` papéis."):
+                   "O excesso de `retorno 29 bps`.", "Os `top 20` papéis.", "O retorno foi `29bps`.",
+                   "O retorno foi 29bps.", "Alavancagem de `2x`."):
         out = lint_report(memory, sneaky, as_of=now, cubes=["stocks"])
         assert out["status"] == "blocked" and out["violations"][0]["code"] == "NO_PROVENANCE", sneaky
     cited = lint_report(memory, f"O retorno foi de `29` bps [ev:{net['id']}].", as_of=now, cubes=["stocks"])
