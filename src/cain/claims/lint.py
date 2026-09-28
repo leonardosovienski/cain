@@ -8,11 +8,12 @@ contains the same magnitude:
 * ``[run:<run_id>@<sha256>]`` a SUPPORTED EMPIRICAL_PROOF claim with that run_ref whose artifact
   (read and re-hashed here) contains the number.
 
-Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, and are skipped. Inline code that
-names something (`` `momentum 12-1` ``, `` `h14-near-52w-high` ``: a word of two or more letters that is not a unit)
-is a name, not a claim: its numbers are skipped (the utility rounds blocked an honest report on the "12" of
-"momentum 12-1"). Inline code with only numbers and units (`` `29` ``, `` `+29 bps` ``, `` `0,95` ``) is still checked:
-backticks are not a way around provenance. A percentage is covered by the same fraction
+Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, and are skipped. Inside inline code
+(backticks), numbers that are part of an identifier are names, not claims: a token with a letter (``h14``, ``52w``,
+``h14-near-52w-high``) or a numeric compound joined by a hyphen or underscore (``12-1``). So `` `momentum 12-1` `` is a
+name (the utility rounds blocked an honest report on its "12"). A standalone number inside backticks is still a claim
+(`` `29` ``, `` `net 29` ``, `` `IC 95%` ``, `` `top 20` ``, `` `0,95` ``): backticks are not a way around provenance
+(reviews of the integration-brasileirao session on cain#77). A percentage is covered by the same fraction
 in the cited source (95% by 0.95: the stocks result stores the confidence as a fraction).
 Lexical only: the linter never judges whether a derived or rounded number is right.
 """
@@ -31,16 +32,13 @@ _ENUMERATOR = re.compile(r"^(\s*(?:#+\s*)?(?:[-*]\s+)?)\d+(?:\.\d+)*[.)]\s", re.
 _SENTENCE = re.compile(r"(?<=[.!?;])\s+|\n+")
 _NUMBER = re.compile(r"(?<![\w.,])[-+]?\d+(?:[.,]\d+)*%?(?![\w])")
 _CODE = re.compile(r"`([^`\n]*)`")
-_WORD = re.compile(r"[^\W\d_]{2,}")
-# words that only measure a number (a code span made of numbers and these is a number, not a name)
-UNITS = frozenset({"bps", "bp", "pb", "pp", "pct", "ms", "sec", "min", "dias", "days", "meses", "months", "anos",
-                   "years", "periods", "períodos", "pregões", "sessions", "trades", "vezes", "times"})
+_IDENTIFIER = re.compile(r"\S*[^\W\d_]\S*|(?<!\S)\d+(?:[-_]\d+)+(?!\S)")
 
 
 def _unname(match: re.Match) -> str:
-    """A code span that names something disappears; one made of numbers and units stays to be checked."""
-    span = match.group(1)
-    return " " if any(w.lower() not in UNITS for w in _WORD.findall(span)) else " " + span + " "
+    """Inside backticks, identifiers (a token with a letter, or a numeric compound like 12-1) are names and leave;
+    every standalone number stays to be checked."""
+    return " " + _IDENTIFIER.sub(" ", match.group(1)) + " "
 
 
 def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: bool = False,

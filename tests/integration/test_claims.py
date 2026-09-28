@@ -153,11 +153,15 @@ def test_names_in_code_are_not_claims_and_a_percentage_matches_its_fraction(memo
     # backticks are not a way around provenance: numbers with only units inside code are still checked (review of
     # the integration-brasileirao session on cain#77)
     for sneaky in ("O retorno foi de `29` bps.", "O retorno foi `+29 bps` por período.", "A confiança foi `0,95`.",
-                   "Foram `50 períodos`."):
+                   "Foram `50 períodos`.", "O retorno de `net 29` bps.", "A confiança `IC 95%`.",
+                   "O excesso de `retorno 29 bps`.", "Os `top 20` papéis."):
         out = lint_report(memory, sneaky, as_of=now, cubes=["stocks"])
         assert out["status"] == "blocked" and out["violations"][0]["code"] == "NO_PROVENANCE", sneaky
     cited = lint_report(memory, f"O retorno foi de `29` bps [ev:{net['id']}].", as_of=now, cubes=["stocks"])
     assert cited["status"] == "publishable"
+    trial = lint_report(memory, f"O `h14-near-52w-high` e o `momentum 12-1` tiveram 29 bps [ev:{net['id']}].",
+                        as_of=now, cubes=["stocks"])
+    assert trial["status"] == "publishable" and trial["numbers_checked"] == 1
 
 
 def test_verifier_disagreement_goes_to_the_human_review_queue(memory, clock):
