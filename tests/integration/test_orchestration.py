@@ -448,7 +448,8 @@ def test_llm_only_chooses_among_hypotheses_the_policy_would_accept_now(world, tm
     assert summary == {"results": 3, "scientific_states": {"INCONCLUSIVE": 3}, "refusals": [], "eligible_now": False,
                        "not_eligible_reason": "NEGATIVE_STREAK"}
     assert info["rationale_check"] == {"mentioned": ["crypto:QUAL-SHADOW-001", "crypto:QUAL-SHADOW-REAL-001"],
-                                       "without_evidence": ["crypto:QUAL-SHADOW-001"]}
+                                       "without_evidence": ["crypto:QUAL-SHADOW-001"], "count_mismatches": [],
+                                       "eligibility_mismatches": []}
     audit = json.loads((tmp_path / "llm" / "e1.audit.json").read_text(encoding="utf-8"))
     assert audit["eligibility"]["crypto:QUAL-SHADOW-REAL-001"]["rule"] == "R13"
     assert audit["rationale_check"] == info["rationale_check"]
