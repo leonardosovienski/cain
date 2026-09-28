@@ -28,11 +28,29 @@ e receipt; mesmos bytes → nada novo). Pontos de falha de qualificação: `CAIN
 
 ## DecisionPolicy (`cain.orchestration.policy`)
 
-Genérica, versionada (`cain-decision-policy` v1 + sha256 do código) e sem relógio: as entradas são a proposta, a
+Genérica, versionada (`cain-decision-policy` v2 + sha256 do código) e sem relógio: as entradas são a proposta, a
 configuração do domínio e a visão do domínio no `as_of` (tasks emitidas + fatos de resultado recuperados da memória,
 lidos na cabeça do log e válidos no `as_of`). Decisões: `ALLOW | BLOCK | ABSTAIN | REQUIRE_HUMAN | DUPLICATE |
-COOLDOWN`, com a regra que disparou (R01–R14, ordem na docstring do módulo). Nenhum resultado aumenta budget,
+COOLDOWN`, com a regra que disparou (R01–R15, ordem na docstring do módulo). Nenhum resultado aumenta budget,
 prioridade ou escopo; nada lê estado econômico como sinal; não existe caminho de capital.
+
+v2 (2026-09-28) acrescenta a **R15**: se o domínio já recusou a hipótese com o código `HYPOTHESIS_NOT_ADMITTED`,
+uma nova proposta dela vira `REQUIRE_HUMAN HYPOTHESIS_NOT_ADMITTED_BY_DOMAIN` (sem task). A memória guarda o motivo
+da recusa só quando é um código fechado (`[A-Z][A-Z0-9_]{2,63}`); texto livre continua fora da memória (FUTURE_CANARY).
+Achado na primeira campanha com modelo local: o CAIN propôs três vezes uma hipótese que a admissão do operador não
+aceita.
+
+## Propostas por modelo local (`cain research explain --propose-for-domain`)
+
+O modelo escolhe só a hipótese e a justificativa; não escolhe semente, handler, budget, prioridade, custos, dados nem
+capital, e a proposta passa pela mesma DecisionPolicy. A semente do placebo é do CAIN: derivada do ID da proposta,
+nunca uma já usada no domínio (na primeira campanha o modelo repetia sementes, e a mesma semente repete o mesmo
+placebo). Antes de perguntar, o CAIN testa cada hipótese configurada na própria política sobre a visão atual:
+só as que seriam `ALLOW` entram no enum do schema (as em `COOLDOWN`, recusadas pelo domínio ou retidas ficam de fora),
+e sem nenhuma elegível ele responde `NO_ELIGIBLE_HYPOTHESIS` em vez de chamar o modelo. O prompt leva um resumo por
+hipótese (resultados, estados científicos, códigos de recusa, por que não é elegível). A auditoria
+(`cain-llm-proposal-audit/2`) grava a elegibilidade e a checagem da justificativa: hipóteses citadas sem resultado
+nem recusa na memória (checagem por nome, de melhor esforço; a justificativa nunca decide nada).
 
 ## Interface da configuração de domínio (`cain-domain-config/1`)
 

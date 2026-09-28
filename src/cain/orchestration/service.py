@@ -9,6 +9,7 @@ same task bytes are published once, the same result bytes are ingested once, and
 from __future__ import annotations
 
 import hashlib
+import re
 from pathlib import Path
 
 from research_protocol import v2
@@ -28,6 +29,15 @@ class OrchestrationError(ValueError):
 
 def sha256(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
+
+
+_REASON_CODE = re.compile(r"[A-Z][A-Z0-9_]{2,63}\Z")
+
+
+def reason_code(outcome: dict) -> str | None:
+    """The domain's refusal reason when it is a closed code (``HYPOTHESIS_NOT_ADMITTED``); free text never passes."""
+    reason = outcome.get("reason")
+    return reason if isinstance(reason, str) and _REASON_CODE.fullmatch(reason) else None
 
 
 class Orchestrator:
@@ -194,9 +204,9 @@ class Orchestrator:
                 "class": klass, "fact": fact.get("fact_id")}
 
     def _complete_memory(self, digest: str) -> dict:
-        # The memory (and so the retrieval) keeps states, IDs and hashes only. The domain's free-text reason stays in
-        # the inbox record for audit: a temporal refusal names the instant of a post-cutoff event, which must never
-        # reach what later decisions or a model can read (FUTURE_CANARY).
+        # The memory (and so the retrieval) keeps states, IDs, hashes and closed reason codes only. The domain's
+        # free-text reason stays in the inbox record for audit: a temporal refusal names the instant of a post-cutoff
+        # event, which must never reach what later decisions or a model can read (FUTURE_CANARY).
         with self.store.db() as db:
             row = db.execute("SELECT * FROM inbox WHERE domain=? AND result_sha256=?", (self.domain, digest)).fetchone()
         result = v2.loads_result(bytes(row["raw"]))
@@ -208,7 +218,7 @@ class Orchestrator:
             "task_id": result["task_id"], "episode": v2.episode_number(result["episode_id"]),
             "request_id": result["request_id"], "research_id": result["research_id"],
             "hypothesis_id": result["hypothesis_id"], "status": result["outcome"]["status"], "class": klass,
-            "result_id": body.get("result_id"),
+            "reason_code": reason_code(result["outcome"]), "result_id": body.get("result_id"),
             "result_state": body.get("result_state"), "operational_state": body.get("operational_state"),
             "scientific_state": body.get("scientific_state"), "economic_state": body.get("economic_state"),
             "payload_sha256": body.get("payload_sha256"), "capital_permission": False,

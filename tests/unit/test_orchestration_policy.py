@@ -118,6 +118,21 @@ def test_require_human_contradiction_new_hypothesis_and_reconciliation():
     assert decide(proposal(), held)["reason_code"] == "DOMAIN_RECONCILIATION_PENDING"
 
 
+def test_require_human_when_the_domain_refused_the_hypothesis_as_not_admitted():
+    t1 = "crypto:TASK-" + "1" * 32
+    refused = dict(result(t1, 1, state=None, scientific=None, klass="TERMINAL_REFUSAL", economic=None),
+                   status="REJECTED", reason_code="HYPOTHESIS_NOT_ADMITTED")
+    view = dict(EMPTY, tasks=[task(t1, 1)], results=[refused])
+    out = decide(proposal(), view, episode=2)
+    assert (out["decision"], out["reason_code"], out["rule"]) == ("REQUIRE_HUMAN", "HYPOTHESIS_NOT_ADMITTED_BY_DOMAIN",
+                                                                  "R15")
+    assert decide(proposal(hypothesis_id="crypto:QUAL-SHADOW-REAL-002"), view, episode=2)["decision"] == "ALLOW"
+    other_refusal = dict(refused, reason_code="TEMPORAL_INTEGRITY_VIOLATION")
+    assert decide(proposal(), dict(view, results=[other_refusal]), episode=2)["decision"] == "ALLOW"
+    free_text = dict(refused, reason_code=None)
+    assert decide(proposal(), dict(view, results=[free_text]), episode=2)["decision"] == "ALLOW"
+
+
 def test_abstain_on_open_task_and_budget():
     t1 = "crypto:TASK-" + "1" * 32
     assert decide(proposal(), dict(EMPTY, tasks=[task(t1, 1)], open_task_ids=[t1]))["reason_code"] == "OPEN_TASK_PENDING"
@@ -163,7 +178,7 @@ def test_receipt_is_canonical_deterministic_and_names_policy_and_config():
     second = policy.dumps(policy.receipt(proposal(), EMPTY, CONFIG, domain_config.digest(CONFIG), out, **kwargs))
     assert first == second
     receipt = policy.receipt(proposal(), EMPTY, CONFIG, domain_config.digest(CONFIG), out, **kwargs)
-    assert receipt["policy"] == {"id": "cain-decision-policy", "version": 1, "code_sha256": policy.code_sha256()}
+    assert receipt["policy"] == {"id": "cain-decision-policy", "version": 2, "code_sha256": policy.code_sha256()}
     assert receipt["config"]["sha256"] == domain_config.digest(CONFIG) and receipt["capital_permission"] is False
     with pytest.raises(ValueError):
         policy.receipt(proposal(), EMPTY, CONFIG, "x", out, episode_number=1, as_of="2026-09-27", task=None)
