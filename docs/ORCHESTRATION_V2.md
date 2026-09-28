@@ -82,8 +82,16 @@ hipótese configurada na própria política sobre a visão atual:
 só as que seriam `ALLOW` entram no enum do schema (as em `COOLDOWN`, recusadas pelo domínio ou retidas ficam de fora),
 e sem nenhuma elegível ele responde `NO_ELIGIBLE_HYPOTHESIS` em vez de chamar o modelo. O prompt leva um resumo por
 hipótese (resultados, estados científicos, códigos de recusa, por que não é elegível). A auditoria
-(`cain-llm-proposal-audit/2`) grava a elegibilidade e a checagem da justificativa: hipóteses citadas sem resultado
-nem recusa na memória (checagem por nome, de melhor esforço; a justificativa nunca decide nada).
+(`cain-llm-proposal-audit/3`) grava a elegibilidade e a checagem da justificativa, que é de melhor esforço e nunca
+decide nada:
+- `without_evidence`: hipóteses citadas sem resultado nem recusa na memória;
+- `count_mismatches`: frase sobre uma hipótese só (ou "esta hipótese", a escolhida) que cita um número de resultados
+  ou episódios diferente do resumo que o modelo recebeu;
+- `eligibility_mismatches`: frase que diz que a hipótese é (ou não é) elegível, quando a política diz o contrário.
+
+Frases que citam várias hipóteses ficam de fora, porque parear números e nomes ali seria chute. Na rodada de
+utilidade com o Stocks, 4 de 12 justificativas tinham erro desse tipo (por exemplo, "4 resultados" quando eram 3, e
+"não é elegível" para uma hipótese elegível).
 
 ## Interface da configuração de domínio (`cain-domain-config/1`)
 

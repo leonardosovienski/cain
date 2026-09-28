@@ -186,6 +186,27 @@ def test_the_same_experiment_under_another_id_adds_no_information():
     assert new["reason_code"] == "NEW_HYPOTHESIS"
 
 
+def test_rationale_counts_and_eligibility_are_checked_against_the_view():
+    # cycles 10 and 11 of the utility round (qwen3.5:4b on the real stocks panel)
+    row = {"results": 0, "scientific_states": {}, "refusals": [], "eligible_now": True, "not_eligible_reason": None}
+    summary = {h: dict(row) for h in CONFIG["proposable_hypotheses"]}
+    summary["stocks:QUAL-PIT-MOM-REAL-003"]["results"] = 3
+    summary["stocks:QUAL-EI-COLLECTION-001"].update(eligible_now=False, not_eligible_reason="NEGATIVE_STREAK")
+    text = ("Esta hipótese é elegível e já possui 4 resultados (episodes 1, 6, 7) todos em estado INCONCLUSIVE. "
+            "A stocks:QUAL-PIT-MOM-REAL-001 está com streak negativo e não é elegível. "
+            "A stocks:QUAL-EI-COLLECTION-001 está com streak negativo e não é elegível.")
+    check = llm.rationale_check(text, CONFIG, EMPTY, chosen="stocks:QUAL-PIT-MOM-REAL-003", summary=summary)
+    assert [(c["hypothesis"], c["cited"], c["actual"]) for c in check["count_mismatches"]] == [
+        ("stocks:QUAL-PIT-MOM-REAL-003", [4], 3)]
+    assert [(c["hypothesis"], c["claimed_eligible"]) for c in check["eligibility_mismatches"]] == [
+        ("stocks:QUAL-PIT-MOM-REAL-001", False)]
+    # a sentence naming several hypotheses is skipped: pairing numbers to names there would be a guess
+    many = "QUAL-PIT-MOM-REAL-001 tem 1, QUAL-PIT-MOM-REAL-002 e REAL-003 têm 2 resultados cada."
+    assert llm.rationale_check(many, CONFIG, EMPTY, summary=summary)["count_mismatches"] == []
+    # without a summary only the naming checks run
+    assert llm.rationale_check(text, CONFIG, EMPTY)["count_mismatches"] == []
+
+
 def test_economic_watch_never_raises_priority_or_budget():
     results = [{"task_id": f"stocks:TASK-{n:032d}", "episode": n, "hypothesis_id": "stocks:QUAL-PIT-MOM-REAL-001",
                 "status": "RESULT", "class": "TERMINAL_RESULT", "result_state": "WATCH_NO_CAPITAL",

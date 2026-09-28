@@ -152,13 +152,46 @@ def _tokens(hypothesis: str) -> set[str]:
     return {hypothesis, local} | ({"-".join(parts[-2:])} if len(parts) >= 2 else set())
 
 
-def rationale_check(rationale: str, config: dict, view: dict) -> dict:
-    """Hypotheses the rationale names, and those named without any result or refusal behind them (best effort)."""
+_SENTENCE = re.compile(r"(?<=[.!?;])\s+|\n+")
+_COUNT = re.compile(r"\b(\d+)\s+(?:resultados?|results?|epis[óo]dios?|episodes?)\b", re.I)
+_NOT_ELIGIBLE = re.compile(r"n[ãa]o\s+(?:(?:é|e|est[áa])\s+)?eleg[ií]ve(?:l|is)|ineleg[ií]ve(?:l|is)", re.I)
+_ELIGIBLE = re.compile(r"\beleg[ií]ve(?:l|is)\b", re.I)
+_THIS = re.compile(r"\b(?:esta|essa)\s+hip[óo]tese\b", re.I)
+
+
+def _named(sentence: str, known: list[str]) -> list[str]:
+    return [h for h in known if any(
+        re.search(r"(?<![A-Za-z0-9-])" + re.escape(t) + r"(?![A-Za-z0-9-])", sentence) for t in _tokens(h))]
+
+
+def rationale_check(rationale: str, config: dict, view: dict, *, chosen: str | None = None,
+                    summary: dict | None = None) -> dict:
+    """Best-effort reading of the rationale against the CAIN's own view (it never decides anything):
+
+    * ``mentioned`` / ``without_evidence``: hypotheses named, and those named without any result or refusal;
+    * ``count_mismatches``: a sentence about one hypothesis ("esta hipótese" = the chosen one) cites a number of
+      results or episodes that differs from the summary the model received;
+    * ``eligibility_mismatches``: such a sentence says the hypothesis is (not) eligible and the policy says otherwise.
+    Sentences naming several hypotheses are skipped (the pairing would be a guess)."""
     known = sorted(set(config["proposable_hypotheses"]) | set(config["closed_hypotheses"]))
-    mentioned = [h for h in known if any(
-        re.search(r"(?<![A-Za-z0-9-])" + re.escape(t) + r"(?![A-Za-z0-9-])", rationale) for t in _tokens(h))]
+    mentioned = _named(rationale, known)
     with_evidence = {r["hypothesis_id"] for r in view["results"]}
-    return {"mentioned": mentioned, "without_evidence": [h for h in mentioned if h not in with_evidence]}
+    counts, eligibility = [], []
+    for sentence in (s for s in _SENTENCE.split(rationale) if s.strip()):
+        named = _named(sentence, known) or ([chosen] if chosen and _THIS.search(sentence) else [])
+        if len(named) != 1 or named[0] not in (summary or {}):
+            continue
+        hypothesis, row = named[0], summary[named[0]]
+        cited = sorted({int(n) for n in _COUNT.findall(sentence)})
+        if cited and row["results"] not in cited:
+            counts.append({"hypothesis": hypothesis, "cited": cited, "actual": row["results"],
+                           "sentence": sentence[:240]})
+        claim = False if _NOT_ELIGIBLE.search(sentence) else (True if _ELIGIBLE.search(sentence) else None)
+        if claim is not None and claim != row["eligible_now"]:
+            eligibility.append({"hypothesis": hypothesis, "claimed_eligible": claim, "eligible_now": row["eligible_now"],
+                                "not_eligible_reason": row["not_eligible_reason"], "sentence": sentence[:240]})
+    return {"mentioned": mentioned, "without_evidence": [h for h in mentioned if h not in with_evidence],
+            "count_mismatches": counts, "eligibility_mismatches": eligibility}
 
 
 def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: str, out: Path) -> dict:
@@ -178,8 +211,9 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     if not allowed:
         held = sorted({f"{d['decision']} {d['reason_code']}" for d in decisions.values()})
         raise ValueError(f"NO_ELIGIBLE_HYPOTHESIS: the policy holds every proposable hypothesis now: {held}")
+    summary = hypothesis_summary(config, view, decisions)
     context = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
-               "hypothesis_summary": hypothesis_summary(config, view, decisions),
+               "hypothesis_summary": summary,
                "results": [{k: r[k] for k in ("episode", "hypothesis_id", "status", "result_state", "scientific_state",
                                               "reason_code")}
                            for r in view["results"][-50:]]}
@@ -198,10 +232,10 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     request = _request(template, domain, answer["hypothesis_id"], assign_seed(proposal_id, seeds), request_id)
     proposal = {"schema": policy.PROPOSAL_SCHEMA, "proposal_id": proposal_id, "domain": domain, "request": request,
                 "based_on": [], "rationale": str(answer["rationale"])[:2000], "source": "llm"}
-    check = rationale_check(proposal["rationale"], config, view)
+    check = rationale_check(proposal["rationale"], config, view, chosen=answer["hypothesis_id"], summary=summary)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(proposal, ensure_ascii=False, indent=1), encoding="utf-8")
-    audit = {"schema": "cain-llm-proposal-audit/2", "proposal_file": out.name,
+    audit = {"schema": "cain-llm-proposal-audit/3", "proposal_file": out.name,
              "proposal_sha256": policy.safe_digest(proposal), "as_of": as_of, "instruction": INSTRUCTION,
              "prompt": prompt, "response": raw, "model": model_identity(provider), "eligibility": decisions,
              "rationale_check": check, "capital_permission": False}
