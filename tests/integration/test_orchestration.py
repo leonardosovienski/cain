@@ -289,7 +289,8 @@ def test_process_death_in_dispatch_or_ingest_recovers_exactly_once(world, point)
 def test_cli_refuses_unknown_domain_configuration(tmp_path):
     candidate = tmp_path / "p.json"
     candidate.write_text(json.dumps(proposal(1)), encoding="utf-8")
-    done = run_cain("research", "propose", "--domain", "brasileirao", "--state", tmp_path / "s", "--proposal", candidate)
+    # every domain of the frozen V2 registry now has a configuration; an unknown domain still fails closed
+    done = run_cain("research", "propose", "--domain", "football", "--state", tmp_path / "s", "--proposal", candidate)
     assert done.returncode == 1 and b"CONFIG_INVALID" in done.stdout
 
 
