@@ -18,12 +18,18 @@ from cain.orchestration.service import OrchestrationError, _payload
 DEEP = b"[" * 100_000 + b"]" * 100_000
 
 
-def test_a_deeply_nested_proposal_file_is_refused_as_schema_invalid(tmp_path):
+def test_a_deeply_nested_proposal_file_is_refused_as_schema_invalid(world, tmp_path):
+    """Python up to 3.13 raises RecursionError while decoding (now SCHEMA_INVALID); 3.14 decodes it, and the policy
+    blocks the non-object proposal. Either way: no traceback, no ALLOW."""
     path = tmp_path / "deep.json"
     path.write_bytes(DEEP)
-    with pytest.raises(v2.V2Error) as info:
-        cli._proposal(path)
-    assert info.value.code == "SCHEMA_INVALID"
+    try:
+        parsed = cli._proposal(path)
+    except v2.V2Error as exc:
+        assert exc.code == "SCHEMA_INVALID"
+        return
+    receipt = world.orch.decision_receipt(parsed, as_of=AS_OF)["receipt"]
+    assert (receipt["decision"], receipt["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
 
 
 def test_a_deeply_nested_result_file_is_rejected_and_the_next_results_still_ingest(world):
