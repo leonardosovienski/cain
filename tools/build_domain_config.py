@@ -24,6 +24,7 @@ import hashlib
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 SOURCES = {
@@ -128,6 +129,17 @@ def read_brasileirao(domain: str, raw_files: dict[str, bytes], contract: dict) -
 READERS = {"crypto": read_crypto, "stocks": read_stocks}
 
 
+def sealed_scopes(frozen_config: dict) -> list:
+    """Lacres da R16. Lista = formato de máquina; objeto só é aceito quando declara que ainda não foi materializado."""
+    value = frozen_config.get("sealed_scopes", [])
+    if isinstance(value, list):
+        return value
+    if isinstance(value, dict) and value.get("materialized_in_cain_config") is False:
+        print("sealed_scopes ainda não materializado no FROZEN_PARAMETERS: configuração sem lacre", file=sys.stderr)
+        return []
+    raise SystemExit("sealed_scopes do FROZEN_PARAMETERS não está em formato de máquina (lista)")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("domain", choices=sorted(SOURCES))
@@ -189,6 +201,9 @@ def main() -> int:
                      "episodes": frozen_config["cooldown"]["episodes"]},
         "negative_result_states": frozen_config["cooldown"]["negative_result_states"],
         "contradiction_pairs": [["REFUTED", "SUPPORTED"]],
+        # R16: escopos lacrados (ex.: holdout) em formato de máquina no FROZEN_PARAMETERS da integração; sem a
+        # chave, nenhum lacre (cripto e stocks).
+        "sealed_scopes": sealed_scopes(frozen_config),
     }
     a.out.write_text(json.dumps(config, indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
     print(a.out, hashlib.sha256(a.out.read_bytes()).hexdigest())

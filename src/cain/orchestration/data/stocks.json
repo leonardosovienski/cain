@@ -128,6 +128,7 @@
   "stocks:QUAL-PIT-MOM-REAL-003"
  ],
  "schema": "cain-domain-config/1",
+ "sealed_scopes": [],
  "source": {
   "commit": "61fc017256ffea815ae96bbe02b847dccdb395cc",
   "files": [

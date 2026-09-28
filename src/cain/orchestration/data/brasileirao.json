@@ -90,6 +90,7 @@
   "brasileirao:QUAL-SERVING-REAL-003"
  ],
  "schema": "cain-domain-config/1",
+ "sealed_scopes": [],
  "source": {
   "commit": "25cdf4d9bb309d33f066fbc6a379f5d98c69f08a",
   "files": [

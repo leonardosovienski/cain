@@ -14,6 +14,9 @@ Rules, first match wins (FROZEN_PARAMETERS.json → decision_policy.rule_order):
                                      final priority, capital …) or a client_ref the envelope owns
   R04 BLOCK REQUEST_TYPE_NOT_ALLOWED request_type outside the contract's handler_allowlist keys
   R05 BLOCK HYPOTHESIS_CLOSED        closed hypothesis of the domain's scientific state, or frozen family
+  R16 REQUIRE_HUMAN SEALED_SCOPE     the request would touch a sealed scope of the domain (configuration
+                                     ``sealed_scopes``: a value, a window or an instant, e.g. a holdout season);
+                                     a sealed field that is absent or malformed also holds the request (fail closed)
   R06 BLOCK SYMBOL_NOT_ALLOWED / COST_MODEL_MISMATCH / REFERENCE_NOT_ALLOWED / PRIORITY_ABOVE_CAP
                                      (costs are compared when the request's parameters variant in the domain's
                                      frozen request_schema declares the cost keys: a collection carries none)
@@ -57,6 +60,99 @@ PRIORITY_ORDER = {"LOW": 0, "NORMAL": 1, "HIGH": 2}
 _PROPOSAL_ID = re.compile(r"cain:[A-Za-z0-9][A-Za-z0-9_.-]{0,127}\Z")
 _AS_OF = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z\Z")
 TERMINAL = ("TERMINAL_RESULT", "TERMINAL_REFUSAL", "REQUIRES_HUMAN")
+_UTC = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z\Z")
+_PATH = re.compile(r"[A-Za-z_][A-Za-z0-9_]*(\[\])?(\.[A-Za-z_][A-Za-z0-9_]*(\[\])?)*\Z")
+SEALED_KINDS = {"any_of": {"field", "any_of"}, "window": {"window", "intersects"}, "within": {"field", "within"}}
+
+
+def _utc_interval(value) -> bool:
+    return (isinstance(value, list) and len(value) == 2 and all(isinstance(v, str) and _UTC.fullmatch(v) for v in value)
+            and value[0] < value[1])
+
+
+def check_sealed_scopes(rules) -> None:
+    """Validate the ``sealed_scopes`` of a domain configuration (ValueError on anything unexpected)."""
+    if not isinstance(rules, list):
+        raise ValueError("sealed_scopes must be a list")
+    for rule in rules:
+        if not isinstance(rule, dict):
+            raise ValueError("a sealed scope is an object")
+        kinds = [kind for kind in SEALED_KINDS if kind in rule]
+        if len(kinds) != 1 or set(rule) - {"optional"} != SEALED_KINDS[kinds[0]]:
+            raise ValueError(f"sealed scope with unexpected fields: {sorted(rule)}")
+        if not isinstance(rule.get("optional", False), bool):
+            raise ValueError("sealed scope 'optional' must be true or false")
+        kind = kinds[0]
+        if kind == "window":
+            ends = rule["window"]
+            if not isinstance(ends, dict) or set(ends) != {"from", "to"} or not all(
+                isinstance(p, str) and _PATH.fullmatch(p) and "[]" not in p for p in ends.values()
+            ):
+                raise ValueError("sealed window needs 'from' and 'to' paths without []")
+            if not _utc_interval(rule["intersects"]):
+                raise ValueError("sealed window 'intersects' must be [start, end) in UTC, start < end")
+        elif not isinstance(rule["field"], str) or not _PATH.fullmatch(rule["field"]):
+            raise ValueError("sealed scope 'field' must be a dotted path")
+        elif kind == "any_of" and not (
+            isinstance(rule["any_of"], list) and rule["any_of"]
+            and all(type(v) in (int, str) for v in rule["any_of"])
+        ):
+            raise ValueError("sealed scope 'any_of' must be a non-empty list of integers or strings")
+        elif kind == "within" and not _utc_interval(rule["within"]):
+            raise ValueError("sealed scope 'within' must be [start, end) in UTC, start < end")
+
+
+def _path_values(obj, path: str) -> list | None:
+    """Values at a dotted path (``name[]`` walks every element of a list); None when a step is missing."""
+    nodes = [obj]
+    for part in path.split("."):
+        many = part.endswith("[]")
+        key = part[:-2] if many else part
+        found = []
+        for node in nodes:
+            if not isinstance(node, dict) or key not in node:
+                return None
+            value = node[key]
+            if many and not isinstance(value, list):
+                return None
+            found.extend(value if many else [value])
+        nodes = found
+    return nodes
+
+
+def _sealed(request: dict, rules: list) -> str | None:
+    """Why the request touches a sealed scope (or cannot be checked against one); None when it does not."""
+    for rule in rules:
+        if "window" in rule:
+            start, end = _path_values(request, rule["window"]["from"]), _path_values(request, rule["window"]["to"])
+            if start is None or end is None:
+                if rule.get("optional"):
+                    continue
+                return f"window {rule['window']['from']}..{rule['window']['to']} absent"
+            if not (_utc_interval(start + end)):
+                return f"window {rule['window']['from']}..{rule['window']['to']} malformed"
+            low, high = rule["intersects"]
+            if start[0] < high and low < end[0]:
+                return f"window [{start[0]}, {end[0]}) intersects sealed [{low}, {high})"
+            continue
+        values = _path_values(request, rule["field"])
+        if values is None:
+            if rule.get("optional"):
+                continue
+            return f"{rule['field']} absent"
+        for value in values:
+            if "any_of" in rule:
+                if type(value) not in {type(v) for v in rule["any_of"]}:
+                    return f"{rule['field']} malformed"
+                if value in rule["any_of"]:
+                    return f"{rule['field']} = {value!r} is sealed"
+            else:
+                low, high = rule["within"]
+                if not (isinstance(value, str) and _UTC.fullmatch(value)):
+                    return f"{rule['field']} malformed"
+                if low <= value < high:
+                    return f"{rule['field']} = {value} within sealed [{low}, {high})"
+    return None
 
 
 def code_sha256() -> str:
@@ -173,6 +269,8 @@ def decide(proposal, view: dict, config: dict, *, episode_number: int) -> dict:
                         f"{hypothesis} is {config['closed_hypotheses'][hypothesis]} and is never reopened")
     if proposal.get("hypothesis_family") in config["frozen_families"]:
         return _outcome("BLOCK", "HYPOTHESIS_CLOSED", "R05", f"frozen family {proposal['hypothesis_family']}")
+    if why := _sealed(request, config["sealed_scopes"]):
+        return _outcome("REQUIRE_HUMAN", "SEALED_SCOPE", "R16", f"{why}; a human decides")
     params = request.get("parameters", {})
     if "symbol" in params and params["symbol"] not in config["allowed_symbols"]:
         return _outcome("BLOCK", "SYMBOL_NOT_ALLOWED", "R06", str(params["symbol"])[:20])
