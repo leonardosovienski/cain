@@ -66,7 +66,12 @@ O modelo escolhe só a hipótese e a justificativa; não escolhe semente, handle
 capital, e a proposta passa pela mesma DecisionPolicy. A semente do placebo é do CAIN: derivada do ID da proposta,
 nunca uma já usada no domínio (na primeira campanha o modelo repetia sementes, e a mesma semente repete o mesmo
 placebo). O CAIN só grava `placebo_seed` onde o contrato do domínio declara esse parâmetro para o pedido. O cripto
-declara; o stocks não, e antes toda proposta por modelo do stocks virava `SCHEMA_INVALID` (IS-F003). Antes de perguntar, o CAIN testa cada hipótese configurada na própria política sobre a visão atual:
+declara; o stocks não, e antes toda proposta por modelo do stocks virava `SCHEMA_INVALID` (IS-F003). O resto do
+pedido vem de um molde da hipótese escolhida: a última task emitida dela, senão a última task do tipo de pedido que a
+configuração fixa para ela (`proposable_request_types`), nunca de outro tipo. Na rodada de utilidade com o Stocks, a
+hipótese de coleta saía como backtest porque o molde era a última task do domínio. Hipótese sem molde fica fora das
+opções (`NO_REQUEST_TEMPLATE`) até o operador emitir um pedido daquele tipo. Antes de perguntar, o CAIN testa cada
+hipótese configurada na própria política sobre a visão atual:
 só as que seriam `ALLOW` entram no enum do schema (as em `COOLDOWN`, recusadas pelo domínio ou retidas ficam de fora),
 e sem nenhuma elegível ele responde `NO_ELIGIBLE_HYPOTHESIS` em vez de chamar o modelo. O prompt leva um resumo por
 hipótese (resultados, estados científicos, códigos de recusa, por que não é elegível). A auditoria
@@ -90,6 +95,7 @@ parâmetros congelados da missão), com sha256 de cada fonte:
 | `cooldown`, `negative_result_states` | N negativos seguidos da mesma hipótese → K episódios sem task nova dela |
 | `contradiction_pairs` | estados científicos em conflito → REQUIRE_HUMAN, nunca maioria |
 | `sealed_scopes` | escopos lacrados (ex.: holdout) → REQUIRE_HUMAN `SEALED_SCOPE` (R16); lista vazia = nenhum lacre |
+| `proposable_request_types` | tipo de pedido de cada hipótese proponível: pedido de outro tipo → BLOCK `REQUEST_TYPE_NOT_ALLOWED` (R04); molde do LLM. Com um tipo só no contrato, todas as hipóteses têm esse tipo; com vários (stocks), as fixtures de proposta congeladas da missão decidem |
 
 Acrescentar `stocks` ou `brasileirao` = um arquivo de configuração novo + o adapter do domínio (no repositório do
 domínio) + a entrada do adapter na allowlist do transporte. O framework não muda. As variantes de `parameters` do

@@ -12,7 +12,9 @@ Rules, first match wins (FROZEN_PARAMETERS.json → decision_policy.rule_order):
   R02 BLOCK SCHEMA_INVALID           proposal shape or contract request invalid (frozen envelope validator)
   R03 BLOCK FORBIDDEN_FIELD          field outside cain-proposal/1 (handler, command, module, path, URL, budget,
                                      final priority, capital …) or a client_ref the envelope owns
-  R04 BLOCK REQUEST_TYPE_NOT_ALLOWED request_type outside the contract's handler_allowlist keys
+  R04 BLOCK REQUEST_TYPE_NOT_ALLOWED request_type outside the contract's handler_allowlist keys, or not the request
+                                     type the configuration fixes for a proposable hypothesis (a collection hypothesis
+                                     is never sent as a backtest)
   R05 BLOCK HYPOTHESIS_CLOSED        closed hypothesis of the domain's scientific state, or frozen family
   R16 REQUIRE_HUMAN SEALED_SCOPE     the request would touch a sealed scope of the domain (configuration
                                      ``sealed_scopes``: a value, a window or an instant, e.g. a holdout season);
@@ -264,6 +266,10 @@ def decide(proposal, view: dict, config: dict, *, episode_number: int) -> dict:
     if request["request_type"] not in config["allowed_request_types"]:
         return _outcome("BLOCK", "REQUEST_TYPE_NOT_ALLOWED", "R04", request["request_type"][:60])
     hypothesis = request["hypothesis_id"]
+    expected = config["proposable_request_types"].get(hypothesis)
+    if expected is not None and request["request_type"] != expected:
+        return _outcome("BLOCK", "REQUEST_TYPE_NOT_ALLOWED", "R04",
+                        f"{hypothesis} is a {expected} hypothesis, not {request['request_type'][:60]}")
     if hypothesis in config["closed_hypotheses"]:
         return _outcome("BLOCK", "HYPOTHESIS_CLOSED", "R05",
                         f"{hypothesis} is {config['closed_hypotheses'][hypothesis]} and is never reopened")

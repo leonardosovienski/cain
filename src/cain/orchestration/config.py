@@ -16,7 +16,7 @@ KEYS = frozenset(
         "schema", "domain", "config_version", "source", "contract", "frozen_parameters", "allowed_request_types",
         "closed_hypotheses", "frozen_families", "proposable_hypotheses", "allowed_symbols", "costs",
         "allowed_references", "max_priority_hint", "budget", "cooldown", "negative_result_states",
-        "contradiction_pairs", "sealed_scopes",
+        "contradiction_pairs", "sealed_scopes", "proposable_request_types",
     }
 )
 PRIORITIES = ("LOW", "NORMAL", "HIGH")
@@ -51,6 +51,10 @@ def validate(config: dict) -> dict:
         raise ConfigError("a closed hypothesis cannot be proposable")
     if config["max_priority_hint"] not in PRIORITIES:
         raise ConfigError("unknown priority cap")
+    types = config["proposable_request_types"]
+    if not isinstance(types, dict) or set(types) != set(config["proposable_hypotheses"]) or not set(
+            types.values()) <= set(config["allowed_request_types"]):
+        raise ConfigError("every proposable hypothesis needs exactly one allowed request type")
     try:
         policy.check_sealed_scopes(config["sealed_scopes"])
     except ValueError as exc:
