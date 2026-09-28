@@ -171,3 +171,104 @@ def test_cli_reads_the_stocks_files_at_a_pinned_commit_and_blocks_the_retest(tmp
     assert main([*base, "check", "--domain", "stocks", "--statement", "momentum 12-1 again", "--as-of", "now",
                  "--hypothesis-id", "H11"]) == 0
     assert json.loads(capsys.readouterr().out)["equivalent_to_closed"] is True
+
+
+MANIFEST = """# RESEARCH_FREEZE
+
+```yaml
+ST_RESEARCH_FREEZE:
+  active_hypotheses: []
+  stopped_hypotheses:
+    - id: H14
+      family: near_52w_high
+      result: NOT_SUPPORTED (IC cruza zero)
+      note: >
+        Distância do preço até a máxima de 252
+        pregões, quintil superior.
+
+        Segundo parágrafo.
+    - id: H11
+      family: momentum_12_1_total_return
+      result: NOT_SUPPORTED (DSR 0.8430 < 0.95)
+  preserved_components:
+    - stocks_predictor/universe.py
+```
+"""
+REGISTRY = [
+    {"name": "h11-momentum-12-1-total-return", "hypothesis_family": "momentum_12_1_total_return",
+     "params": {"factor.name": "momentum_12_1", "adjust.total_return": True, "bootstrap.n_boot": 10000}},
+    {"name": "h14-near-52w-high", "hypothesis_family": "UNKNOWN",
+     "params": {"factor.name": "near_52w_high", "bootstrap.n_boot": 10000}},
+]
+
+
+def test_the_freeze_manifest_is_read_in_its_fixed_shape_only():
+    from cain.findings.ingest import freeze_manifest
+
+    manifest = freeze_manifest(MANIFEST.encode())
+    assert sorted(manifest) == ["H11", "H14"]
+    assert manifest["H14"]["note"] == ("Distância do preço até a máxima de 252 pregões, quintil superior. "
+                                       "Segundo parágrafo.")
+    assert manifest["H11"] == {"family": "momentum_12_1_total_return", "result": "NOT_SUPPORTED (DSR 0.8430 < 0.95)"}
+    with pytest.raises(ValueError, match="no ST_RESEARCH_FREEZE"):
+        freeze_manifest(b"# nothing here\n")
+    with pytest.raises(ValueError, match="lists no stopped hypothesis"):
+        freeze_manifest(b"ST_RESEARCH_FREEZE:\n  stopped_hypotheses:\n  preserved_components: []\n")
+
+
+def test_rows_are_described_by_the_parameters_that_tell_them_apart():
+    from cain.findings.ingest import describe_rows
+
+    described = describe_rows(REGISTRY)
+    # bootstrap.n_boot is the same in every row: it describes none of them
+    assert described == {
+        "h11-momentum-12-1-total-return": "momentum 12 1 total return adjust total return True factor name momentum 12 1",
+        "h14-near-52w-high": "factor name near 52w high"}
+
+
+def test_described_statements_are_plain_words_and_the_default_is_unchanged(tmp_path):
+    from cain.findings.ingest import freeze_manifest
+
+    state = {**STATE, "hypotheses": {"H11": "CLOSED_JUDGED", "H14": "CLOSED_JUDGED"},
+             "hypothesis_trials": {"H11": "h11-momentum-12-1-total-return", "H14": "h14-near-52w-high"}}
+    plain = FindingsArchive(MemoryStore(tmp_path / "plain.db"))
+    ingest_scientific_state(plain, "stocks", *hashed(state), REGISTRY)
+    default = {f["finding_id"]: f for f in plain.closed("stocks", as_of=plain.memory.now())}
+    assert default["stocks:hypothesis:H14"]["statement"].startswith("H14 h14-near-52w-high h14-near-52w-high {")
+    assert "described" not in default["stocks:hypothesis:H14"]["details"]
+
+    archive = FindingsArchive(MemoryStore(tmp_path / "described.db"))
+    manifest_source = {"repo": "stocks-predictor", "commit": "0" * 40, "path": "RESEARCH_FREEZE.md", "sha256": "1" * 64}
+    ingest_scientific_state(archive, "stocks", *hashed(state), REGISTRY,
+                            {"manifest": freeze_manifest(MANIFEST.encode()), "manifest_source": manifest_source})
+    closed = {f["finding_id"]: f for f in archive.closed("stocks", as_of=archive.memory.now())}
+    h14 = closed["stocks:hypothesis:H14"]
+    assert h14["statement"] == ("H14 h14 near 52w high factor name near 52w high NOT_SUPPORTED (IC cruza zero) "
+                                "Distância do preço até a máxima de 252 pregões, quintil superior. Segundo parágrafo.")
+    assert h14["details"]["described"] == {"registry": True, "manifest_source": manifest_source,
+                                           "manifest_entry": True}
+    family = closed["stocks:frozen-family:momentum_12_1_total_return"]
+    assert family["statement"].startswith("frozen family momentum 12 1 total return: cannot be reopened")
+
+
+def test_cli_reads_the_manifest_only_with_describe(tmp_path, capsys):
+    from cain.cli import main
+
+    repo = tmp_path / "stocks-predictor"
+    (repo / "research").mkdir(parents=True)
+    git(repo, "init", "-q")
+    (repo / "research" / "scientific_state.json").write_text(json.dumps(STATE), encoding="utf-8")
+    (repo / "RESEARCH_FREEZE.md").write_text(MANIFEST, encoding="utf-8")
+    (repo / "trials.json").write_text(json.dumps(REGISTRY), encoding="utf-8")
+    git(repo, "add", ".")
+    git(repo, "commit", "-q", "-m", "state")
+    base = ["findings", "--db", str(tmp_path / "cli.db"), "ingest-state", "--domain", "stocks", "--repo", str(repo),
+            "--commit", "HEAD", "--path", "research/scientific_state.json", "--registry-path", "trials.json"]
+    assert main([*base, "--manifest-path", "RESEARCH_FREEZE.md"]) != 0
+    capsys.readouterr()
+    assert main([*base, "--describe", "--manifest-path", "RESEARCH_FREEZE.md"]) == 0
+    assert json.loads(capsys.readouterr().out)["counts"]["recorded:negative"] == 4
+    assert main(["findings", "--db", str(tmp_path / "cli.db"), "list", "--domain", "stocks", "--as-of", "now",
+                 "--include-quarantine", "--kind", "negative"]) == 0
+    statements = [f["statement"] for f in json.loads(capsys.readouterr().out)["findings"]]
+    assert any(s.startswith("H11 h11 momentum 12 1 total return momentum 12 1 total return") for s in statements)

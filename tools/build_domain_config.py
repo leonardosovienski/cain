@@ -8,8 +8,11 @@ same for every domain. Values come only from:
   * brasileirao only: CAIN's own research-loop ledger of PR #50 (docs/evidence/2026-09-24-prompt6/ledger-events.jsonl),
     read with ``git show`` at the pinned CAIN commit deccaaa0a0e2cb2b5f292614659eb4bf2e943e50;
   * the domain contract (DOMAIN_RESEARCH_CONTRACT.json) from the main of predictor-qualification;
-  * the frozen mission parameters (FROZEN_PARAMETERS.json → decision_policy.<domain>_config).
-Nothing from later commits of the domain enters the configuration.
+  * the frozen mission parameters (FROZEN_PARAMETERS.json → decision_policy.<domain>_config);
+  * stocks only, by the owner's decision D-26: the ``frozen_families`` list of one later file of the domain, named in
+    the frozen parameters (``additional_frozen_families``: repository, full commit, path, blob, sha256 and the families
+    it adds). The families are added to the base's, never removed, and nothing else of that file is read.
+Nothing else from later commits of the domain enters the configuration.
 
 Usage:
   python tools/build_domain_config.py {crypto,stocks,brasileirao} --repo <domain repository clone> \
@@ -127,6 +130,33 @@ def read_brasileirao(domain: str, raw_files: dict[str, bytes], contract: dict) -
 
 
 READERS = {"crypto": read_crypto, "stocks": read_stocks}
+ADDITIONAL_KEYS = {"decision", "repository", "commit", "path", "git_blob", "sha256", "key", "added"}
+
+
+def additional_families(domain: str, repo: Path, frozen_config: dict, base: list) -> tuple[list, dict | None]:
+    """Base families plus the frozen families of a later domain file (D-26, stocks): the file named in the frozen
+    parameters, read with ``git show <full sha>:<path>``, its blob and sha256 checked; only its ``frozen_families``
+    list is read. A family is added, never removed; the families it adds must be the ones the frozen parameters
+    list. Without ``additional_frozen_families``: the base families, no source."""
+    extra = frozen_config.get("additional_frozen_families")
+    if extra is None:
+        return list(base), None
+    if domain != "stocks" or set(extra) != ADDITIONAL_KEYS or extra["key"] != "frozen_families":
+        raise SystemExit("additional_frozen_families: stocks only, with " + ", ".join(sorted(ADDITIONAL_KEYS)))
+    if extra["repository"] != SOURCES[domain]["repository"] or not re.fullmatch(r"[0-9a-f]{40}", extra["commit"]):
+        raise SystemExit("additional_frozen_families: the domain repository at a full 40-hex SHA")
+    raw = git(repo, "show", f"{extra['commit']}:{extra['path']}")
+    blob = git(repo, "rev-parse", f"{extra['commit']}:{extra['path']}").decode().strip()
+    if (blob, hashlib.sha256(raw).hexdigest()) != (extra["git_blob"], extra["sha256"]):
+        raise SystemExit("additional_frozen_families: blob or sha256 differs from the frozen parameters")
+    families = json.loads(raw)[extra["key"]]
+    if not isinstance(families, list) or not all(isinstance(f, str) and f for f in families):
+        raise SystemExit("additional_frozen_families: the file's frozen_families is not a list of names")
+    added = sorted(set(families) - set(base))
+    if added != sorted(extra["added"]):
+        raise SystemExit(f"additional_frozen_families: the later file adds {added}, not the frozen parameters' list")
+    source = {k: extra[k] for k in ("decision", "repository", "commit", "path", "git_blob", "sha256", "key")}
+    return sorted(set(base) | set(families)), {**source, "added": added}
 
 
 def sealed_scopes(frozen_config: dict) -> list:
@@ -193,6 +223,7 @@ def main() -> int:
         if (fee, slippage) != (frozen_config["costs"]["fee_bps"], frozen_config["costs"]["slippage_bps"]):
             raise SystemExit("frozen costs differ from the domain's cost source at the pinned commit")
         costs = {"fee_bps": int(fee), "slippage_bps": int(slippage)}
+    families, later_source = additional_families(a.domain, a.repo, frozen_config, families)
     if closed != frozen_config["closed_hypotheses"] or families != frozen_config["frozen_families"]:
         raise SystemExit("scientific state at the pinned commit differs from the frozen parameters")
     allowed_types = sorted(contract["handler_allowlist"])
@@ -202,7 +233,9 @@ def main() -> int:
         "schema": "cain-domain-config/1",
         "domain": a.domain,
         "config_version": 1,
-        "source": {"repository": spec["repository"], "commit": spec["commit"], "files": files},
+        "source": {"repository": spec["repository"], "commit": spec["commit"], "files": files,
+                   # D-26 (stocks): families added from a later file; key emitted only when present
+                   **({"additional_frozen_families": later_source} if later_source else {})},
         "contract": {"repository": "leonardosovienski/predictor-qualification", "commit": a.contract_commit,
                      "path": spec["contract"], "sha256": hashlib.sha256(contract_raw).hexdigest(),
                      "request_schema_id": contract["request_schema"]["$id"],
