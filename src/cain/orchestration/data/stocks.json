@@ -106,10 +106,10 @@
   "volume_surge"
  ],
  "frozen_parameters": {
-  "commit": "1eb146b6bd5e362e2edbabee31358662dd56264e",
+  "commit": "30c02c75c7d169bd3907ca0a075e837c8bd60d51",
   "path": "qualification/integration-stocks/FROZEN_PARAMETERS.json",
   "repository": "leonardosovienski/predictor-qualification",
-  "sha256": "771b8a23e9b9bde7a0e2a92b8ae92ccc01748ac9511b787cdbafdd7fcd8a7bfd"
+  "sha256": "11ad4cb7f255da063cc40d9191f3e7ed1a50c43ad4124da19feef0953be5ab7b"
  },
  "max_priority_hint": "NORMAL",
  "negative_result_states": [
@@ -122,6 +122,11 @@
  ],
  "proposable_hypotheses": [
   "stocks:QUAL-EI-COLLECTION-001",
+  "stocks:QUAL-LLM-CTRL-001",
+  "stocks:QUAL-LLM-CTRL-002",
+  "stocks:QUAL-LLM-CTRL-003",
+  "stocks:QUAL-LLM-CTRL-004",
+  "stocks:QUAL-LLM-CTRL-005",
   "stocks:QUAL-PIT-MOM-001",
   "stocks:QUAL-PIT-MOM-REAL-001",
   "stocks:QUAL-PIT-MOM-REAL-002",
@@ -129,10 +134,47 @@
  ],
  "proposable_request_types": {
   "stocks:QUAL-EI-COLLECTION-001": "COLLECT_EXTERNAL_INTELLIGENCE",
+  "stocks:QUAL-LLM-CTRL-001": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-002": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-003": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-004": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-005": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-001": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-REAL-001": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-REAL-002": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-REAL-003": "BACKTEST_PIT_FACTOR"
+ },
+ "proposal_overlays": {
+  "stocks:QUAL-LLM-CTRL-001": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9001
+   }
+  },
+  "stocks:QUAL-LLM-CTRL-002": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9002
+   }
+  },
+  "stocks:QUAL-LLM-CTRL-003": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9003
+   }
+  },
+  "stocks:QUAL-LLM-CTRL-004": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9004
+   }
+  },
+  "stocks:QUAL-LLM-CTRL-005": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9005
+   }
+  }
  },
  "schema": "cain-domain-config/1",
  "sealed_scopes": [],
