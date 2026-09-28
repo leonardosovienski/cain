@@ -8,7 +8,14 @@ contains the same magnitude:
 * ``[run:<run_id>@<sha256>]`` a SUPPORTED EMPIRICAL_PROOF claim with that run_ref whose artifact
   (read and re-hashed here) contains the number.
 
-Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, and are skipped.
+Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, and are skipped. Inside inline code
+(backticks), numbers that are part of an identifier are names, not claims: a token with a letter (``h14``, ``52w``,
+``h14-near-52w-high``) or a numeric compound joined by a hyphen or underscore (``12-1``). So `` `momentum 12-1` `` is a
+name (the utility rounds blocked an honest report on its "12"). A standalone number inside backticks is still a claim
+(`` `29` ``, `` `net 29` ``, `` `IC 95%` ``, `` `top 20` ``, `` `0,95` ``): backticks are not a way around provenance
+(reviews of the integration-brasileirao session on cain#77). A number glued to a unit suffix (``29bps``, ``2x``,
+anywhere in the sentence) is a number, not an identifier. A percentage is covered by the same fraction
+in the cited source (95% by 0.95: the stocks result stores the confidence as a fraction).
 Lexical only: the linter never judges whether a derived or rounded number is right.
 """
 
@@ -25,6 +32,15 @@ MARKER = re.compile(r"\[(ev|claim|run):([^\]\s]+)\]")
 _ENUMERATOR = re.compile(r"^(\s*(?:#+\s*)?(?:[-*]\s+)?)\d+(?:\.\d+)*[.)]\s", re.M)
 _SENTENCE = re.compile(r"(?<=[.!?;])\s+|\n+")
 _NUMBER = re.compile(r"(?<![\w.,])[-+]?\d+(?:[.,]\d+)*%?(?![\w])")
+_CODE = re.compile(r"`([^`\n]*)`")
+_IDENTIFIER = re.compile(r"\S*[^\W\d_]\S*|(?<!\S)\d+(?:[-_]\d+)+(?!\S)")
+_GLUED_UNIT = re.compile(r"(?<![\w.,])([-+]?\d+(?:[.,]\d+)*)(bps|bp|pb|pp|pct|x)(?![\w])", re.I)
+
+
+def _unname(match: re.Match) -> str:
+    """Inside backticks, identifiers (a token with a letter, or a numeric compound like 12-1) are names and leave;
+    every standalone number stays to be checked."""
+    return " " + _IDENTIFIER.sub(" ", match.group(1)) + " "
 
 
 def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: bool = False,
@@ -41,7 +57,7 @@ def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: boo
     violations, checked, resolved = [], 0, set()
     for sentence in _SENTENCE.split(body):
         markers = MARKER.findall(sentence)
-        bare = MARKER.sub(" ", sentence)
+        bare = _CODE.sub(_unname, _GLUED_UNIT.sub(r"\1 \2", MARKER.sub(" ", sentence)))
         numbers = _NUMBER.findall(bare)
         if not numbers:
             continue
@@ -57,6 +73,8 @@ def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: boo
         for token in numbers:
             checked += 1
             value = number_values(token)
+            if token.endswith("%") and value and not value <= supported:
+                value = {(v / 100).normalize() for v in value}
             if not markers:
                 violations.append({"number": token, "sentence": sentence.strip()[:300], "code": "NO_PROVENANCE"})
             elif not value or not value <= supported:

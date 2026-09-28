@@ -76,20 +76,30 @@ placebo). O CAIN só grava `placebo_seed` onde o contrato do domínio declara es
 declara; o stocks não, e antes toda proposta por modelo do stocks virava `SCHEMA_INVALID` (IS-F003). O resto do
 pedido vem de um molde da hipótese escolhida: a última task emitida dela, senão a última task do tipo de pedido que a
 configuração fixa para ela (`proposable_request_types`), nunca de outro tipo. Na rodada de utilidade com o Stocks, a
-hipótese de coleta saía como backtest porque o molde era a última task do domínio. Hipótese sem molde fica fora das
-opções (`NO_REQUEST_TEMPLATE`) até o operador emitir um pedido daquele tipo. Antes de perguntar, o CAIN testa cada
+hipótese de coleta saía como backtest porque o molde era a última task do domínio. Task que o domínio recusou
+(`TERMINAL_REFUSAL`) nunca é molde, nem da própria hipótese nem emprestada. Na segunda rodada com o Stocks (rc12),
+uma hipótese sem task própria pegou a task do canário do futuro, já recusada, e a política deixou o mesmo pedido
+passar de novo. Hipótese sem molde fica fora das opções (`NO_REQUEST_TEMPLATE`) até o operador emitir um pedido
+daquele tipo. Antes de perguntar, o CAIN testa cada
 hipótese configurada na própria política sobre a visão atual:
 só as que seriam `ALLOW` entram no enum do schema (as em `COOLDOWN`, recusadas pelo domínio ou retidas ficam de fora),
 e sem nenhuma elegível ele responde `NO_ELIGIBLE_HYPOTHESIS` em vez de chamar o modelo. O prompt leva um resumo por
-hipótese (resultados, estados científicos, códigos de recusa, por que não é elegível). A auditoria
-(`cain-llm-proposal-audit/3`) grava a elegibilidade e a checagem da justificativa, que é de melhor esforço e nunca
-decide nada:
+hipótese (resultados, estados científicos, códigos de recusa, por que não é elegível). Leva também `allowed_requests`,
+com o que cada hipótese permitida pediria: tipo, nomes das referências e parâmetros do experimento, nunca custos nem
+semente. Na segunda rodada, o modelo só via IDs e leu `QUAL-LLM-CTRL-*` como "controle de qualidade de LLMs", quando
+são controles negativos (`negative_control`) do momentum. A auditoria (`cain-llm-proposal-audit/4`) grava a
+elegibilidade e a checagem da justificativa, que é de melhor esforço e nunca decide nada:
 - `without_evidence`: hipóteses citadas sem resultado nem recusa na memória;
 - `count_mismatches`: frase sobre uma hipótese só (ou "esta hipótese", a escolhida) que cita um número de resultados
   ou episódios diferente do resumo que o modelo recebeu;
-- `eligibility_mismatches`: frase que diz que a hipótese é (ou não é) elegível, quando a política diz o contrário.
+- `eligibility_mismatches`: frase que diz que a hipótese é (ou não é) elegível, quando a política diz o contrário;
+- `refusal_mismatches`: frase que diz que hipóteses foram recusadas (ou rejeitadas), quando nenhuma das hipóteses a
+  que ela pode se referir tem recusa na memória. Contam as citadas pelo nome e todas as que terminam num sufixo solto
+  como `001`. Frase negada ("não foi recusada") não conta. Na segunda rodada, duas justificativas diziam que
+  hipóteses "foram recusadas por serem equivalentes" quando elas tinham rodado e dado resultado.
 
-Frases que citam várias hipóteses ficam de fora, porque parear números e nomes ali seria chute. Na rodada de
+Nas contagens e na elegibilidade, frases que citam várias hipóteses ficam de fora, porque parear números e nomes ali
+seria chute. A checagem de recusa não precisa parear, porque só acusa quando nenhum candidato foi recusado. Na rodada de
 utilidade com o Stocks, 4 de 12 justificativas tinham erro desse tipo (por exemplo, "4 resultados" quando eram 3, e
 "não é elegível" para uma hipótese elegível).
 

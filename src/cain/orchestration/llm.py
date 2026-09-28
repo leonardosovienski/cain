@@ -13,8 +13,11 @@ the request's parameters (crypto; not stocks). In the first local-model campaign
 and, at temperature 0, kept repeating a refused one; the same seed repeats the same placebo. The CAIN fills the rest
 of the request from a template of the chosen hypothesis (its own last emitted task, else the last emitted task of the
 request type the configuration fixes for it; never another type: the utility round sent a collection hypothesis as a
-backtest) and writes a ``cain-proposal/1`` file with ``source = "llm"``; the proposal then goes through the same DecisionPolicy as
-any other (``cain research propose``). Every call is audited next to the proposal: prompt, response, provider, model
+backtest; never a task the domain refused: the second utility round borrowed the refused future-canary task) and
+writes a ``cain-proposal/1`` file with ``source = "llm"``; the proposal then goes through the same DecisionPolicy as
+any other (``cain research propose``). The prompt also says what each allowed hypothesis would request (type,
+references and experiment parameters, never costs): in that round the model read negative-control hypotheses as
+"quality control of LLMs" from their IDs alone. Every call is audited next to the proposal: prompt, response, provider, model
 and model digest, eligibility, the rationale check and the proposal's sha256. The model never chooses a handler, a
 budget, a priority, costs or capital, and nothing it writes is trusted before the policy.
 """
@@ -34,7 +37,9 @@ INSTRUCTION = (
     "Você propõe o próximo experimento de pesquisa de UM domínio, só com base nos fatos listados. "
     "Responda apenas JSON com hypothesis_id (um de allowed_hypotheses: as outras estão em pausa, recusadas pelo "
     "domínio ou retidas pela política) e rationale (até 400 caracteres). Na rationale, cite só fatos de "
-    "hypothesis_summary e results; não descreva resultado de hipótese que não tem resultado. Você não escolhe "
+    "hypothesis_summary e results; não descreva resultado de hipótese que não tem resultado; diga recusada só se "
+    "refusals tiver código. allowed_requests mostra o que cada hipótese permitida pediria (tipo, referências e "
+    "parâmetros do experimento, ex.: negative_control = controle negativo). Você não escolhe "
     "semente, handler, budget, prioridade, custos, dados nem capital; resultados negativos não justificam mais escopo."
 )
 
@@ -99,11 +104,13 @@ def _request(template: dict, domain: str, hypothesis: str, seed: int, request_id
 NO_TEMPLATE = {"decision": "ABSTAIN", "reason_code": "NO_REQUEST_TEMPLATE", "rule": "LLM"}
 
 
-def templates(config: dict, emitted: list[dict]) -> dict:
+def templates(config: dict, emitted: list[dict], refused: frozenset | set = frozenset()) -> dict:
     """Request template of each proposable hypothesis, from the CAIN's own emitted tasks (newest first, without
     ``client_ref``): the hypothesis's own last task, else the last task of the request type the configuration fixes
     for it (``proposable_request_types``). Never a task of another type: a collection hypothesis never borrows a
-    backtest. A hypothesis with neither has no template (it is not offered to the model).
+    backtest. Never a task the domain refused (``refused``: request IDs of emitted tasks whose outcome is a terminal
+    refusal): its request is one the domain already would not run (e.g. a future-canary dataset). A hypothesis with
+    neither has no template (it is not offered to the model).
 
     ``proposal_overlays`` (optional) gives a hypothesis parameters of its own (e.g. a negative control with its own
     seed): a template borrowed from another hypothesis drops every overlaid parameter and takes the hypothesis's
@@ -111,6 +118,7 @@ def templates(config: dict, emitted: list[dict]) -> dict:
     overlays = config.get("proposal_overlays", {})
     overlaid = set().union(*overlays.values()) if overlays else set()
     out = {}
+    emitted = [p for p in emitted if p["request_id"] not in refused]
     for hypothesis in sorted(config["proposable_hypotheses"]):
         kind = config["proposable_request_types"][hypothesis]
         own = next((p for p in emitted if p["hypothesis_id"] == hypothesis and p["request_type"] == kind), None)
@@ -169,6 +177,24 @@ def hypothesis_summary(config: dict, view: dict, decisions: dict) -> dict:
     return rows
 
 
+COST_KEYS = frozenset({"fee_bps", "slippage_bps", "placebo_seed"})
+
+
+def allowed_requests(templates_by_hypothesis: dict, allowed: list[str]) -> dict:
+    """What each allowed hypothesis would request: type, reference names and experiment parameters (never costs nor
+    the placebo seed, which the model does not choose). A request without parameters shows type and references."""
+    out = {}
+    for hypothesis in allowed:
+        template = templates_by_hypothesis[hypothesis]
+        row = {"request_type": template.get("request_type"),
+               "references": {k: v.get("name") for k, v in sorted(template.get("references", {}).items())
+                              if isinstance(v, dict)}}
+        if "parameters" in template:
+            row["parameters"] = {k: v for k, v in sorted(template["parameters"].items()) if k not in COST_KEYS}
+        out[hypothesis] = row
+    return out
+
+
 def _tokens(hypothesis: str) -> set[str]:
     local = hypothesis.split(":", 1)[1]
     parts = local.split("-")
@@ -180,6 +206,18 @@ _COUNT = re.compile(r"\b(\d+)\s+(?:resultados?|results?|epis[óo]dios?|episodes?
 _NOT_ELIGIBLE = re.compile(r"n[ãa]o\s+(?:(?:é|e|est[áa])\s+)?eleg[ií]ve(?:l|is)|ineleg[ií]ve(?:l|is)", re.I)
 _ELIGIBLE = re.compile(r"\beleg[ií]ve(?:l|is)\b", re.I)
 _THIS = re.compile(r"\b(?:esta|essa)\s+hip[óo]tese\b", re.I)
+_REFUSED = re.compile(r"\b(?:recusad[ao]s?|rejeitad[ao]s?|refused|rejected)\b", re.I)
+_NOT_REFUSED = re.compile(r"\b(?:n[ãa]o\s+(?:foi|foram|est[áa]|est[ãa]o)\s+recusad|sem\s+recusas?|not\s+refused)", re.I)
+_SUFFIX = re.compile(r"(?<![A-Za-z0-9-])(\d{3})(?![A-Za-z0-9-])")
+
+
+def _refusal_candidates(sentence: str, known: list[str]) -> set[str]:
+    """Hypotheses a sentence may refer to: the ones it names, plus every known hypothesis whose ID ends with a bare
+    three-digit suffix the sentence cites (``001`` may be any of several; all of them are candidates)."""
+    named = set(_named(sentence, known))
+    for suffix in _SUFFIX.findall(sentence):
+        named |= {h for h in known if h.rsplit("-", 1)[-1] == suffix}
+    return named
 
 
 def _named(sentence: str, known: list[str]) -> list[str]:
@@ -194,13 +232,20 @@ def rationale_check(rationale: str, config: dict, view: dict, *, chosen: str | N
     * ``mentioned`` / ``without_evidence``: hypotheses named, and those named without any result or refusal;
     * ``count_mismatches``: a sentence about one hypothesis ("esta hipótese" = the chosen one) cites a number of
       results or episodes that differs from the summary the model received;
-    * ``eligibility_mismatches``: such a sentence says the hypothesis is (not) eligible and the policy says otherwise.
-    Sentences naming several hypotheses are skipped (the pairing would be a guess)."""
+    * ``eligibility_mismatches``: such a sentence says the hypothesis is (not) eligible and the policy says otherwise;
+    * ``refusal_mismatches``: a sentence says hypotheses were refused (recusadas/rejeitadas) and none of the
+      hypotheses it may refer to (named, or by a bare ``001``-style suffix) has a refusal in the summary.
+    Count and eligibility skip sentences naming several hypotheses (the pairing would be a guess); the refusal check
+    needs no pairing, since it only fires when no candidate was refused."""
     known = sorted(set(config["proposable_hypotheses"]) | set(config["closed_hypotheses"]))
     mentioned = _named(rationale, known)
     with_evidence = {r["hypothesis_id"] for r in view["results"]}
-    counts, eligibility = [], []
+    counts, eligibility, refusals = [], [], []
     for sentence in (s for s in _SENTENCE.split(rationale) if s.strip()):
+        if _REFUSED.search(sentence) and not _NOT_REFUSED.search(sentence):
+            candidates = _refusal_candidates(sentence, known) or ({chosen} if chosen and _THIS.search(sentence) else set())
+            if candidates and candidates <= set(summary or {}) and not any(summary[h]["refusals"] for h in candidates):
+                refusals.append({"hypotheses": sorted(candidates), "sentence": sentence[:240]})
         named = _named(sentence, known) or ([chosen] if chosen and _THIS.search(sentence) else [])
         if len(named) != 1 or named[0] not in (summary or {}):
             continue
@@ -214,14 +259,14 @@ def rationale_check(rationale: str, config: dict, view: dict, *, chosen: str | N
             eligibility.append({"hypothesis": hypothesis, "claimed_eligible": claim, "eligible_now": row["eligible_now"],
                                 "not_eligible_reason": row["not_eligible_reason"], "sentence": sentence[:240]})
     return {"mentioned": mentioned, "without_evidence": [h for h in mentioned if h not in with_evidence],
-            "count_mismatches": counts, "eligibility_mismatches": eligibility}
+            "count_mismatches": counts, "eligibility_mismatches": eligibility, "refusal_mismatches": refusals}
 
 
 MAX_RESULTS = 50
 
 
 def _fitted(domain: str, question: str, as_of: str, allowed: list, summary: dict, results: list, total: int,
-            budget) -> tuple[str, str]:
+            budget, requests: dict | None = None) -> tuple[str, str]:
     """Prompt and instruction within the provider's input budget (``effective_input_byte_budget``). The oldest
     results leave first; the hypothesis_summary keeps every count, and ``results_omitted`` says how many results are
     not listed. With nothing omitted the prompt is the one of before. Validation of 2026-09-28 (rc11 soak): with
@@ -230,6 +275,8 @@ def _fitted(domain: str, question: str, as_of: str, allowed: list, summary: dict
     while True:
         context = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
                    "hypothesis_summary": summary, "results": results}
+        if requests:
+            context["allowed_requests"] = requests
         if total > len(results):
             context["results_omitted"] = total - len(results)
         instruction = INSTRUCTION + (METRICS_NOTE if any("metrics" in r for r in results) else "")
@@ -244,10 +291,13 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     with orchestrator.store.db() as db:
         view = orchestrator.store.view(db, domain, as_of)
         number = orchestrator.store.next_episode(db, domain)
-        emitted = [{k: v for k, v in v2.loads_task(bytes(r["raw"]))["payload"].items() if k != "client_ref"}
-                   for r in db.execute("SELECT raw FROM outbox WHERE domain=? ORDER BY episode DESC", (domain,))]
+        rows = [(r["task_id"], {k: v for k, v in v2.loads_task(bytes(r["raw"]))["payload"].items() if k != "client_ref"})
+                for r in db.execute("SELECT task_id, raw FROM outbox WHERE domain=? ORDER BY episode DESC", (domain,))]
+    emitted = [p for _task, p in rows]
+    refused_tasks = {r["task_id"] for r in view["results"] if r["class"] == "TERMINAL_REFUSAL"}
+    refused = {p["request_id"] for task, p in rows if task in refused_tasks}
     seeds = sorted({p.get("parameters", {}).get("placebo_seed") for p in emitted} - {None})
-    by_hypothesis = templates(config, emitted)
+    by_hypothesis = templates(config, emitted, refused)
     if not by_hypothesis:
         raise ValueError("NO_TEMPLATE: no emitted task of the domain can be a request template for a proposable "
                          "hypothesis (same hypothesis or same request type)")
@@ -261,7 +311,8 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
                                 "reason_code")} | ({"metrics": r["metrics"]} if r.get("metrics") else {})
              for r in view["results"][-MAX_RESULTS:]]
     prompt, instruction = _fitted(domain, question, as_of, allowed, summary, shown, len(view["results"]),
-                                  getattr(provider, "effective_input_byte_budget", None))
+                                  getattr(provider, "effective_input_byte_budget", None),
+                                  allowed_requests(by_hypothesis, allowed))
     if callable(getattr(provider, "generate_json", None)):
         raw = provider.generate_json(prompt, instruction, _schema(allowed))
     else:
@@ -279,7 +330,7 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     check = rationale_check(proposal["rationale"], config, view, chosen=answer["hypothesis_id"], summary=summary)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(proposal, ensure_ascii=False, indent=1), encoding="utf-8")
-    audit = {"schema": "cain-llm-proposal-audit/3", "proposal_file": out.name,
+    audit = {"schema": "cain-llm-proposal-audit/4", "proposal_file": out.name,
              "proposal_sha256": policy.safe_digest(proposal), "as_of": as_of, "instruction": INSTRUCTION,
              "prompt": prompt, "response": raw, "model": model_identity(provider), "eligibility": decisions,
              "rationale_check": check, "capital_permission": False}

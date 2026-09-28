@@ -42,7 +42,8 @@ def register(sub):
         check.add_argument("--" + key)
     # What counts as equivalent is the versioned findings-policy; no flag moves its threshold.
     check.add_argument("--rank-embedding", action="store_true",
-                       help="order the matches by embedding similarity (never decides; not calibrated)")
+                       help="order the matches by embedding similarity and list the closest closed hypotheses as "
+                            "review candidates (never decides; not calibrated)")
     check.add_argument("--config", type=Path, help="cain.toml for the embedding model")
     pre = commands.add_parser("preregister", help="Pre-register a hypothesis in a domain")
     pre.add_argument("--domain", required=True)
@@ -116,7 +117,13 @@ def execute(args):
         rank = similarity_function("embedding", args.config) if args.rank_embedding else None
         matches = archive.equivalent_closed(args.domain, args.statement, as_of=at(args.as_of), identity=identity,
                                             rank=rank)
-        return {"equivalent_to_closed": bool(matches), "matches": matches}
+        out = {"equivalent_to_closed": bool(matches), "matches": matches}
+        if rank is not None:  # for review only: never counted in equivalent_to_closed
+            out["review_candidates"] = archive.review_candidates(
+                args.domain, args.statement, as_of=at(args.as_of), rank=rank,
+                exclude={m["finding_id"] for m in matches})
+            out["review_note"] = "ranked by embedding similarity, not calibrated; a human decides"
+        return out
     if cmd == "preregister":
         return archive.preregister(args.domain, args.hypothesis_id, statement=args.statement,
                                    derived_from=args.derived_from, by=args.by,

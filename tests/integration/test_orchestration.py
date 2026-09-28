@@ -424,9 +424,11 @@ class RefusingBrasileirao(StandInDomain):
                 "status": "TEMPORAL_INTEGRITY_VIOLATION", "exit_code": 4, "reason": "TEMPORAL_INTEGRITY_VIOLATION"}
 
 
-def test_llm_proposal_for_a_domain_whose_request_has_no_parameters(tmp_path):
-    # the brasileirao request_schema has no parameters (additionalProperties false): the template, the probe and the
-    # proposal keep the request without them (rc10 died reading parameters of the emitted tasks)
+def test_llm_never_reproposes_a_request_the_domain_refused(tmp_path):
+    # utility round 2 (rc12): a hypothesis without a task of its own borrowed the future-canary task the domain had
+    # refused, and the policy let it through again. A refused task is never a request template (own or borrowed), so
+    # with only refused tasks there is nothing the model can be offered. (The request without parameters of this
+    # domain is covered in tests/unit/test_orchestration_brasileirao_config.py; rc10 died reading parameters here.)
     from cain.orchestration import llm
 
     spool = Spool(tmp_path / "spool")
@@ -440,11 +442,9 @@ def test_llm_proposal_for_a_domain_whose_request_has_no_parameters(tmp_path):
     orch.ingest(spool)
     model = StubModel({"hypothesis_id": "brasileirao:QUAL-SERVING-REAL-001", "rationale": "x"})
     out = tmp_path / "llm" / "b1.json"
-    llm.propose(orch, model, question="próximo", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-B1", out=out)
-    proposal = json.loads(out.read_text(encoding="utf-8"))
-    assert "parameters" not in proposal["request"]
-    decision = orch.propose(proposal, as_of="2030-01-01T11:00:00Z")["receipt"]
-    assert decision["decision"] == "ALLOW" and decision["task"] is not None
+    with pytest.raises(ValueError, match="NO_TEMPLATE"):
+        llm.propose(orch, model, question="próximo", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-B1", out=out)
+    assert model.calls == [] and not out.exists()
 
 
 def test_llm_proposal_cli_requires_state_and_output(tmp_path, capsys):
@@ -506,7 +506,7 @@ def test_llm_only_chooses_among_hypotheses_the_policy_would_accept_now(world, tm
                        "not_eligible_reason": "NEGATIVE_STREAK"}
     assert info["rationale_check"] == {"mentioned": ["crypto:QUAL-SHADOW-001", "crypto:QUAL-SHADOW-REAL-001"],
                                        "without_evidence": ["crypto:QUAL-SHADOW-001"], "count_mismatches": [],
-                                       "eligibility_mismatches": []}
+                                       "eligibility_mismatches": [], "refusal_mismatches": []}
     audit = json.loads((tmp_path / "llm" / "e1.audit.json").read_text(encoding="utf-8"))
     assert audit["eligibility"]["crypto:QUAL-SHADOW-REAL-001"]["rule"] == "R13"
     assert audit["rationale_check"] == info["rationale_check"]
