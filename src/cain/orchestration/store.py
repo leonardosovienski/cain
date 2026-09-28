@@ -5,7 +5,8 @@ hash-chained memory of PR #45). Every table is keyed by domain and every memory 
 (``cube == domain``): a read of one domain never sees another (the store refuses cross-cube reads unless asked).
 
 The domain view given to the DecisionPolicy is rebuilt from these records only:
-  * tasks: the CAIN's outbox of the domain (what it emitted);
+  * tasks: the CAIN's outbox of the domain (what it emitted), each with the digest of its experiment (the request
+    without request, hypothesis and research IDs) for the equivalence rule R17;
   * results: facts retrieved from the domain cube, valid at ``as_of`` (valid time = when the domain produced the
     outcome), read at the head of the memory log (transaction time): the same state and ``as_of`` give the same view
     in any process.
@@ -97,9 +98,15 @@ class OrchestrationStore:
         return facts
 
     def view(self, db, domain: str, as_of: str) -> dict:
-        tasks = [dict(r) for r in db.execute(
-            "SELECT task_id, episode, request_id, research_id, hypothesis_id, payload_sha256 FROM outbox "
-            "WHERE domain=? ORDER BY episode", (domain,))]
+        from cain.orchestration.policy import experiment_digest
+
+        tasks = []
+        for r in db.execute("SELECT task_id, episode, request_id, research_id, hypothesis_id, payload_sha256, raw "
+                            "FROM outbox WHERE domain=? ORDER BY episode", (domain,)):
+            task = {k: r[k] for k in ("task_id", "episode", "request_id", "research_id", "hypothesis_id",
+                                      "payload_sha256")}
+            task["experiment_sha256"] = experiment_digest(v2.loads_task(bytes(r["raw"]))["payload"])
+            tasks.append(task)
         results = sorted(
             ({k: f["object"][k] for k in ("task_id", "episode", "hypothesis_id", "status", "class", "result_state",
                                           "scientific_state", "economic_state", "payload_sha256")}

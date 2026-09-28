@@ -410,6 +410,19 @@ def test_domain_refusal_code_is_remembered_and_the_hypothesis_is_not_proposed_ag
     assert other["receipt"]["decision"] == "ALLOW"
 
 
+def test_the_same_experiment_under_another_request_id_is_not_run_again(world):
+    cycle(world, 1)
+    with world.orch.store.db() as db:
+        (task,) = world.orch.store.view(db, "crypto", AS_OF)["tasks"]
+    assert task["experiment_sha256"] == policy.experiment_digest(proposal(1)["request"])
+    same = proposal(2, parameters=dict(REQUEST["parameters"], placebo_seed=1))  # only the request_id differs
+    out = world.orch.propose(same, as_of="2030-01-01T11:00:00Z")["receipt"]
+    assert (out["decision"], out["reason_code"], out["rule"], out["task"]) == (
+        "DUPLICATE", "EQUIVALENT_REQUEST", "R17", None)
+    # another placebo seed is another experiment
+    assert world.orch.propose(proposal(3), as_of="2030-01-01T12:00:00Z")["receipt"]["decision"] == "ALLOW"
+
+
 def test_free_text_refusal_reason_never_becomes_a_reason_code(world):
     leaked = "evento observado em 2026-09-07T00:00:00Z depois do corte"
     world.domain.script = [("TEMPORAL_INTEGRITY_VIOLATION", leaked)]

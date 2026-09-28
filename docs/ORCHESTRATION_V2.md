@@ -31,7 +31,7 @@ e receipt; mesmos bytes → nada novo). Pontos de falha de qualificação: `CAIN
 Genérica, versionada (`cain-decision-policy` v2 + sha256 do código) e sem relógio: as entradas são a proposta, a
 configuração do domínio e a visão do domínio no `as_of` (tasks emitidas + fatos de resultado recuperados da memória,
 lidos na cabeça do log e válidos no `as_of`). Decisões: `ALLOW | BLOCK | ABSTAIN | REQUIRE_HUMAN | DUPLICATE |
-COOLDOWN`, com a regra que disparou (R01–R16, ordem na docstring do módulo). Nenhum resultado aumenta budget,
+COOLDOWN`, com a regra que disparou (R01–R17, ordem na docstring do módulo). Nenhum resultado aumenta budget,
 prioridade ou escopo; nada lê estado econômico como sinal; não existe caminho de capital.
 
 v2 (2026-09-28) acrescenta a **R15**: se o domínio já recusou a hipótese com o código `HYPOTHESIS_NOT_ADMITTED`,
@@ -59,6 +59,13 @@ qualquer um que case retém o pedido:
 Fail closed: campo lacrado ausente, de tipo inesperado ou com janela invertida também retém; só um lacre
 `"optional": true` ausente não retém. Caminhos são pontilhados; `nome[]` percorre cada elemento de uma lista; instantes
 em UTC `YYYY-MM-DDTHH:MM:SSZ`. Criado para o holdout 2025 do Brasileirão (D-25 (2)); cripto e stocks não lacram nada.
+
+**R17** (logo depois da R11): o mesmo experimento com outro nome vira `DUPLICATE EQUIVALENT_REQUEST` (sem task).
+O experimento é o pedido sem `request_id`, `hypothesis_id` e `research_id` (`policy.experiment_digest`). Cada task da
+visão leva esse digest. Contam as tasks que rodaram (`TERMINAL_RESULT`) ou estão pendentes; uma task que o domínio
+recusou nunca rodou e não conta. Outro `as_of`, outros parâmetros ou outra semente de placebo são outro experimento.
+Achado da rodada de utilidade com o Stocks: `QUAL-PIT-MOM-REAL-001/002/003` são um só experimento, e 12 backtests
+deram o mesmo número.
 
 ## Propostas por modelo local (`cain research explain --propose-for-domain`)
 
