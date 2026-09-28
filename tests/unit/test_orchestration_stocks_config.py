@@ -127,11 +127,15 @@ def test_llm_requests_carry_the_placebo_seed_only_where_the_contract_declares_it
     assert (out["decision"], out["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
 
 
+LLM_ONLY = [f"stocks:QUAL-LLM-CTRL-{k:03d}" for k in range(1, 6)]
+
+
 def test_each_proposable_hypothesis_has_one_request_type_from_the_frozen_fixtures():
     assert CONFIG["proposable_request_types"] == {
         "stocks:QUAL-EI-COLLECTION-001": "COLLECT_EXTERNAL_INTELLIGENCE",
         "stocks:QUAL-PIT-MOM-001": "BACKTEST_PIT_FACTOR", "stocks:QUAL-PIT-MOM-REAL-001": "BACKTEST_PIT_FACTOR",
-        "stocks:QUAL-PIT-MOM-REAL-002": "BACKTEST_PIT_FACTOR", "stocks:QUAL-PIT-MOM-REAL-003": "BACKTEST_PIT_FACTOR"}
+        "stocks:QUAL-PIT-MOM-REAL-002": "BACKTEST_PIT_FACTOR", "stocks:QUAL-PIT-MOM-REAL-003": "BACKTEST_PIT_FACTOR",
+        **{h: "BACKTEST_PIT_FACTOR" for h in LLM_ONLY}}
     broken = dict(CONFIG, proposable_request_types={})
     with pytest.raises(domain_config.ConfigError):
         domain_config.validate(broken)
@@ -212,8 +216,9 @@ def test_overlaid_hypotheses_ask_for_their_own_experiment():
     # the real backtest, which has no seed, is one experiment: without them the model is never asked)
     extra = ["stocks:QUAL-LLM-CTRL-001", "stocks:QUAL-LLM-CTRL-002"]
     config = copy.deepcopy(CONFIG)
-    config["proposable_hypotheses"] = sorted(config["proposable_hypotheses"] + extra)
-    config["proposable_request_types"] = dict(config["proposable_request_types"],
+    base = [h for h in config["proposable_hypotheses"] if h not in LLM_ONLY]
+    config["proposable_hypotheses"] = sorted(base + extra)
+    config["proposable_request_types"] = dict({h: config["proposable_request_types"][h] for h in base},
                                               **{h: "BACKTEST_PIT_FACTOR" for h in extra})
     config["proposal_overlays"] = {h: {"negative_control": {"kind": "SHUFFLED_LABELS", "seed": 9000 + k}}
                                    for k, h in enumerate(extra, 1)}
@@ -239,6 +244,22 @@ def test_overlaid_hypotheses_ask_for_their_own_experiment():
     # optional key: domains without overlays keep their bytes
     assert "proposal_overlays" not in domain_config.load("crypto")
     assert "proposal_overlays" not in domain_config.load("brasileirao")
+
+
+def test_packaged_llm_only_hypotheses_are_negative_controls_with_their_own_seeds():
+    # the packaged configuration of cycle 2 (FROZEN_PARAMETERS → stocks_config.proposal_overlays)
+    assert CONFIG["proposal_overlays"] == {h: {"negative_control": {"kind": "SHUFFLED_LABELS", "seed": 9000 + k}}
+                                           for k, h in enumerate(LLM_ONLY, 1)}
+    assert set(LLM_ONLY) <= set(CONFIG["proposable_hypotheses"])
+    # after the real backtest ran, the model is offered exactly the five controls; each runs once
+    t = llm.templates(CONFIG, [REQUEST, COLLECTION])
+    view = _ran(REQUEST, "stocks:TASK-" + "1" * 32)
+    eligible = llm.eligibility(CONFIG, view, t, [], 2)
+    assert {h for h, d in eligible.items() if d["decision"] == "ALLOW"} == set(LLM_ONLY) | {
+        "stocks:QUAL-EI-COLLECTION-001"}
+    control = llm._request(t[LLM_ONLY[0]], "stocks", LLM_ONLY[0], 0, "stocks:REQ-LLM-0010")
+    again = llm.templates(CONFIG, [control, REQUEST, COLLECTION])
+    assert again[LLM_ONLY[0]] == control  # its own task: the same experiment again (R17), never re-offered
 
 
 def test_economic_watch_never_raises_priority_or_budget():
