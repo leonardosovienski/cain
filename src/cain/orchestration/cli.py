@@ -55,7 +55,10 @@ def _proposal(path: Path):
     raw = path.read_bytes()
     if len(raw) > MAX_PROPOSAL_BYTES:
         raise ValueError("PROPOSAL_TOO_LARGE")
-    return v2.loads_strict(raw)
+    try:
+        return v2.loads_strict(raw)
+    except RecursionError as exc:  # absurd nesting: refused like any other malformed proposal, never a traceback
+        raise v2.V2Error("SCHEMA_INVALID", "nesting too deep") from exc
 
 
 def execute_llm(args) -> int:
@@ -63,7 +66,7 @@ def execute_llm(args) -> int:
     from cain.llm import LLMError
     from cain.orchestration.config import ConfigError
     from cain.orchestration.llm import propose
-    from cain.orchestration.service import Orchestrator
+    from cain.orchestration.service import Orchestrator, check_as_of
     from cain.providers import configured_llm
     from cain.settings import load_settings
 
@@ -73,7 +76,8 @@ def execute_llm(args) -> int:
     try:
         orchestrator = Orchestrator(args.propose_for_domain, args.state)
         result = propose(orchestrator, configured_llm(load_settings(args.config)), question=args.question,
-                         as_of=args.as_of or _now(), proposal_id=args.proposal_id, out=args.proposal_out)
+                         as_of=check_as_of(args.as_of or _now()), proposal_id=args.proposal_id,
+                         out=args.proposal_out)
     except ConfigError as exc:
         _line({"error": exc.code, "detail": str(exc)})
         return 1

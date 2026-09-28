@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 from research_protocol import v2
@@ -33,13 +34,35 @@ def sha256(raw: bytes) -> str:
 
 
 _REASON_CODE = re.compile(r"[A-Z][A-Z0-9_]{2,63}\Z")
+_AS_OF = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z\Z")
+# what the frozen protocol's loaders raise on bytes that are not a well-formed envelope: its own V2Error, but also
+# a RecursionError on absurd nesting and a TypeError on an unhashable value where it expects text (audit 2026-09-28)
+UNPARSEABLE = (v2.V2Error, RecursionError, TypeError)
+
+
+def check_as_of(as_of) -> str:
+    """``as_of`` as a real UTC instant (``YYYY-MM-DDTHH:MM:SSZ`` that exists on the calendar), or AS_OF_INVALID.
+    The receipt only checks the shape; without this, ``2030-13-45T99:00:00Z`` was recorded and emitted in a task."""
+    if not isinstance(as_of, str) or not _AS_OF.fullmatch(as_of):
+        raise OrchestrationError("AS_OF_INVALID", "as_of must be UTC YYYY-MM-DDTHH:MM:SSZ")
+    try:
+        datetime.strptime(as_of, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError as exc:
+        raise OrchestrationError("AS_OF_INVALID", f"{as_of} is not an instant") from exc
+    return as_of
+
+
+def _reject_code(exc: BaseException) -> tuple[str, str]:
+    if isinstance(exc, v2.V2Error):
+        return exc.code, str(exc)
+    return "SCHEMA_INVALID", f"SCHEMA_INVALID: unparseable envelope ({type(exc).__name__})"
 
 
 def _payload(body: dict) -> dict:
     """The domain's result payload (canonical JSON text in the V2 result), or {} when there is none."""
     try:
         payload = json.loads(body.get("payload_canonical") or "{}")
-    except ValueError:
+    except (ValueError, RecursionError):
         return {}
     return payload if isinstance(payload, dict) else {}
 
@@ -88,6 +111,7 @@ class Orchestrator:
 
     def decision_receipt(self, proposal, *, as_of: str) -> dict:
         """Read-only: the receipt the policy gives now, without recording anything (N+1, C9)."""
+        check_as_of(as_of)
         with self.store.db() as db:
             existing = self._existing(db, proposal)
             if existing is not None:
@@ -97,6 +121,7 @@ class Orchestrator:
         return {"status": "COMPUTED", "episode": number, "receipt": rec, "receipt_sha256": sha256(raw)}
 
     def propose(self, proposal, *, as_of: str, source: str = "operator") -> dict:
+        check_as_of(as_of)
         with self.store.db() as db:
             db.execute("BEGIN IMMEDIATE")
             existing = self._existing(db, proposal)
@@ -184,8 +209,8 @@ class Orchestrator:
             return self._reject(path, raw, "SIZE_LIMIT", "empty or larger than MAX_RESULT_BYTES")
         try:
             loose = v2.loads_result(raw)
-        except v2.V2Error as exc:
-            return self._reject(path, raw, exc.code, str(exc))
+        except UNPARSEABLE as exc:
+            return self._reject(path, raw, *_reject_code(exc))
         if loose["domain"] != self.domain:
             return self._reject(path, raw, "DOMAIN_MISMATCH", f"result of domain {loose['domain']}")
         task = self.store.task(self.domain, loose["task_id"])
@@ -193,8 +218,8 @@ class Orchestrator:
             return self._reject(path, raw, "TASK_NOT_FOUND", f"{loose['task_id']} was not emitted by this CAIN")
         try:
             result = v2.loads_result(raw, task=task)
-        except v2.V2Error as exc:
-            return self._reject(path, raw, exc.code, str(exc))
+        except UNPARSEABLE as exc:
+            return self._reject(path, raw, *_reject_code(exc))
         status = result["outcome"]["status"]
         klass = v2.OUTCOME_CLASSES[status]
         payload = result["result"]["payload_sha256"] if result["result"] else None
