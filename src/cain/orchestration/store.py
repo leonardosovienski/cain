@@ -111,6 +111,7 @@ class OrchestrationStore:
             ({k: f["object"][k] for k in ("task_id", "episode", "hypothesis_id", "status", "class", "result_state",
                                           "scientific_state", "economic_state", "payload_sha256")}
              | {"reason_code": f["object"].get("reason_code")}
+             | ({"metrics": f["object"]["metrics"]} if f["object"].get("metrics") else {})
              for f in self.result_facts(domain, as_of)),
             key=lambda r: (r["episode"], r["task_id"], r["status"]),
         )

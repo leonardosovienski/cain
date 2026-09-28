@@ -9,6 +9,7 @@ same task bytes are published once, the same result bytes are ingested once, and
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 from pathlib import Path
 
@@ -32,6 +33,15 @@ def sha256(raw: bytes) -> str:
 
 
 _REASON_CODE = re.compile(r"[A-Z][A-Z0-9_]{2,63}\Z")
+
+
+def _payload(body: dict) -> dict:
+    """The domain's result payload (canonical JSON text in the V2 result), or {} when there is none."""
+    try:
+        payload = json.loads(body.get("payload_canonical") or "{}")
+    except ValueError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 def reason_code(outcome: dict) -> str | None:
@@ -224,6 +234,10 @@ class Orchestrator:
             "payload_sha256": body.get("payload_sha256"), "capital_permission": False,
             "adapter": result["adapter"],
         }
+        # numbers the domain configuration declares (net return, CI, sample...), only from a result with a payload
+        metrics = domain_config.result_metrics(self.config, _payload(body)) if klass == "TERMINAL_RESULT" else {}
+        if metrics:
+            obj["metrics"] = metrics
         predicate = FACT_PREDICATES[klass]
         head = self.store.memory_head()
         existing = [] if head is None else [

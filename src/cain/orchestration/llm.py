@@ -38,6 +38,12 @@ INSTRUCTION = (
     "semente, handler, budget, prioridade, custos, dados nem capital; resultados negativos não justificam mais escopo."
 )
 
+# appended only when some result carries metrics, so a domain without result_metrics gets the same prompt
+METRICS_NOTE = (
+    " Em results, metrics traz números do domínio (ex.: net_return_bps e net_ci_low_bps/net_ci_high_bps, retorno "
+    "líquido e limites do IC 95% em pontos-base; sample_size, tamanho da amostra); cite-os só como estão."
+)
+
 
 def _schema(allowed: list[str]) -> dict:
     return {
@@ -232,13 +238,14 @@ def propose(orchestrator, provider, *, question: str, as_of: str, proposal_id: s
     context = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
                "hypothesis_summary": summary,
                "results": [{k: r[k] for k in ("episode", "hypothesis_id", "status", "result_state", "scientific_state",
-                                              "reason_code")}
+                                              "reason_code")} | ({"metrics": r["metrics"]} if r.get("metrics") else {})
                            for r in view["results"][-50:]]}
+    instruction = INSTRUCTION + (METRICS_NOTE if any("metrics" in r for r in context["results"]) else "")
     prompt = json.dumps(context, ensure_ascii=False, sort_keys=True)
     if callable(getattr(provider, "generate_json", None)):
-        raw = provider.generate_json(prompt, INSTRUCTION, _schema(allowed))
+        raw = provider.generate_json(prompt, instruction, _schema(allowed))
     else:
-        raw = provider.generate(prompt, context=INSTRUCTION)
+        raw = provider.generate(prompt, context=instruction)
     answer = json.loads(raw)
     if not isinstance(answer, dict) or set(answer) != {"hypothesis_id", "rationale"}:
         raise ValueError("LLM_ANSWER_INVALID: expected hypothesis_id, rationale")

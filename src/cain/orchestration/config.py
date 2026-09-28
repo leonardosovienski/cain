@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
+import re
 from importlib.resources import files
 
 from research_protocol import v2
@@ -20,10 +22,14 @@ KEYS = frozenset(
     }
 )
 # optional: absent means empty, so a domain without it keeps the same bytes (crypto.json and brasileirao.json of rc10)
-OPTIONAL_KEYS = frozenset({"proposal_overlays"})
+OPTIONAL_KEYS = frozenset({"proposal_overlays", "result_metrics"})
 # parameters an overlay never sets: the costs are the frozen configuration's, the placebo seed is the CAIN's
 NOT_OVERLAID = frozenset({"fee_bps", "slippage_bps", "placebo_seed"})
 PRIORITIES = ("LOW", "NORMAL", "HIGH")
+# result_metrics: name -> dotted path in the domain's result payload; only numbers are ever read through it
+METRIC_NAME = re.compile(r"[a-z][a-z0-9_]{0,63}\Z")
+METRIC_PATH = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}(\.[A-Za-z_][A-Za-z0-9_]{0,63}){0,7}\Z")
+MAX_METRICS = 16
 
 
 class ConfigError(ValueError):
@@ -64,6 +70,12 @@ def validate(config: dict) -> dict:
             isinstance(o, dict) and o and not set(o) & NOT_OVERLAID for o in overlays.values()):
         raise ConfigError("proposal_overlays: non-empty parameter objects of proposable hypotheses, never costs or "
                           "the placebo seed")
+    metrics = config.get("result_metrics", {})
+    if not isinstance(metrics, dict) or len(metrics) > MAX_METRICS or not all(
+            isinstance(n, str) and METRIC_NAME.fullmatch(n) and isinstance(p, str) and METRIC_PATH.fullmatch(p)
+            for n, p in metrics.items()):
+        raise ConfigError(f"result_metrics: up to {MAX_METRICS} lowercase names mapped to dotted paths of the result "
+                          "payload")
     try:
         policy.check_sealed_scopes(config["sealed_scopes"])
     except ValueError as exc:
@@ -73,6 +85,20 @@ def validate(config: dict) -> dict:
         if type(value) is not int or value < 1:
             raise ConfigError("budget and cooldown values are positive integers")
     return config
+
+
+def result_metrics(config: dict, payload: dict) -> dict:
+    """The numbers of a domain result that the configuration declares (``result_metrics``: name -> dotted path in the
+    result payload). Only finite ints and floats are kept (never text, lists or objects: the memory keeps no free
+    text, FUTURE_CANARY); a path that is missing or not a number is left out. Without the key: nothing."""
+    out = {}
+    for name, path in sorted(config.get("result_metrics", {}).items()):
+        value = payload
+        for part in path.split("."):
+            value = value.get(part) if isinstance(value, dict) else None
+        if type(value) in (int, float) and math.isfinite(value):
+            out[name] = value
+    return out
 
 
 def digest(config: dict) -> str:

@@ -69,10 +69,10 @@
   "funding_oi_hmm_v3"
  ],
  "frozen_parameters": {
-  "commit": "e8c9e9db7cc0e7585535469279a62ee49f41bd5f",
+  "commit": "73cab73fa154f0c4db6ae39d3334675a43119781",
   "path": "qualification/integration-crypto/FROZEN_PARAMETERS.json",
   "repository": "leonardosovienski/predictor-qualification",
-  "sha256": "c428e4b769e3a6f932bda166d54f92d76b95680d8e689a612dbf4f3426dae760"
+  "sha256": "98b01f26715dadeb34c412cd54e4708c1cf393c26207e2d2c449d44cd7703b28"
  },
  "max_priority_hint": "NORMAL",
  "negative_result_states": [
@@ -93,6 +93,12 @@
   "crypto:QUAL-SHADOW-REAL-001": "BACKTEST_EXISTING_HYPOTHESIS",
   "crypto:QUAL-SHADOW-REAL-002": "BACKTEST_EXISTING_HYPOTHESIS",
   "crypto:QUAL-SHADOW-REAL-003": "BACKTEST_EXISTING_HYPOTHESIS"
+ },
+ "result_metrics": {
+  "net_ci_high_bps": "domain_facts.metrics.net_ci_high_bps",
+  "net_ci_low_bps": "domain_facts.metrics.net_ci_low_bps",
+  "net_return_bps": "domain_facts.metrics.net_return_bps",
+  "sample_size": "domain_facts.metrics.sample_size"
  },
  "schema": "cain-domain-config/1",
  "sealed_scopes": [],
