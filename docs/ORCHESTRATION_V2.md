@@ -111,10 +111,13 @@ parâmetros congelados da missão), com sha256 de cada fonte:
 | `contradiction_pairs` | estados científicos em conflito → REQUIRE_HUMAN, nunca maioria |
 | `sealed_scopes` | escopos lacrados (ex.: holdout) → REQUIRE_HUMAN `SEALED_SCOPE` (R16); lista vazia = nenhum lacre |
 | `proposable_request_types` | tipo de pedido de cada hipótese proponível: pedido de outro tipo → BLOCK `REQUEST_TYPE_NOT_ALLOWED` (R04); molde do LLM. Com um tipo só no contrato, todas as hipóteses têm esse tipo; com vários (stocks), as fixtures de proposta congeladas da missão decidem |
+| `proposal_overlays` (opcional; ausente = nenhum) | parâmetros próprios de uma hipótese proponível no molde de pedido do LLM (ex.: controle negativo com semente própria no stocks). Sem task própria, a hipótese pega a última task do tipo dela sem as chaves de overlay e aplica o seu overlay, então pede o seu experimento, e a R17 não a trata como repetição. Com task própria, o molde é a própria task (a R17 a segura). Nunca `fee_bps`, `slippage_bps` ou `placebo_seed`. O builder só emite a chave quando o `FROZEN_PARAMETERS` a tem, então as configurações sem ela mantêm os mesmos bytes |
 
 Acrescentar `stocks` ou `brasileirao` = um arquivo de configuração novo + o adapter do domínio (no repositório do
 domínio) + a entrada do adapter na allowlist do transporte. O framework não muda. As variantes de `parameters` do
-contrato (custos, semente) vêm do `request_schema` congelado no registro V2, não da configuração.
+contrato (custos, semente) vêm do `request_schema` congelado no registro V2, não da configuração. Um pedido sem
+`parameters` (Brasileirão: o `request_schema` não tem a chave) continua sem eles no molde, na sonda de elegibilidade e
+na proposta do LLM.
 
 ## Loop do PR #50 (execução direta do avaliador)
 
