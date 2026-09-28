@@ -70,10 +70,10 @@
   "brasileirao-elo-1x2-dev2022"
  ],
  "frozen_parameters": {
-  "commit": "ebf32fac496f76dfd1d7139fbcf357bf13a66ee6",
+  "commit": "417024ec25c678cad276dde648179caaed985648",
   "path": "qualification/integration-brasileirao/FROZEN_PARAMETERS.json",
   "repository": "leonardosovienski/predictor-qualification",
-  "sha256": "e5f254bd5d441fa83b3ab9de38582e65a01a7cdf6bca602eda17978a9ed26aec"
+  "sha256": "1c9e11bd702bdb916088e0a2513d296cb1251cedb3c88ba14e2862de5727e8a2"
  },
  "max_priority_hint": "NORMAL",
  "negative_result_states": [
@@ -90,7 +90,33 @@
   "brasileirao:QUAL-SERVING-REAL-003"
  ],
  "schema": "cain-domain-config/1",
- "sealed_scopes": [],
+ "sealed_scopes": [
+  {
+   "any_of": [
+    2025,
+    2026
+   ],
+   "field": "season"
+  },
+  {
+   "intersects": [
+    "2025-01-01T00:00:00Z",
+    "2026-01-01T00:00:00Z"
+   ],
+   "window": {
+    "from": "events.kickoff_from",
+    "to": "events.kickoff_to"
+   }
+  },
+  {
+   "field": "events.fixtures[].kickoff_at",
+   "optional": true,
+   "within": [
+    "2025-01-01T00:00:00Z",
+    "2026-01-01T00:00:00Z"
+   ]
+  }
+ ],
  "source": {
   "commit": "25cdf4d9bb309d33f066fbc6a379f5d98c69f08a",
   "files": [
