@@ -22,6 +22,11 @@ the verdict in the notes. When the notes state it with an explicit marker, ``RES
 <VERDICT>`` or ``VEREDITO FINAL[ <qualifier>]: <VERDICT>``, the last such marker is read
 deterministically (a fixed pattern, no model), and the finding records that it came from the notes.
 Anything else stays UNLABELLED.
+
+With ``describe`` (``ingest-state --describe``), a closed hypothesis is recorded with a statement in plain words, for a
+model to compare with a new idea (the findings-policy embedding route): its trial and family, the parameters that tell
+its trial apart from the other rows of the registry, and, when a manifest is given (stocks ``RESEARCH_FREEZE.md``), the
+manifest's result and note. Without it, statements keep the identity + params + notes form.
 """
 
 from __future__ import annotations
@@ -49,6 +54,9 @@ NOTES_STATUS = {"COMPROVADA": "comprovada", "REFUTADA": "refutada", "INCONCLUSIV
 STATE_SCHEMAS = {"stocks-scientific-state/1": "stocks"}
 LEDGER_INDEX_SCHEMAS = {"stocks-trial-ledger-index/1": "stocks"}
 LEDGER_OUTCOMES = ("COMPLETED", "FAILED", "ABANDONED")
+_WORDS = re.compile(r"[\W_]+")
+_MANIFEST_ITEM = re.compile(r"- id:\s*(\S+)")
+_MANIFEST_FIELD = re.compile(r"([a-z_]+):\s*(.*)")
 
 
 def state_vocabulary(at: str | None = None) -> dict:
@@ -80,6 +88,66 @@ def _statement(row: dict) -> str:
     params = json.dumps(row.get("params") or {}, ensure_ascii=False, sort_keys=True)
     notes = str(row.get("notes") or row.get("legacy_notes") or "")[:400]
     return " ".join(part for part in (identity, family, params, notes) if part)
+
+
+def _words(value) -> str:
+    """An identifier or value as plain words: every run of non-alphanumeric characters, underscore included, is one
+    space (``momentum_12_1`` -> ``momentum 12 1``)."""
+    return " ".join(_WORDS.sub(" ", str(value)).split())
+
+
+def describe_rows(rows: list[dict]) -> dict[str, str]:
+    """Plain-words description of each registry row, by its identity: its family and the parameters that tell it apart
+    from the other rows, as ``key value`` words. A parameter with the same value in every row describes none of them
+    (the universe, costs and bootstrap settings shared by a whole registry), so it is left out."""
+    params = [row.get("params") if isinstance(row.get("params"), dict) else {} for row in rows]
+    keys = sorted({key for p in params for key in p})
+    distinct = [key for key in keys if len({json.dumps(p.get(key), sort_keys=True) for p in params}) > 1]
+    out = {}
+    for row, p in zip(rows, params):
+        family = row.get("hypothesis_family") if row.get("hypothesis_family") not in (None, "UNKNOWN") else ""
+        parts = [_words(family), *(f"{_words(key)} {_words(p[key])}" for key in distinct if key in p)]
+        out[str(row.get("name") or row.get("trial_id") or "")] = " ".join(part for part in parts if part)
+    return out
+
+
+def freeze_manifest(raw: bytes) -> dict[str, dict]:
+    """The stocks ``RESEARCH_FREEZE.md`` manifest: ``stopped_hypotheses`` of the ``ST_RESEARCH_FREEZE:`` YAML block, by
+    hypothesis id, with its scalar fields and each folded (``key: >``) field as one line. Only this fixed shape is read,
+    without a YAML library: ``- id: <H>`` opens an entry, ``key: value`` lines deeper than the item fill it, the lines
+    deeper than a ``key: >`` are its text, and the first line at the list's level or above ends the list."""
+    lines = raw.decode("utf-8").splitlines()
+    block = next((i for i, line in enumerate(lines) if line.strip() == "ST_RESEARCH_FREEZE:"), None)
+    start = None if block is None else next(
+        (i for i in range(block + 1, len(lines)) if lines[i].strip() == "stopped_hypotheses:"), None)
+    if start is None:
+        raise ValueError("no ST_RESEARCH_FREEZE stopped_hypotheses manifest")
+    out: dict[str, dict] = {}
+    current, item_indent, folded = None, None, None
+    for line in lines[start + 1:]:
+        text, indent = line.strip(), len(line) - len(line.lstrip(" "))
+        if folded is not None:
+            if not text or indent > folded[1]:
+                if text:
+                    current[folded[0]].append(text)
+                continue
+            current[folded[0]], folded = " ".join(current[folded[0]]), None
+        if not text:
+            continue
+        item, field = _MANIFEST_ITEM.fullmatch(text), _MANIFEST_FIELD.fullmatch(text)
+        if item and item_indent in (None, indent):
+            item_indent, current = indent, out.setdefault(item.group(1), {})
+        elif field and current is not None and indent > item_indent:
+            key, value = field.groups()
+            current[key] = [] if value == ">" else value
+            folded = (key, indent) if value == ">" else None
+        else:
+            break
+    if folded is not None:
+        current[folded[0]] = " ".join(current[folded[0]])
+    if not out:
+        raise ValueError("the ST_RESEARCH_FREEZE manifest lists no stopped hypothesis")
+    return out
 
 
 def notes_verdict(notes) -> dict | None:
@@ -130,7 +198,9 @@ def ingest_trial_registry(archive: FindingsArchive, domain: str, raw: bytes, sou
 
 
 def ingest_scientific_state(archive: FindingsArchive, domain: str, raw: bytes, source: dict,
-                            registry_rows: list[dict] | None = None) -> dict:
+                            registry_rows: list[dict] | None = None, describe: dict | None = None) -> dict:
+    """Closed/open hypotheses, frozen families and the reopen policy of a scientific state. ``describe``
+    (``{"manifest": {...} | None, "manifest_source": {...} | None}``): plain-words statements (module docstring)."""
     state = json.loads(raw)
     _owned(state, domain, STATE_SCHEMAS, "scientific state")
     vocabulary = state_vocabulary()
@@ -145,14 +215,24 @@ def ingest_scientific_state(archive: FindingsArchive, domain: str, raw: bytes, s
     trials = state.get("hypothesis_trials", {})
     reassessments = state.get("reassessment", {})
     by_name = {str(r.get("name") or r.get("trial_id")): r for r in registry_rows or []}
+    described = describe_rows(registry_rows or []) if describe is not None else {}
+    manifest = (describe or {}).get("manifest") or {}
     counts: dict[str, int] = {}
     for hypothesis, value in sorted(state.get("hypotheses", {}).items()):
         kind, verdict = reading[value]["kind"], reading[value]["verdict"]
         trial = trials.get(hypothesis)
         row = by_name.get(trial, {})
-        statement = " ".join(p for p in (hypothesis, trial or "", _statement(row) if row else "") if p)
+        if describe is None:
+            statement = " ".join(p for p in (hypothesis, trial or "", _statement(row) if row else "") if p)
+        else:
+            entry = manifest.get(hypothesis, {})
+            statement = " ".join(p for p in (hypothesis, _words(trial or ""), described.get(trial or "", ""),
+                                             entry.get("result", ""), entry.get("note", "")) if p)
         details = {"state": value, "as_of_commit": state.get("as_of_commit"), "notes": state.get("notes"),
                    "vocabulary": used}
+        if describe is not None:
+            details["described"] = {"registry": bool(row), "manifest_source": describe.get("manifest_source"),
+                                    "manifest_entry": bool(manifest.get(hypothesis))}
         if hypothesis in reassessments:
             details["reassessment"] = reassessments[hypothesis]
         outcome = archive.record(
@@ -165,7 +245,8 @@ def ingest_scientific_state(archive: FindingsArchive, domain: str, raw: bytes, s
     for family in state.get("frozen_families") or []:
         outcome = archive.record(
             domain, f"{domain}:frozen-family:{family}", kind="negative", verdict="FROZEN_FAMILY",
-            statement=f"frozen family {family}: cannot be reopened or reparameterized silently",
+            statement=f"frozen family {family if describe is None else _words(family)}: cannot be reopened or "
+                      "reparameterized silently",
             source={**source, "key": "frozen_families"}, identity={"hypothesis_family": family},
             details={"as_of_commit": state.get("as_of_commit"), "notes": state.get("notes")})
         key = f"{outcome['status']}:negative"

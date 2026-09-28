@@ -25,6 +25,10 @@ def register(sub):
         command.add_argument("--path", required=True)
         if name == "ingest-state":
             command.add_argument("--registry-path")
+            command.add_argument("--describe", action="store_true",
+                                 help="statements in plain words: trial, family, the parameters that tell the trial "
+                                      "apart and, with --manifest-path, the manifest's result and note")
+            command.add_argument("--manifest-path", help="stocks RESEARCH_FREEZE.md (read only with --describe)")
     loop = commands.add_parser("ingest-loop", help="Outcome of a CAIN research loop")
     loop.add_argument("--domain", required=True)
     loop.add_argument("--loop-db", type=Path, required=True)
@@ -70,7 +74,7 @@ def execute(args):
     from hashlib import sha256
 
     from cain.findings.archive import FindingsArchive
-    from cain.findings.ingest import (ingest_ledger_index, ingest_loop, ingest_scientific_state,
+    from cain.findings.ingest import (freeze_manifest, ingest_ledger_index, ingest_loop, ingest_scientific_state,
                                       ingest_trial_registry, read_source)
     from cain.memory.store import MemoryStore
 
@@ -93,7 +97,15 @@ def execute(args):
         rows = None
         if args.registry_path:
             rows = json.loads(read_source(args.repo, args.commit, args.registry_path)[0])
-        return ingest_scientific_state(archive, args.domain, raw, source, rows)
+        if args.manifest_path and not args.describe:
+            raise ValueError("--manifest-path is read only with --describe")
+        describe = None
+        if args.describe:
+            describe = {"manifest": None, "manifest_source": None}
+            if args.manifest_path:
+                manifest_raw, describe["manifest_source"] = read_source(args.repo, args.commit, args.manifest_path)
+                describe["manifest"] = freeze_manifest(manifest_raw)
+        return ingest_scientific_state(archive, args.domain, raw, source, rows, describe)
     if cmd == "ingest-ledger-index":
         raw, source = read_source(args.repo, args.commit, args.path)
         return ingest_ledger_index(archive, args.domain, raw, source)
