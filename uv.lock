@@ -41,7 +41,7 @@ wheels = [
 
 [[package]]
 name = "cain-research"
-version = "0.4.13rc12"
+version = "0.4.13rc13"
 source = { editable = "." }
 dependencies = [
     { name = "predictor-research-bundle" },

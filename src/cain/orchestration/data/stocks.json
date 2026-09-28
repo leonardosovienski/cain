@@ -97,7 +97,9 @@
   "near_52w_high",
   "net_margin",
   "quality_leverage",
+  "quality_net_margin",
   "quality_roe",
+  "quality_roe_leverage_double_filter",
   "quality_roe_leverage_intersection",
   "revenue_growth_yoy",
   "reversal_21d",
@@ -106,10 +108,10 @@
   "volume_surge"
  ],
  "frozen_parameters": {
-  "commit": "30c02c75c7d169bd3907ca0a075e837c8bd60d51",
+  "commit": "37a0e28d6d8d6953c9f3b1cc7ec9fc6cbb438f53",
   "path": "qualification/integration-stocks/FROZEN_PARAMETERS.json",
   "repository": "leonardosovienski/predictor-qualification",
-  "sha256": "11ad4cb7f255da063cc40d9191f3e7ed1a50c43ad4124da19feef0953be5ab7b"
+  "sha256": "40d740cb257bbc1a3dc3e5cade6eeffa5e6841955e0e3ba22ce58ff9b9ff41e5"
  },
  "max_priority_hint": "NORMAL",
  "negative_result_states": [
@@ -127,6 +129,9 @@
   "stocks:QUAL-LLM-CTRL-003",
   "stocks:QUAL-LLM-CTRL-004",
   "stocks:QUAL-LLM-CTRL-005",
+  "stocks:QUAL-LLM-CTRL-006",
+  "stocks:QUAL-LLM-CTRL-007",
+  "stocks:QUAL-LLM-CTRL-008",
   "stocks:QUAL-PIT-MOM-001",
   "stocks:QUAL-PIT-MOM-REAL-001",
   "stocks:QUAL-PIT-MOM-REAL-002",
@@ -139,6 +144,9 @@
   "stocks:QUAL-LLM-CTRL-003": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-LLM-CTRL-004": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-LLM-CTRL-005": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-006": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-007": "BACKTEST_PIT_FACTOR",
+  "stocks:QUAL-LLM-CTRL-008": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-001": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-REAL-001": "BACKTEST_PIT_FACTOR",
   "stocks:QUAL-PIT-MOM-REAL-002": "BACKTEST_PIT_FACTOR",
@@ -174,11 +182,42 @@
     "kind": "SHUFFLED_LABELS",
     "seed": 9005
    }
+  },
+  "stocks:QUAL-LLM-CTRL-006": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9006
+   }
+  },
+  "stocks:QUAL-LLM-CTRL-007": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9007
+   }
+  },
+  "stocks:QUAL-LLM-CTRL-008": {
+   "negative_control": {
+    "kind": "SHUFFLED_LABELS",
+    "seed": 9008
+   }
   }
  },
  "schema": "cain-domain-config/1",
  "sealed_scopes": [],
  "source": {
+  "additional_frozen_families": {
+   "added": [
+    "quality_net_margin",
+    "quality_roe_leverage_double_filter"
+   ],
+   "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+   "decision": "D-26",
+   "git_blob": "3fc34e5e24778cc2501a78d5832c369486e06155",
+   "key": "frozen_families",
+   "path": "research/scientific_state.json",
+   "repository": "leonardosovienski/stocks-predictor",
+   "sha256": "1f7eeff798a1ac378393e9f9225f5708004d5cd54c6d912d1547c4bc390c6ec7"
+  },
   "commit": "61fc017256ffea815ae96bbe02b847dccdb395cc",
   "files": [
    {

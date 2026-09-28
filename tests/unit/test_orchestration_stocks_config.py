@@ -127,7 +127,7 @@ def test_llm_requests_carry_the_placebo_seed_only_where_the_contract_declares_it
     assert (out["decision"], out["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
 
 
-LLM_ONLY = [f"stocks:QUAL-LLM-CTRL-{k:03d}" for k in range(1, 6)]
+LLM_ONLY = [f"stocks:QUAL-LLM-CTRL-{k:03d}" for k in range(1, 9)]  # cycle 3 (pq#84): eight
 
 
 def test_each_proposable_hypothesis_has_one_request_type_from_the_frozen_fixtures():
@@ -247,11 +247,11 @@ def test_overlaid_hypotheses_ask_for_their_own_experiment():
 
 
 def test_packaged_llm_only_hypotheses_are_negative_controls_with_their_own_seeds():
-    # the packaged configuration of cycle 2 (FROZEN_PARAMETERS → stocks_config.proposal_overlays)
+    # the packaged configuration of cycle 4 (FROZEN_PARAMETERS → stocks_config.proposal_overlays)
     assert CONFIG["proposal_overlays"] == {h: {"negative_control": {"kind": "SHUFFLED_LABELS", "seed": 9000 + k}}
                                            for k, h in enumerate(LLM_ONLY, 1)}
     assert set(LLM_ONLY) <= set(CONFIG["proposable_hypotheses"])
-    # after the real backtest ran, the model is offered exactly the five controls; each runs once
+    # after the real backtest ran, the model is offered exactly the eight controls; each runs once
     t = llm.templates(CONFIG, [REQUEST, COLLECTION])
     view = _ran(REQUEST, "stocks:TASK-" + "1" * 32)
     eligible = llm.eligibility(CONFIG, view, t, [], 2)
@@ -330,3 +330,17 @@ def test_stocks_and_crypto_configurations_are_distinct_and_hashed():
     assert domain_config.digest(CONFIG) != domain_config.digest(crypto)
     assert not set(CONFIG["closed_hypotheses"]) & set(crypto["closed_hypotheses"])
     assert CONFIG["costs"] != crypto["costs"]
+
+
+def test_the_families_of_the_stocks_main_are_frozen_too_d26():
+    # D-26: the base families plus frozen_families of the stocks main scientific state (pinned); none removed
+    extra = CONFIG["source"]["additional_frozen_families"]
+    assert (extra["decision"], extra["commit"], extra["path"]) == (
+        "D-26", "4c82885eddab233f2b57442046875fdc2c8f0932", "research/scientific_state.json")
+    assert extra["added"] == ["quality_net_margin", "quality_roe_leverage_double_filter"]
+    assert len(CONFIG["frozen_families"]) == 17
+    for family in ("quality_net_margin", "quality_roe_leverage_double_filter", "net_margin",
+                   "quality_roe_leverage_intersection"):
+        assert family in CONFIG["frozen_families"]
+        out = decide(proposal(family=family))
+        assert (out["decision"], out["rule"], out["reason_code"]) == ("BLOCK", "R05", "HYPOTHESIS_CLOSED")
