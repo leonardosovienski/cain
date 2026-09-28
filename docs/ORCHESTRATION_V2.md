@@ -133,7 +133,7 @@ parâmetros congelados da missão), com sha256 de cada fonte:
 |---|---|
 | `domain`, `config_version`, `source`, `contract`, `frozen_parameters` | identidade e proveniência |
 | `allowed_request_types` | as chaves da `handler_allowlist` do contrato (o CAIN nunca escolhe handler) |
-| `closed_hypotheses`, `frozen_families` | nunca reabertas: proposta equivalente → BLOCK `HYPOTHESIS_CLOSED` |
+| `closed_hypotheses`, `frozen_families` | nunca reabertas: proposta equivalente → BLOCK `HYPOTHESIS_CLOSED`. No stocks, pela decisão D-26 do dono, `frozen_families` = as famílias da base somadas às de um arquivo posterior fixado no `FROZEN_PARAMETERS` (`additional_frozen_families`: commit completo, caminho, blob, sha256 e a lista do que acrescenta). O builder lê desse arquivo só `frozen_families` e nunca remove uma família; a proveniência fica em `source.additional_frozen_families` |
 | `proposable_hypotheses` | fora desta lista → REQUIRE_HUMAN `NEW_HYPOTHESIS` |
 | `allowed_symbols`, `costs`, `allowed_references`, `max_priority_hint` | o que o pedido pode conter |
 | `budget` (`max_open_tasks`, `max_tasks_per_research`, `max_tasks_total`) | constantes; resultados não as mudam |
