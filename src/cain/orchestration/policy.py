@@ -20,6 +20,9 @@ Rules, first match wins (FROZEN_PARAMETERS.json → decision_policy.rule_order):
   R09 REQUIRE_HUMAN DOMAIN_RECONCILIATION_PENDING   a REQUIRES_HUMAN outcome of the domain is unresolved
   R10 REQUIRE_HUMAN CONTRADICTION_UNRESOLVED        conflicting scientific states for the hypothesis (never
                                                     decided by majority)
+  R15 REQUIRE_HUMAN HYPOTHESIS_NOT_ADMITTED_BY_DOMAIN   the domain already refused the hypothesis as not admitted
+                                                    (refusal code HYPOTHESIS_NOT_ADMITTED): proposing it again only
+                                                    wastes a task; a human aligns the configuration or the admission
   R11 REQUIRE_HUMAN NEW_HYPOTHESIS   hypothesis outside the configured proposable list
   R12 ABSTAIN OPEN_TASK_PENDING / BUDGET_EXHAUSTED
   R13 COOLDOWN NEGATIVE_STREAK       N negative results in a row for the hypothesis: K episodes without a new task
@@ -39,7 +42,7 @@ from pathlib import Path
 from research_protocol import v2
 
 POLICY_ID = "cain-decision-policy"
-POLICY_VERSION = 1
+POLICY_VERSION = 2
 PROPOSAL_SCHEMA = "cain-proposal/1"
 RECEIPT_SCHEMA = "cain-decision-receipt/1"
 DECISIONS = ("ALLOW", "BLOCK", "ABSTAIN", "REQUIRE_HUMAN", "DUPLICATE", "COOLDOWN")
@@ -172,6 +175,11 @@ def decide(proposal, view: dict, config: dict, *, episode_number: int) -> dict:
         if set(pair) <= states:
             return _outcome("REQUIRE_HUMAN", "CONTRADICTION_UNRESOLVED", "R10",
                             f"{hypothesis} has {sorted(states)}; a human decides, never a majority")
+    if any(r["hypothesis_id"] == hypothesis and r["class"] == "TERMINAL_REFUSAL"
+           and r.get("reason_code") == "HYPOTHESIS_NOT_ADMITTED" for r in view["results"]):
+        return _outcome("REQUIRE_HUMAN", "HYPOTHESIS_NOT_ADMITTED_BY_DOMAIN", "R15",
+                        f"the domain refused {hypothesis} as not admitted; a human aligns the configuration or the "
+                        "domain's admission")
     if hypothesis not in config["proposable_hypotheses"]:
         return _outcome("REQUIRE_HUMAN", "NEW_HYPOTHESIS", "R11", f"{hypothesis} needs the owner")
     budget = config["budget"]

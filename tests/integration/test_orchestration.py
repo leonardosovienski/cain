@@ -69,9 +69,11 @@ class StandInDomain:
         request = json.loads(raw)
         out = {"submission_sha256": sha(raw), "request_id": request["request_id"], "client_ref": request["client_ref"]}
         status = self.script.pop(0) if self.script else None
-        if status in ("OPS_FAILED_RETRYABLE", "TEMPORAL_INTEGRITY_VIOLATION", "RECONCILIATION_REQUIRED"):
-            code = {"OPS_FAILED_RETRYABLE": 3, "TEMPORAL_INTEGRITY_VIOLATION": 4, "RECONCILIATION_REQUIRED": 5}[status]
-            return out | {"status": status, "exit_code": code, "reason": status}
+        status, reason = status if isinstance(status, tuple) else (status, status)
+        if status in ("OPS_FAILED_RETRYABLE", "TEMPORAL_INTEGRITY_VIOLATION", "RECONCILIATION_REQUIRED", "REJECTED"):
+            code = {"OPS_FAILED_RETRYABLE": 3, "TEMPORAL_INTEGRITY_VIOLATION": 4, "RECONCILIATION_REQUIRED": 5,
+                    "REJECTED": 2}[status]
+            return out | {"status": status, "exit_code": code, "reason": reason}
         duplicate = request["request_id"] in self.results
         state, scientific = self.states.get(request["request_id"], ("NO_EDGE", "INCONCLUSIVE"))
         result = self.results.setdefault(request["request_id"], {
@@ -353,13 +355,14 @@ def test_llm_proposal_is_audited_and_still_goes_through_the_policy(world, tmp_pa
     from cain.orchestration import llm
 
     cycle(world, 1)
-    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "placebo_seed": 4242, "rationale": "x"})
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "rationale": "x"})
     out = tmp_path / "llm" / "p1.json"
     info = llm.propose(world.orch, model, question="próximo", as_of="2030-01-01T11:00:00Z",
                        proposal_id="cain:LLM-1", out=out)
     (prompt, _context, schema), = model.calls
     assert schema["properties"]["hypothesis_id"]["enum"] == sorted(world.orch.config["proposable_hypotheses"])
     assert "crypto:H9" not in schema["properties"]["hypothesis_id"]["enum"]
+    assert set(schema["properties"]) == {"hypothesis_id", "rationale"}  # the CAIN, not the model, picks the seed
     assert "stocks" not in prompt and "capital" not in json.loads(prompt)
     proposal = json.loads(out.read_text(encoding="utf-8"))
     audit = json.loads(out.with_suffix(".audit.json").read_text(encoding="utf-8"))
@@ -367,11 +370,18 @@ def test_llm_proposal_is_audited_and_still_goes_through_the_policy(world, tmp_pa
     assert audit["proposal_sha256"] == policy.safe_digest(proposal) and info["model"]["model"] == "stub"
     decision = world.orch.propose(proposal, as_of="2030-01-01T11:00:00Z")["receipt"]
     assert decision["decision"] == "ALLOW" and decision["task"] is not None
-    bad = StubModel({"hypothesis_id": "crypto:H9", "placebo_seed": 1})
+    world.orch.dispatch(world.spool)  # the model is only asked while some hypothesis is eligible (no open task)
+    world.consumer.run_once()
+    world.orch.ingest(world.spool)
+    bad = StubModel({"hypothesis_id": "crypto:H9"})
     with pytest.raises(ValueError, match="LLM_ANSWER_INVALID"):
         llm.propose(world.orch, bad, question="x", as_of="2030-01-01T12:00:00Z", proposal_id="cain:LLM-2",
                     out=tmp_path / "llm" / "p2.json")
-    closed = StubModel({"hypothesis_id": "crypto:H9", "placebo_seed": 1, "rationale": "tenta reabrir"})
+    seeded = StubModel({"hypothesis_id": "crypto:H9", "placebo_seed": 1, "rationale": "x"})
+    with pytest.raises(ValueError, match="LLM_ANSWER_INVALID"):  # a seed from the model is not accepted
+        llm.propose(world.orch, seeded, question="x", as_of="2030-01-01T12:00:00Z", proposal_id="cain:LLM-5",
+                    out=tmp_path / "llm" / "p5.json")
+    closed = StubModel({"hypothesis_id": "crypto:H9", "rationale": "tenta reabrir"})
     llm.propose(world.orch, closed, question="x", as_of="2030-01-01T12:00:00Z", proposal_id="cain:LLM-3",
                 out=tmp_path / "llm" / "p3.json")
     reopened = json.loads((tmp_path / "llm" / "p3.json").read_text(encoding="utf-8"))
@@ -384,3 +394,74 @@ def test_llm_proposal_cli_requires_state_and_output(tmp_path, capsys):
 
     assert main(["research", "explain", "q", "--propose-for-domain", "crypto"]) == 2
     assert json.loads(capsys.readouterr().out)["error"] == "INPUT_INVALID"
+
+
+def test_domain_refusal_code_is_remembered_and_the_hypothesis_is_not_proposed_again(world):
+    world.domain.script = [("REJECTED", "HYPOTHESIS_NOT_ADMITTED")]
+    cycle(world, 1)
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert [(f["object"]["status"], f["object"]["reason_code"]) for f in facts] == [
+        ("REJECTED", "HYPOTHESIS_NOT_ADMITTED")]
+    again = world.orch.propose(proposal(2), as_of="2030-01-01T11:00:00Z")["receipt"]
+    assert (again["decision"], again["reason_code"], again["rule"], again["task"]) == (
+        "REQUIRE_HUMAN", "HYPOTHESIS_NOT_ADMITTED_BY_DOMAIN", "R15", None)
+    other = world.orch.propose(proposal(3, hypothesis_id="crypto:QUAL-SHADOW-REAL-002"), as_of="2030-01-01T12:00:00Z")
+    assert other["receipt"]["decision"] == "ALLOW"
+
+
+def test_free_text_refusal_reason_never_becomes_a_reason_code(world):
+    leaked = "evento observado em 2026-09-07T00:00:00Z depois do corte"
+    world.domain.script = [("TEMPORAL_INTEGRITY_VIOLATION", leaked)]
+    cycle(world, 1)
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert [f["object"]["reason_code"] for f in facts] == [None]
+    assert leaked.encode() not in (world.tmp / "state" / "memory.sqlite").read_bytes()
+
+
+def test_llm_only_chooses_among_hypotheses_the_policy_would_accept_now(world, tmp_path):
+    from cain.orchestration import llm
+
+    for n in (1, 2, 3):  # three negative results in a row: REAL-001 enters COOLDOWN
+        cycle(world, n, as_of=f"2030-01-01T1{n}:00:00Z")
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002",
+                       "rationale": "REAL-001 teve 3 INCONCLUSIVE; QUAL-SHADOW-001 funcionou"})
+    info = llm.propose(world.orch, model, question="próximo", as_of="2030-01-01T14:00:00Z",
+                       proposal_id="cain:LLM-E1", out=tmp_path / "llm" / "e1.json")
+    (prompt, _context, schema), = model.calls
+    enum = schema["properties"]["hypothesis_id"]["enum"]
+    assert "crypto:QUAL-SHADOW-REAL-001" not in enum and "crypto:QUAL-SHADOW-REAL-002" in enum
+    summary = json.loads(prompt)["hypothesis_summary"]["crypto:QUAL-SHADOW-REAL-001"]
+    assert summary == {"results": 3, "scientific_states": {"INCONCLUSIVE": 3}, "refusals": [], "eligible_now": False,
+                       "not_eligible_reason": "NEGATIVE_STREAK"}
+    assert info["rationale_check"] == {"mentioned": ["crypto:QUAL-SHADOW-001", "crypto:QUAL-SHADOW-REAL-001"],
+                                       "without_evidence": ["crypto:QUAL-SHADOW-001"]}
+    audit = json.loads((tmp_path / "llm" / "e1.audit.json").read_text(encoding="utf-8"))
+    assert audit["eligibility"]["crypto:QUAL-SHADOW-REAL-001"]["rule"] == "R13"
+    assert audit["rationale_check"] == info["rationale_check"]
+
+
+def test_the_cain_assigns_an_unused_deterministic_placebo_seed(world, tmp_path):
+    from cain.orchestration import llm
+
+    cycle(world, 1)
+    used = [1]
+    assert llm.assign_seed("cain:LLM-S1", used) == llm.assign_seed("cain:LLM-S1", used)
+    natural = llm.assign_seed("cain:LLM-S1", [])
+    assert llm.assign_seed("cain:LLM-S1", [natural]) == (natural + 1) % 1_000_000
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "rationale": "x"})
+    llm.propose(world.orch, model, question="x", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-S1",
+                out=tmp_path / "llm" / "s1.json")
+    seed = json.loads((tmp_path / "llm" / "s1.json").read_text(encoding="utf-8"))["request"]["parameters"]["placebo_seed"]
+    assert seed == llm.assign_seed("cain:LLM-S1", used) and seed not in used
+
+
+def test_llm_is_not_asked_when_no_hypothesis_is_eligible(world, tmp_path):
+    from cain.orchestration import llm
+
+    world.orch.propose(proposal(1), as_of=AS_OF)
+    world.orch.dispatch(world.spool)  # the task is open: the policy abstains for every hypothesis
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "rationale": "x"})
+    with pytest.raises(ValueError, match="NO_ELIGIBLE_HYPOTHESIS"):
+        llm.propose(world.orch, model, question="x", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-E2",
+                    out=tmp_path / "llm" / "e2.json")
+    assert model.calls == [] and not (tmp_path / "llm" / "e2.json").exists()
