@@ -93,6 +93,20 @@ Frases que citam várias hipóteses ficam de fora, porque parear números e nome
 utilidade com o Stocks, 4 de 12 justificativas tinham erro desse tipo (por exemplo, "4 resultados" quando eram 3, e
 "não é elegível" para uma hipótese elegível).
 
+### Métricas do resultado (`result_metrics`)
+
+Na validação prática do cripto (rc10, 20 rodadas com dados reais), a memória e o prompt só tinham rótulos de estado
+("INCONCLUSIVE ×2"). O modelo não via, por exemplo, retorno líquido de −152 bps com IC 95% de [−323, 0]. Quando a
+configuração do domínio declara `result_metrics` (nome → caminho pontilhado no payload do resultado):
+- o fato da memória de um `TERMINAL_RESULT` ganha `metrics`;
+- a visão (`view`) repassa as métricas em cada resultado;
+- o prompt leva as métricas junto de cada resultado, com uma frase a mais na instrução.
+
+Só entram números finitos (int ou float, nunca booleano, texto, lista ou objeto), e um caminho ausente ou não numérico
+fica de fora. Assim a memória continua sem texto livre (FUTURE_CANARY). A DecisionPolicy não lê as métricas: budget,
+prioridade e escopo continuam constantes (NEGATIVE_RESULT_NEUTRALITY). Sem a chave, fato, visão, prompt e instrução
+ficam iguais aos de antes.
+
 ## Interface da configuração de domínio (`cain-domain-config/1`)
 
 Um arquivo `src/cain/orchestration/data/<domínio>.json`, gerado por `tools/build_domain_config.py` a partir de
@@ -111,6 +125,7 @@ parâmetros congelados da missão), com sha256 de cada fonte:
 | `contradiction_pairs` | estados científicos em conflito → REQUIRE_HUMAN, nunca maioria |
 | `sealed_scopes` | escopos lacrados (ex.: holdout) → REQUIRE_HUMAN `SEALED_SCOPE` (R16); lista vazia = nenhum lacre |
 | `proposable_request_types` | tipo de pedido de cada hipótese proponível: pedido de outro tipo → BLOCK `REQUEST_TYPE_NOT_ALLOWED` (R04); molde do LLM. Com um tipo só no contrato, todas as hipóteses têm esse tipo; com vários (stocks), as fixtures de proposta congeladas da missão decidem |
+| `result_metrics` (opcional; ausente = nenhuma) | números do resultado do domínio que o CAIN guarda nos fatos e mostra ao modelo: até 16 nomes (minúsculas) → caminho pontilhado no payload (cripto: `net_return_bps`, `net_ci_low_bps`, `net_ci_high_bps`, `sample_size` em `domain_facts.metrics`). O builder só emite a chave quando o `FROZEN_PARAMETERS` a tem |
 | `proposal_overlays` (opcional; ausente = nenhum) | parâmetros próprios de uma hipótese proponível no molde de pedido do LLM (ex.: controle negativo com semente própria no stocks). Sem task própria, a hipótese pega a última task do tipo dela sem as chaves de overlay e aplica o seu overlay, então pede o seu experimento, e a R17 não a trata como repetição. Com task própria, o molde é a própria task (a R17 a segura). Nunca `fee_bps`, `slippage_bps` ou `placebo_seed`. O builder só emite a chave quando o `FROZEN_PARAMETERS` a tem, então as configurações sem ela mantêm os mesmos bytes |
 
 Acrescentar `stocks` ou `brasileirao` = um arquivo de configuração novo + o adapter do domínio (no repositório do
@@ -131,3 +146,7 @@ imports, que nenhum console script alcança o avaliador direto nem um pacote de 
 
 `cain findings ingest-*` lê arquivos versionados de um predictor por `git show` num commit, só leitura. Para o
 cripto, o commit tem de ser um SHA completo de 40 hex (nunca um ref móvel como `origin/main`).
+
+`cain findings check --hypothesis-id` aceita o ID qualificado do próprio domínio (`crypto:H9`, C18) como o mesmo que o
+ID do estado científico (`H9`). Antes, o ID qualificado respondia "não equivalente" para a H9 fechada (validação
+prática do cripto). O prefixo de outro domínio (`stocks:H9` num check do cripto) nunca casa.

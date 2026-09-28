@@ -237,6 +237,11 @@ def main() -> int:
         raise SystemExit("proposal_overlays of hypotheses that are not proposable")
     if overlays:
         config["proposal_overlays"] = {h: overlays[h] for h in sorted(overlays)}
+    # métricas do resultado que o CAIN guarda nos fatos e mostra ao modelo (nome -> caminho no payload); chave opcional,
+    # emitida só quando não é vazia
+    metrics = frozen_config.get("result_metrics", {})
+    if metrics:
+        config["result_metrics"] = {name: metrics[name] for name in sorted(metrics)}
     a.out.write_text(json.dumps(config, indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8")
     print(a.out, hashlib.sha256(a.out.read_bytes()).hexdigest())
     return 0

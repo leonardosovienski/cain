@@ -41,6 +41,14 @@ def _sha(value) -> bool:
     return isinstance(value, str) and bool(_SHA.match(value))
 
 
+def _local(domain: str, hypothesis_id):
+    """The hypothesis ID without this domain's prefix ("crypto:H9" -> "H9"); another domain's prefix stays, so it
+    never matches a hypothesis of this domain."""
+    prefix = domain + ":"
+    return hypothesis_id[len(prefix):] if isinstance(hypothesis_id, str) and hypothesis_id.startswith(prefix) \
+        else hypothesis_id
+
+
 def _proven(report, transition) -> bool:
     return (isinstance(report, dict) and _sha(report.get("sha256")) and bool(report.get("path"))
             and isinstance(transition, dict) and _sha(transition.get("sha256")) and bool(transition.get("to"))
@@ -120,9 +128,14 @@ class FindingsArchive:
         rules = equivalence_policy()
         threshold = rules["thresholds"]["lexical"]
         identity = {k: v for k, v in (identity or {}).items() if v}
+        if "hypothesis_id" in identity:  # "crypto:H9" and "H9" name the same hypothesis of this domain (C18)
+            identity["hypothesis_id"] = _local(domain, identity["hypothesis_id"])
         matches = []
         for finding in self.closed(domain, as_of=as_of):
             known = {k: v for k, v in finding["identity"].items() if v}
+            if "hypothesis_id" in known:
+                h = known["hypothesis_id"]
+                known["hypothesis_id"] = [_local(domain, x) for x in h] if isinstance(h, list) else _local(domain, h)
             shared = sorted(k for k in identity if k in known and (
                 identity[k] == known[k] or (isinstance(known[k], list) and identity[k] in known[k])))
             family = identity.get("hypothesis_family")

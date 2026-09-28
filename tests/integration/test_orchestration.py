@@ -59,7 +59,7 @@ class StandInDomain:
     DOMAIN = "crypto"
 
     def __init__(self):
-        self.results, self.script, self.states = {}, [], {}
+        self.results, self.script, self.states, self.facts = {}, [], {}, {}
 
     def identity(self):
         return {"distribution": "cripto-predictor", "version": "stand-in", "module": "tests.stand_in"}
@@ -85,7 +85,7 @@ class StandInDomain:
             "result_state": state, "operational_state": "SUCCEEDED", "scientific_state": scientific,
             "economic_state": "WATCH" if state == "WATCH_NO_CAPITAL" else "NO_EDGE", "capital_permission": False,
             "produced_at": "2026-09-27T09:00:00Z", "core_facts": {"ci": [-0.25, 0.3]}, "ops_facts": {},
-            "domain_facts": {}, "provenance": {}})
+            "domain_facts": self.facts.get(request["request_id"], {}), "provenance": {}})
         return out | {"status": "DUPLICATE" if duplicate else "RESULT", "exit_code": 0, "result": result}
 
     def reread(self, request_id, config):
@@ -537,3 +537,40 @@ def test_llm_is_not_asked_when_no_hypothesis_is_eligible(world, tmp_path):
         llm.propose(world.orch, model, question="x", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-E2",
                     out=tmp_path / "llm" / "e2.json")
     assert model.calls == [] and not (tmp_path / "llm" / "e2.json").exists()
+
+
+def test_result_metrics_reach_the_memory_the_view_and_the_model_as_numbers_only(world, tmp_path):
+    from cain.orchestration import llm
+
+    world.domain.facts["crypto:REQ-I-0001"] = {
+        "metrics": {"net_return_bps": -118, "net_ci_low_bps": -298, "net_ci_high_bps": 42, "sample_size": 52,
+                    "gross_return_bps": -89},
+        "data_cutoff": "2026-08-31T00:00:00Z"}
+    cycle(world, 1)
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert [f["object"]["metrics"] for f in facts] == [
+        {"net_ci_high_bps": 42, "net_ci_low_bps": -298, "net_return_bps": -118, "sample_size": 52}]
+    with world.orch.store.db() as db:
+        view = world.orch.store.view(db, "crypto", "2030-01-01T11:00:00Z")
+    assert view["results"][0]["metrics"]["net_return_bps"] == -118
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "rationale": "x"})
+    llm.propose(world.orch, model, question="próximo", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-M1",
+                out=tmp_path / "llm" / "m1.json")
+    (prompt, context, _schema), = model.calls
+    shown = json.loads(prompt)["results"][0]["metrics"]
+    assert shown == {"net_ci_high_bps": 42, "net_ci_low_bps": -298, "net_return_bps": -118, "sample_size": 52}
+    assert context == llm.INSTRUCTION + llm.METRICS_NOTE
+    assert b"2026-08-31T00:00:00Z" not in (world.tmp / "state" / "memory.sqlite").read_bytes()
+
+
+def test_without_declared_numbers_the_fact_the_view_and_the_prompt_stay_as_before(world, tmp_path):
+    from cain.orchestration import llm
+
+    cycle(world, 1)  # the stand-in result carries no domain_facts.metrics
+    facts = world.orch.store.memory.facts(as_of=world.orch.store.memory_head(), cubes=["crypto"])
+    assert "metrics" not in facts[0]["object"]
+    model = StubModel({"hypothesis_id": "crypto:QUAL-SHADOW-REAL-002", "rationale": "x"})
+    llm.propose(world.orch, model, question="próximo", as_of="2030-01-01T11:00:00Z", proposal_id="cain:LLM-M2",
+                out=tmp_path / "llm" / "m2.json")
+    (prompt, context, _schema), = model.calls
+    assert all("metrics" not in r for r in json.loads(prompt)["results"]) and context == llm.INSTRUCTION
