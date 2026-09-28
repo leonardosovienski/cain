@@ -1,0 +1,7406 @@
+{
+ "schema": "cain-findings-calibration/1",
+ "started_at": "2026-09-28T17:14:02.427135+00:00",
+ "set": {
+  "path": "docs/evidence/2026-09-28-findings-calibration/calibration-set.json",
+  "sha256": "65a52c59292267e8f69271f5ca948786df5ce64445a0bfe9afc0838142b48fc0",
+  "items": 96
+ },
+ "stocks": {
+  "commit": "4c82885eddab233f2b57442046875fdc2c8f0932"
+ },
+ "policy_in_force": {
+  "policy": "findings-equivalence-policy",
+  "version": 2,
+  "sha256": "b496ba4f102aeb1f4624db0a4c3f73fc0e951ae89c00ca9ab7b9b4c604eca835"
+ },
+ "cain_commit": "84c20a168bf03535f6d5d654eb36a508c6774f68",
+ "config": {
+  "path": "docs/evidence/2026-09-28-findings-calibration/cain-embed.toml",
+  "sha256": "3aa902d62346c7145ee3a65d9704d235e301261a16663fe626fc909cfa4ac578"
+ },
+ "variants": {
+  "state": {
+   "sources": [
+    {
+     "repo": "integration-stocks-stocks-predictor",
+     "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+     "path": "research/scientific_state.json",
+     "sha256": "1f7eeff798a1ac378393e9f9225f5708004d5cd54c6d912d1547c4bc390c6ec7"
+    }
+   ],
+   "closed_findings": 35,
+   "closed_statement_sample": {
+    "stocks:frozen-family:low_vol_252": "frozen family low_vol_252: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_12_1": "frozen family momentum_12_1: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_12_1_total_return": "frozen family momentum_12_1_total_return: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_6_1": "frozen family momentum_6_1: cannot be reopened or reparameterized silently"
+   },
+   "decided_by_policy": [],
+   "auc": {
+    "calibration": 0.5475,
+    "validation": 0.6869
+   },
+   "top_is_target": {
+    "calibration": "10/33",
+    "validation": "10/33"
+   },
+   "t_star": {
+    "calibration": {
+     "threshold": 0.592,
+     "closed": 33,
+     "closed_caught": 9,
+     "closed_recall": 0.2727,
+     "closed_missed": [
+      "C-H1-en",
+      "C-H1-pt",
+      "C-H10-en",
+      "C-H10-pt",
+      "C-H11-en",
+      "C-H11-pt",
+      "C-H12-pt",
+      "C-H13-pt",
+      "C-H14-en",
+      "C-H14-pt",
+      "C-H15-pt",
+      "C-H16-pt",
+      "C-H2-pt",
+      "C-H4-en",
+      "C-H4-pt",
+      "C-H5-en",
+      "C-H5-pt",
+      "C-H6-pt",
+      "C-H7-en",
+      "C-H7-pt",
+      "C-H8-pt",
+      "C-H9-pt",
+      "C-R-H14-pt",
+      "C-R-H6-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    },
+    "validation": {
+     "threshold": 0.592,
+     "closed": 33,
+     "closed_caught": 16,
+     "closed_recall": 0.4848,
+     "closed_missed": [
+      "V-H1-en",
+      "V-H1-pt",
+      "V-H11-pt",
+      "V-H12-pt",
+      "V-H14-pt",
+      "V-H15-pt",
+      "V-H16-pt",
+      "V-H2-pt",
+      "V-H4-pt",
+      "V-H5-pt",
+      "V-H6-en",
+      "V-H6-pt",
+      "V-H7-en",
+      "V-H7-pt",
+      "V-H8-pt",
+      "V-H9-pt",
+      "V-R-H5-en"
+     ],
+     "new": 15,
+     "new_blocked": 1,
+     "new_blocked_ids": [
+      "V-N-rd-en"
+     ],
+     "new_blocked_hard": 1
+    }
+   },
+   "t_youden_for_comparison": {
+    "calibration": {
+     "threshold": 0.5997,
+     "closed": 33,
+     "closed_caught": 9,
+     "closed_recall": 0.2727,
+     "closed_missed": [
+      "C-H1-en",
+      "C-H1-pt",
+      "C-H10-en",
+      "C-H10-pt",
+      "C-H11-en",
+      "C-H11-pt",
+      "C-H12-pt",
+      "C-H13-pt",
+      "C-H14-en",
+      "C-H14-pt",
+      "C-H15-pt",
+      "C-H16-pt",
+      "C-H2-pt",
+      "C-H4-en",
+      "C-H4-pt",
+      "C-H5-en",
+      "C-H5-pt",
+      "C-H6-pt",
+      "C-H7-en",
+      "C-H7-pt",
+      "C-H8-pt",
+      "C-H9-pt",
+      "C-R-H14-pt",
+      "C-R-H6-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    },
+    "validation": {
+     "threshold": 0.5997,
+     "closed": 33,
+     "closed_caught": 16,
+     "closed_recall": 0.4848,
+     "closed_missed": [
+      "V-H1-en",
+      "V-H1-pt",
+      "V-H11-pt",
+      "V-H12-pt",
+      "V-H14-pt",
+      "V-H15-pt",
+      "V-H16-pt",
+      "V-H2-pt",
+      "V-H4-pt",
+      "V-H5-pt",
+      "V-H6-en",
+      "V-H6-pt",
+      "V-H7-en",
+      "V-H7-pt",
+      "V-H8-pt",
+      "V-H9-pt",
+      "V-R-H5-en"
+     ],
+     "new": 15,
+     "new_blocked": 1,
+     "new_blocked_ids": [
+      "V-N-rd-en"
+     ],
+     "new_blocked_hard": 1
+    }
+   },
+   "rows": [
+    {
+     "id": "C-H1-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.4191,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4191
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.4187
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4039
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H1-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.535,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.535
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.527
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5063
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H1-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.2554,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.2554
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.2479
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.2416
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H1-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.5685,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.5685
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5501
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5442
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H2-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.5423,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.5423
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.534
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5118
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H2-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6071,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6071
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6019
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5674
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H2-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.3351,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3351
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3202
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3172
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H2-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6003,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6003
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5756
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5472
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H4-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.4671,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.4671
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4477
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.435
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H4-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.5823,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5823
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5723
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5449
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H4-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.5306,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5306
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.4949
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4844
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H4-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.6385,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6385
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.601
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5761
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H5-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.3395,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3395
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.2927
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.2803
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H5-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.5895,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5895
+      ],
+      [
+       "stocks:frozen-family:reversal_21d",
+       0.5539
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5457
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H5-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.3324,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3324
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.321
+      ],
+      [
+       "stocks:frozen-family:turn_of_month",
+       0.3062
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H5-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.6378,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6378
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5863
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5775
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H6-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.3017,
+     "top": [
+      [
+       "stocks:hypothesis:H6",
+       0.3017
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.2889
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.2845
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H6-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.6049,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6049
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5917
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.5892
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H6-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.4693,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.4693
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4225
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.4191
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H6-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.4866,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.4866
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4496
+      ],
+      [
+       "stocks:hypothesis:H21",
+       0.4288
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H7-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.2917,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.2917
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.2855
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.2713
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H7-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.5689,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5689
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.551
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5302
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H7-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.3442,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3442
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.3175
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.2963
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H7-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.5251,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.5251
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5002
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.4817
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H8-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.4893,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.4893
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4223
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.396
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H8-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.6501,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6501
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6268
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5683
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H8-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.4384,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.4384
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.381
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3754
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H8-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.6703,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6703
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6066
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5581
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H9-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.3592,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3592
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.3381
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.3266
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H9-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.5997,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5997
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5816
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5608
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H9-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.3254,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3254
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3035
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3002
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H9-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.6236,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6236
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5883
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5872
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H10-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.4582,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4582
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.4073
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.3779
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H10-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.5702,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.5702
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5582
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5366
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H10-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.608,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.608
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5933
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5807
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H10-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.63,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.63
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.6254
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5953
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H11-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.3448,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3448
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3419
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3195
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H11-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.4803,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.4803
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4792
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4762
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H11-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.5899,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.5899
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5651
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.558
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H11-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.6008,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.6008
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5949
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.583
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H12-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.2488,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.2488
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.242
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.2376
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H12-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.6063,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.6063
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.598
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5746
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H12-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.407,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.407
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.3923
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.3745
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H12-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.609,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.609
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5861
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5807
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H13-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.3133,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3133
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.2738
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.2128
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H13-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6444,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6444
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5752
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5474
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H13-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6787,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6787
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.672
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5974
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H13-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6767,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6767
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.6206
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5125
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H14-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.3786,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3786
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3325
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3297
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H14-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.5015,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.5015
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4821
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4758
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H14-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.4384,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.4384
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.3911
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3873
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H14-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.6355,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6355
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.6113
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6028
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H15-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.2991,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.2991
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.28
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.2683
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H15-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.6031,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6031
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5473
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5347
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H15-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.5191,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.5191
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.4997
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4738
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H15-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.6048,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6048
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5367
+      ],
+      [
+       "stocks:hypothesis:H21",
+       0.4951
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H16-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.3832,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3832
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3705
+      ],
+      [
+       "stocks:hypothesis:H3",
+       0.3294
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H16-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.6032,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.6032
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5781
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5748
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H16-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.352,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.352
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3248
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.317
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H16-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.6002,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6002
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5931
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5849
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-R-H6-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.4457,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.4457
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.4274
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4213
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-R-H2-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.685,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.685
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6282
+      ],
+      [
+       "stocks:frozen-family:low_vol_252",
+       0.5875
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-R-H14-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.3997,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3997
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3971
+      ],
+      [
+       "stocks:hypothesis:H22",
+       0.3837
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-R-H5-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.5653,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.5653
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5619
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5588
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-R-H15-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6143,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6143
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.587
+      ],
+      [
+       "stocks:hypothesis:H3",
+       0.5781
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-R-H12-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6776,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.6776
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.6246
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.6167
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-N-ep-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.3618,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3618
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3587
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3354
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-insider-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3442,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3442
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3168
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.3082
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-dy-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.591,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.591
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5788
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5736
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-buyback-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4717,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4717
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4418
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4333
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-pead-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5102,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5102
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4869
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.4851
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-size-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3865,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.3865
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.3767
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3687
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-amihud-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5806,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5806
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5725
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5699
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-lockup-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4725,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4725
+      ],
+      [
+       "stocks:frozen-family:low_vol_252",
+       0.453
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.4463
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-january-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5162,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5162
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5123
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5023
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-grossprof-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5875,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5875
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5717
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5571
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-analyst-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.5384,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5384
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.517
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.508
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-index-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5102,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5102
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5077
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4835
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-assetgrowth-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.324,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.324
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3224
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.2555
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-fx-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.32,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.32
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.304
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.2973
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-accruals-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5165,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5165
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5147
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5021
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-bm-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5603,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5603
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5358
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5311
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-lending-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4019,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4019
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3936
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3876
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-short-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5401,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5401
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5319
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5265
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-divinit-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3337,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.3337
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3331
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.32
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-monday-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5882,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.5882
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.5811
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.565
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-issuance-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3411,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.3411
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3226
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3208
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-governance-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5363,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5363
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5228
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5222
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ironore-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3753,
+     "top": [
+      [
+       "stocks:hypothesis:H20",
+       0.3753
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.3564
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3534
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-news-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.4951,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4951
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4916
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4872
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-selic-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3597,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3597
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.3585
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3529
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ceo-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5789,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5789
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5754
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5512
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-cash-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.2149,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.2149
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.2127
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.2051
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-rd-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.6194,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6194
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5924
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5548
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ps-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.538,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.538
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5232
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5034
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-onpn-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4275,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.4275
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4243
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4116
+      ]
+     ],
+     "top_is_target": false
+    }
+   ]
+  },
+  "registry": {
+   "sources": [
+    {
+     "repo": "integration-stocks-stocks-predictor",
+     "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+     "path": "research/scientific_state.json",
+     "sha256": "1f7eeff798a1ac378393e9f9225f5708004d5cd54c6d912d1547c4bc390c6ec7"
+    },
+    {
+     "repo": "integration-stocks-stocks-predictor",
+     "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+     "path": "trials_v2.json",
+     "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+    }
+   ],
+   "closed_findings": 35,
+   "closed_statement_sample": {
+    "stocks:frozen-family:low_vol_252": "frozen family low_vol_252: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_12_1": "frozen family momentum_12_1: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_12_1_total_return": "frozen family momentum_12_1_total_return: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_6_1": "frozen family momentum_6_1: cannot be reopened or reparameterized silently"
+   },
+   "decided_by_policy": [],
+   "auc": {
+    "calibration": 0.6667,
+    "validation": 0.7616
+   },
+   "top_is_target": {
+    "calibration": "16/33",
+    "validation": "20/33"
+   },
+   "t_star": {
+    "calibration": {
+     "threshold": 0.65,
+     "closed": 33,
+     "closed_caught": 8,
+     "closed_recall": 0.2424,
+     "closed_missed": [
+      "C-H1-pt",
+      "C-H10-en",
+      "C-H10-pt",
+      "C-H11-en",
+      "C-H11-pt",
+      "C-H12-en",
+      "C-H12-pt",
+      "C-H13-pt",
+      "C-H14-en",
+      "C-H14-pt",
+      "C-H15-pt",
+      "C-H16-en",
+      "C-H16-pt",
+      "C-H2-en",
+      "C-H2-pt",
+      "C-H4-pt",
+      "C-H5-pt",
+      "C-H6-pt",
+      "C-H7-en",
+      "C-H7-pt",
+      "C-H8-pt",
+      "C-H9-en",
+      "C-H9-pt",
+      "C-R-H14-pt",
+      "C-R-H6-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    },
+    "validation": {
+     "threshold": 0.65,
+     "closed": 33,
+     "closed_caught": 11,
+     "closed_recall": 0.3333,
+     "closed_missed": [
+      "V-H1-pt",
+      "V-H10-en",
+      "V-H10-pt",
+      "V-H11-pt",
+      "V-H12-en",
+      "V-H12-pt",
+      "V-H13-en",
+      "V-H14-pt",
+      "V-H15-pt",
+      "V-H16-pt",
+      "V-H2-en",
+      "V-H2-pt",
+      "V-H4-pt",
+      "V-H5-pt",
+      "V-H6-en",
+      "V-H6-pt",
+      "V-H7-en",
+      "V-H7-pt",
+      "V-H8-pt",
+      "V-H9-en",
+      "V-H9-pt",
+      "V-R-H15-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    }
+   },
+   "t_youden_for_comparison": {
+    "calibration": {
+     "threshold": 0.5995,
+     "closed": 33,
+     "closed_caught": 15,
+     "closed_recall": 0.4545,
+     "closed_missed": [
+      "C-H1-pt",
+      "C-H10-pt",
+      "C-H11-en",
+      "C-H11-pt",
+      "C-H12-pt",
+      "C-H13-pt",
+      "C-H14-en",
+      "C-H14-pt",
+      "C-H15-pt",
+      "C-H16-pt",
+      "C-H5-pt",
+      "C-H6-pt",
+      "C-H7-en",
+      "C-H7-pt",
+      "C-H8-pt",
+      "C-H9-pt",
+      "C-R-H14-pt",
+      "C-R-H6-pt"
+     ],
+     "new": 15,
+     "new_blocked": 1,
+     "new_blocked_ids": [
+      "C-N-dy-en"
+     ],
+     "new_blocked_hard": 1
+    },
+    "validation": {
+     "threshold": 0.5995,
+     "closed": 33,
+     "closed_caught": 20,
+     "closed_recall": 0.6061,
+     "closed_missed": [
+      "V-H1-pt",
+      "V-H12-pt",
+      "V-H14-pt",
+      "V-H15-pt",
+      "V-H16-pt",
+      "V-H2-pt",
+      "V-H5-pt",
+      "V-H6-en",
+      "V-H6-pt",
+      "V-H7-en",
+      "V-H7-pt",
+      "V-H8-pt",
+      "V-H9-pt"
+     ],
+     "new": 15,
+     "new_blocked": 1,
+     "new_blocked_ids": [
+      "V-N-monday-en"
+     ],
+     "new_blocked_hard": 1
+    }
+   },
+   "rows": [
+    {
+     "id": "C-H1-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.5906,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.5906
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.555
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.55
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H1-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.6509,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.6509
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6437
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.6224
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H1-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.3495,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.3495
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3407
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3279
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H1-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.6958,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.6958
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6736
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.6545
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H2-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.5995,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.5995
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5853
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5789
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H2-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6425,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6425
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.6401
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.635
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H2-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.4051,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.4051
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4033
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.3973
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H2-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6385,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6385
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.6327
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.6132
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H4-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.6106,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.6106
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5491
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5471
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H4-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.6601,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.6601
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6401
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.6303
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H4-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.6296,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6296
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.625
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.622
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H4-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.7456,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.7456
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6948
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.6836
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H5-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.3919,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3919
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.3774
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3762
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H5-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.6603,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.6603
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.6151
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.604
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H5-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.3391,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3391
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3324
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.312
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H5-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.7641,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.7641
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.6808
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.6679
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H6-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.462,
+     "top": [
+      [
+       "stocks:hypothesis:H6",
+       0.462
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.4121
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3688
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H6-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.6927,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.6927
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.6615
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.6539
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H6-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.5673,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.5673
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5168
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.4881
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H6-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.4759,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.4759
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.447
+      ],
+      [
+       "stocks:hypothesis:H21",
+       0.4288
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H7-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.2924,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.2924
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.2855
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.2713
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H7-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.577,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.577
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5689
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5616
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H7-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.3703,
+     "top": [
+      [
+       "stocks:hypothesis:H7",
+       0.3703
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3536
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3442
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H7-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.5398,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5398
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.4987
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.4817
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H8-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.5626,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.5626
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.5454
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5431
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H8-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.6682,
+     "top": [
+      [
+       "stocks:hypothesis:H8",
+       0.6682
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6574
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6463
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H8-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.4888,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.4888
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.476
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.4734
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H8-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.7101,
+     "top": [
+      [
+       "stocks:hypothesis:H8",
+       0.7101
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.6974
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.6949
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H9-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.3592,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3592
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.3381
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.3184
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H9-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.5997,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5997
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5832
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.5772
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H9-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.3491,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3491
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3266
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.3235
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H9-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.6355,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.6355
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.6236
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.6003
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H10-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.4582,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4582
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.4203
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.4073
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H10-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.6023,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.6023
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5884
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.574
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H10-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.6498,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.6498
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.6209
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5807
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H10-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.63,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.63
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.6254
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.5836
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H11-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.462,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.462
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.435
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4179
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H11-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.5589,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5589
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.551
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.4961
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H11-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.6437,
+     "top": [
+      [
+       "stocks:hypothesis:H11",
+       0.6437
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.6387
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.5785
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H11-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.6872,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.6872
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6863
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.6833
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H12-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.2683,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.2683
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.2488
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.2487
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H12-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.6284,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6284
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.6025
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5818
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H12-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.407,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.407
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3924
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.3923
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H12-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.6251,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6251
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.613
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.6044
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H13-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.3183,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.3183
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3133
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.2128
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H13-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6524,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6524
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5752
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5296
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H13-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6858,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6858
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.672
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5831
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H13-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6483,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6483
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.6206
+      ],
+      [
+       "stocks:hypothesis:H3",
+       0.5102
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H14-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.4869,
+     "top": [
+      [
+       "stocks:hypothesis:H14",
+       0.4869
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.4226
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.4093
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H14-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.5747,
+     "top": [
+      [
+       "stocks:hypothesis:H14",
+       0.5747
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5567
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5376
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H14-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.463,
+     "top": [
+      [
+       "stocks:hypothesis:H14",
+       0.463
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.4462
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4443
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H14-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.6889,
+     "top": [
+      [
+       "stocks:hypothesis:H14",
+       0.6889
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.6642
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6639
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H15-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.4207,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.4207
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.3784
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3684
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H15-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.7032,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.7032
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.637
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6346
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H15-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.5872,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.5872
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.5061
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.5008
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H15-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.6902,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6902
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.646
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6218
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H16-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.432,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.432
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3667
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.3617
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H16-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.6105,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.6105
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5781
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5744
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H16-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.4452,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.4452
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.3801
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3675
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H16-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.6593,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.6593
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6433
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.6429
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-R-H6-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.5437,
+     "top": [
+      [
+       "stocks:hypothesis:H7",
+       0.5437
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5195
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5129
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-R-H2-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6901,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6901
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.6889
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.6658
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-R-H14-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.4885,
+     "top": [
+      [
+       "stocks:hypothesis:H14",
+       0.4885
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4494
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.4388
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-R-H5-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.7274,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.7274
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.645
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6247
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-R-H15-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6329,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6329
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6009
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.5914
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-R-H12-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6759,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.6759
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.635
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.6309
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-N-ep-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.4278,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.4278
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.3977
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.3789
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-insider-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3623,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.3623
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.3507
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3366
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-dy-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.6498,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.6498
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.6472
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.645
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-buyback-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4781,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.4781
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4717
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.4448
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-pead-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5389,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5389
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5271
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5227
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-size-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3453,
+     "top": [
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.3453
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.3433
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.3372
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-amihud-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5699,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5699
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5648
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5533
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-lockup-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4725,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4725
+      ],
+      [
+       "stocks:frozen-family:low_vol_252",
+       0.453
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.4463
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-january-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.566,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.566
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.544
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.539
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-grossprof-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.592,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.592
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5571
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5442
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-analyst-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.5823,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5823
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5781
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5478
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-index-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5365,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.5365
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5337
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.5301
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-assetgrowth-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.3331,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.3331
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.324
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.2555
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-fx-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3421,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3421
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.2943
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.2841
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-accruals-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5165,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5165
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5147
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5119
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-bm-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.579,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.579
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5708
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5668
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-lending-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4457,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.4457
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4402
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.4362
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-short-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5597,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5597
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5401
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5165
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-divinit-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3875,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.3875
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.3824
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3822
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-monday-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.6174,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.6174
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6011
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5839
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-issuance-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3342,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3342
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3226
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3124
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-governance-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5222,
+     "top": [
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5222
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.4968
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.4955
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ironore-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3821,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3821
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.3753
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.3636
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-news-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5234,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.5234
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4951
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.49
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-selic-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.376,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.376
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.3659
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.3616
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ceo-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5789,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5789
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.5754
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_intersection",
+       0.5512
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-cash-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.2274,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.2274
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.2197
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.196
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-rd-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5888,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5888
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5547
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5468
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ps-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.493,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.493
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4898
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.4872
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-onpn-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4659,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.4659
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4505
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4467
+      ]
+     ],
+     "top_is_target": false
+    }
+   ]
+  },
+  "described": {
+   "sources": [
+    {
+     "repo": "integration-stocks-stocks-predictor",
+     "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+     "path": "research/scientific_state.json",
+     "sha256": "1f7eeff798a1ac378393e9f9225f5708004d5cd54c6d912d1547c4bc390c6ec7"
+    },
+    {
+     "repo": "integration-stocks-stocks-predictor",
+     "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+     "path": "trials_v2.json",
+     "sha256": "281030b156cec7a5415e655c7f86319fd00d77fdec9e12bee6f5bdde8c5aa208"
+    },
+    {
+     "repo": "integration-stocks-stocks-predictor",
+     "commit": "4c82885eddab233f2b57442046875fdc2c8f0932",
+     "path": "RESEARCH_FREEZE.md",
+     "sha256": "a6b9e923d243b486d52d8c97ed64a758cc40df29c19699bdb220e79115cf39ba"
+    }
+   ],
+   "closed_findings": 35,
+   "closed_statement_sample": {
+    "stocks:frozen-family:low_vol_252": "frozen family low vol 252: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_12_1": "frozen family momentum 12 1: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_12_1_total_return": "frozen family momentum 12 1 total return: cannot be reopened or reparameterized silently",
+    "stocks:frozen-family:momentum_6_1": "frozen family momentum 6 1: cannot be reopened or reparameterized silently"
+   },
+   "decided_by_policy": [],
+   "auc": {
+    "calibration": 0.6303,
+    "validation": 0.7354
+   },
+   "top_is_target": {
+    "calibration": "13/33",
+    "validation": "13/33"
+   },
+   "t_star": {
+    "calibration": {
+     "threshold": 0.632,
+     "closed": 33,
+     "closed_caught": 8,
+     "closed_recall": 0.2424,
+     "closed_missed": [
+      "C-H1-pt",
+      "C-H10-pt",
+      "C-H11-en",
+      "C-H11-pt",
+      "C-H12-en",
+      "C-H12-pt",
+      "C-H13-en",
+      "C-H13-pt",
+      "C-H14-en",
+      "C-H14-pt",
+      "C-H15-pt",
+      "C-H16-en",
+      "C-H16-pt",
+      "C-H2-pt",
+      "C-H4-pt",
+      "C-H5-en",
+      "C-H5-pt",
+      "C-H6-pt",
+      "C-H7-en",
+      "C-H7-pt",
+      "C-H8-pt",
+      "C-H9-en",
+      "C-H9-pt",
+      "C-R-H14-pt",
+      "C-R-H6-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    },
+    "validation": {
+     "threshold": 0.632,
+     "closed": 33,
+     "closed_caught": 17,
+     "closed_recall": 0.5152,
+     "closed_missed": [
+      "V-H1-en",
+      "V-H1-pt",
+      "V-H10-en",
+      "V-H11-pt",
+      "V-H12-pt",
+      "V-H14-pt",
+      "V-H15-pt",
+      "V-H16-pt",
+      "V-H2-pt",
+      "V-H5-pt",
+      "V-H6-en",
+      "V-H6-pt",
+      "V-H7-en",
+      "V-H7-pt",
+      "V-H8-pt",
+      "V-H9-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    }
+   },
+   "t_youden_for_comparison": {
+    "calibration": {
+     "threshold": 0.5976,
+     "closed": 33,
+     "closed_caught": 14,
+     "closed_recall": 0.4242,
+     "closed_missed": [
+      "C-H1-pt",
+      "C-H10-pt",
+      "C-H11-en",
+      "C-H11-pt",
+      "C-H12-pt",
+      "C-H13-pt",
+      "C-H14-en",
+      "C-H14-pt",
+      "C-H15-pt",
+      "C-H16-pt",
+      "C-H4-pt",
+      "C-H5-pt",
+      "C-H6-pt",
+      "C-H7-en",
+      "C-H7-pt",
+      "C-H8-pt",
+      "C-H9-pt",
+      "C-R-H14-pt",
+      "C-R-H6-pt"
+     ],
+     "new": 15,
+     "new_blocked": 1,
+     "new_blocked_ids": [
+      "C-N-dy-en"
+     ],
+     "new_blocked_hard": 1
+    },
+    "validation": {
+     "threshold": 0.5976,
+     "closed": 33,
+     "closed_caught": 19,
+     "closed_recall": 0.5758,
+     "closed_missed": [
+      "V-H1-pt",
+      "V-H11-pt",
+      "V-H12-pt",
+      "V-H14-pt",
+      "V-H15-pt",
+      "V-H16-pt",
+      "V-H2-pt",
+      "V-H5-pt",
+      "V-H6-en",
+      "V-H6-pt",
+      "V-H7-en",
+      "V-H7-pt",
+      "V-H8-pt",
+      "V-H9-pt"
+     ],
+     "new": 15,
+     "new_blocked": 0,
+     "new_blocked_ids": [],
+     "new_blocked_hard": 0
+    }
+   },
+   "rows": [
+    {
+     "id": "C-H1-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.5221,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.5221
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5115
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.5069
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H1-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.6535,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.6535
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.649
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6438
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H1-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.3396,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.3396
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3054
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.2977
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H1-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H1",
+     "policy_match": [],
+     "score": 0.626,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.626
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.6244
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6238
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H2-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6167,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.6167
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6041
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6033
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H2-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6699,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.6699
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6679
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6678
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H2-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.4096,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.4096
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3849
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.3832
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H2-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "policy_match": [],
+     "score": 0.6602,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6602
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.6254
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6234
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H4-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.5803,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.5803
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5617
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.561
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H4-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.6853,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6853
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6788
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6779
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H4-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.6635,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6635
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6271
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.602
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H4-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H4",
+     "policy_match": [],
+     "score": 0.7454,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.7454
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.7082
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.6721
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H5-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.3796,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.3796
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.3658
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.3619
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H5-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.6093,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.6093
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5857
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.5837
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H5-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.3238,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3238
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3146
+      ],
+      [
+       "stocks:frozen-family:reversal_21d",
+       0.3133
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H5-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "policy_match": [],
+     "score": 0.7314,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.7314
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6941
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6826
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H6-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.3682,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.3682
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.3433
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.313
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H6-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.676,
+     "top": [
+      [
+       "stocks:hypothesis:H6",
+       0.676
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6659
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6409
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H6-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.4872,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.4872
+      ],
+      [
+       "stocks:hypothesis:H16",
+       0.4776
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.465
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H6-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H6",
+     "policy_match": [],
+     "score": 0.4418,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.4418
+      ],
+      [
+       "stocks:hypothesis:H21",
+       0.4288
+      ],
+      [
+       "stocks:hypothesis:H22",
+       0.4253
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H7-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.323,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.323
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.2947
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.2922
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H7-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.5896,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.5896
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5788
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5539
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H7-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.3825,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3825
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3563
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3348
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H7-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H7",
+     "policy_match": [],
+     "score": 0.5129,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5129
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4965
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.49
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H8-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.5455,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.5455
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5235
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.4971
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H8-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.6879,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.6879
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6658
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.66
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H8-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.4888,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.4888
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4657
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.4652
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H8-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H8",
+     "policy_match": [],
+     "score": 0.7314,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.7314
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.7083
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.6983
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H9-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.3619,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3619
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.3408
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.3173
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H9-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.6234,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.6234
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.6005
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5051
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H9-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.3623,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3623
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.3382
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3225
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H9-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H9",
+     "policy_match": [],
+     "score": 0.6794,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.6794
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.6144
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5587
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H10-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.4544,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.4544
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4342
+      ],
+      [
+       "stocks:frozen-family:quality_roe_leverage_double_filter",
+       0.4017
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H10-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.6434,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.6434
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.607
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5726
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H10-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.6822,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.6822
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.6124
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.5768
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H10-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H10",
+     "policy_match": [],
+     "score": 0.6013,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.6013
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5827
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.5609
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H11-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.4242,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.4242
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.3853
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3808
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H11-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.5116,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.5116
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5088
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.4985
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H11-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.5758,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5758
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5574
+      ],
+      [
+       "stocks:hypothesis:H11",
+       0.5505
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H11-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H11",
+     "policy_match": [],
+     "score": 0.6653,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.6653
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.6605
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6434
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H12-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.2638,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.2638
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.2621
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.232
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H12-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.603,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.603
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.5918
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5706
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H12-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.3885,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3885
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3849
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3793
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H12-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "policy_match": [],
+     "score": 0.6365,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.6365
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.6235
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.614
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H13-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.3432,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.3432
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3274
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.2065
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H13-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6042,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.6042
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5949
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5119
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H13-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6956,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.6956
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.6777
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.587
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H13-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H13",
+     "policy_match": [],
+     "score": 0.6582,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.6582
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.6119
+      ],
+      [
+       "stocks:hypothesis:H3",
+       0.5102
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H14-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.399,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.399
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3752
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.3685
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H14-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.5217,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.5217
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5201
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.5201
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H14-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.4324,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.4324
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.4259
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.4258
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H14-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H14",
+     "policy_match": [],
+     "score": 0.6858,
+     "top": [
+      [
+       "stocks:hypothesis:H4",
+       0.6858
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.6682
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6528
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-H15-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.4179,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.4179
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.3192
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3142
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H15-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.6777,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6777
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.6212
+      ],
+      [
+       "stocks:hypothesis:H8",
+       0.6139
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H15-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.5869,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.5869
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.49
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4894
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H15-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H15",
+     "policy_match": [],
+     "score": 0.6717,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6717
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.5986
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.581
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H16-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.3881,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3881
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3623
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3437
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-H16-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.5976,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5976
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5941
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.571
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-H16-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.3466,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3466
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.3313
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3237
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-H16-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H16",
+     "policy_match": [],
+     "score": 0.6669,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.6669
+      ],
+      [
+       "stocks:hypothesis:H4",
+       0.6604
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6564
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-R-H6-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H6",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.5125,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5125
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4841
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.4799
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-R-H2-en",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "en",
+     "target": "H2",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.7079,
+     "top": [
+      [
+       "stocks:hypothesis:H2",
+       0.7079
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6864
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.6744
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-R-H14-pt",
+     "split": "calibration",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H14",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.413,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.413
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.4017
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.3923
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-R-H5-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H5",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6704,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.6704
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.6573
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.6404
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-R-H15-pt",
+     "split": "validation",
+     "label": "closed",
+     "lang": "pt",
+     "target": "H15",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6394,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.6394
+      ],
+      [
+       "stocks:hypothesis:H3",
+       0.5781
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5685
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "V-R-H12-en",
+     "split": "validation",
+     "label": "closed",
+     "lang": "en",
+     "target": "H12",
+     "kind": "reparameterization",
+     "policy_match": [],
+     "score": 0.6509,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.6509
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.6257
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.6147
+      ]
+     ],
+     "top_is_target": true
+    },
+    {
+     "id": "C-N-ep-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.3973,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.3973
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.3957
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3826
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-insider-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3545,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3545
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.333
+      ],
+      [
+       "stocks:hypothesis:H2",
+       0.3204
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-dy-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.6312,
+     "top": [
+      [
+       "stocks:hypothesis:H12",
+       0.6312
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.6181
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5921
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-buyback-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4782,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.4782
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4612
+      ],
+      [
+       "stocks:hypothesis:H7",
+       0.4585
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-pead-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.516,
+     "top": [
+      [
+       "stocks:hypothesis:H6",
+       0.516
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5134
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5103
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-size-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3582,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3582
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.3372
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3346
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-amihud-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5657,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5657
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.5467
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5393
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-lockup-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.479,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_lowvol_intersection",
+       0.479
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.4633
+      ],
+      [
+       "stocks:frozen-family:quality_net_margin",
+       0.4383
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-january-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5294,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5294
+      ],
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5229
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5112
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-grossprof-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.577,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.577
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.5576
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5474
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-analyst-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.5947,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5947
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5889
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5759
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-index-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5486,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.5486
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5479
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.5388
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-assetgrowth-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.3608,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.3608
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.3476
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.2588
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-fx-pt",
+     "split": "calibration",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3246,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3246
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.3209
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.3117
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "C-N-accruals-en",
+     "split": "calibration",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5297,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5297
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5198
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.4984
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-bm-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5901,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.5901
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5889
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5889
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-lending-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4093,
+     "top": [
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.4093
+      ],
+      [
+       "stocks:hypothesis:H12",
+       0.4011
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3993
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-short-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5409,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5409
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.5139
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.5063
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-divinit-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3743,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.3743
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3696
+      ],
+      [
+       "stocks:hypothesis:H13",
+       0.3683
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-monday-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5972,
+     "top": [
+      [
+       "stocks:hypothesis:H1",
+       0.5972
+      ],
+      [
+       "stocks:hypothesis:H5",
+       0.5804
+      ],
+      [
+       "stocks:hypothesis:H6",
+       0.5787
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-issuance-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3552,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3552
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.337
+      ],
+      [
+       "stocks:frozen-family:momentum_lowvol_intersection",
+       0.3181
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-governance-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5376,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.5376
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.4955
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.4938
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ironore-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3756,
+     "top": [
+      [
+       "stocks:hypothesis:H16",
+       0.3756
+      ],
+      [
+       "stocks:hypothesis:H20",
+       0.3753
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.3649
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-news-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5183,
+     "top": [
+      [
+       "stocks:hypothesis:H5",
+       0.5183
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5048
+      ],
+      [
+       "stocks:hypothesis:H1",
+       0.4949
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-selic-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.3967,
+     "top": [
+      [
+       "stocks:hypothesis:H9",
+       0.3967
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.3799
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.3764
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ceo-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "policy_match": [],
+     "score": 0.5575,
+     "top": [
+      [
+       "stocks:frozen-family:momentum_12_1_total_return",
+       0.5575
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.5539
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5515
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-cash-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.2336,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.2336
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.2263
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.2224
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-rd-en",
+     "split": "validation",
+     "label": "new",
+     "lang": "en",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5834,
+     "top": [
+      [
+       "stocks:hypothesis:H13",
+       0.5834
+      ],
+      [
+       "stocks:frozen-family:revenue_growth_yoy",
+       0.5784
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.5399
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-ps-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "hard": true,
+     "policy_match": [],
+     "score": 0.5065,
+     "top": [
+      [
+       "stocks:hypothesis:H10",
+       0.5065
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4978
+      ],
+      [
+       "stocks:hypothesis:H15",
+       0.4907
+      ]
+     ],
+     "top_is_target": false
+    },
+    {
+     "id": "V-N-onpn-pt",
+     "split": "validation",
+     "label": "new",
+     "lang": "pt",
+     "policy_match": [],
+     "score": 0.4334,
+     "top": [
+      [
+       "stocks:hypothesis:H15",
+       0.4334
+      ],
+      [
+       "stocks:hypothesis:H10",
+       0.4148
+      ],
+      [
+       "stocks:hypothesis:H9",
+       0.4031
+      ]
+     ],
+     "top_is_target": false
+    }
+   ]
+  }
+ },
+ "chosen_variant": "registry",
+ "threshold": 0.65,
+ "recommendation": "KEEP_REVIEW_ONLY",
+ "finished_at": "2026-09-28T17:14:12.477953+00:00"
+}

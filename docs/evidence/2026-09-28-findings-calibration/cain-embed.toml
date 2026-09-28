@@ -1,0 +1,8 @@
+[llm]
+provider = "ollama"
+model = "qwen3.5:4b"
+base_url = "http://127.0.0.1:11434"
+
+[search]
+embedding_model = "qwen3-embedding:0.6b"
+embedding_digest = "ac6da0dfba84a81fdbfbaf330198c33cd77c4cdfc53e8bc50eb581914a15621d"
