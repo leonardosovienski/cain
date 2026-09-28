@@ -8,13 +8,15 @@ from importlib.resources import files
 
 from research_protocol import v2
 
+from cain.orchestration import policy
+
 SCHEMA = "cain-domain-config/1"
 KEYS = frozenset(
     {
         "schema", "domain", "config_version", "source", "contract", "frozen_parameters", "allowed_request_types",
         "closed_hypotheses", "frozen_families", "proposable_hypotheses", "allowed_symbols", "costs",
         "allowed_references", "max_priority_hint", "budget", "cooldown", "negative_result_states",
-        "contradiction_pairs",
+        "contradiction_pairs", "sealed_scopes",
     }
 )
 PRIORITIES = ("LOW", "NORMAL", "HIGH")
@@ -49,6 +51,10 @@ def validate(config: dict) -> dict:
         raise ConfigError("a closed hypothesis cannot be proposable")
     if config["max_priority_hint"] not in PRIORITIES:
         raise ConfigError("unknown priority cap")
+    try:
+        policy.check_sealed_scopes(config["sealed_scopes"])
+    except ValueError as exc:
+        raise ConfigError(str(exc)) from exc
     budget, cooldown = config["budget"], config["cooldown"]
     for value in (*budget.values(), *cooldown.values()):
         if type(value) is not int or value < 1:

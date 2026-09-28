@@ -31,7 +31,7 @@ e receipt; mesmos bytes → nada novo). Pontos de falha de qualificação: `CAIN
 Genérica, versionada (`cain-decision-policy` v2 + sha256 do código) e sem relógio: as entradas são a proposta, a
 configuração do domínio e a visão do domínio no `as_of` (tasks emitidas + fatos de resultado recuperados da memória,
 lidos na cabeça do log e válidos no `as_of`). Decisões: `ALLOW | BLOCK | ABSTAIN | REQUIRE_HUMAN | DUPLICATE |
-COOLDOWN`, com a regra que disparou (R01–R15, ordem na docstring do módulo). Nenhum resultado aumenta budget,
+COOLDOWN`, com a regra que disparou (R01–R16, ordem na docstring do módulo). Nenhum resultado aumenta budget,
 prioridade ou escopo; nada lê estado econômico como sinal; não existe caminho de capital.
 
 v2 (2026-09-28) acrescenta a **R15**: se o domínio já recusou a hipótese com o código `HYPOTHESIS_NOT_ADMITTED`,
@@ -45,6 +45,20 @@ congelado do domínio, declara as chaves de custo. No cripto, a única variante 
 backtest declara e continua preso aos custos [H1-FROZEN]; a coleta de External Intelligence não declara e deixa de ser
 bloqueada com `COST_MODEL_MISMATCH` (IS-F002 da integration-stocks). Se nenhuma variante aceitar os parâmetros, a
 política é conservadora e compara os custos (a R02 já recusa o formato).
+
+**R16** (logo depois da R05): um pedido que tocaria um escopo lacrado do domínio vira `REQUIRE_HUMAN SEALED_SCOPE`
+(sem task). Os lacres ficam em `sealed_scopes` da configuração, gerados do `FROZEN_PARAMETERS` da integração, e
+qualquer um que case retém o pedido:
+
+| Lacre | Retém quando |
+|---|---|
+| `{"field": "season", "any_of": [2025, 2026]}` | o valor do campo está na lista |
+| `{"window": {"from": "events.kickoff_from", "to": "events.kickoff_to"}, "intersects": [a, b]}` | `[from, to)` intersecta `[a, b)` |
+| `{"field": "events.fixtures[].kickoff_at", "within": [a, b], "optional": true}` | algum instante está em `[a, b)` |
+
+Fail closed: campo lacrado ausente, de tipo inesperado ou com janela invertida também retém; só um lacre
+`"optional": true` ausente não retém. Caminhos são pontilhados; `nome[]` percorre cada elemento de uma lista; instantes
+em UTC `YYYY-MM-DDTHH:MM:SSZ`. Criado para o holdout 2025 do Brasileirão (D-25 (2)); cripto e stocks não lacram nada.
 
 ## Propostas por modelo local (`cain research explain --propose-for-domain`)
 
@@ -75,6 +89,7 @@ parâmetros congelados da missão), com sha256 de cada fonte:
 | `budget` (`max_open_tasks`, `max_tasks_per_research`, `max_tasks_total`) | constantes; resultados não as mudam |
 | `cooldown`, `negative_result_states` | N negativos seguidos da mesma hipótese → K episódios sem task nova dela |
 | `contradiction_pairs` | estados científicos em conflito → REQUIRE_HUMAN, nunca maioria |
+| `sealed_scopes` | escopos lacrados (ex.: holdout) → REQUIRE_HUMAN `SEALED_SCOPE` (R16); lista vazia = nenhum lacre |
 
 Acrescentar `stocks` ou `brasileirao` = um arquivo de configuração novo + o adapter do domínio (no repositório do
 domínio) + a entrada do adapter na allowlist do transporte. O framework não muda. As variantes de `parameters` do

@@ -89,6 +89,7 @@
   "crypto:QUAL-SHADOW-REAL-003"
  ],
  "schema": "cain-domain-config/1",
+ "sealed_scopes": [],
  "source": {
   "commit": "341d270e4d709150c581c3cd93f4518d483009eb",
   "files": [
