@@ -90,14 +90,26 @@ def test_references_priority_and_domain_are_enforced():
     assert decide(proposal(hypothesis_id="brasileirao:QUAL-NEW-001"))["reason_code"] == "NEW_HYPOTHESIS"
 
 
-def test_known_framework_limits_for_brasileirao():
-    # IS-F003 / IB: the LLM proposal path writes the crypto placebo_seed, which the brasileirao schema refuses.
+def test_a_request_with_parameters_is_refused_by_the_brasileirao_schema():
+    # the brasileirao request_schema has no parameters (additionalProperties false)
     out = decide(proposal(parameters={"placebo_seed": 7}))
     assert (out["decision"], out["reason_code"]) == ("BLOCK", "SCHEMA_INVALID")
-    # IB-F002 (open, owner decision): no rule of R01–R14 reads the season, so a proposal of the sealed 2025 holdout
-    # is not turned into REQUIRE_HUMAN by the policy; the domain admission refuses it (HOLDOUT_SEALED). Recorded as is.
-    sealed = proposal(season=2025, events={"kickoff_from": "2025-01-01T00:00:00Z", "kickoff_to": "2026-01-01T00:00:00Z"})
-    assert decide(sealed)["rule"] == "R14"
+
+
+def test_the_sealed_2025_holdout_goes_to_a_human():
+    # D-25 (2): a proposal that would touch the 2025 holdout ends in REQUIRE_HUMAN (R16 SEALED_SCOPE); the domain
+    # admission still refuses it (HOLDOUT_SEALED). The three frozen holdout vectors of the integration-brasileirao.
+    assert [rule["field"] if "field" in rule else "window" for rule in CONFIG["sealed_scopes"]] == [
+        "season", "window", "events.fixtures[].kickoff_at"]
+    for season, start, end in ((2025, "2025-01-01T00:00:00Z", "2026-01-01T00:00:00Z"),
+                               (2024, "2024-10-01T00:00:00Z", "2025-03-01T00:00:00Z"),
+                               (2026, "2026-01-01T00:00:00Z", "2026-09-08T19:31:32Z")):
+        out = decide(proposal(season=season, events={"kickoff_from": start, "kickoff_to": end}))
+        assert (out["decision"], out["reason_code"], out["rule"]) == ("REQUIRE_HUMAN", "SEALED_SCOPE", "R16"), season
+    inside = {"kickoff_from": "2024-01-01T00:00:00Z", "kickoff_to": "2024-12-31T00:00:00Z",
+              "fixtures": [{"event_id": 1, "kickoff_at": "2025-02-01T21:00:00Z"}]}
+    assert decide(proposal(events=inside))["reason_code"] == "SEALED_SCOPE"
+    assert decide(proposal())["rule"] == "R14"  # 2024, window before 2025: not sealed
 
 
 def test_negative_results_never_raise_priority_or_budget():
