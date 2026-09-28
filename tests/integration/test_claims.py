@@ -130,6 +130,28 @@ def test_number_without_provenance_blocks_the_report(memory, clock, tmp_path):
     assert lint_report(memory, text, as_of=clock.now.isoformat(), cubes=["stocks"], root=tmp_path)["status"] == "blocked"
 
 
+def test_names_in_code_are_not_claims_and_a_percentage_matches_its_fraction(memory, clock):
+    # utility rounds (stocks): an honest report was blocked on the "12" of "momentum 12-1" and on "95%" (the result
+    # stores the confidence as 0.95); outside backticks a name's numbers still need a source
+    text = '{"confidence": 0.95, "excess_net_bps": 29}'
+    doc = memory.record_document("stocks", "result", text, published_at=T0 - timedelta(days=1), source="fixture:result")
+    clock.tick()
+    s, e = _span(text, '"confidence": 0.95')
+    conf = memory.record_evidence("stocks", doc["id"], s, e, '"confidence": 0.95')
+    s, e = _span(text, '"excess_net_bps": 29')
+    net = memory.record_evidence("stocks", doc["id"], s, e, '"excess_net_bps": 29')
+    clock.tick()
+    now = clock.now.isoformat()
+    named = lint_report(memory, f"O `momentum 12-1` teve 29 bps [ev:{net['id']}].", as_of=now, cubes=["stocks"])
+    assert named["status"] == "publishable" and named["numbers_checked"] == 1
+    bare = lint_report(memory, f"O momentum 12-1 teve 29 bps [ev:{net['id']}].", as_of=now, cubes=["stocks"])
+    assert bare["status"] == "blocked" and {v["number"] for v in bare["violations"]} == {"12", "1"}
+    percent = lint_report(memory, f"O intervalo de 95% [ev:{conf['id']}] cruza zero.", as_of=now, cubes=["stocks"])
+    assert percent["status"] == "publishable"
+    for wrong in (f"O intervalo de 90% [ev:{conf['id']}] cruza zero.", f"A confiança foi 95 [ev:{conf['id']}]."):
+        assert lint_report(memory, wrong, as_of=now, cubes=["stocks"])["status"] == "blocked"
+
+
 def test_verifier_disagreement_goes_to_the_human_review_queue(memory, clock):
     source, report = _setup(memory, clock)
     s, e = _span(SOURCE, "Net excess return averaged 29 basis points per period")

@@ -8,7 +8,10 @@ contains the same magnitude:
 * ``[run:<run_id>@<sha256>]`` a SUPPORTED EMPIRICAL_PROOF claim with that run_ref whose artifact
   (read and re-hashed here) contains the number.
 
-Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, and are skipped.
+Enumerators at the start of a line (``1.``, ``## 2.``) are layout, not claims, and are skipped. Inline code
+(`` `momentum 12-1` ``, `` `h14-near-52w-high` ``) is a name, not a claim: numbers inside backticks are skipped (the
+utility rounds blocked an honest report on the "12" of "momentum 12-1"). A percentage is covered by the same fraction
+in the cited source (95% by 0.95: the stocks result stores the confidence as a fraction).
 Lexical only: the linter never judges whether a derived or rounded number is right.
 """
 
@@ -25,6 +28,7 @@ MARKER = re.compile(r"\[(ev|claim|run):([^\]\s]+)\]")
 _ENUMERATOR = re.compile(r"^(\s*(?:#+\s*)?(?:[-*]\s+)?)\d+(?:\.\d+)*[.)]\s", re.M)
 _SENTENCE = re.compile(r"(?<=[.!?;])\s+|\n+")
 _NUMBER = re.compile(r"(?<![\w.,])[-+]?\d+(?:[.,]\d+)*%?(?![\w])")
+_CODE = re.compile(r"`[^`\n]*`")
 
 
 def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: bool = False,
@@ -41,7 +45,7 @@ def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: boo
     violations, checked, resolved = [], 0, set()
     for sentence in _SENTENCE.split(body):
         markers = MARKER.findall(sentence)
-        bare = MARKER.sub(" ", sentence)
+        bare = _CODE.sub(" ", MARKER.sub(" ", sentence))
         numbers = _NUMBER.findall(bare)
         if not numbers:
             continue
@@ -57,6 +61,8 @@ def lint_report(memory: MemoryStore, text: str, *, as_of, cubes, cross_cube: boo
         for token in numbers:
             checked += 1
             value = number_values(token)
+            if token.endswith("%") and value and not value <= supported:
+                value = {(v / 100).normalize() for v in value}
             if not markers:
                 violations.append({"number": token, "sentence": sentence.strip()[:300], "code": "NO_PROVENANCE"})
             elif not value or not value <= supported:
