@@ -4,6 +4,8 @@ name: Relock (diagnóstico)
 
 on:
   workflow_dispatch:
+  push:
+    paths: [uv.lock, pyproject.toml, .github/workflows/relock.yml]
 
 permissions:
   contents: read
