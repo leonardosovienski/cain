@@ -41,7 +41,7 @@ wheels = [
 
 [[package]]
 name = "cain-research"
-version = "0.4.13rc14"
+version = "0.4.13rc15"
 source = { editable = "." }
 dependencies = [
     { name = "predictor-research-bundle" },
@@ -89,7 +89,7 @@ requires-dist = [
     { name = "predictor-research-bundle", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-bundle-v1.0.1rc1/predictor_research_bundle-1.0.1rc1-py3-none-any.whl" },
     { name = "predictor-research-protocol", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v2.0.0rc2/predictor_research_protocol-2.0.0rc2-py3-none-any.whl" },
     { name = "predictor-research-snapshot", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-snapshot-v1.0.2rc1/predictor_research_snapshot-1.0.2rc1-py3-none-any.whl" },
-    { name = "predictor-research-transport", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc6/predictor_research_transport-0.1.0rc6-py3-none-any.whl" },
+    { name = "predictor-research-transport", url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8,<10" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6,<8" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9,<1" },
@@ -1057,13 +1057,13 @@ wheels = [
 
 [[package]]
 name = "predictor-research-transport"
-version = "0.1.0rc6"
-source = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc6/predictor_research_transport-0.1.0rc6-py3-none-any.whl" }
+version = "0.1.0rc7"
+source = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl" }
 dependencies = [
     { name = "predictor-research-protocol" },
 ]
 wheels = [
-    { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc6/predictor_research_transport-0.1.0rc6-py3-none-any.whl", hash = "sha256:6c7e83c4d93d4802b7cdfbc569b0828cde34ccd2241b5a274003ff21c9daec33" },
+    { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl", hash = "sha256:d3dfbff4b72d717ed4f655b1c97e85ca909140dcd9ebfb17e9a51a8b089c60c2" },
 ]
 
 [package.metadata]

@@ -55,23 +55,29 @@ def _documents(database, source_root, destination):
 
 def backup(workspace, research, policy, destination, objects=None):
     destination = Path(destination).absolute()
-    safe_mkdirs(destination.parent)
-    destination.mkdir(parents=True, exist_ok=False)
-    _snapshot(workspace, destination / "workspace.db")
-    _documents(destination / "workspace.db", Path(workspace).resolve().parent / "knowledge",
-               destination)
-    _snapshot(research, destination / "research.db")
+    # Validate every source before the destination exists: a wrong path (e.g. a research database that is not
+    # there) must fail with nothing written, not leave a half-built backup directory behind.
+    for source in (workspace, research):
+        if not Path(source).is_file():
+            raise ValueError(f"backup source is not a file: {source}")
+        no_links(source)
     policy_raw = _read(Path(policy).absolute().parent, Path(policy).name)
     # Validate configuration without creating or modifying a database.
     from cain.research import ResearchService
     checker = object.__new__(ResearchService)
     checker.policy_path = Path(policy)
     checker.policy()
+    objects_root = Path(objects or os.getenv("CAIN_RESEARCH_OBJECTS") or
+                        Path(research).absolute().parent / "research-objects")
+    safe_mkdirs(destination.parent)
+    destination.mkdir(parents=True, exist_ok=False)
+    _snapshot(workspace, destination / "workspace.db")
+    _documents(destination / "workspace.db", Path(workspace).resolve().parent / "knowledge",
+               destination)
+    _snapshot(research, destination / "research.db")
     (destination / "policy.json").write_bytes(policy_raw)
     from cain.research.bundle_backup import copy_objects
-    received = copy_objects(destination / "research.db", objects or
-                            os.getenv("CAIN_RESEARCH_OBJECTS") or
-                            Path(research).absolute().parent / "research-objects", destination)
+    received = copy_objects(destination / "research.db", objects_root, destination)
     files = {path.relative_to(destination).as_posix(): _hash(destination, path.relative_to(destination).as_posix())
              for path in destination.rglob("*") if path.is_file()}
     manifest = dict(version=2, files=files, objects=received,
