@@ -11,7 +11,8 @@ can be read ``as_of``. Statuses: OPEN, TEST_PROPOSED, TEST_DEFINED, ANSWERED, NO
 
 A test the model proposes is only TEST_PROPOSED: a proposal is not a decision (the first real review
 had tests that did not fit their perspective). A named human accepts it, rewrites it, or waives the
-item. Pre-registration is refused while any mandatory item is not TEST_DEFINED, ANSWERED or WAIVED.
+item. Pre-registration is refused while any mandatory item is not TEST_DEFINED, ANSWERED or WAIVED, and
+while any mandatory perspective has no question at all (the model never answered for it).
 """
 
 from __future__ import annotations
@@ -217,19 +218,34 @@ class ReviewBoard:
     def question_map(self, domain, hypothesis_id, *, as_of) -> dict:
         items = self.items(domain, hypothesis_id, as_of=as_of)
         blocking = [i["item_id"] for i in items if i["mandatory"] and i["status"] not in RESOLVED]
+        missing = self.missing_perspectives(domain, items)
         draft = self.draft(domain, hypothesis_id)
         return {"hypothesis_id": hypothesis_id, "domain": domain, "state": draft["state"],
                 "statement": draft["statement"], "as_of": as_of, "blocking": blocking,
-                "ready_to_preregister": not blocking and bool(items),
+                "missing_perspectives": missing,
+                "ready_to_preregister": not blocking and not missing and bool(items),
                 "questions": [{k: i.get(k) for k in ("item_id", "perspective_name", "mandatory", "question", "status",
                                                      "test", "answered_by", "waiver", "not_testable_reason",
                                                      "matches")} for i in items]}
+
+    @staticmethod
+    def missing_perspectives(domain, items, perspectives: dict | None = None) -> list[str]:
+        """Mandatory perspectives of ``domain`` that asked no question: a review without them is incomplete."""
+        perspectives = perspectives or load_perspectives()
+        asked = {i["perspective"] for i in items}
+        return [p["id"] for p in perspectives["perspectives"]
+                if p.get("mandatory", True) and ("*" in p["domains"] or domain in p["domains"])
+                and p["id"] not in asked]
 
     # ------------------------------------------------------------------ pre-registration
     def preregister(self, domain, hypothesis_id, *, by) -> dict:
         view = self.question_map(domain, hypothesis_id, as_of=self.memory.now())
         if not view["questions"]:
             raise MemoryStoreError("REVIEW_MISSING", "no adversarial review was generated for this hypothesis")
+        if view["missing_perspectives"]:
+            raise MemoryStoreError("REVIEW_INCOMPLETE", "mandatory perspectives without a generated question "
+                                   f"(run `review generate` again with the model available): "
+                                   f"{view['missing_perspectives']}")
         if view["blocking"]:
             raise MemoryStoreError("CHECKLIST_UNRESOLVED",
                                    f"mandatory items without test, answer or human waiver: {view['blocking']}")

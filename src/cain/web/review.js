@@ -20,7 +20,9 @@ async function load(domain, hypothesis) {
     return;
   }
   const map = await response.json();
+  const missing = map.missing_perspectives || [];
   summary.textContent = `${map.hypothesis_id} (${map.state}): ${map.blocking.length} item(ns) obrigatório(s) bloqueando; ` +
+    (missing.length ? `${missing.length} perspectiva(s) obrigatória(s) sem pergunta gerada (${missing.join(', ')}); ` : '') +
     (map.ready_to_preregister ? 'pronto para pré-registro.' : 'pré-registro recusado até resolver.');
   for (const q of map.questions) {
     const row = document.createElement('tr');
