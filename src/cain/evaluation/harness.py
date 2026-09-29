@@ -196,14 +196,14 @@ def run_smoke(output: Path, config: EvaluationConfig | None = None,
     records = []
     routing = []
     profile_observations = defaultdict(list)
-    by_routing_mode = {"explicit_intent": [], "inferred": []}
+    by_routing_mode: dict[str, list] = {"explicit_intent": [], "inferred": []}
     try:
         for scenario in design["scenarios"]:
-            histories = {"A": [], "B": []}
+            histories: dict[str, list] = {"A": [], "B": []}
             user_id = f"{run_id}-{scenario['id']}"
             for session_index, task in enumerate(scenario["sessions"], 1):
                 session_id = f"{scenario['id']}-s{session_index}"
-                pending = {"A": [], "B": []}
+                pending: dict[str, list] = {"A": [], "B": []}
                 prompts = [{"id": "task", "prompt": task, "surface": "delegation",
                             "intent": scenario["intent"]}, *probes["style"], *probes["profile"]]
                 for prompt in prompts:

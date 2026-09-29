@@ -24,6 +24,7 @@ budget, a priority, costs or capital, and nothing it writes is trusted before th
 
 from __future__ import annotations
 
+from typing import Any
 import hashlib
 import json
 import re
@@ -241,6 +242,7 @@ def rationale_check(rationale: str, config: dict, view: dict, *, chosen: str | N
     mentioned = _named(rationale, known)
     with_evidence = {r["hypothesis_id"] for r in view["results"]}
     counts, eligibility, refusals = [], [], []
+    summary = summary or {}
     for sentence in (s for s in _SENTENCE.split(rationale) if s.strip()):
         if _REFUSED.search(sentence) and not _NOT_REFUSED.search(sentence):
             candidates = _refusal_candidates(sentence, known) or ({chosen} if chosen and _THIS.search(sentence) else set())
@@ -273,7 +275,7 @@ def _fitted(domain: str, question: str, as_of: str, allowed: list, summary: dict
     result_metrics, about 25 results passed the 7680-byte budget of an 8k-context model and every proposal failed
     before the model was asked. A provider without a budget gets the last MAX_RESULTS results."""
     while True:
-        context = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
+        context: dict[str, Any] = {"domain": domain, "question": question[:500], "as_of": as_of, "allowed_hypotheses": allowed,
                    "hypothesis_summary": summary, "results": results}
         if requests:
             context["allowed_requests"] = requests

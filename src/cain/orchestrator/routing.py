@@ -264,7 +264,7 @@ class RuleRouter:
             "additionalProperties": False}
         structured = getattr(self.llm, "generate_json", None)
         generate = (lambda prompt, context: structured(prompt, context, schema)) \
-            if structured is not None else self.llm.generate
+            if structured is not None else getattr(self.llm, "generate")
         result = generate(
             json.dumps(classifier_input, ensure_ascii=False),
             "Selecione uma capacidade registrada para atender à mensagem instruction. "

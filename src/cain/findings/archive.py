@@ -181,7 +181,7 @@ class FindingsArchive:
         matches.sort(key=lambda m: (-bool(m["same_identity"]), -m.get("rank_similarity", m["similarity"])))
         return matches
 
-    def review_candidates(self, domain: str, statement: str, *, as_of, rank, exclude: set[str] = frozenset(),
+    def review_candidates(self, domain: str, statement: str, *, as_of, rank, exclude: frozenset[str] | set[str] = frozenset(),
                           limit: int = 3) -> list[dict]:
         """Closed hypotheses closest to the statement by ``rank`` (e.g. the embedding cosine), for a human to look
         at: never a decision (``equivalent_to_closed`` does not use them) and not calibrated. ``exclude``: finding

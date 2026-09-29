@@ -113,7 +113,7 @@ def describe_rows(rows: list[dict]) -> dict[str, str]:
     """Plain-words description of each registry row, by its identity: its family and the parameters that tell it apart
     from the other rows, as ``key value`` words. A parameter with the same value in every row describes none of them
     (the universe, costs and bootstrap settings shared by a whole registry), so it is left out."""
-    params = [row.get("params") if isinstance(row.get("params"), dict) else {} for row in rows]
+    params: list[dict] = [row["params"] if isinstance(row.get("params"), dict) else {} for row in rows]
     keys = sorted({key for p in params for key in p})
     distinct = [key for key in keys if len({json.dumps(p.get(key), sort_keys=True) for p in params}) > 1]
     out = {}
@@ -136,7 +136,10 @@ def freeze_manifest(raw: bytes) -> dict[str, dict]:
     if start is None:
         raise ValueError("no ST_RESEARCH_FREEZE stopped_hypotheses manifest")
     out: dict[str, dict] = {}
-    current, item_indent, folded = None, None, None
+    current: dict = {}
+    item_indent: int | None = None
+    folded: tuple[str, int] | None = None
+    started = False
     for line in lines[start + 1:]:
         text, indent = line.strip(), len(line) - len(line.lstrip(" "))
         if folded is not None:
@@ -149,8 +152,8 @@ def freeze_manifest(raw: bytes) -> dict[str, dict]:
             continue
         item, field = _MANIFEST_ITEM.fullmatch(text), _MANIFEST_FIELD.fullmatch(text)
         if item and item_indent in (None, indent):
-            item_indent, current = indent, out.setdefault(item.group(1), {})
-        elif field and current is not None and indent > item_indent:
+            item_indent, current, started = indent, out.setdefault(item.group(1), {}), True
+        elif field and started and item_indent is not None and indent > item_indent:
             key, value = field.groups()
             current[key] = [] if value == ">" else value
             folded = (key, indent) if value == ">" else None

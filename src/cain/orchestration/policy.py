@@ -113,7 +113,7 @@ def _path_values(obj, path: str) -> list | None:
     for part in path.split("."):
         many = part.endswith("[]")
         key = part[:-2] if many else part
-        found = []
+        found: list = []
         for node in nodes:
             if not isinstance(node, dict) or key not in node:
                 return None

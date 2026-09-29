@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from hashlib import sha256
 import json
 import re
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from cain.common import Message
 from cain.common.text import tokens
@@ -63,7 +63,7 @@ def _literal_json_schema(payload: str) -> dict | None:
     if declaration is None:
         return None
     rest = payload[declaration.end():].lstrip()
-    keys = []
+    keys: list[str] = []
     decoder = json.JSONDecoder()
     while len(keys) < 8:
         try:
@@ -80,7 +80,7 @@ def _literal_json_schema(payload: str) -> dict | None:
         keys.append(key)
         rest = rest[end:].lstrip(' \t\r')
         if not rest or rest[0] in '.;:\n':
-            properties = {key: {} for key in keys}
+            properties: dict[str, dict] = {key: {} for key in keys}
             for assignment in re.finditer(
                 r'(?:\bo valor de|\be o de|\bthe value of)\s+'
                 r'("(?:[^"\\]|\\.)*")\s+(?:deve ser|must be)\s+', rest, flags=re.I,
@@ -260,7 +260,7 @@ class SearchAgent:
             )
         # One shared text budget. External passages take priority over historical
         # transcripts; distribute the remaining budget across peers, not 4000 each.
-        evidence = []
+        evidence: list[dict] = []
         remaining = self.EVIDENCE_CHAR_BUDGET
         for group in (results[:external_count], results[external_count:]):
             for offset, item in enumerate(group):
@@ -342,12 +342,13 @@ class SearchAgent:
         return answer.strip() + "\n\nFontes consultadas:\n" + references
 
     def _input_byte_budget(self) -> int | None:
-        limits = [getattr(self.llm, field, None) for field in ("max_input_bytes", "num_ctx", "num_predict")]
+        limits: list[Any] = [getattr(self.llm, field, None) for field in ("max_input_bytes", "num_ctx", "num_predict")]
         if any(value is None for value in limits):
             return None  # Legacy providers/test doubles keep the 2400-character rule.
         if any(isinstance(value, bool) or not isinstance(value, int) or value < 0 for value in limits):
             raise SearchError("Limites de entrada do LLM devem ser inteiros não negativos")
-        return min(limits[0], limits[1] - limits[2] - 256)
+        first, ctx, predict = (int(value) for value in limits)
+        return min(first, ctx - predict - 256)
 
     @staticmethod
     def _json_label(text: str, char_limit: int, byte_limit: int | None) -> str:
@@ -487,7 +488,7 @@ class ConversationAgent:
             return "You're welcome!" if english else 'De nada!'
         if automatic_social and social in ({'tudo', 'bem'}, {'como', 'vai'}):
             return "I'm ready to help. How can I help you?" if english else 'Estou pronto para ajudar. Como posso ajudar você?'
-        generate = self.llm.generate
+        generate: Any = self.llm.generate
         schema = _literal_json_schema(message.payload)
         structured = getattr(self.llm, 'generate_json', None)
         if schema is not None and callable(structured):

@@ -203,7 +203,7 @@ class SQLiteIdentityStore:
             locations.append(("session", project_id or "", session_id, ""))
         if turn_id is not None and session_id is not None:
             locations.append(("turn", project_id or "", session_id, turn_id))
-        result = []
+        result: list = []
         for scope, project, session, turn in locations:
             rows = self._connection.execute(
                 "SELECT record_json FROM scoped_preferences WHERE user_id = ? AND scope = ? "

@@ -23,6 +23,7 @@ across machines is not promised. Replaying the recorded output is what makes a p
 
 from __future__ import annotations
 
+from typing import Any
 from contextlib import contextmanager
 import contextvars
 from datetime import datetime, timezone
@@ -249,7 +250,7 @@ def missing_fields(manifest: dict, endpoint: str) -> list[str]:
         section, key = name.split(".")
         value = (manifest.get(section) or {}).get(key)
         # A model that declares no default parameters has an empty set, which is a recorded fact.
-        empty = (None, "") if name == "model.default_parameters" else (None, "", {}, [])
+        empty: tuple = (None, "") if name == "model.default_parameters" else (None, "", {}, [])
         if value in empty:
             missing.append(name)
     return missing
@@ -257,8 +258,8 @@ def missing_fields(manifest: dict, endpoint: str) -> list[str]:
 
 def _cain_identity() -> dict:
     root = Path(__file__).resolve().parents[1]
-    identity = {"package": "cain-research", "version": None, "git_commit": None, "git_dirty": None,
-                "uv_lock_sha256": None}
+    identity: dict[str, Any] = {"package": "cain-research", "version": None, "git_commit": None, "git_dirty": None,
+                                "uv_lock_sha256": None}
     try:
         from importlib import metadata
 
@@ -312,7 +313,7 @@ def _ram_bytes() -> int | None:
 
         status = _MemoryStatus()
         status.dwLength = ctypes.sizeof(_MemoryStatus)
-        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+        if getattr(ctypes, "windll").kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
             return int(status.ullTotalPhys)
     except (AttributeError, OSError):
         pass
@@ -339,7 +340,7 @@ class Recorder:
         self.store, self.mode, self.base = store, mode, base or urlopen
         self.server_parallel = server_parallel
         self._facts: dict = {}
-        self._cain = None
+        self._cain: dict | None = None
         self.last_call_id: str | None = None
         self.last_manifest: dict | None = None
 
@@ -379,7 +380,7 @@ class Recorder:
             else:
                 version, _ = self._get_json(base_url + "/api/version")
                 tags, _ = self._get_json(base_url + "/api/tags")
-                found = next((m for m in tags.get("models", []) if m.get("name") == model), {})
+                found: dict = next((m for m in tags.get("models", []) if m.get("name") == model), {})
                 show, _ = self._get_json(base_url + "/api/show", {"model": model})
                 modelfile = show.get("modelfile") or ""
                 blob = re.search(r"^FROM\s+\S*sha256[-:]([0-9a-f]{64})", modelfile, re.M)
@@ -555,7 +556,7 @@ class Recorder:
             vectors = vectors if isinstance(vectors, list) else []
             output.update(vectors=len(vectors), dimensions=len(vectors[0]) if vectors else None,
                           vectors_sha256=_hash(canonicalize(vectors)) if vectors else None)
-        context = _CONTEXT.get() or {}
+        context: dict = _CONTEXT.get() or {}
         return {
             "schema": MANIFEST_SCHEMA, "call_id": call["id"], "recorded_at": call["recorded_at"], "mode": call["mode"],
             "status": call["status"], "cache": {"key": call["cache_key"], "hit": call["cache_hit"]},

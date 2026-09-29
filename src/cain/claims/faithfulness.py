@@ -39,7 +39,7 @@ def wilson(successes: int, n: int, z: float = Z95) -> tuple[float, float] | None
     return round(centre - half, 6), round(centre + half, 6)
 
 
-def _var(values: list[float]) -> float:
+def _var(values: list[int] | list[float]) -> float:
     if len(values) < 2:
         return 0.0
     mean = sum(values) / len(values)
