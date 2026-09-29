@@ -132,7 +132,7 @@ class RuleRouter:
             r'\s*(?:oi|olá|ola|bom dia|boa tarde|boa noite|hello|hi)'
             r'(?:[ ,]+cain)?(?:[ ,!.]+(?:tudo bem|tudo bom|como vai))?[.!?\s]*', payload, flags=re.I,
         ):
-            return self._selected("resumo", registry, "social_greeting")
+            return self._selected("conversa", registry, "social_greeting")
         head = strip_preference_scope_marks(instruction_head(payload))
         from cain.agents.arithmetic import sequence_request
 

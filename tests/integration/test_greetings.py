@@ -18,6 +18,7 @@ def test_greeting_avoids_model_and_retrieval_and_is_logged(tmp_path, payload):
                     retrieval_factory=no_retrieval) as cain:
         result = cain.run('test', 's', payload, run_id='greeting')
         assert result.response == 'Oi! Como posso ajudar você?'
+        assert result.selected_agent == 'conversa'
         events = list(cain.decision_log.export('greeting'))
         assert events[-1].reason == 'social_greeting'
         assert events[-1].status == 'completed'
