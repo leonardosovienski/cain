@@ -297,4 +297,16 @@ class Orchestrator:
                                     (self.domain,)).fetchall()
         return [{"domain": self.domain, "episodes": [dict(r) | {"outbox": outbox.get(r["task_id"])} for r in rows],
                  "inbox": [dict(r) for r in inbox], "rejections": [dict(r) for r in rejections],
-                 "memory": self.store.memory.verify()}]
+                 "memory": self._memory_view()}]
+
+    def _memory_view(self) -> dict:
+        """Integrity of the (single, hash-chained) memory log plus the facts of this domain's cube only.
+
+        The log head and its entry count belong to every domain at once (another domain's ingest moves them), so
+        the per-domain view names the cube and counts its facts instead of exposing the global head.
+        """
+        check = self.store.memory.verify()
+        head = self.store.memory_head()
+        facts = [] if head is None else self.store.memory.facts(as_of=head, cubes=[self.domain])
+        return {"status": check["status"], "projection": check["projection"], "broken_at": check["broken_at"],
+                "cube": self.domain, "facts": len(facts), "log": "shared across domains"}

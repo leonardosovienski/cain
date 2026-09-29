@@ -21,10 +21,17 @@ proposta (cain-proposal/1)
 | `dispatch --domain D --state S --spool DIR [--resend]` | publica as tasks pendentes no spool (write-once) |
 | `retry --domain D --state S --spool DIR --task-id ID` | pede reenvio de uma task cujo único resultado é RETRYABLE |
 | `ingest --domain D --state S --spool DIR` | valida e ingere os resultados do domínio; grava fatos na memória |
-| `episodes --domain D --state S` | episódios, outbox, inbox, rejeições e `verify` da memória |
+| `episodes --domain D --state S` | episódios, outbox, inbox, rejeições e `memory` (integridade do log compartilhado — `status`/`projection`/`broken_at` — mais `cube` e `facts` só do domínio; o head global do log não aparece na visão por domínio) |
 
 Cada comando é um processo e cada passo é uma transação; os comandos são idempotentes (mesma proposta → mesmo episódio
 e receipt; mesmos bytes → nada novo). Pontos de falha de qualificação: `CAIN_ORCHESTRATION_FAULT=<ponto>`.
+
+### Códigos de saída
+
+`0` = tudo aceito; `2` = **algo foi rejeitado** (um resultado, uma task ou um pedido inválido), mesmo que o resto da
+passada tenha sido entregue ou ingerido — o operador lê as linhas `rejected` da saída, não trata o `2` como falha
+da passada inteira; `86` = falha injetada (`CAIN_ORCHESTRATION_FAULT`, só em teste); outros = erro. O consumidor
+(`predictor-research-consumer`) segue a mesma convenção (`2` = rejeição parcial, `6` = `CONSUMER_BUSY`).
 
 ## DecisionPolicy (`cain.orchestration.policy`)
 
