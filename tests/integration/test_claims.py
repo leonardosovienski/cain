@@ -406,3 +406,21 @@ def test_cli_paths(memory, clock, tmp_path, capsys, monkeypatch):
     assert json.loads(capsys.readouterr().out)["status"] == "blocked"
     report.write_text(f"It covered 49 periods [claim:{claim['id']}].", encoding="utf-8")
     assert main(["claims", "--db", db, "lint", str(report), "--as-of", "now", "--cube", "stocks"]) == 0
+
+
+def test_verify_and_golden_without_the_verify_extra_fail_with_a_message(memory, clock, tmp_path, capsys, monkeypatch):
+    """Without torch/transformers the CLI says which extra is missing (exit 1), it never shows a traceback."""
+    import sys
+
+    from cain.claims.verifiers import load_default_pair
+
+    monkeypatch.setitem(sys.modules, "torch", None)  # ``import torch`` now raises ImportError
+    with pytest.raises(RuntimeError, match="extra 'verify'.*missing: torch"):
+        load_default_pair(tmp_path)
+    db = str(tmp_path / "cli.db")
+    assert main(["claims", "--db", db, "verify", "claim:missing"]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("Cain: ") and "uv sync --extra verify" in err and "Traceback" not in err
+    assert main(["claims", "--db", db, "golden"]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("Cain: ") and "torch" in err

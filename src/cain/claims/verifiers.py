@@ -93,8 +93,27 @@ class MiniCheckVerifier:
         return float(self.torch.softmax(logits[:, [3, 209]], dim=-1)[0, 1])
 
 
+VERIFY_EXTRA_MODULES = ("torch", "safetensors", "transformers")
+
+
+def require_verify_extra() -> None:
+    """Fail closed, and legibly, when the optional ``verify`` extra is not installed."""
+    import importlib
+
+    missing = []
+    for name in VERIFY_EXTRA_MODULES:
+        try:
+            importlib.import_module(name)
+        except ImportError:
+            missing.append(name)
+    if missing:
+        raise RuntimeError("the local claim verifiers need the optional extra 'verify' "
+                           f"(missing: {', '.join(missing)}); install it with `uv sync --extra verify`")
+
+
 def load_default_pair(models_dir=None) -> list:
     """The two verifiers named by the versioned policy, with the policy's thresholds."""
+    require_verify_extra()
     rules = policy()
     return [HHEMVerifier(models_dir, threshold=rules["thresholds"][HHEM_REPO]),
             MiniCheckVerifier(models_dir, threshold=rules["thresholds"][MINICHECK_REPO])]

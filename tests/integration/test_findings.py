@@ -305,3 +305,47 @@ def test_cli_ingest_list_and_check(tmp_path, capsys):
     assert main([*base, "check", "--domain", "brasileirao", "--statement", "whatever", "--as-of", "now",
                  "--trial-id", "h1-edge"]) == 0
     assert json.loads(capsys.readouterr().out)["equivalent_to_closed"] is True
+
+
+def test_cli_invalid_inputs_are_refused_with_a_message_not_a_traceback(tmp_path, capsys):
+    """Missing file at the commit, unknown loop and a malformed procedure file: exit 1 and a `Cain:` line."""
+    from cain.cli import main
+
+    repo = repo_with(tmp_path, [])
+    db = str(tmp_path / "cli-memory.db")
+    base = ["findings", "--db", db]
+    assert main([*base, "ingest-registry", "--domain", "brasileirao", "--repo", str(repo), "--commit", "HEAD",
+                 "--path", "data/nao-existe.json"]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("Cain: path 'data/nao-existe.json' not found at commit") and "Traceback" not in err
+    assert main([*base, "ingest-registry", "--domain", "brasileirao", "--repo", str(repo), "--commit", "no-such-ref",
+                 "--path", "data/trials.v2.json"]) == 1
+    assert capsys.readouterr().err.startswith("Cain: commit 'no-such-ref' not found in repository")
+    assert main([*base, "ingest-registry", "--domain", "brasileirao", "--repo", str(tmp_path / "missing"),
+                 "--commit", "HEAD", "--path", "data/trials.v2.json"]) == 1
+    assert capsys.readouterr().err.startswith("Cain: commit 'HEAD' not found in repository")
+
+    assert main([*base, "ingest-loop", "--domain", "brasileirao", "--loop-db", str(tmp_path / "inexistente.db"),
+                 "--loop-id", "loop:x"]) == 1
+    assert capsys.readouterr().err.startswith("Cain: loop 'loop:x' not found in ledger")
+
+    proc = tmp_path / "proc.json"
+    proc.write_text(json.dumps({"procedure_id": "p1", "name": "p1", "code_sha256": H, "data_sha256": H,
+                                "metrics": {}, "tests": {"sha256": H, "passed": 1, "failed": 0},
+                                "walk_forward": {"sha256": H, "passed": True}, "source": source()}), encoding="utf-8")
+    assert main([*base, "add-procedure", "--domain", "brasileirao", "--file", str(proc)]) == 1
+    err = capsys.readouterr().err
+    assert "invalid procedure (unknown keys: procedure_id)" in err and "Traceback" not in err
+    proc.write_text(json.dumps({"name": ""}), encoding="utf-8")
+    assert main([*base, "add-procedure", "--domain", "brasileirao", "--file", str(proc)]) == 1
+    err = capsys.readouterr().err
+    assert "missing keys: code_sha256, data_sha256, metrics, tests, walk_forward, source" in err
+    assert "'name' must be a non-empty string" in err
+    proc.write_text("[1, 2]", encoding="utf-8")
+    assert main([*base, "add-procedure", "--domain", "brasileirao", "--file", str(proc)]) == 1
+    assert "a procedure is a JSON object" in capsys.readouterr().err
+    proc.write_text("{not json", encoding="utf-8")
+    assert main([*base, "add-procedure", "--domain", "brasileirao", "--file", str(proc)]) == 1
+    assert capsys.readouterr().err.startswith("Cain: ")
+    assert main([*base, "add-procedure", "--domain", "brasileirao", "--file", str(tmp_path / "nope.json")]) == 1
+    assert capsys.readouterr().err.startswith("Cain: ")

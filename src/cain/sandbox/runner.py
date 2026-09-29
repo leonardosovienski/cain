@@ -68,8 +68,18 @@ class DockerSandbox:
         return subprocess.run([*self.docker, *args], capture_output=True, text=True, timeout=timeout, check=check)
 
     def image_identity(self) -> dict:
-        done = self._docker("image", "inspect", self.policy.image, "--format", "{{json .}}")
-        info = json.loads(done.stdout)
+        try:
+            done = self._docker("image", "inspect", self.policy.image, "--format", "{{json .}}")
+        except subprocess.CalledProcessError as exc:
+            reason = " ".join((exc.stderr or exc.stdout or "").split())[:300] or f"exit status {exc.returncode}"
+            raise RuntimeError(f"docker could not inspect image {self.policy.image!r} "
+                               f"(is the engine running and the image pulled?): {reason}") from exc
+        except subprocess.TimeoutExpired as exc:
+            raise RuntimeError(f"docker did not answer `image inspect {self.policy.image}` in time") from exc
+        try:
+            info = json.loads(done.stdout)
+        except ValueError as exc:
+            raise RuntimeError(f"docker returned an unreadable description of image {self.policy.image!r}") from exc
         return {"reference": self.policy.image, "id": info["Id"], "repo_digests": info.get("RepoDigests") or []}
 
     def command(self, name: str, workspace: Path, argv: list[str], data_ro=()) -> list[str]:
@@ -110,6 +120,11 @@ class DockerSandbox:
         inspected = self._docker("inspect", name, "--format", "{{json .State}}", check=False)
         if inspected.returncode == 0:
             state = json.loads(inspected.stdout)
+        elif status == "OK" and process.returncode not in (0, None):
+            # No container exists and the CLI itself failed: docker never ran the attempt (engine
+            # down, image missing, invalid flags). That is not an attempt outcome; it is an error.
+            reason = " ".join((stderr or stdout).split())[:300] or f"exit status {process.returncode}"
+            raise RuntimeError(f"docker could not start the attempt container: {reason}")
         diff = self._docker("diff", name, check=False).stdout.split("\n") if inspected.returncode == 0 else []
         self._docker("rm", "-f", name, check=False)
         exit_code = state.get("ExitCode")

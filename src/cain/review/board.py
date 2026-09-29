@@ -138,7 +138,11 @@ class ReviewBoard:
                 created.append(item["item_id"])
         if self.archive is not None:
             created.append(self._closed_item(domain, draft, closed_rank))
-        return {"hypothesis_id": hypothesis_id, "items": created, "failures": failures,
+        # When every perspective failed, no review question exists: that is a failed generation,
+        # reported as such (the deterministic closed-archive item alone is not a review).
+        answered = len(created) - (1 if self.archive is not None else 0)
+        status = "generation_failed" if failures and not answered else "generated"
+        return {"hypothesis_id": hypothesis_id, "status": status, "items": created, "failures": failures,
                 "perspectives_sha256": perspectives["sha256"]}
 
     def _closed_item(self, domain, draft, rank) -> str:

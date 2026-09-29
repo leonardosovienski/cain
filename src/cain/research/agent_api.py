@@ -10,6 +10,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from cain.llm import OllamaLLM, urlopen
+from urllib.error import URLError
 from urllib.request import Request
 from cain.llm.streaming import require_local, stream, validate_images
 from cain.research.analysis import entities, search
@@ -70,18 +71,31 @@ class StreamRequest(BaseModel):
 def mount(app, service_factory, validate_context, provider_factory, generation_lock):
     def models(provider):
         require_local(provider)
-        with urlopen(Request(provider.base_url.rstrip("/") + "/api/tags"), timeout=5) as response:
-            raw = response.read(1_000_001)
+        try:
+            with urlopen(Request(provider.base_url.rstrip("/") + "/api/tags"), timeout=5) as response:
+                raw = response.read(1_000_001)
+        except (URLError, TimeoutError, OSError) as exc:
+            # The provider is configured but not answering: an explicit 503, never a 500.
+            raise HTTPException(503, f"Ollama indisponível em {provider.base_url}: {exc}") from exc
         if len(raw) > 1_000_000:
             raise ValueError("Model inventory exceeds limit")
+        try:
+            inventory = json.loads(raw)
+        except ValueError as exc:
+            raise ValueError("Model inventory is not valid JSON") from exc
+        if not isinstance(inventory, dict) or not isinstance(inventory.get("models", []), list):
+            raise ValueError("Model inventory has an unexpected shape")
         return [{"name": m["name"], "digest": m.get("digest"), "size": m.get("size"),
                  "capabilities": m.get("capabilities", [])}
-                for m in json.loads(raw).get("models", [])]
+                for m in inventory.get("models", [])]
 
     @app.get("/assistant/models")
     def available_models():
         provider = provider_factory()
-        return {"configured": provider.model, "models": models(provider), "inference": "not_probed"}
+        # The inventory check runs first: a provider without an Ollama endpoint (e.g. ``fake``) is
+        # refused with 400 before anything else is read from it.
+        listed = models(provider)
+        return {"configured": getattr(provider, "model", None), "models": listed, "inference": "not_probed"}
 
     def prepare(request):
         validate_context(request.user_id, request.project_id)

@@ -166,3 +166,37 @@ def test_cli_open_generate_map_waive_and_preregister(tmp_path, capsys, monkeypat
     assert main([*base, "map", "--domain", "brasileirao", "H11b", "--as-of", "now"]) == 0
     assert json.loads(capsys.readouterr().out)["ready_to_preregister"] is True
     assert main([*base, "preregister", "--domain", "brasileirao", "H11b", "--by", "leo"]) == 0
+
+
+def test_generate_fails_when_no_perspective_answers(tmp_path, capsys, monkeypatch):
+    """With the model unavailable every perspective fails: the CLI exits 1 and the map has no question."""
+    from cain.cli import main
+    from cain.llm import LLMError
+    import cain.providers
+
+    @dataclass
+    class Unavailable(Reviewer):
+        answers: int = 0  # how many perspectives still get an answer before the model "goes away"
+
+        def generate_json(self, prompt, context, schema):
+            if self.answers <= 0:
+                raise LLMError("Ollama indisponível")
+            self.answers -= 1
+            return super().generate_json(prompt, context, schema)
+
+    draft = tmp_path / "draft.json"
+    draft.write_text(json.dumps(DRAFT), encoding="utf-8")
+    db = str(tmp_path / "cli-memory.db")
+    monkeypatch.setattr(cain.providers, "configured_llm", lambda settings: Unavailable())
+    base = ["review", "--db", db]
+    assert main([*base, "open", "--domain", "brasileirao", "--file", str(draft)]) == 0
+    capsys.readouterr()
+    assert main([*base, "generate", "--domain", "brasileirao", "H11b"]) == 1
+    out = json.loads(capsys.readouterr().out)
+    assert out["status"] == "generation_failed" and len(out["failures"]) == 5
+    assert out["items"] == ["H11b:closed-archive:1"]
+    # Partial success is still a generation: one perspective answered.
+    monkeypatch.setattr(cain.providers, "configured_llm", lambda settings: Unavailable(answers=1))
+    assert main([*base, "generate", "--domain", "brasileirao", "H11b"]) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["status"] == "generated" and len(out["failures"]) == 4 and len(out["items"]) == 2

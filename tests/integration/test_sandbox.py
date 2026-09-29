@@ -261,3 +261,30 @@ def test_attacks_against_a_real_engine(tmp_path):
     assert rows["benign_candidate"]["verdict"] == "VALID"
     assert rows["infinite_loop"]["status"] == "TIMEOUT" and rows["memory_hog"]["status"] == "OOM_KILLED"
     assert evaluator.read_text() == "def score(x):\n    return x\n"
+
+
+def test_a_stopped_engine_is_reported_without_a_traceback(fake, monkeypatch, capsys):
+    """docker is installed but its daemon is down: `sandbox run` and `sandbox attacks` end with `Cain:` and exit 1."""
+    import cain.sandbox.runner as runner
+    from cain.cli import main
+
+    tmp_path, evaluator = fake
+    monkeypatch.setenv("FAKE_DOCKER_ENGINE_DOWN", "1")
+    with pytest.raises(RuntimeError, match="docker could not inspect image .*Cannot connect to the Docker daemon"):
+        sandbox().image_identity()
+    with pytest.raises(RuntimeError, match="docker could not start the attempt container: Cannot connect"):
+        sandbox().run(tmp_path, ["python", "candidate.py"])
+    real = runner.DockerSandbox
+    monkeypatch.setattr(runner, "DockerSandbox", lambda policy, docker, path_mapper: real(
+        policy, docker=[sys.executable, str(HERE / "fake_docker.py")], path_mapper=path_mapper))
+    assert main(["sandbox", "--image", IMAGE, "--workspace-root", str(tmp_path), "run",
+                 "--candidate", str(candidate(tmp_path, "print(1)\n")), "--evaluator-file", str(evaluator)]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("Cain: docker could not inspect image") and "Traceback" not in err
+    data = tmp_path / "allowed.csv"
+    data.write_text("value\n1\n", encoding="utf-8")
+    assert main(["sandbox", "--image", IMAGE, "--workspace-root", str(tmp_path), "attacks",
+                 "--evaluator-file", str(evaluator), "--holdout-file", str(evaluator), "--allowed-data", str(data)]) == 1
+    assert capsys.readouterr().err.startswith("Cain: docker could not inspect image")
+    # Only the direct ``run`` above reached docker; the two CLI commands stopped at the image check.
+    assert len([c for c in calls(tmp_path) if c[0] == "run"]) == 1
