@@ -61,8 +61,10 @@ extend-exclude = ["docs"]
 select = ["E4", "E7", "E9", "F"]
 
 [tool.mypy]
-# Informational only (CI job "typecheck" never blocks). Debt recorded on 2026-09-24:
-# 49 errors in 13 files, mostly var-annotated (15), arg-type (10), assignment (6).
+# Informational only (CI job "typecheck" never blocks). Debt recorded on 2026-09-29
+# (mypy 2.3.1): 81 errors in 24 files, mostly var-annotated (21), arg-type (12),
+# index (11), assignment (11). It was 49 errors in 13 files on 2026-09-24; the debt grows
+# with every new module and is not being paid down.
 python_version = "3.11"
 ignore_missing_imports = true
 files = ["src/cain"]
