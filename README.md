@@ -66,7 +66,7 @@ Isso não afirma inexistência na fonte completa nem estado atual do produtor.
 ## Capacidades e limites
 
 - Conversas, projetos, documentos, histórico, feedback e preferências por usuário, projeto, conversa ou resposta.
-- Conversa cotidiana com o modelo local (`--intent conversa` na CLI; `conversa` ou `chat` na API). Cálculos simples como “Quanto é 2 + 2?” usam aritmética limitada e exata, sem geração; frações são exibidas sem arredondamento.
+- Conversa cotidiana com o modelo local (`--intent conversa` na CLI; `conversa` ou `chat` na API). Sem intenção explícita, cálculos simples como “Quanto é 2 + 2?” usam aritmética limitada e exata, sem geração; frações são exibidas sem arredondamento. Uma intenção forçada (`--intent conversa`, `"intent":"chat"`) desliga esse atalho e envia a pergunta ao modelo.
 - Busca lexical/híbrida, citações, inspeção de fontes e recebimento de Snapshot e Bundle com autorização por operação.
 - Historian: campos literais completos para listas explícitas; citações estruturadas limitadas aos trechos disponíveis quando o conjunto cabe no orçamento.
 - Workflows com checkpoints, cancelamento e retomada; API, CLI, web e MCP locais.
