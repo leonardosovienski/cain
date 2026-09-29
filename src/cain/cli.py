@@ -155,8 +155,9 @@ def main(argv=None) -> int:
             return 0
         if args.command == "review":
             from cain.review.cli import execute as execute_review
-            _write(execute_review(args))
-            return 0
+            result = execute_review(args)
+            _write(result)
+            return 1 if isinstance(result, dict) and result.get("status") == "generation_failed" else 0
         if args.command == "findings":
             from cain.findings.cli import execute as execute_findings
             _write(execute_findings(args))

@@ -166,3 +166,56 @@ def test_cli_open_generate_map_waive_and_preregister(tmp_path, capsys, monkeypat
     assert main([*base, "map", "--domain", "brasileirao", "H11b", "--as-of", "now"]) == 0
     assert json.loads(capsys.readouterr().out)["ready_to_preregister"] is True
     assert main([*base, "preregister", "--domain", "brasileirao", "H11b", "--by", "leo"]) == 0
+
+
+def test_generate_fails_when_no_perspective_answers(tmp_path, capsys, monkeypatch):
+    """With the model unavailable every perspective fails: the CLI exits 1 and the map has no question."""
+    from cain.cli import main
+    from cain.llm import LLMError
+    import cain.providers
+
+    @dataclass
+    class Unavailable(Reviewer):
+        answers: int = 0  # how many perspectives still get an answer before the model "goes away"
+
+        def generate_json(self, prompt, context, schema):
+            if self.answers <= 0:
+                raise LLMError("Ollama indisponível")
+            self.answers -= 1
+            return super().generate_json(prompt, context, schema)
+
+    draft = tmp_path / "draft.json"
+    draft.write_text(json.dumps(DRAFT), encoding="utf-8")
+    db = str(tmp_path / "cli-memory.db")
+    monkeypatch.setattr(cain.providers, "configured_llm", lambda settings: Unavailable())
+    base = ["review", "--db", db]
+    assert main([*base, "open", "--domain", "brasileirao", "--file", str(draft)]) == 0
+    capsys.readouterr()
+    assert main([*base, "generate", "--domain", "brasileirao", "H11b"]) == 1
+    out = json.loads(capsys.readouterr().out)
+    assert out["status"] == "generation_failed" and len(out["failures"]) == 5
+    assert out["items"] == ["H11b:closed-archive:1"]
+    # The deterministic archive item alone is not a review: the map is not ready and preregister refuses.
+    assert main([*base, "map", "--domain", "brasileirao", "H11b", "--as-of", "now"]) == 0
+    view = json.loads(capsys.readouterr().out)
+    assert view["ready_to_preregister"] is False and view["blocking"] == []
+    assert view["missing_perspectives"] == ["overfitting", "temporal-leakage", "costs-execution", "regime-change"]
+    assert main([*base, "preregister", "--domain", "brasileirao", "H11b", "--by", "leo"]) == 1
+    err = capsys.readouterr().err
+    assert err.startswith("Cain: REVIEW_INCOMPLETE") and "regime-change" in err
+    # Partial success is still a generation: one perspective answered, the other mandatory ones are still missing.
+    monkeypatch.setattr(cain.providers, "configured_llm", lambda settings: Unavailable(answers=1))
+    assert main([*base, "generate", "--domain", "brasileirao", "H11b"]) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["status"] == "generated" and len(out["failures"]) == 4 and len(out["items"]) == 2
+    assert main([*base, "map", "--domain", "brasileirao", "H11b", "--as-of", "now"]) == 0
+    assert json.loads(capsys.readouterr().out)["missing_perspectives"] == ["temporal-leakage", "costs-execution",
+                                                                            "regime-change"]
+    assert main([*base, "preregister", "--domain", "brasileirao", "H11b", "--by", "leo"]) == 1
+    assert capsys.readouterr().err.startswith("Cain: REVIEW_INCOMPLETE")
+    # A second generate with the model back fills the rest; the optional perspective is never required.
+    monkeypatch.setattr(cain.providers, "configured_llm", lambda settings: Unavailable(answers=4))
+    assert main([*base, "generate", "--domain", "brasileirao", "H11b"]) == 0
+    capsys.readouterr()
+    assert main([*base, "map", "--domain", "brasileirao", "H11b", "--as-of", "now"]) == 0
+    assert json.loads(capsys.readouterr().out)["missing_perspectives"] == []

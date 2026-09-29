@@ -28,6 +28,11 @@ args = sys.argv[1:]
 with open(os.environ["FAKE_DOCKER_LOG"], "a", encoding="utf-8") as log:
     log.write(json.dumps(args) + "\n")
 command = args[0]
+if os.environ.get("FAKE_DOCKER_ENGINE_DOWN"):
+    # The CLI is installed but the engine is not running: every command fails like the real one.
+    print("Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?",
+          file=sys.stderr)
+    sys.exit(1)
 if command == "image":
     print(json.dumps({"Id": "sha256:" + "f" * 64, "RepoDigests": ["python@sha256:" + "e" * 64]}))
 elif command == "run":

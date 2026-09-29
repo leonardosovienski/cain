@@ -70,6 +70,27 @@ def register(sub):
     add.add_argument("--file", type=Path, required=True)
 
 
+PROCEDURE_REQUIRED = ("name", "code_sha256", "data_sha256", "metrics", "tests", "walk_forward", "source")
+PROCEDURE_OPTIONAL = ("source_trial",)
+
+
+def _check_procedure_spec(spec, path) -> None:
+    """The procedure file is validated here, before ``record_procedure`` sees its fields."""
+    if not isinstance(spec, dict):
+        raise ValueError(f"{path}: a procedure is a JSON object with the keys {', '.join(PROCEDURE_REQUIRED)}")
+    problems = []
+    missing = [key for key in PROCEDURE_REQUIRED if key not in spec]
+    unknown = sorted(set(spec) - set(PROCEDURE_REQUIRED) - set(PROCEDURE_OPTIONAL))
+    if missing:
+        problems.append(f"missing keys: {', '.join(missing)}")
+    if unknown:
+        problems.append(f"unknown keys: {', '.join(unknown)}")
+    if "name" in spec and not (isinstance(spec["name"], str) and spec["name"].strip()):
+        problems.append("'name' must be a non-empty string")
+    if problems:
+        raise ValueError(f"{path}: invalid procedure ({'; '.join(problems)})")
+
+
 def execute(args):
     from hashlib import sha256
 
@@ -148,5 +169,6 @@ def execute(args):
                                                  include_demoted=args.include_demoted)}
     if cmd == "add-procedure":
         spec = json.loads(args.file.read_text(encoding="utf-8"))
+        _check_procedure_spec(spec, args.file)
         return archive.record_procedure(args.domain, spec.pop("name"), **spec)
     raise ValueError(f"unknown findings command {cmd!r}")

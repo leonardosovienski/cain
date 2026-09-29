@@ -168,3 +168,24 @@ def test_abstention_is_only_accepted_after_a_failed_generation(setup, tmp_path):
         assert abstained["steps"][-1]["result"] == {"status": "abstained_by_operator", "reason": "model output unusable",
                                                      "model_calls": 0, "accepted_model_output": False,
                                                      "previous_failure_retained": True}
+
+
+def test_model_inventory_without_a_model_is_an_explicit_error_not_a_500(setup, tmp_path):
+    """No provider answers: the route says so with 400/503 and a JSON detail, never a bare 500."""
+    import socket
+
+    service, _, _, _, policy = setup
+    fake = tmp_path / "fake.toml"
+    fake.write_text('[llm]\nprovider="fake"\nmodel="qwen3.5:4b"\n[search]\npaths=[]\nallow_public_urls=false\n'
+                    '[orchestration]\nllm_routing=false\n', encoding="utf-8")
+    with TestClient(create_app(tmp_path / "w.db", config_path=fake, research_policy=policy,
+                              research_db=service.path, trusted_hosts=("testserver",))) as client:
+        response = client.get("/assistant/models")
+        assert response.status_code == 400 and "loopback" in response.json()["detail"]
+    with socket.socket() as probe:  # a loopback port nobody listens on: Ollama configured but not running
+        probe.bind(("127.0.0.1", 0))
+        port = probe.getsockname()[1]
+    with ollama_client(tmp_path, f"http://127.0.0.1:{port}", policy, service.path) as down:
+        response = down.get("/assistant/models")
+        assert response.status_code == 503
+        assert response.json()["detail"].startswith("Ollama indisponível em http://127.0.0.1:")

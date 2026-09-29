@@ -64,10 +64,11 @@ def run_attempt(sandbox, candidate: Path, *, evaluator_files, argv=("python", "c
     shutil.copytree(candidate, workspace, dirs_exist_ok=True)
     for item in workspace.rglob("*"):
         item.chmod(0o777 if item.is_dir() else 0o666)
+    image = sandbox.image_identity()  # first: an engine that is down or an image that is absent stops here
     before = hashes(evaluator_files)
     result = sandbox.run(workspace, list(argv), data_ro=data_ro)
     after = hashes(evaluator_files)
-    manifest = {"attempt_id": attempt_id, "image": sandbox.image_identity(), "workspace": str(workspace),
+    manifest = {"attempt_id": attempt_id, "image": image, "workspace": str(workspace),
                 "evaluator": {"before": before, "after": after, "unchanged": before == after},
                 "run": result, "alerts": []}
     problems = []

@@ -73,12 +73,25 @@ def _owned(value: dict, domain: str, schemas: dict, what: str) -> None:
         raise ValueError(f"{what} of domain {owner!r} cannot be ingested as {domain!r}")
 
 
+def _git_reason(stderr) -> str:
+    text = stderr.decode("utf-8", "replace") if isinstance(stderr, bytes) else (stderr or "")
+    return " ".join(text.split())[:300] or "git exited with an error"
+
+
 def read_source(repo: str | Path, commit: str, path: str) -> tuple[bytes, dict]:
     """Bytes of ``path`` at ``commit`` of a local git repository, with its provenance."""
-    resolved = subprocess.run(["git", "-C", str(repo), "rev-parse", "--verify", f"{commit}^{{commit}}"],
-                              capture_output=True, text=True, check=True).stdout.strip()
-    raw = subprocess.run(["git", "-C", str(repo), "show", f"{resolved}:{path}"], capture_output=True,
-                         check=True).stdout
+    try:
+        resolved = subprocess.run(["git", "-C", str(repo), "rev-parse", "--verify", f"{commit}^{{commit}}"],
+                                  capture_output=True, text=True, check=True).stdout.strip()
+    except subprocess.CalledProcessError as exc:
+        raise ValueError(f"commit {commit!r} not found in repository {str(repo)!r}: "
+                         f"{_git_reason(exc.stderr)}") from exc
+    try:
+        raw = subprocess.run(["git", "-C", str(repo), "show", f"{resolved}:{path}"], capture_output=True,
+                             check=True).stdout
+    except subprocess.CalledProcessError as exc:
+        raise ValueError(f"path {path!r} not found at commit {resolved[:12]} of repository {str(repo)!r}: "
+                         f"{_git_reason(exc.stderr)}") from exc
     return raw, {"repo": Path(repo).name, "commit": resolved, "path": path, "sha256": sha256(raw).hexdigest()}
 
 
@@ -344,6 +357,8 @@ def ingest_ledger_index(archive: FindingsArchive, domain: str, raw: bytes, sourc
 def ingest_loop(archive: FindingsArchive, domain: str, ledger, loop_id: str) -> dict:
     """The outcome of a CAIN research loop as a finding (negative when nothing beat the baseline)."""
     events = ledger.events(loop_id)
+    if not events or events[0].get("kind") != "loop.started":
+        raise ValueError(f"loop {loop_id!r} not found in ledger {ledger.path}")
     started = events[0]["body"]
     stopped = next((e for e in events if e["kind"] == "loop.stopped"), None)
     if stopped is None:
