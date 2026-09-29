@@ -439,6 +439,11 @@ class ConversationAgent:
         if message.metadata.get('route_reason') == 'conversation_rule:arithmetic':
             from cain.agents.arithmetic import answer
             return answer(message.payload)
+        # A bare greeting is everyday conversation with a fixed reply; no model call.
+        if message.metadata.get('route_reason') == 'social_greeting':
+            if message.metadata.get('preferences', {}).get('language') == 'en':
+                return 'Hello! How can I help you?'
+            return 'Oi! Como posso ajudar você?'
         social = tokens(message.payload)
         english = message.metadata.get('preferences', {}).get('language') == 'en'
         prompt = _generation_prompt(message)
@@ -544,10 +549,6 @@ class SummaryAgent:
     def handle(self, message: Message) -> str:
         if message.metadata.get("route_reason") == "preference_confirmation":
             return self._confirm_preferences(message.metadata.get("preferences", {}))
-        if message.metadata.get("route_reason") == "social_greeting":
-            if message.metadata.get("preferences", {}).get("language") == "en":
-                return "Hello! How can I help you?"
-            return "Oi! Como posso ajudar você?"
         explicit = re.search(r'\bresuma(?:\s+(?:o\s+)?texto)?\s*:\s*(.+)\Z',
                              message.payload, flags=re.I | re.S)
         preferences = message.metadata.get('preferences', {})
