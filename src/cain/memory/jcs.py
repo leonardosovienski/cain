@@ -30,7 +30,7 @@ def _number(value) -> str:
     digits_tuple, exponent = Decimal(repr(abs(value))).as_tuple()[1:]
     digits = "".join(map(str, digits_tuple)).lstrip("0") or "0"
     trailing = len(digits) - len(digits.rstrip("0"))
-    digits, exponent = digits.rstrip("0") or "0", exponent + trailing
+    digits, exponent = digits.rstrip("0") or "0", int(exponent) + trailing
     k = len(digits)
     n = exponent + k  # value = 0.digits x 10**n
     if k <= n <= 21:

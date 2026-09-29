@@ -132,7 +132,7 @@ class ResultEgressPolicy:
         is_local = base_url in {"local", "http://127.0.0.1", "http://localhost"}
         if classification in policy["local_only_classifications"] and not is_local:
             raise PermissionError("EGRESS_DENIED: classification is local-only")
-        redactions = []
+        redactions: list = []
         sanitized = self._redact(payload, set(policy["redact_fields"]), redactions)
         encoded = json.dumps(sanitized, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
         if len(encoded.encode("utf-8")) > policy["max_context_bytes"]:

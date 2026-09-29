@@ -19,7 +19,7 @@ def installed_identity() -> dict:
         version = metadata.version('cain-research')
     except metadata.PackageNotFoundError:
         version = None
-    dependencies = {}
+    dependencies: dict[str, dict | None] = {}
     for package, distribution in (('research_bundle', 'predictor-research-bundle'),
                                   ('research_snapshot', 'predictor-research-snapshot')):
         try:

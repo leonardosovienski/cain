@@ -152,8 +152,8 @@ def functional_checks(records: list[dict], plan: list[dict], process_mode: bool)
     by_id = {record["stage_id"]: record for record in records}
     checks = []
     for stage in plan:
-        record = by_id.get(stage["id"])
-        complete = record is not None and record["status"] == "completed"
+        record = by_id.get(stage["id"]) or {}
+        complete = bool(record) and record["status"] == "completed"
         checks.append(_check(stage["id"] + ":completed", complete,
                              "Runtime completed the planned request" if complete else
                              "Request failed or was not run; consult raw/failure records", [stage["id"]]))

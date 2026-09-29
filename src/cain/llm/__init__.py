@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from hashlib import sha256
 import json
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
@@ -104,7 +104,7 @@ class OllamaLLM:
                 f"Pedido e contexto somam {input_bytes} bytes; limite configurado "
                 f"{effective_budget}. Reduza o texto ou ajuste o orçamento de contexto."
             )
-        body = {
+        body: dict[str, Any] = {
             "model": self.model,
             "prompt": prompt,
             "system": context,
@@ -125,7 +125,8 @@ class OllamaLLM:
             method="POST",
         )
         try:
-            with (self.transport or urlopen)(request, timeout=self.timeout) as response:
+            opener: Any = self.transport or urlopen
+            with opener(request, timeout=self.timeout) as response:
                 raw = response.read(4 * 1024 * 1024 + 1)
             if len(raw) > 4 * 1024 * 1024:
                 raise LLMError("Resposta HTTP do modelo excedeu 4 MiB; sem truncamento")

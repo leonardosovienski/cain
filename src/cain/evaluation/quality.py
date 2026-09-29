@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import Any
 import argparse
 import ast
 from collections import Counter, defaultdict
@@ -198,7 +199,7 @@ def assess(case: dict, response: str) -> list[dict]:
 def _provider(model: str, config: QualityConfig):
     from cain.llm import OllamaLLM
 
-    options = {"model": model, "base_url": config.base_url, "temperature": config.temperature,
+    options: dict[str, Any] = {"model": model, "base_url": config.base_url, "temperature": config.temperature,
                "seed": config.seed, "timeout": config.timeout, "num_ctx": config.num_ctx,
                "num_predict": config.num_predict, "max_input_bytes": config.max_input_bytes}
     if config.think is not None:
@@ -209,7 +210,7 @@ def _provider(model: str, config: QualityConfig):
 def _backend(config: QualityConfig) -> dict:
     if config.provider == "injected-test":
         return {"backend_version": None, "models": {}, "reason": "Injected test providers, not real models"}
-    observed = {"backend_version": None, "models": {}}
+    observed: dict[str, Any] = {"backend_version": None, "models": {}}
     for endpoint in ("version", "tags"):
         try:
             with urlopen(config.base_url.rstrip("/") + "/api/" + endpoint,
@@ -238,7 +239,7 @@ def _summary(records: list[dict], config: QualityConfig, cases: list[dict], run_
         groups = {}
         for split in ("dev", "holdout"):
             subset = [row for row in rows if row["split"] == split]
-            rates = defaultdict(lambda: {"passed": 0, "measured": 0})
+            rates: dict[str, dict[str, int]] = defaultdict(lambda: {"passed": 0, "measured": 0})
             for row in subset:
                 if row["status"] != "completed":
                     continue
@@ -300,7 +301,8 @@ def run_comparison(output: Path, config: QualityConfig | None = None, *, dataset
     _write(run_dir / "config.json", meta)
     records = []
     for model in config.models:
-        provider, setup_error = None, None
+        provider: Any = None
+        setup_error: Exception | None = None
         try:
             provider = (provider_factory or _provider)(model, config)
             meta.setdefault("adapters_observed", {})[model] = {

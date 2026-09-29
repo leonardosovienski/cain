@@ -106,7 +106,7 @@ class ExplicitPreferenceAdaptation:
     """Latest directly stated user preference wins; negation never implies its opposite."""
 
     def extract(self, user_text: str) -> list[PreferenceChange]:
-        changes = []
+        changes: list[PreferenceChange] = []
         pending_scope = None
         for original in _unquoted_clauses(user_text):
             clause = _normalize(original)

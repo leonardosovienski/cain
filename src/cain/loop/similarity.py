@@ -23,7 +23,8 @@ def similarity_function(kind: str, config=None):
     from cain.providers import configured_embedding
     from cain.settings import load_settings
 
-    cache, model = {}, []
+    cache: dict = {}
+    model: list = []
 
     def vector(text):
         if not model:

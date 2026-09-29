@@ -1,5 +1,6 @@
 """Persistent preferences by user/project/session/turn, with auditable overlays."""
 
+from typing import Any
 from collections.abc import Callable
 from copy import deepcopy
 from dataclasses import asdict, replace
@@ -76,7 +77,7 @@ class IdentityService:
         }
 
     def _layers(self, state: IdentityState, context: dict, now: datetime) -> dict:
-        layers = {scope: {} for scope in PREFERENCE_SCOPES}
+        layers: dict[str, dict] = {scope: {} for scope in PREFERENCE_SCOPES}
         # v0.2 globals exist only in identities.state_json. No data rewrite is
         # necessary: they remain the global layer unless a v0.3 record replaces it.
         for key in set(state.user_model.preferences) | set(state.user_model.preference_provenance):
@@ -135,7 +136,7 @@ class IdentityService:
         # This is a derived prompt view, not the stored/inspectable profile.
         # Audit evidence and identifiers remain in SQLite and the UI; the model
         # needs the resolved preferences and personality, not their event log.
-        projected = {
+        projected: dict[str, Any] = {
             "personality": asdict(state.personality),
             "preferences": dict(state.user_model.preferences),
         }
@@ -195,8 +196,9 @@ class IdentityService:
         recent = self.store.recent_interactions(user_id, session_id, project_id,
                                                self.memory_top_k * 4) if session_id else []
         recent_order = {item.doc_id: index for index, item in enumerate(recent)}
-        unique = {}
-        for hit in [*recent, *hits]:
+        unique: dict[str, Any] = {}
+        candidates: list[Any] = [*recent, *hits]
+        for hit in candidates:
             key = hit.metadata.get('decision_id') or hit.doc_id
             previous = unique.get(key)
             if previous is None or (hit.metadata.get('kind') == 'interaction'
@@ -216,7 +218,7 @@ class IdentityService:
             r'\b(?:detalh\w*|aprofund\w*|continu\w*|elabor\w*|reescrev\w*|'
             r'revis\w*|reformul\w*|resposta|answer|wrote|escreveu|expli[cq]\w*|explain\w*)\b',
             query, re.I))
-        memories = []
+        memories: list[dict] = []
         selected = []
         for hit in hits:
             if hit.metadata.get('user_id') != user_id or hit.metadata.get('project_id') != project_id:
@@ -323,6 +325,7 @@ class IdentityService:
             layers[scope][change.key] = self._entry(record, now)
             if scope == "user":
                 if change.action == "set":
+                    assert change.value is not None
                     after.user_model.preferences[change.key] = change.value
                 else:
                     after.user_model.preferences.pop(change.key, None)

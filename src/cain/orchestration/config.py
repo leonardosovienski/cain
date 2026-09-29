@@ -93,10 +93,10 @@ def result_metrics(config: dict, payload: dict) -> dict:
     text, FUTURE_CANARY); a path that is missing or not a number is left out. Without the key: nothing."""
     out = {}
     for name, path in sorted(config.get("result_metrics", {}).items()):
-        value = payload
+        value: object = payload
         for part in path.split("."):
             value = value.get(part) if isinstance(value, dict) else None
-        if type(value) in (int, float) and math.isfinite(value):
+        if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value):
             out[name] = value
     return out
 

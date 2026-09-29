@@ -11,7 +11,7 @@ import re
 import socket
 import ssl
 from time import monotonic
-from typing import Iterable, Protocol, runtime_checkable
+from typing import Any, Iterable, Protocol, runtime_checkable
 from urllib.parse import quote, urljoin, urlsplit, urlunsplit
 
 from cain.common.text import tokens, RETRIEVAL_STOP_WORDS
@@ -196,7 +196,7 @@ class PublicURLRetriever:
             path = quote(parsed.path or "/", safe="/%:@!$&'()*+,;=-._~")
             path += ("?" + quote(parsed.query, safe="%=&?/:@!$'()*+,;~-._")) if parsed.query else ""
             clean_url = urlunsplit((parsed.scheme.lower(), parsed.netloc, parsed.path, parsed.query, ""))
-            return clean_url, host, port, path, ips[0]
+            return clean_url, host, port, path, str(ips[0])
         except (ValueError, OSError, UnicodeError) as exc:
             raise SearchError(f"URL não permitida ou DNS indisponível: {exc}") from exc
 
@@ -211,10 +211,10 @@ class PublicURLRetriever:
                 http.client.HTTPSConnection if clean_url.startswith("https:")
                 else http.client.HTTPConnection
             )
-            kwargs = {"timeout": remaining}
+            kwargs: dict[str, Any] = {"timeout": remaining}
             if connection_type is http.client.HTTPSConnection:
                 kwargs["context"] = ssl.create_default_context()
-            connection = connection_type(host, port, **kwargs)
+            connection: Any = connection_type(host, port, **kwargs)
             # TLS still verifies the original hostname; only the socket destination is pinned.
             connection._create_connection = lambda address, timeout, source_address=None: (
                 socket.create_connection((pinned_ip, port), timeout, source_address)

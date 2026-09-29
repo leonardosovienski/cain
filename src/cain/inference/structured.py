@@ -101,5 +101,6 @@ def generate_structured(provider, prompt: str, context: str, schema: dict, *, at
         if store is not None and call_id is not None:
             store.validation(call_id, group, attempt, error is None, error)
         if error is None:
+            assert isinstance(value, dict)
             return value, history
     raise StructuredOutputError(f"no valid structured answer after {attempts} attempts", history)

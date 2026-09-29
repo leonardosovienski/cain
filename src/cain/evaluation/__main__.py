@@ -1,5 +1,6 @@
 """python -m cain.evaluation --output evaluation/results --mode smoke"""
 
+from typing import Any
 import argparse
 import json
 import sys
@@ -39,8 +40,9 @@ def main(argv: list[str] | None = None) -> int:
                               num_predict=args.num_predict, max_input_bytes=args.max_input_bytes,
                               think=None if args.think is None else args.think == "true")
     try:
-        runner = {"smoke": run_smoke, "pilot": run_construct_pilot,
-                  "functional": run_functional}[args.mode]
+        runners: dict[str, Any] = {"smoke": run_smoke, "pilot": run_construct_pilot,
+                                   "functional": run_functional}
+        runner = runners[args.mode]
         result = runner(args.output, config, data_root=args.data_root)
     except Exception as error:
         print(f"Execução não concluída: {type(error).__name__}: {error}", file=sys.stderr)

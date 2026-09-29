@@ -105,7 +105,7 @@ class ProvenanceGraph:
                 add(answered["ref"], "SUPPORTS", f"review:{fact['object']['item_id']}", "review_item")
             call = (fact["object"].get("generated_by") or {}).get("call_id")
             if call:
-                add(f"review:{fact['object']['item_id']}", "DERIVED_FROM", node("inference", call), "review_item")
+                add(f"review:{fact['object']['item_id']}", "DERIVED_FROM", f"inference:{call}", "review_item")
         for fact in self._facts(at, cube=CUBE):
             if fact["predicate"].startswith("prov:") and fact["predicate"] != "prov:FLAGGED":
                 add(fact["subject"], fact["predicate"][5:], fact["object"]["to"], f"relate by {fact['object']['by']}")
