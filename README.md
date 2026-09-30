@@ -1,4 +1,12 @@
-# CAIN — acervo Stocks e leitura verificável
+# CAIN — estado em 2026-09-30
+
+`cain-research 0.4.13rc15` é a wheel publicada ([release](https://github.com/leonardosovienski/cain/releases/tag/v0.4.13rc15)): orquestração
+determinística de pesquisa por domínio (crypto, stocks, brasileirão) sobre o envelope V2 (`predictor-research-protocol 2.0.0rc2`,
+`predictor-research-transport 0.1.0rc7`), DecisionPolicy versionada, memória bitemporal e propostas por LLM local opcionais. É o alvo das
+integrações do `predictor-qualification` (ciclo D-27). O `main` declara `0.4.13rc16` **não publicada** (só documentação desde a rc15; o README
+entra na METADATA da wheel). Estado vivo, evidências e limites: [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md). Nada aqui autoriza capital.
+
+# CAIN — acervo Stocks e leitura verificável (histórico, 16/09/2026)
 
 Nova rodada em QA: [campanha de conversa H1–H22](docs/STOCKS_CONVERSATION_CAMPAIGN_20260916.md).
 Correções de contexto e inferência real são avaliadas separadamente das reproduções históricas.
@@ -25,7 +33,7 @@ Nada foi apagado. Consulte os recibos de ativação para o caminho exato do runt
 <details>
 <summary>Histórico preservado — não representa o estado corrente</summary>
 
-# CAIN — integração V8 e correções de pesquisa
+# CAIN — integração V8 e correções de pesquisa (histórico, 15/09/2026)
 
 Esta revisão concilia a main consolidada em `2bdb570` com as correções Stocks de
 `f6c86d3`, pela [PR #3](https://github.com/leonardosovienski/cain/pull/3).
@@ -43,7 +51,7 @@ interpretação geral do modelo nem conclusões científicas.
 
 # CAIN — conversa, memória e pesquisa local
 
-CAIN 0.4.13rc15 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
+CAIN 0.4.13rc16 é um assistente local com projetos, preferências, documentos, consulta de evidências e workflows retomáveis.
 A referência de publicação é **main**. Este checkout está em `fix/readiness-main-20260914`: a V4 foi preservada no checkpoint local `ad21220`, seguido pelas alterações desta continuação. A candidata V6 está somente em QA não editável; não foi publicada nem instalada como principal. Veja a [continuação e seus limites](docs/CONTINUACAO_POS_V4_20260915.md).
 Consulte o [estado verificado](ESTADO_DO_PROJETO.md), a [continuidade](CONTINUIDADE.md) e o [índice documental](docs/README.md).
 

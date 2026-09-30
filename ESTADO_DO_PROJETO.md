@@ -1,5 +1,8 @@
 # Estado CAIN — 16/09/2026
 
+> **Atualização 2026-09-30:** o estado vivo do pacote (0.4.13rc15 publicada, `main` em 0.4.13rc16 não publicada), das integrações e da
+> qualificação está em [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md). O texto abaixo é o registro datado da campanha Stocks.
+
 Rodada atual: [campanha Stocks no CAIN](docs/STOCKS_CAMPAIGN_20260916.md).
 Projeto local com 112 documentos, 22 jobs e reproduções históricas H21/H22 conferidas.
 Validação econômica geral e interpretação autônoma continuam limitadas.
