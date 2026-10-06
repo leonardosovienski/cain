@@ -1,0 +1,645 @@
+{
+ "note": "step 2 only, after EVENT_IDENTIFICATION labels are recorded; evidence reveals the condition",
+ "context": {
+  "R01": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 90,
+     "net_return_bps": 33,
+     "net_ci_low_bps": 2,
+     "net_ci_high_bps": 64,
+     "verdict": "INCONCLUSIVE_DATA_QUALITY (the evaluator flagged a data-quality rule the proposer cannot see; the rule and its threshold are part of the sealed evaluator configuration)"
+    }
+   ]
+  },
+  "R02": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 38,
+     "net_return_bps": 21,
+     "net_ci_low_bps": -9,
+     "net_ci_high_bps": 51,
+     "verdict": "INCONCLUSIVE (interval crosses zero; sample below the 80-observation floor)"
+    }
+   ]
+  },
+  "R03": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 55,
+     "net_return_bps": 18,
+     "net_ci_low_bps": -6,
+     "net_ci_high_bps": 42,
+     "verdict": "INCONCLUSIVE"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 60,
+     "net_return_bps": 15,
+     "net_ci_low_bps": -8,
+     "net_ci_high_bps": 38,
+     "verdict": "INCONCLUSIVE"
+    }
+   ]
+  },
+  "R04": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -30,
+     "net_ci_low_bps": -50,
+     "net_ci_high_bps": -10,
+     "verdict": "REFUTED"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 44,
+     "net_ci_low_bps": 20,
+     "net_ci_high_bps": 68,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R05": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": 27,
+     "net_return_bps": -3,
+     "net_ci_low_bps": -14,
+     "net_ci_high_bps": 8,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "INCONCLUSIVE (gross positive, net around zero; with 5 bps lower costs the interval would be entirely positive)"
+    }
+   ]
+  },
+  "R06": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R07": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 55,
+     "net_return_bps": 18,
+     "net_ci_low_bps": -6,
+     "net_ci_high_bps": 42,
+     "verdict": "INCONCLUSIVE"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 60,
+     "net_return_bps": 15,
+     "net_ci_low_bps": -8,
+     "net_ci_high_bps": 38,
+     "verdict": "INCONCLUSIVE"
+    }
+   ]
+  },
+  "R08": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": 27,
+     "net_return_bps": -3,
+     "net_ci_low_bps": -14,
+     "net_ci_high_bps": 8,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "INCONCLUSIVE (gross positive, net around zero; with 5 bps lower costs the interval would be entirely positive)"
+    }
+   ]
+  },
+  "R09": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 55,
+     "net_return_bps": 18,
+     "net_ci_low_bps": -6,
+     "net_ci_high_bps": 42,
+     "verdict": "INCONCLUSIVE"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 60,
+     "net_return_bps": 15,
+     "net_ci_low_bps": -8,
+     "net_ci_high_bps": 38,
+     "verdict": "INCONCLUSIVE"
+    }
+   ]
+  },
+  "R10": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": -12,
+     "net_return_bps": -42,
+     "net_ci_low_bps": -60,
+     "net_ci_high_bps": -24,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "REFUTED (negative even gross)"
+    }
+   ]
+  },
+  "R11": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R12": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -30,
+     "net_ci_low_bps": -50,
+     "net_ci_high_bps": -10,
+     "verdict": "REFUTED"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 44,
+     "net_ci_low_bps": 20,
+     "net_ci_high_bps": 68,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R13": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -30,
+     "net_ci_low_bps": -50,
+     "net_ci_high_bps": -10,
+     "verdict": "REFUTED"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 44,
+     "net_ci_low_bps": 20,
+     "net_ci_high_bps": 68,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R14": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": 27,
+     "net_return_bps": -3,
+     "net_ci_low_bps": -14,
+     "net_ci_high_bps": 8,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "INCONCLUSIVE (gross positive, net around zero; with 5 bps lower costs the interval would be entirely positive)"
+    }
+   ]
+  },
+  "R15": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": -12,
+     "net_return_bps": -42,
+     "net_ci_low_bps": -60,
+     "net_ci_high_bps": -24,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "REFUTED (negative even gross)"
+    }
+   ]
+  },
+  "R16": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 96,
+     "net_return_bps": -34,
+     "net_ci_low_bps": -58,
+     "net_ci_high_bps": -11,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R17": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R18": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 39,
+     "net_ci_low_bps": 14,
+     "net_ci_high_bps": 64,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R19": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": 27,
+     "net_return_bps": -3,
+     "net_ci_low_bps": -14,
+     "net_ci_high_bps": 8,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "INCONCLUSIVE (gross positive, net around zero; with 5 bps lower costs the interval would be entirely positive)"
+    }
+   ]
+  },
+  "R20": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": -12,
+     "net_return_bps": -42,
+     "net_ci_low_bps": -60,
+     "net_ci_high_bps": -24,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "REFUTED (negative even gross)"
+    }
+   ]
+  },
+  "R21": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 39,
+     "net_ci_low_bps": 14,
+     "net_ci_high_bps": 64,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R22": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R23": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R24": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 39,
+     "net_ci_low_bps": 14,
+     "net_ci_high_bps": 64,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R25": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 90,
+     "net_return_bps": 33,
+     "net_ci_low_bps": 2,
+     "net_ci_high_bps": 64,
+     "verdict": "INCONCLUSIVE_DATA_QUALITY (the evaluator flagged a data-quality rule the proposer cannot see; the rule and its threshold are part of the sealed evaluator configuration)"
+    }
+   ]
+  },
+  "R26": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R27": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -30,
+     "net_ci_low_bps": -50,
+     "net_ci_high_bps": -10,
+     "verdict": "REFUTED"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 44,
+     "net_ci_low_bps": 20,
+     "net_ci_high_bps": 68,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R28": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 90,
+     "net_return_bps": 33,
+     "net_ci_low_bps": 2,
+     "net_ci_high_bps": 64,
+     "verdict": "INCONCLUSIVE_DATA_QUALITY (the evaluator flagged a data-quality rule the proposer cannot see; the rule and its threshold are part of the sealed evaluator configuration)"
+    }
+   ]
+  },
+  "R29": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 38,
+     "net_return_bps": 21,
+     "net_ci_low_bps": -9,
+     "net_ci_high_bps": 51,
+     "verdict": "INCONCLUSIVE (interval crosses zero; sample below the 80-observation floor)"
+    }
+   ]
+  },
+  "R30": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 96,
+     "net_return_bps": -34,
+     "net_ci_low_bps": -58,
+     "net_ci_high_bps": -11,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R31": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 38,
+     "net_return_bps": 21,
+     "net_ci_low_bps": -9,
+     "net_ci_high_bps": 51,
+     "verdict": "INCONCLUSIVE (interval crosses zero; sample below the 80-observation floor)"
+    }
+   ]
+  },
+  "R32": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 96,
+     "net_return_bps": -34,
+     "net_ci_low_bps": -58,
+     "net_ci_high_bps": -11,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R33": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 38,
+     "net_return_bps": 21,
+     "net_ci_low_bps": -9,
+     "net_ci_high_bps": 51,
+     "verdict": "INCONCLUSIVE (interval crosses zero; sample below the 80-observation floor)"
+    }
+   ]
+  },
+  "R34": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R35": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R36": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 90,
+     "net_return_bps": 33,
+     "net_ci_low_bps": 2,
+     "net_ci_high_bps": 64,
+     "verdict": "INCONCLUSIVE_DATA_QUALITY (the evaluator flagged a data-quality rule the proposer cannot see; the rule and its threshold are part of the sealed evaluator configuration)"
+    }
+   ]
+  },
+  "R37": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REGIME-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": 39,
+     "net_ci_low_bps": 14,
+     "net_ci_high_bps": 64,
+     "verdict": "SUPPORTED"
+    }
+   ]
+  },
+  "R38": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-REV-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 55,
+     "net_return_bps": 18,
+     "net_ci_low_bps": -6,
+     "net_ci_high_bps": 42,
+     "verdict": "INCONCLUSIVE"
+    },
+    {
+     "hypothesis_id": "H-VOL-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 60,
+     "net_return_bps": 15,
+     "net_ci_low_bps": -8,
+     "net_ci_high_bps": 38,
+     "verdict": "INCONCLUSIVE"
+    }
+   ]
+  },
+  "R39": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-MOM-7D",
+     "dataset": "in_sample_2024",
+     "sample_size": 96,
+     "net_return_bps": -34,
+     "net_ci_low_bps": -58,
+     "net_ci_high_bps": -11,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R40": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-TREND-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "gross_return_bps": -12,
+     "net_return_bps": -42,
+     "net_ci_low_bps": -60,
+     "net_ci_high_bps": -24,
+     "costs_applied": {
+      "fee_bps": 10,
+      "slippage_bps": 5
+     },
+     "verdict": "REFUTED (negative even gross)"
+    }
+   ]
+  }
+ }
+}
