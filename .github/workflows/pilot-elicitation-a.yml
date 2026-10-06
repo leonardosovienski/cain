@@ -1,0 +1,56 @@
+name: Pilot elicitation A (prompt-only)
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: Ollama model tag
+        default: qwen2.5:7b-instruct-q4_K_M
+      run_id:
+        description: run id (default = model + GitHub run id)
+        default: ""
+permissions:
+  contents: write
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install and start Ollama (CPU)
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          nohup ollama serve > ollama-serve.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/version && break; sleep 2; done
+          ollama --version
+          nproc; free -g
+      - name: Pull model
+        run: ollama pull "${{ inputs.model }}"
+      - name: Run pilot
+        id: run
+        run: |
+          RUN_ID="${{ inputs.run_id }}"
+          if [ -z "$RUN_ID" ]; then RUN_ID="$(echo '${{ inputs.model }}' | tr ':/' '--')-gha${GITHUB_RUN_ID}"; fi
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          python pilots/elicitation-a/run_pilot.py --run-id "$RUN_ID" --provider ollama --model "${{ inputs.model }}"
+          python pilots/elicitation-a/label.py "pilots/elicitation-a/runs/$RUN_ID"
+          python pilots/elicitation-a/summarize.py "pilots/elicitation-a/runs/$RUN_ID"
+          cp ollama-serve.log "pilots/elicitation-a/runs/$RUN_ID/ollama-serve.log"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pilot-elicitation-a-${{ steps.run.outputs.run_id }}
+          path: pilots/elicitation-a/runs/${{ steps.run.outputs.run_id }}
+      - name: Commit raw results to the branch
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pilots/elicitation-a/runs
+          git commit -m "pilot(elicitation-a): raw results of ${{ steps.run.outputs.run_id }}" || exit 0
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"
