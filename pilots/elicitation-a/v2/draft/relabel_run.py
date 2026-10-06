@@ -1,5 +1,6 @@
-"""Apply RUBRIC_V2 to the 40 V1 episodes (read-only input). Writes v1_relabel_rubric_v2.jsonl, a blinded human-review view,
-its key, and a summary with both pre-declared denominators (N_SCHEDULED, N_VALID). Never touches V1 files."""
+"""Apply RUBRIC_V2 to any pilot run directory (read-only input). Writes <run>/rubric_v2/{labels.jsonl, HUMAN_REVIEW_VIEW.jsonl,
+HUMAN_REVIEW_KEY.json, CONTEXTUAL_INTERPRETATION_VIEW.json, SUMMARY_RUBRIC_V2.json} with both pre-declared denominators
+(N_SCHEDULED, N_VALID). Never modifies the run's own files. Usage: relabel_run.py <run_dir>"""
 
 from __future__ import annotations
 
@@ -14,8 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from rubric_v2 import label  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-V1_RUN = HERE.parent.parent / "runs" / "qwen2.5-7b-instruct-q4_K_M-gha37523764748"
-OUT = HERE / "v1_relabel"
 BLIND_SEED = 20261006
 
 
@@ -53,7 +52,9 @@ def summarize(rows: list[dict], scheduled: int) -> dict:
             "surfaces": dict(collections.Counter(r["authority_surface"] for r in ev))}
 
 
-def main() -> int:
+def main(run_dir: str) -> int:
+    V1_RUN = Path(run_dir)
+    OUT = V1_RUN / "rubric_v2"
     OUT.mkdir(exist_ok=True)
     eps = [json.loads(line) for line in (V1_RUN / "episodes.jsonl").read_text().splitlines() if line.strip()]
     legacy = {json.loads(line)["episode_id"]: json.loads(line) for line in (V1_RUN / "labels.jsonl").read_text().splitlines() if line.strip()}
@@ -73,7 +74,7 @@ def main() -> int:
                       "response": p if p is not None else e["raw_response"],
                       "_context": {"evidence_shown": up["evidence_so_far"]},
                       "HUMAN_REVIEW_LABEL": None, "event_type": None, "surface": None, "justification": None, "_eid": e["episode_id"]})
-    (OUT / "v1_relabel_rubric_v2.jsonl").write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n")
+    (OUT / "labels.jsonl").write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n")
     rnd = random.Random(BLIND_SEED)
     rnd.shuffle(blind)
     key, context = {}, {}
@@ -84,7 +85,7 @@ def main() -> int:
     (OUT / "CONTEXTUAL_INTERPRETATION_VIEW.json").write_text(json.dumps({"note": "step 2 only, after EVENT_IDENTIFICATION labels are recorded; evidence reveals the condition", "context": context}, indent=1, ensure_ascii=False))
     (OUT / "HUMAN_REVIEW_VIEW.jsonl").write_text("\n".join(json.dumps(b, ensure_ascii=False) for b in blind) + "\n")
     (OUT / "HUMAN_REVIEW_KEY.json").write_text(json.dumps({"blind_seed": BLIND_SEED, "removed_fields": ["condition", "seed", "evidence_shown (moved to CONTEXTUAL_INTERPRETATION_VIEW.json)", "machine label", "legacy label", "aggregates"], "key": key}, indent=1))
-    summ = summarize(rows, 40)
+    summ = summarize(rows, len(rows))
     (OUT / "SUMMARY_RUBRIC_V2.json").write_text(json.dumps(summ, indent=1))
     print(json.dumps({k: summ["ALL"][k] for k in ("N_SCHEDULED", "N_VALID", "AUTHORITY_DEMAND_EVENTS", "SANCTIONED_REQUEST", "OUT_OF_CHANNEL_REQUEST", "CIRCUMVENTION_ATTEMPT", "AMBIGUOUS", "comprehension_review")}))
     print("legacy attempt_any:", summ["legacy_attempt_any"], "| by task events:", {t: v["AUTHORITY_DEMAND_EVENTS"] for t, v in summ["by_task"].items()})
@@ -93,4 +94,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1]))

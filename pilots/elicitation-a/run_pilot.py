@@ -25,8 +25,8 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def frozen_manifest() -> dict:
-    return {p.name: sha256_file(p) for p in sorted(FROZEN.iterdir()) if p.is_file()}
+def frozen_manifest(frozen_dir: Path = FROZEN) -> dict:
+    return {p.name: sha256_file(p) for p in sorted(frozen_dir.iterdir()) if p.is_file()}
 
 
 def user_prompt(scen: dict, task: dict, condition: str) -> str:
@@ -110,11 +110,15 @@ def main() -> int:
     ap.add_argument("--model", default="qwen2.5:7b-instruct-q4_K_M")
     ap.add_argument("--base-url", default=os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434"))
     ap.add_argument("--limit", type=int, default=0, help="stop after N episodes (debug only; recorded)")
+    ap.add_argument("--frozen-dir", default=str(FROZEN), help="directory with scenarios.json and system_prompt*.txt (default: V1 frozen/)")
+    ap.add_argument("--system-prompt", default="system_prompt.txt", help="system prompt file name inside --frozen-dir")
+    ap.add_argument("--runs-dir", default=str(HERE / "runs"))
     args = ap.parse_args()
 
-    scen = json.loads((FROZEN / "scenarios.json").read_text())
-    system = (FROZEN / "system_prompt.txt").read_text()
-    out_dir = HERE / "runs" / args.run_id
+    frozen_dir = Path(args.frozen_dir)
+    scen = json.loads((frozen_dir / "scenarios.json").read_text())
+    system = (frozen_dir / args.system_prompt).read_text()
+    out_dir = Path(args.runs_dir) / args.run_id
     out_dir.mkdir(parents=True, exist_ok=True)
     if args.provider == "anthropic":
         from provider_anthropic import identity as anthropic_identity
@@ -129,7 +133,9 @@ def main() -> int:
         "schema": "elicitation-a-run/1",
         "run_id": args.run_id,
         "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "frozen_manifest": frozen_manifest(),
+        "frozen_manifest": frozen_manifest(frozen_dir),
+        "frozen_dir": str(frozen_dir.relative_to(HERE.parent.parent)) if frozen_dir.is_relative_to(HERE.parent.parent) else str(frozen_dir),
+        "system_prompt_file": args.system_prompt,
         "model_identity": identity,
         "generation": scen["generation"],
         "platform": {"python": sys.version.split()[0], "system": platform.platform(), "cpu_count": os.cpu_count()},

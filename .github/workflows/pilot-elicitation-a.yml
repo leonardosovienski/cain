@@ -2,7 +2,7 @@ name: Pilot elicitation A (prompt-only)
 on:
   push:
     branches: [claude/cain-scientific-validation-nw9doc]
-    paths: [pilots/elicitation-a/TRIGGER, pilots/elicitation-a/TRIGGER_FRONTIER]
+    paths: [pilots/elicitation-a/TRIGGER, pilots/elicitation-a/TRIGGER_FRONTIER, pilots/elicitation-a/v2/TRIGGER_V2]
   workflow_dispatch:
     inputs:
       model:
@@ -117,5 +117,57 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add pilots/elicitation-a/runs
           git commit -m "pilot(elicitation-a): raw results of ${{ steps.run.outputs.run_id }}" || exit 0
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"
+  pilot-v2:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Only when v2/TRIGGER_V2 changed in this push
+        id: gate
+        run: |
+          if git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" | grep -qx 'pilots/elicitation-a/v2/TRIGGER_V2'; then echo "go=yes" >> "$GITHUB_OUTPUT"; else echo "go=no" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.go == 'yes'
+        with:
+          python-version: "3.13"
+      - name: Install and start Ollama 0.40.0 (CPU, pinned to the V1 version)
+        if: steps.gate.outputs.go == 'yes'
+        run: |
+          curl -fsSL https://ollama.com/install.sh | OLLAMA_VERSION=0.40.0 sh
+          nohup ollama serve > ollama-serve.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://127.0.0.1:11434/api/version && break; sleep 2; done
+          ollama --version; nproc; free -g
+      - name: Pull model
+        if: steps.gate.outputs.go == 'yes'
+        run: ollama pull "$MODEL"
+      - name: Run V2 (frozen v2/, same model, same harness)
+        if: steps.gate.outputs.go == 'yes'
+        id: run
+        run: |
+          test -d pilots/elicitation-a/v2/frozen || { echo "::error::v2/frozen missing: not frozen"; exit 1; }
+          RUN_ID="v2-$(echo "$MODEL" | tr ':/' '--')-gha${GITHUB_RUN_ID}"
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          python pilots/elicitation-a/run_pilot.py --run-id "$RUN_ID" --provider ollama --model "$MODEL" \
+            --frozen-dir pilots/elicitation-a/v2/frozen --system-prompt system_prompt_v2.txt --runs-dir pilots/elicitation-a/v2/runs
+          python pilots/elicitation-a/label.py "pilots/elicitation-a/v2/runs/$RUN_ID"
+          python pilots/elicitation-a/v2/frozen/relabel_run.py "pilots/elicitation-a/v2/runs/$RUN_ID"
+          cp ollama-serve.log "pilots/elicitation-a/v2/runs/$RUN_ID/ollama-serve.log"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.gate.outputs.go == 'yes' && steps.run.outputs.run_id != ''
+        with:
+          name: pilot-elicitation-a-${{ steps.run.outputs.run_id }}
+          path: pilots/elicitation-a/v2/runs/${{ steps.run.outputs.run_id }}
+      - name: Commit raw results to the branch
+        if: always() && steps.gate.outputs.go == 'yes' && steps.run.outputs.run_id != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pilots/elicitation-a/v2/runs
+          git commit -m "pilot(elicitation-a) v2: raw results of ${{ steps.run.outputs.run_id }}" || exit 0
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin HEAD:"$GITHUB_REF_NAME"
