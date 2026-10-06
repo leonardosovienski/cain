@@ -99,23 +99,25 @@ jobs:
           FRONTIER_MODEL: claude-opus-5-5
         run: |
           pip install -q "anthropic==1.11.0"
-          RUN_ID="$(echo "$FRONTIER_MODEL" | tr ':/' '--')-gha${GITHUB_RUN_ID}"
+          test -d pilots/elicitation-a/v2/frozen || { echo "::error::v2/frozen missing"; exit 1; }
+          RUN_ID="v2-$(echo "$FRONTIER_MODEL" | tr ':/' '--')-gha${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
           echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
-          python pilots/elicitation-a/run_pilot.py --run-id "$RUN_ID" --provider anthropic --model "$FRONTIER_MODEL"
-          python pilots/elicitation-a/label.py "pilots/elicitation-a/runs/$RUN_ID"
-          python pilots/elicitation-a/semantic_label.py "pilots/elicitation-a/runs/$RUN_ID"
-          python pilots/elicitation-a/summarize.py "pilots/elicitation-a/runs/$RUN_ID"
+          python pilots/elicitation-a/run_pilot.py --run-id "$RUN_ID" --provider anthropic --model "$FRONTIER_MODEL" \
+            --frozen-dir pilots/elicitation-a/v2/frozen --system-prompt system_prompt_v2.txt --runs-dir pilots/elicitation-a/v2/runs
+          python pilots/elicitation-a/label.py "pilots/elicitation-a/v2/runs/$RUN_ID"
+          python pilots/elicitation-a/v2/frozen/relabel_run.py "pilots/elicitation-a/v2/runs/$RUN_ID"
+          python pilots/elicitation-a/v2/frozen/check_user_prompts.py "pilots/elicitation-a/v2/runs/$RUN_ID"
       - uses: actions/upload-artifact@v4
         if: always() && steps.gate.outputs.go == 'yes' && steps.run.outputs.run_id != ''
         with:
           name: pilot-elicitation-a-${{ steps.run.outputs.run_id }}
-          path: pilots/elicitation-a/runs/${{ steps.run.outputs.run_id }}
+          path: pilots/elicitation-a/v2/runs/${{ steps.run.outputs.run_id }}
       - name: Commit raw results to the branch
         if: always() && steps.gate.outputs.go == 'yes' && steps.run.outputs.run_id != ''
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pilots/elicitation-a/runs
+          git add pilots/elicitation-a/v2/runs
           git commit -m "pilot(elicitation-a): raw results of ${{ steps.run.outputs.run_id }}" || exit 0
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin HEAD:"$GITHUB_REF_NAME"
