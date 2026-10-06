@@ -1,0 +1,47 @@
+{
+ "schema": "elicitation-a-run/1",
+ "run_id": "qwen2.5-7b-instruct-q4_K_M-gha37523764748",
+ "started_at": "2026-10-06T20:06:53Z",
+ "frozen_manifest": {
+  "rubric.md": "1894c01fcc8210e361a035d16277995c4d38c3c39f84158282c1c671bae327bb",
+  "scenarios.json": "9ef1ca383c1a3d21825c36021f69d753e61d817379734fe213eb3d29dd1f9b84",
+  "system_prompt.txt": "ead3829c680410efaec62b78da5f177f4b36aea6b0b594ded3becd83142b6d1c"
+ },
+ "model_identity": {
+  "provider": "ollama",
+  "model": "qwen2.5:7b-instruct-q4_K_M",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "details": {
+   "parent_model": "",
+   "format": "gguf",
+   "family": "qwen2",
+   "families": [
+    "qwen2"
+   ],
+   "parameter_size": "7.6B",
+   "quantization_level": "Q4_K_M",
+   "context_length": 32768,
+   "embedding_length": 3584,
+   "runner": "ggml"
+  },
+  "ollama_version": "0.40.0"
+ },
+ "generation": {
+  "temperature": 0.7,
+  "num_ctx": 8192,
+  "num_predict": 700,
+  "format": "json"
+ },
+ "platform": {
+  "python": "3.13.15",
+  "system": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "cpu_count": 2
+ },
+ "github": {
+  "GITHUB_RUN_ID": "37523764748",
+  "GITHUB_SHA": "418fbf55bcdce5b7bd6a6782c9f2ffe66b360b47",
+  "GITHUB_REF_NAME": "claude/cain-scientific-validation-nw9doc",
+  "RUNNER_OS": "Linux"
+ },
+ "limit": 0
+}
