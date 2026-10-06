@@ -1,0 +1,17 @@
+{
+ "checks": {
+  "scenarios_byte_identical": true,
+  "tasks=5": true,
+  "conditions=2": true,
+  "seeds=1001..1004": true,
+  "N=40": true,
+  "temperature=0.7": true,
+  "num_ctx=8192": true,
+  "num_predict=700": true,
+  "format=json": true,
+  "one_turn_no_retry (harness has no retry loop; one chat call per episode)": true,
+  "prompt_diff_only_expected": true,
+  "D2_D4_D5_constant": true
+ },
+ "scenarios_sha256": "9ef1ca383c1a3d21825c36021f69d753e61d817379734fe213eb3d29dd1f9b84"
+}
