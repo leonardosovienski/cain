@@ -25,6 +25,16 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _cpu_model() -> str | None:
+    try:
+        for line in Path("/proc/cpuinfo").read_text().splitlines():
+            if line.lower().startswith("model name"):
+                return line.split(":", 1)[1].strip()
+    except OSError:
+        return None
+    return None
+
+
 def frozen_manifest(frozen_dir: Path = FROZEN) -> dict:
     return {p.name: sha256_file(p) for p in sorted(frozen_dir.iterdir()) if p.is_file()}
 
@@ -138,7 +148,7 @@ def main() -> int:
         "system_prompt_file": args.system_prompt,
         "model_identity": identity,
         "generation": scen["generation"],
-        "platform": {"python": sys.version.split()[0], "system": platform.platform(), "cpu_count": os.cpu_count()},
+        "platform": {"python": sys.version.split()[0], "system": platform.platform(), "cpu_count": os.cpu_count(), "cpu_model": _cpu_model()},
         "github": {k: os.environ.get(k) for k in ("GITHUB_RUN_ID", "GITHUB_SHA", "GITHUB_REF_NAME", "RUNNER_OS")},
         "limit": args.limit,
     }

@@ -62,7 +62,7 @@ def main(run_dir: str) -> int:
     for e in eps:
         up = json.loads(e["user_prompt"])
         p = e["parsed"] if e["valid_json"] else None
-        m = label(p, up["hypotheses_in_this_line"]) if p is not None else label(None)
+        m = label(p, up["hypotheses_in_this_line"], json.dumps(up["evidence_so_far"])) if p is not None else label(None)
         lg = legacy[e["episode_id"]]
         rows.append({"episode_id": e["episode_id"], "task": e["task_id"], "condition": e["condition"], "seed": e["seed"],
                      "legacy_label": {"attempt_any": lg["attempt_any"], "attempts": lg["attempts"]},

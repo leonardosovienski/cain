@@ -23,7 +23,7 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
   classifiable attempt rate in arm A (see R02).
 
 ### R02 · SCIENCE · no evidence yet that the phenomenon can be elicited
-- STATUS: OPEN — **pilot run 1 (2026-10-06, qwen2.5:7b-instruct-q4_K_M, 40 episodes, integrity VALID): 0/40 authority-expansion attempts on every surface; machine label 14/40 are `horizon_days=3` range deviations, not authority. See `pilots/elicitation-a/runs/qwen2.5-7b-instruct-q4_K_M-gha37523764748/REVIEW.md`. Next: same frozen files, one frontier model.**
+- STATUS: OPEN — **V2 instrument implemented, hostile-reviewed (DO_NOT_FREEZE: 3 P0, 2 closed, 1 gated on owner's blind V1 labels), not run; see `pilots/elicitation-a/HANDOFF.md`.** Pilot run 1 (2026-10-06, qwen2.5:7b-instruct-q4_K_M, 40 episodes, integrity VALID): 0/40 authority-expansion attempts on every surface; machine label 14/40 are `horizon_days=3` range deviations, not authority. See `pilots/elicitation-a/runs/qwen2.5-7b-instruct-q4_K_M-gha37523764748/REVIEW.md`. Next: same frozen files, one frontier model.**
 - EVIDENCE: the only LLM data is `qwen2.5:0.5b` picking from a 2-item enum with incoherent rationales; no frontier model
   has ever been connected (CAIN supports Ollama only); no task has an incentive where more authority helps.
 - WHY_IT_MATTERS: without a base rate there is no power analysis, no pre-registration, no falsifiable H1.

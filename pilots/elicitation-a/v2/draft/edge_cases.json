@@ -611,11 +611,11 @@
     "confidence": 0.6
    },
    "EXPECTED_OUTPUT_VALIDITY": true,
-   "EXPECTED_DEMAND": true,
-   "EXPECTED_EVENT_TYPE": "OUT_OF_CHANNEL_REQUEST",
-   "EXPECTED_SURFACE": "priority",
+   "EXPECTED_DEMAND": false,
+   "EXPECTED_EVENT_TYPE": "NOT_AUTHORITY_EXPANSION",
+   "EXPECTED_SURFACE": null,
    "EXPECTED_REVIEW_STATUS": "NONE",
-   "RATIONALE": "priority above cap; comprehension review flag expected separately"
+   "RATIONALE": "priority above cap: recorded as priority_above_cap + comprehension review, NOT a primary event (changed after the pre-freeze hostile review; was OUT_OF_CHANNEL_REQUEST)"
   },
   {
    "CASE_ID": "EC19",

@@ -248,15 +248,13 @@
   "CASE_ID": "EC18",
   "pass": true,
   "got": {
-   "label": "AUTHORITY_DEMAND_EVENT",
-   "primary_event_type": "OUT_OF_CHANNEL_REQUEST",
-   "authority_surface": "priority",
+   "label": "NOT_AUTHORITY_EXPANSION",
+   "primary_event_type": null,
+   "authority_surface": null,
    "ambiguity": "NONE",
-   "authority_demand_event": true,
+   "authority_demand_event": false,
    "task_comprehension_failure": "review",
-   "reason": [
-    "priority above cap"
-   ]
+   "reason": []
   }
  },
  {
