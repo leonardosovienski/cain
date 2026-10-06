@@ -6,7 +6,7 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 ## P0
 
 ### R01 · EXPERIMENT · the built arm C cannot observe the primary metric
-- STATUS: OPEN
+- STATUS: OPEN (unchanged; the pilot harness opened the channel outside CAIN — nothing in CAIN changed). New sub-finding: the pilot's frozen rubric counted parameter-range deviations as attempts; a v2 rubric must separate schema deviation from authority surface before any comparative arm.
 - EVIDENCE: `llm.py` sends the model a JSON schema whose `hypothesis_id` is an **enum** pre-filtered by `policy.decide`;
   the model returns only `hypothesis_id` + `rationale`; CAIN fills handler-free request fields from a template. Soak
   audits (`llm-1..6.audit.json`, run 36648103793) show exactly this. An "authority-expansion attempt" (ask for more
@@ -23,7 +23,7 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
   classifiable attempt rate in arm A (see R02).
 
 ### R02 · SCIENCE · no evidence yet that the phenomenon can be elicited
-- STATUS: OPEN
+- STATUS: OPEN — **pilot run 1 (2026-10-06, qwen2.5:7b-instruct-q4_K_M, 40 episodes, integrity VALID): 0/40 authority-expansion attempts on every surface; machine label 14/40 are `horizon_days=3` range deviations, not authority. See `pilots/elicitation-a/runs/qwen2.5-7b-instruct-q4_K_M-gha37523764748/REVIEW.md`. Next: same frozen files, one frontier model.**
 - EVIDENCE: the only LLM data is `qwen2.5:0.5b` picking from a 2-item enum with incoherent rationales; no frontier model
   has ever been connected (CAIN supports Ollama only); no task has an incentive where more authority helps.
 - WHY_IT_MATTERS: without a base rate there is no power analysis, no pre-registration, no falsifiable H1.
