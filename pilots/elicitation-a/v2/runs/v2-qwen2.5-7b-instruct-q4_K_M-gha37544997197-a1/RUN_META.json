@@ -1,0 +1,59 @@
+{
+ "schema": "elicitation-a-run/1",
+ "run_id": "v2-qwen2.5-7b-instruct-q4_K_M-gha37544997197-a1",
+ "started_at": "2026-10-06T23:11:36Z",
+ "frozen_manifest": {
+  "DESIGN_V2.md": "8179bf1162460dc82622f5cd234c5fcea51fc3f17c609470592752d5b714a7f1",
+  "FREEZE_MANIFEST.json": "3f4c356d2f32a4678221a1e518f49ad6a9820103b1976fe97237b9e0a56168e9",
+  "PROTOCOL_AMENDMENT_V2_BASELINE_001.md": "46720d00fe3567142edcf2aef6912c3cce4ea6ffec7c4efc1a4e8c9f089b0cb5",
+  "REVIEW_PREFREEZE.md": "3f42ede38c9d7d9db3d94007704e3746129565801f2095f0464645cff18da4fe",
+  "check_user_prompts.py": "870d0643c6d9352fe48cda7be3dd81eb46688323373eed8eccbef3096930272f",
+  "edge_cases.json": "0553097a5b0403b46b72b15d31183721a0d43527a6200ee225f0347e72861ed0",
+  "edge_cases_adversarial.json": "254214a5461d5cbaf52c905fabc570b9717a156badb0cc3843a4d2efa7352e1d",
+  "edge_cases_review2.json": "d7d8353549487aabe35858db1c6a49536dbf4e4ff3ede50106ffcdd1471a006c",
+  "relabel_run.py": "021369120ea95f4ce1b3000473469e24c20b39e44ecd3058fd6c7e3d4646083c",
+  "rubric_v2.py": "d27929132679189384b633095338ea88586d7495a04fb788ada32c1fd3595d41",
+  "scenarios.json": "9ef1ca383c1a3d21825c36021f69d753e61d817379734fe213eb3d29dd1f9b84",
+  "system_prompt_v2.txt": "0138cfcb7d6ddda26df1d9085a21a37142dcab6c94e262bee99bacec02cc5211"
+ },
+ "frozen_dir": "pilots/elicitation-a/v2/frozen",
+ "system_prompt_file": "system_prompt_v2.txt",
+ "model_identity": {
+  "provider": "ollama",
+  "model": "qwen2.5:7b-instruct-q4_K_M",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "details": {
+   "parent_model": "",
+   "format": "gguf",
+   "family": "qwen2",
+   "families": [
+    "qwen2"
+   ],
+   "parameter_size": "7.6B",
+   "quantization_level": "Q4_K_M",
+   "context_length": 32768,
+   "embedding_length": 3584,
+   "runner": "ggml"
+  },
+  "ollama_version": "0.40.0"
+ },
+ "generation": {
+  "temperature": 0.7,
+  "num_ctx": 8192,
+  "num_predict": 700,
+  "format": "json"
+ },
+ "platform": {
+  "python": "3.13.16",
+  "system": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "cpu_count": 2,
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor"
+ },
+ "github": {
+  "GITHUB_RUN_ID": "37544997197",
+  "GITHUB_SHA": "ca043c4c9ca5238ea9a7e1188c79817c21ea99eb",
+  "GITHUB_REF_NAME": "claude/cain-scientific-validation-nw9doc",
+  "RUNNER_OS": "Linux"
+ },
+ "limit": 0
+}
