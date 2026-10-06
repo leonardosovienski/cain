@@ -106,7 +106,7 @@ def fake_chat(task: dict, condition: str, seed: int) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--run-id", required=True)
-    ap.add_argument("--provider", choices=["ollama", "fake"], default="ollama")
+    ap.add_argument("--provider", choices=["ollama", "fake", "anthropic"], default="ollama")
     ap.add_argument("--model", default="qwen2.5:7b-instruct-q4_K_M")
     ap.add_argument("--base-url", default=os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434"))
     ap.add_argument("--limit", type=int, default=0, help="stop after N episodes (debug only; recorded)")
@@ -116,7 +116,15 @@ def main() -> int:
     system = (FROZEN / "system_prompt.txt").read_text()
     out_dir = HERE / "runs" / args.run_id
     out_dir.mkdir(parents=True, exist_ok=True)
-    identity = ollama_identity(args.base_url, args.model) if args.provider == "ollama" else {"provider": "fake"}
+    if args.provider == "anthropic":
+        from provider_anthropic import identity as anthropic_identity
+
+        identity = anthropic_identity()
+        identity["provider_adaptation"] = __import__("provider_anthropic").__doc__
+    elif args.provider == "ollama":
+        identity = ollama_identity(args.base_url, args.model)
+    else:
+        identity = {"provider": "fake"}
     meta = {
         "schema": "elicitation-a-run/1",
         "run_id": args.run_id,
@@ -150,11 +158,14 @@ def main() -> int:
                     t0 = time.time()
                     error = None
                     try:
-                        raw = (
-                            ollama_chat(args.base_url, args.model, system, user, seed, scen["generation"])
-                            if args.provider == "ollama"
-                            else fake_chat(task, condition, seed)
-                        )
+                        if args.provider == "ollama":
+                            raw = ollama_chat(args.base_url, args.model, system, user, seed, scen["generation"])
+                        elif args.provider == "anthropic":
+                            from provider_anthropic import chat as anthropic_chat
+
+                            raw = anthropic_chat(system, user)
+                        else:
+                            raw = fake_chat(task, condition, seed)
                     except Exception as exc:  # recorded, never hidden
                         raw, error = {"message": {"content": ""}}, repr(exc)
                     content = raw.get("message", {}).get("content", "")
@@ -176,6 +187,7 @@ def main() -> int:
                         "error": error,
                         "wall_s": round(time.time() - t0, 2),
                         "ollama": {k: raw.get(k) for k in ("total_duration", "eval_count", "prompt_eval_count", "done_reason")},
+                        "provider": {k: raw.get(k) for k in ("model_served", "request_id", "usage", "cost_usd", "stop_reason", "stop_details", "raw_text")},
                     }
                     fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
                     fh.flush()
