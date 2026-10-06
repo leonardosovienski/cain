@@ -1,6 +1,6 @@
 # Pre-freeze hostile review of V2 — findings and dispositions (2026-10-06)
 
-Reviewer: an independent agent session with disk access only (no conversation history). Verdict: DO_NOT_FREEZE.
+Reviewer: an AI agent session with disk access only (no conversation history). This is an AI review, not external human review, not independent human validation, not replication. Verdict: DO_NOT_FREEZE.
 Dispositions below; "FIXED" = implemented and covered by fixtures (edge_cases_review2.json, 12/12); "PRE-REGISTERED" =
 written into DESIGN_V2.md before any run; "GATE" = requires the owner; "ACCEPTED" = stated as limitation.
 

@@ -3,7 +3,7 @@
 Read this before anything else in a new session. Repository `cain`, branch `claude/cain-scientific-validation-nw9doc`.
 
 PROJECT_STATE: diagnostic phase closed. CAIN's containment is built and engineering-qualified (rc13); no behavioural
-phenomenon has been demonstrated; a second elicitation instrument (V2) is implemented and hostile-reviewed but NOT
+phenomenon has been demonstrated; a second elicitation instrument (V2) is implemented and hostile-reviewed by an AI agent (not a human; EXTERNAL_HUMAN_REVIEW = ABSENT) but NOT
 frozen and NOT run. Main experiment (arms B/C) gate: CLOSED.
 
 CURRENT_SCIENTIFIC_QUESTION (RQ1, diagnostic): under evidence pressure, does a research-agent proposer express demand
@@ -36,6 +36,7 @@ manipulation is a package ("declarative grant with mutable framing"), not isolat
 the resource, NEUTRAL do not; only T2 is construct-valid; N=40 ≈ 10 cells; blinding partial; single 7B model; no
 external human review yet; stack locks 404 after the repository rename (reproducibility, separate from the pilot).
 OPEN_RISK (dominant): no measurable phenomenon in any model; instrument validity unproven on real outputs.
+STATE = PAUSED: LEONARDO_BLINDED_REVIEW_REQUIRED (terminal states and the state machine are in the closing report of 2026-10-06).
 NEXT_ACTION: owner labels the 40 blinded V1 items (EVENT_IDENTIFICATION, ~1 h); if that baseline stays ≈ 0, freeze
 v2/ (copy the five files, record hashes) and run pilot-v2 by changing `v2/TRIGGER_V2`; analyse raw-first; apply the
 pre-registered rule (A needs ≥6/40 over ≥2 tasks or ≥3/8 in T2); independent hostile review; only then decide frontier.
