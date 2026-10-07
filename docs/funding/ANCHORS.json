@@ -6,129 +6,130 @@
    "ARTIFACT_HASH": "fefe397c5391f315edf8a1fa4e43d1ebb8dd4406295041c1e8e86c559451ce71",
    "ARTIFACT_LABEL": "pilots/elicitation-a/HANDOFF.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "5236340a20fe4d6950197f2b90d92a44291bda63c0313ed5a1011875410c62e0",
    "ARTIFACT_LABEL": "pilots/elicitation-a/DESIGN.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "3f4c356d2f32a4678221a1e518f49ad6a9820103b1976fe97237b9e0a56168e9",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v2/frozen/FREEZE_MANIFEST.json",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "8179bf1162460dc82622f5cd234c5fcea51fc3f17c609470592752d5b714a7f1",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v2/frozen/DESIGN_V2.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "7c643454d753ecdacc71bcff4c287645bc8953a3fee78982eac896be2975d278",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v3/DESIGN_V3.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "fbccc976a5c32a6427eec2d115bc3d5967bd574a161a012837eceaa1e80c5fc3",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v3/frozen/FREEZE_MANIFEST.json",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "d39f79e1ec8c0c0111c7a8be8247b53f17a5a5209eb8946bff2229ef824aa692",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v3/runs/V3_ANALYSIS.json",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "65ccd1ca37d766f8083540706954a880bc3e6349c7223423f25a5ab48904964c",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v3/runs/REVIEW_V3.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "bfba01040c12f034e31e5d89d378033afedc453663a003c32fc4692527b2d5f1",
    "ARTIFACT_LABEL": "docs/funding/CAIN_CLAIM_LEDGER.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "fec6d550fdac4533966b485e99ef4f948ef5fc7dfb71a6630b467306b9b89fc6",
    "ARTIFACT_LABEL": "docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "2762e6479d41ea3aaba20b08e295e69df9b2cfe83dbc48a0c15da6b6920136a9",
    "ARTIFACT_LABEL": "STACK_WHEELS.json",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "72d039806a03015ea2362fc6334b46ec8118ff82be0ece74665ac8309211eecc",
    "ARTIFACT_LABEL": "pilots/elicitation-a/runs/dryrun-fake/episodes.jsonl",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "61ffd49e0ae623eb2c2189476b1900f12915ecc5adf76649a8e200e571561003",
    "ARTIFACT_LABEL": "pilots/elicitation-a/runs/qwen2.5-7b-instruct-q4_K_M-gha37523764748/episodes.jsonl",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "5e54132fefa69ac630d30a920cfc34bb22f0c8997f8ec46952afde02e34af30b",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v2/runs/v2-qwen2.5-7b-instruct-q4_K_M-gha37544997197-a1/episodes.jsonl",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "7a1d124e0fca0a0945705e252dc77f0f5ed035bf5031bc683aba3209f7ef5f23",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v3/runs/v3q0-qwen2.5-7b-instruct-q4_K_M-gha37552078241-a1/episodes.jsonl",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
    "ARTIFACT_HASH": "7dc9dc61c01c9e59be0d84b9267d345af711938bfcf5f0117dea90d5da7b74be",
    "ARTIFACT_LABEL": "pilots/elicitation-a/v3/runs/v3q1-qwen2.5-7b-instruct-q4_K_M-gha37552078241-a1/episodes.jsonl",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": null,
-   "PROOF": null,
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
   }
- ]
+ ],
+ "anchors_file_sha256_at_stamp": "153298b9eb86a202089fed34be39473d4c753d528bca93868dad812cd8b8aa73"
 }
