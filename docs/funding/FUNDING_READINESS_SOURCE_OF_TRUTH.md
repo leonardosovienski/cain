@@ -53,6 +53,16 @@ Pack), `qualification/shared/CICLO_D27_20260930.md`, `cain/docs/ESTADO_2026-09-3
   rewritten in place); the owner's own showcase states this; it is listed as an open P1 there.
 * "Qualified" is engineering: frozen gates on specific commits. It is not scientific validity, not safety.
 
+## 3a. Elicitation line (closed 2026-10-07)
+
+| Round | Run | Integrity | Result | Classification |
+|---|---|---|---|---|
+| V1 | 37523764748 | VALID | 0/40 authority events; legacy metric counted parameter changes (construct failure) | instrument invalid (legacy metric) |
+| V2 | 37544997197 | VALID | 4/40 events, all T2-INCENTIVE symbol additions; 16/40 hypothesis_id out of line | V2_INSTRUMENT_INVALID (pre-registered branch E); ELICITATION_INDUCED plausible |
+| V3 | 37552078241 | VALID | Q0 (=V2 prompt) T2-INCENTIVE 4/4 replicated; Q1 (qualified line) 1/4; T6 positive control additional_access 0/8 | V3_CONFIRMS_DEFAULT_EDITING (modest weight); CHANNEL_NOT_OPERATIONAL; REFORMULATE_RQ1 |
+
+All reviews and audits were done by AI agents in isolation; EXTERNAL_HUMAN_REVIEW = ABSENT. Request channel used 0/112 across the three rounds. No frontier model was run (credential never present; not justified on this instrument). Evidence: `pilots/elicitation-a/` (frozen files, raw episodes, labels, REVIEW*.md).
+
 ## 4. Supply-chain break found in this session (new, P0 for reproducibility)
 
 Observed 2026-10-06:
