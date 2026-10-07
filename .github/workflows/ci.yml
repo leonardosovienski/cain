@@ -6,7 +6,7 @@ env:
   # Stack wheels (predictor-research-*) are GitHub Release assets of private repositories (STACK_WHEELS.json).
   # STACK_READ_TOKEN: fine-grained token, Contents: read on each producer repository. Without it the fetch
   # step fails closed with the reason; GITHUB_TOKEN cannot read another repository's releases.
-  STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
+  STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN || github.token }}
 jobs:
   test:
     runs-on: ubuntu-latest

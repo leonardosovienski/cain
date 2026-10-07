@@ -34,9 +34,11 @@ def _repo_with_frozen_dir(tmp_path: Path) -> tuple[Path, Path, str]:
     repo = tmp_path / "repo"
     frozen = repo / "exp" / "frozen"
     frozen.mkdir(parents=True)
-    (frozen / "prompt.txt").write_text("frozen prompt\n", encoding="utf-8")
+    # write_bytes: the manifest records sha256 of these exact bytes; write_text would turn "\n" into "\r\n" on
+    # Windows and the gate would (correctly) fail closed on a hash mismatch (cain main run 37653818187).
+    (frozen / "prompt.txt").write_bytes(b"frozen prompt\n")
     (frozen / "nested").mkdir()
-    (frozen / "nested" / "cases.json").write_text("[]", encoding="utf-8")
+    (frozen / "nested" / "cases.json").write_bytes(b"[]")
     _git(repo, "init", "-q")
     _git(repo, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "--allow-empty", "-m", "root")
     manifest = {
@@ -76,7 +78,7 @@ def test_freeze_gate_passes_on_the_registered_commit_and_on_untouched_later_comm
 
 def test_freeze_gate_fails_closed_when_a_frozen_file_changes_after_the_freeze(tmp_path: Path):
     repo, frozen, registered = _repo_with_frozen_dir(tmp_path)
-    (frozen / "prompt.txt").write_text("edited after freeze\n", encoding="utf-8")
+    (frozen / "prompt.txt").write_bytes(b"edited after freeze\n")
     report = freeze_gate.gate(frozen, registered, None, False)
     assert report["status"] == "FAIL_CLOSED"
     assert any("differ from the manifest" in r for r in report["reasons"])

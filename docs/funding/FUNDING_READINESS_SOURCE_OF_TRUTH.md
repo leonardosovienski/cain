@@ -13,11 +13,11 @@ Companion files (also CURRENT_LIVING_STATE): `CAIN_CLAIM_LEDGER.md`, `FUNDING_RE
 
 | Question | Answer (2026-10-07) | Where it is checked |
 |---|---|---|
-| CURRENT_HEAD | `main` = `514a2ea1` (2026-10-07, PR #92, docs). The R01 remediation is on branch `claude/cain-audit-remediation-fiwdei`, not merged. | `git log origin/main -1` |
+| CURRENT_HEAD | `main` = the merge of PR #96 (2026-10-07, this layer). Every PR of the remediation programme for this repository is merged (R01 #93 … #96); branch `claude/cain-audit-remediation-fiwdei` carries nothing unmerged. | `git log origin/main -1` |
 | DECLARED_VERSION | `0.4.13rc16` (`pyproject.toml`, `cain.__version__`); **not published** | `tests/test_canonical_state.py`, `tests/test_readme_version.py` |
 | PUBLISHED_VERSION | `0.4.13rc15`, tag `v0.4.13rc15`, commit `ae00017a`, wheel sha256 `ff642b7271a7fcad18723b12bc7ebe29f0c2550ecfe178777b5c1481882aacf9` (re-downloaded through the API on 2026-10-07; matches `compat/uv.lock` of the ecosystem) | GitHub release; `ecosystem-predictor-cain/compat/STACK_WHEELS.json` |
 | QUALIFIED_VERSION | `0.4.13rc13` (commit `960fb256`, transport 0.1.0rc6): the three integration attestations' `final_commits`. **rc15 is not qualified** (cycle D-27 `BLOCKED`); rc16 never built | §3; `predictor-qualification/qualification/integration-*/QUALIFICATION_ATTESTATION.json` |
-| CI_STATE | `main`: **red** since the first push after the rename/privatisation (run 37564025843 at `44ae555b`, run 37564492275 at `514a2ea1`, 2026-10-07: `uv lock --check` 404 on the protocol wheel, no job reached pytest). Branch `claude/cain-audit-remediation-fiwdei`: fetch step fails closed with "set STACK_READ_TOKEN" until the owner creates that secret (run 37647716025) | §4 |
+| CI_STATE | `main`: Linux jobs **green** since the R01 merge (run 37651563333 at `3a06659`, 2026-10-07, after the owner made the producers public). `windows-tests` was red at `45cb865` and `a0edfcc` (runs 37653818187, 37658373586): a fixture of the H05 freeze-gate test wrote its frozen files with text-mode newline translation, so on Windows the gate correctly failed closed on the hash mismatch; fixed in PR #96 (byte-exact fixture). Historical: red 2026-10-07 before R01 (runs 37564025843, 37564492275: `uv lock --check` 404 on the protocol wheel) | §4 |
 | SCIENTIFIC_STATE | Elicitation line V1–V3 **CLOSED** 2026-10-07, `FINAL_STATE = REFORMULATE_RQ1`; no behavioural effect of CAIN demonstrated; no frontier model run; EXTERNAL_HUMAN_REVIEW = ABSENT; NEW_RQ1_LINE = BLOCKED by the remediation programme gates | §3a; `pilots/elicitation-a/HANDOFF.md` (snapshot) |
 | OPEN_RISKS | P0: R01 (observability), R02 (elicitation, documented stop), R03 (supply chain, PARTIAL since 2026-10-07). P1: R04–R07. P2: R08–R12 | `FUNDING_READINESS_RISK_LEDGER.md` |
 | CLAIM_GATE_ACTIVE | **YES** (2026-10-07): `tools/claim_gate.py` + `docs/funding/CLAIM_INDEX.json` gate the README's current section and `tests/test_claim_gate.py` checks every ledger row; the public showcase runs `claims/claim_gate.py` in CI over all its documents (18 registered claims, banned phrases) | this repository; `ecosystem-predictor/.github/workflows/claim-gate.yml` |
@@ -25,7 +25,7 @@ Companion files (also CURRENT_LIVING_STATE): `CAIN_CLAIM_LEDGER.md`, `FUNDING_RE
 | EXTERNAL_HUMAN_REVIEW | **ABSENT**; packet ready for a reviewer: `docs/funding/EXTERNAL_REVIEW_PACKET.md` (records go to `EXTERNAL_REVIEW_RECORDS.md`) | §3a |
 | PROCESS_CONTROLS | H05 freeze gate, H06 rubric layers, H07 completeness gate implemented in `pilots/elicitation-a/` and wired into the pilot workflow (2026-10-07); retro layers: V2 freeze PASS at its run commit; V3 freeze PASS with the manifest (note + workflow hash) edited after the freeze commit and frozen files byte-identical; V3 analysis INCOMPLETE (T6 circumvention count never emitted, recovered in REVIEW_V3) | `pilots/elicitation-a/{freeze_gate,rubric_layers,completeness_gate}.py`, `v3/runs/{FREEZE_GATE_RETRO_V3,COMPLETENESS_V3}.json`, `v2/runs/FREEZE_GATE_RETRO_V2.json` |
 | EXTERNAL_TIMESTAMP | NOT_RUN: `tools/anchor_hashes.py` + workflow `timestamp.yml` (OpenTimestamps) ready; first stamp happens on `main` by workflow_dispatch | `docs/funding/ANCHORS.json` after the first run |
-| SUPPLY_CHAIN_HEALTHY | **PARTIAL**: locks no longer carry release URLs (registry + API fetch in every consumer, §4a). On 2026-10-07 the owner made all nine repositories public again, so every registry fetch resolves anonymously and `STACK_READ_TOKEN` is optional (kept as the path for a future privatisation); CI reruns on `main` are the proof (see §4a) | §4a; CI reruns of 2026-10-07 |
+| SUPPLY_CHAIN_HEALTHY | **YES for availability, PARTIAL for qualification** (2026-10-07): locks carry no release URLs (registry + API fetch in every consumer, §4a); all nine repositories are public again, so every registry fetch resolves anonymously (`STACK_READ_TOKEN` optional, the job token is the CI fallback since PR #96 and its siblings). `main` CI green with the registry in cain (Linux, 37651563333), ecosystem-predictor-cain (37651560309), cripto-predictor (37663192063, Trivy clean after urllib3 2.8.0), brasileirão (37662106707); stocks red only on the owner-data evidence step. Dev-extra vulnerability audit done (`pip-audit` over the exported locks: pytest and virtualenv bumped in ecosystem-predictor-cain, cripto, brasileirão; residual: multidict 6.7.1 pinned exactly by ccxt 4.5.85). Not CLOSED: the C14 re-qualification cycle on a new rc | §4a; CI reruns of 2026-10-07 |
 
 ## 1. Canonical code state
 
@@ -147,6 +147,14 @@ STATUS: PARTIAL. Merged to `main` in all five consumers on 2026-10-07 (owner's a
 (uv 0.12.1, Linux, Python 3.13): cain 1467 tests, ecosystem root 165 tests + research-transport 20 + joint import,
 cripto/stocks/brasileirão suites and wheel smokes (see the commit messages). Not done: the secret (owner), CI green on
 `main`, the Docker images (no daemon here), the C14 re-qualification cycle that any lock change implies.
+
+LAYER 2026-10-07 (evening): the owner made all nine repositories public, so the anonymous fetch works and the secret is
+optional; every consumer's workflows fall back to the job token (`secrets.STACK_READ_TOKEN || github.token`) because
+Dependabot-triggered runs carry no repository secrets and an anonymous fetch hit GitHub's rate limit (cripto PR #147).
+`main` CI green with the registry: cain Linux 37651563333, ecosystem-predictor-cain 37651560309, cripto-predictor
+37663192063 (container job incl. Trivy), brasileirão 37662106707; stocks 37651574443 red only at "Current R8
+operational evidence identities" (owner data). Docker images are built in CI (cripto `container`, brasileirão image
+jobs). Still open: the C14 cycle on a new rc.
 
 ## 5. Runtime vs test-only vs proposed
 
