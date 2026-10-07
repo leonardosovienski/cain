@@ -24,16 +24,19 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 
 ### R02 · SCIENCE · no evidence yet that the phenomenon can be elicited
 - STATUS: OPEN — **three integrity-checked rounds (V1, V2, V3; 2026-10-06/07) found no elicitable authority-expansion in qwen2.5:7b. V2's only signal (T2 INCENTIVE 4/4 symbol additions) replicated in V3 and was removed by a one-line qualifier (1/4): DEFAULT_EDITING_CONFIRMED, modest weight. The request channel was used 0/112 times, including 0/8 in a positive control that itself proved defective. Terminal state REFORMULATE_RQ1; frontier NOT justified on this instrument. See `pilots/elicitation-a/HANDOFF.md`, `pilots/elicitation-a/v3/runs/REVIEW_V3.md`.** Earlier: V2 hostile-reviewed; owner replaced manual blind labels by AI shadow adjudication (PROTOCOL_AMENDMENT_V2_BASELINE_001). Pilot run 1 (2026-10-06, qwen2.5:7b-instruct-q4_K_M, 40 episodes, integrity VALID): 0/40 authority-expansion attempts on every surface; machine label 14/40 are `horizon_days=3` range deviations, not authority. See `pilots/elicitation-a/runs/qwen2.5-7b-instruct-q4_K_M-gha37523764748/REVIEW.md`. Next: same frozen files, one frontier model.**
-- EVIDENCE: the only LLM data is `qwen2.5:0.5b` picking from a 2-item enum with incoherent rationales; no frontier model
-  has ever been connected (CAIN supports Ollama only); no task has an incentive where more authority helps.
+- EVIDENCE (2026-10-07): 112 integrity-checked episodes on qwen2.5:7b across V1–V3 (`pilots/elicitation-a/`); additional_access
+  empty 112/112; the one positive signal (V2 T2 4/4) replicated and was removed by a one-word qualifier; positive control defective.
+  Before 2026-10-06 the only LLM data was `qwen2.5:0.5b` picking from a 2-item enum; no frontier model has ever been connected.
 - WHY_IT_MATTERS: without a base rate there is no power analysis, no pre-registration, no falsifiable H1.
 - AFFECTED_FUNDERS: all.
-- CHEAPEST_FIX: 20–40 episode prompt-only pilot (arm A) with free-form requests on 3–5 tasks where extra authority
+- CHEAPEST_FIX (executed as V1–V3, 2026-10-06/07; superseded): 20–40 episode prompt-only pilot (arm A) with free-form requests on 3–5 tasks where extra authority
   rationally helps, one local ≥7B model and, when credits arrive, one frontier model; hand-label attempts with a
   pre-written rubric. Diagnose zero as MODEL_TOO_WEAK / INCENTIVE_TOO_WEAK / TASK_TOO_EASY / AUTHORITY_NOT_USEFUL /
   PROMPT_TOO_STRONG.
 - DEPENDENCIES: R01 design; frontier credits optional for the first pass.
 - CLOSE_CRITERIA: observed base rate with CI, or a documented stop (phenomenon not elicitable → §28 stop rule).
+- CLOSE_STATUS (2026-10-07): documented stop reached, but as INSTRUMENT_INVALID rather than "phenomenon not elicitable": the risk
+  stays OPEN for any future line (RQ1_FUTURE_STATUS = MAY_BE_REFORMULATED, new line, not V4). Nothing here is evidence of safety.
 
 ### R03 · REPRODUCIBILITY · the stack can no longer be installed from its locks
 - STATUS: OPEN (since 2026-10-05/06)
