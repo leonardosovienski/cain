@@ -82,8 +82,7 @@ def test_living_documents_make_no_future_tense_ci_predictions():
     for relative in LIVING:
         text = _text(relative)
         for pattern in STALE_PREDICTIONS:
-            matches = re.findall(pattern, text, flags=re.I)
-            # The historical row in §2 may quote the old wording only inside a sentence that says it materialised.
-            for found in matches:
-                context = text[max(0, text.lower().find(found.lower()) - 200) : text.lower().find(found.lower()) + 200]
-                assert "materialised" in context or "predicted" in context, (relative, found)
+            # A historical sentence may keep the old wording only next to the statement that it materialised.
+            for found in re.finditer(pattern, text, flags=re.I):
+                context = text[max(0, found.start() - 200) : found.end() + 200]
+                assert "materialised" in context or "predicted" in context, (relative, found.group(0))
