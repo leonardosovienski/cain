@@ -1,0 +1,64 @@
+{
+ "schema": "elicitation-a-v3-freeze/1",
+ "frozen_at_utc": "2026-10-07T00:26:54Z",
+ "git_sha_before_freeze_commit": "3bffebc245e9452b9131b4121cf701214d5e7afb",
+ "note": "commit 3bffebc added v3/ and the trigger without this manifest (manifest script failed on __pycache__); that job fails closed at the 'not frozen' guard and produces no run. This commit freezes and re-triggers. No frozen file content changed between the two commits except check_v3.py variable rename (lint).",
+ "model": {
+  "id": "qwen2.5:7b-instruct-q4_K_M",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "runtime": "ollama 0.40.0 (pinned in workflow)",
+  "generation": {
+   "temperature": 0.7,
+   "num_ctx": 8192,
+   "num_predict": 700,
+   "format": "json"
+  }
+ },
+ "design": {
+  "N_per_arm": 16,
+  "arms": {
+   "Q0": "system_prompt_q0.txt (byte-identical to V2 system_prompt_v2.txt)",
+   "Q1": "system_prompt_q1.txt (symbols line qualified with 'only; other symbols are not part of this grant')"
+  },
+  "tasks": [
+   "T2-cross-asset",
+   "T6-channel-control"
+  ],
+  "conditions": [
+   "INCENTIVE",
+   "NEUTRAL"
+  ],
+  "seeds": [
+   1001,
+   1002,
+   1003,
+   1004
+  ],
+  "turns": 1,
+  "retries": 0,
+  "user_prompt_change_vs_v2": "instruction += ' hypothesis_id must be one of hypotheses_in_this_line.'",
+  "rubric": "rubric_v2.py 2.1 (two regex fixes; 48/48 fixtures; relabelling V2 changes 1 label, 0 events)",
+  "pre_registered_reading": "DESIGN_V3.md",
+  "objective": "V3_SINGLE_DISCRIMINATING_TEST"
+ },
+ "files_sha256": {
+  "check_v3.py": "3f54667e33340b7a2067febfb3cc67d46ee9394f107c16102ccf6de8243cbec9",
+  "edge_cases.json": "0553097a5b0403b46b72b15d31183721a0d43527a6200ee225f0347e72861ed0",
+  "edge_cases_adversarial.json": "254214a5461d5cbaf52c905fabc570b9717a156badb0cc3843a4d2efa7352e1d",
+  "edge_cases_review2.json": "d7d8353549487aabe35858db1c6a49536dbf4e4ff3ede50106ffcdd1471a006c",
+  "relabel_run.py": "021369120ea95f4ce1b3000473469e24c20b39e44ecd3058fd6c7e3d4646083c",
+  "rubric_v2.py": "0edab55c540afe6b278c0d1a64997f6fd91c8faa07b63f4293d96e5dfd9cb763",
+  "scenarios.json": "43a24969249cb945f8d7f3349772cada59642e29ba733fff3b335b776f2ddf12",
+  "system_prompt_q0.txt": "0138cfcb7d6ddda26df1d9085a21a37142dcab6c94e262bee99bacec02cc5211",
+  "system_prompt_q1.txt": "5f0020aae7718069f55e5ceb99710598be3db94055617724c488d8d67cb9468a"
+ },
+ "design_doc_sha256": "7c643454d753ecdacc71bcff4c287645bc8953a3fee78982eac896be2975d278",
+ "harness_sha256": "741a260c9923f6a86aeed529c0b787de2dce27a017ae3fc49cb99dcc8489be4b",
+ "workflow": {
+  "path": ".github/workflows/pilot-elicitation-a.yml",
+  "sha256": "f3c33233cb943d5f50dc3f09537f2e31db1c1d2924ba34b5bb376e89dc1e0a80",
+  "job": "pilot-v3",
+  "trigger": "pilots/elicitation-a/v3/TRIGGER_V3"
+ },
+ "v2_prompt_sha256_for_reference": "0138cfcb7d6ddda26df1d9085a21a37142dcab6c94e262bee99bacec02cc5211"
+}

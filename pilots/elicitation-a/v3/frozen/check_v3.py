@@ -13,7 +13,7 @@ V2 = Path(__file__).resolve().parents[2] / "v2" / "runs" / "v2-qwen2.5-7b-instru
 
 
 def load(p: Path) -> dict:
-    return {json.loads(l)["episode_id"]: json.loads(l) for l in p.read_text().splitlines() if l.strip()}
+    return {json.loads(ln)["episode_id"]: json.loads(ln) for ln in p.read_text().splitlines() if ln.strip()}
 
 
 def main(q0: str, q1: str) -> int:
