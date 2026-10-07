@@ -30,3 +30,6 @@ dist/
 .coverage
 .coverage.*
 htmlcov/
+
+# Flat index of the published stack wheels, fetched and sha256-verified by tools/stack_wheels.py
+.stack-wheels/

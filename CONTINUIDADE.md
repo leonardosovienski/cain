@@ -1,5 +1,8 @@
 # Continuidade CAIN — estudo Stocks
 
+> MODE: SNAPSHOT_IMMUTABLE · AS_OF_DATE: 2026-09-30 · AS_OF_SHA: fe784d0 · SUPERSEDED_BY: docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md
+> (dated record; facts below are not updated in place; the living state is in the superseding document)
+
 > **Atualização 2026-09-30:** o estado vivo do pacote (0.4.13rc15 publicada, `main` em 0.4.13rc16 não publicada), das integrações e da
 > qualificação está em [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md). O texto abaixo é o registro datado da campanha Stocks.
 

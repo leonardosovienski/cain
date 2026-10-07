@@ -1,5 +1,8 @@
 # FUNDING_READINESS_RISK_LEDGER
 
+MODE: CURRENT_LIVING_STATE · LAST_MATERIAL_UPDATE: 2026-10-07 · ISSUED: 2026-10-06. Entries are updated in place with dated
+layers; nothing observed earlier is deleted. Ledger IDs (R01–R12 here) are not the remediation programme's item numbers.
+
 Issued 2026-10-06. Severity: P0 may invalidate the contribution or block serious funding; P1 strongly reduces
 probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; no inferred traits.
 
@@ -39,11 +42,19 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
   stays OPEN for any future line (RQ1_FUTURE_STATUS = MAY_BE_REFORMULATED, new line, not V4). Nothing here is evidence of safety.
 
 ### R03 · REPRODUCIBILITY · the stack can no longer be installed from its locks
-- STATUS: OPEN (since 2026-10-05/06)
+- STATUS: **PARTIAL** (2026-10-07; OPEN since 2026-10-05/06). Layer 2026-10-07: root cause confirmed as two independent
+  breaks (rename with reuse of the old name; all producers private, so even unchanged URLs 404 anonymously). Fixed on
+  branch `claude/cain-audit-remediation-fiwdei` in all five consumers (cain, ecosystem research-transport + joint lock,
+  cripto, stocks, brasileirão): `STACK_WHEELS.json` registry + `stack_wheels.py` API fetch with sha256 verification +
+  URL-free locks + CI fetch steps (`FUNDING_READINESS_SOURCE_OF_TRUTH.md` §4a). Remaining for CLOSED: the
+  `STACK_READ_TOKEN` secret in each consumer (owner), green CI on `main` after merge, Docker images built in CI,
+  C14 cycle on a new rc. Preventive controls in place: `check` gate (no release URL may reappear in a lock; registry,
+  index, lock and pyproject must agree), retired-repository-name refusal, fail-closed fetch with the reason, offline
+  unit tests of the registry pins, `probe` as availability sentinel.
 - EVIDENCE: rename `ecosystem-predictor` → `ecosystem-predictor-cain` plus a new public repo under the old name;
   all `uv.lock` URL pins to the old name 404; private repos' assets 404 anonymously; `ecosystem-predictor-cain` CI red
   on every run since 2026-10-04 (37201676611, 37325661999, 37391152563, 37469493563); harness renewal failed
-  2026-10-06 (37451877373). `cain` CI will fail on next push. This session had to build transport wheels from source.
+  2026-10-06 (37451877373). `cain` CI will fail on next push (materialised on 2026-10-07: runs 37564025843 and 37564492275). This session had to build transport wheels from source.
 - WHY_IT_MATTERS: "hash-pinned, cleanroom-installable" is the programme's central credibility claim (C04, C11) and the
   arm-C infrastructure for the experiment; today neither a reviewer nor the owner's CI can re-execute it.
 - AFFECTED_FUNDERS: anyone doing due diligence on the Evidence Pack; Anthropic/OpenAI pilots (arm C needs an install).
@@ -106,10 +117,11 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 
 ## P2
 
-- R08 · ADMIN: `cain` CI has not run since 2026-09-30; failure is latent (see R03).
+- R08 · ADMIN: `cain` CI ran on 2026-10-07 (runs 37564025843, 37564492275) and failed as predicted (see R03); no longer latent.
 - R09 · PUBLIC_EVIDENCE: Evidence Pack hashes have no external timestamp (showcase E6; cost ≈ 0, e.g. OpenTimestamps).
 - R10 · EVALUATION: the two provenance tests need the `observability` extra; the test-count line in state docs should say so.
-- R11 · ADMIN: "787 tests" in `docs/ESTADO_2026-09-30.md` is a stale figure from 2026-09-15; fix on next docs pass.
+- R11 · ADMIN: "787 tests" in `docs/ESTADO_2026-09-30.md` is a stale figure from 2026-09-15; that file is now marked SNAPSHOT_IMMUTABLE (not corrected in place); the current figure lives in the Source of Truth §2.
+- R12 · GOVERNANCE (programme R02, 2026-10-07): canonical documents mixed snapshot and living state (e.g. a future-tense CI prediction left standing after it had materialised; "proposed" experiments after V1–V3 ran). Control: every canonical document now declares `MODE: SNAPSHOT_IMMUTABLE` (AS_OF_DATE, AS_OF_SHA, SUPERSEDED_BY) or `MODE: CURRENT_LIVING_STATE`; `tests/test_canonical_state.py` fails when a declaration is missing, when a living document contains a future-tense CI prediction, or when the declared version in §0 drifts from the package. STATUS: PARTIAL (controls active; the ecosystem and qualification repositories still carry undeclared state documents).
 
 ## Explicitly not findings
 - Personality or motivation of the owner: no evidence considered, none recorded.

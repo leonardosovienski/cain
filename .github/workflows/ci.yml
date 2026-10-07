@@ -2,6 +2,11 @@ name: CI
 on: [push, pull_request]
 permissions:
   contents: read
+env:
+  # Stack wheels (predictor-research-*) are GitHub Release assets of private repositories (STACK_WHEELS.json).
+  # STACK_READ_TOKEN: fine-grained token, Contents: read on each producer repository. Without it the fetch
+  # step fails closed with the reason; GITHUB_TOKEN cannot read another repository's releases.
+  STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -17,8 +22,11 @@ jobs:
         with:
           version: "0.12.1"
           python-version: ${{ matrix.python-version }}
+      - name: Stack wheels from the registry (GitHub Releases, sha256-verified)
+        run: uv run --no-project python tools/stack_wheels.py fetch
       - run: uv lock --check
       - run: uv sync --locked --extra dev --extra vision --extra observability
+      - run: uv run --no-project python tools/stack_wheels.py check
       - run: uv run --locked ruff check .
       - run: uv run --locked pytest -q
       - run: uv run --locked python -m cain --help
@@ -27,7 +35,8 @@ jobs:
         shell: bash
         run: |
           uv export --locked --no-emit-project --format requirements-txt --output-file lock-requirements.txt
-          uv run --locked python tools/verify_wheel.py --wheel dist/cain_research-*.whl --requirements lock-requirements.txt
+          uv run --no-project python tools/stack_wheels.py requirements --input lock-requirements.txt --output lock-requirements.hashed.txt
+          uv run --locked python tools/verify_wheel.py --wheel dist/cain_research-*.whl --requirements lock-requirements.hashed.txt
       - uses: actions/upload-artifact@v4
         with:
           name: cain-wheel-${{ matrix.python-version }}
@@ -49,6 +58,8 @@ jobs:
         with:
           version: "0.12.1"
           python-version: '3.12'
+      - name: Stack wheels from the registry (GitHub Releases, sha256-verified)
+        run: uv run --no-project python tools/stack_wheels.py fetch
       - run: uv sync --locked --extra dev --extra vision --extra observability
       - run: uv run --locked pytest -q --cov=cain --cov-report=term --cov-fail-under=86
 
@@ -62,6 +73,8 @@ jobs:
         with:
           version: "0.12.1"
           python-version: '3.12'
+      - name: Stack wheels from the registry (GitHub Releases, sha256-verified)
+        run: uv run --no-project python tools/stack_wheels.py fetch
       - run: uv sync --locked --extra dev --extra vision --extra observability
       - name: "mypy (blocking since 2026-09-29; the debt was paid down to zero)"
         run: uv run --locked --with mypy mypy
@@ -78,11 +91,14 @@ jobs:
         with:
           version: "0.12.1"
           python-version: '3.12'
+      - name: Stack wheels from the registry (GitHub Releases, sha256-verified)
+        run: uv run --no-project python tools/stack_wheels.py fetch
       - run: uv sync --locked --extra dev --extra vision --extra observability
+      - run: uv run --no-project python tools/stack_wheels.py check
       - run: uv run --locked pytest -q -p no:cacheprovider
 
   # Windows smoke: the documented launcher flow on a fresh checkout, without Ollama.
-  # scripts/start-cain.ps1 installs from uv.lock (uv on PATH) when .venv is absent and
+  # scripts/start-cain.ps1 fetches the stack wheels (STACK_WHEELS.json) and installs from uv.lock (uv on PATH) when .venv is absent and
   # then runs `cain doctor`. Without an Ollama service, doctor exits 1 after printing
   # "Cain: <urlopen error ...>", which already proves the install and the start-up;
   # any other failure (missing uv, uv sync error, import error, traceback) fails the job.

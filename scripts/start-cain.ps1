@@ -23,6 +23,10 @@ if (-not (Test-Path -LiteralPath $taskPython)) {
     if (-not $taskUv) {
         throw 'uv is required to install Cain from uv.lock: https://docs.astral.sh/uv/getting-started/installation/ (see README.md).'
     }
+    # The stack wheels (STACK_WHEELS.json) are GitHub Release assets of private repositories: fetched through the
+    # API, sha256-verified, into .stack-wheels (uses STACK_READ_TOKEN / GH_TOKEN / GITHUB_TOKEN or `gh auth token`).
+    & $taskUv.Source run --no-project --python 3.12 python (Join-Path $taskRoot 'tools\stack_wheels.py') fetch --project $taskRoot
+    if ($LASTEXITCODE -ne 0) { throw 'Could not fetch the stack wheels (tools/stack_wheels.py fetch failed; see STACK_WHEELS.json).' }
     & $taskUv.Source sync --locked --extra api --project $taskRoot
     if ($LASTEXITCODE -ne 0) { throw 'Could not install Cain dependencies (uv sync --locked failed).' }
     if (-not (Test-Path -LiteralPath $taskPython)) { throw 'uv sync finished but .venv\Scripts\python.exe was not created.' }

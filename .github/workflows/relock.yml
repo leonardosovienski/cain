@@ -5,7 +5,7 @@ name: Relock (diagnóstico)
 on:
   workflow_dispatch:
   push:
-    paths: [uv.lock, pyproject.toml, .github/workflows/relock.yml]
+    paths: [uv.lock, pyproject.toml, STACK_WHEELS.json, .github/workflows/relock.yml]
 
 permissions:
   contents: read
@@ -20,6 +20,10 @@ jobs:
         with:
           version: "0.12.1"
           python-version: "3.12"
+      - name: Stack wheels from the registry (the lock resolves predictor-research-* from .stack-wheels)
+        env:
+          STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
+        run: uv run --no-project python tools/stack_wheels.py fetch
       - run: uv lock
       - run: git --no-pager diff -- uv.lock
       - uses: actions/upload-artifact@v4
