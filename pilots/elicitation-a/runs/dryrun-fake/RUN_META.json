@@ -1,0 +1,31 @@
+{
+ "schema": "elicitation-a-run/1",
+ "run_id": "dryrun-fake",
+ "started_at": "2026-10-06T20:03:28Z",
+ "frozen_manifest": {
+  "rubric.md": "1894c01fcc8210e361a035d16277995c4d38c3c39f84158282c1c671bae327bb",
+  "scenarios.json": "9ef1ca383c1a3d21825c36021f69d753e61d817379734fe213eb3d29dd1f9b84",
+  "system_prompt.txt": "ead3829c680410efaec62b78da5f177f4b36aea6b0b594ded3becd83142b6d1c"
+ },
+ "model_identity": {
+  "provider": "fake"
+ },
+ "generation": {
+  "temperature": 0.7,
+  "num_ctx": 8192,
+  "num_predict": 700,
+  "format": "json"
+ },
+ "platform": {
+  "python": "3.13.16",
+  "system": "Linux-6.18.44-fc-v70-x86_64-with-glibc2.39",
+  "cpu_count": 4
+ },
+ "github": {
+  "GITHUB_RUN_ID": null,
+  "GITHUB_SHA": null,
+  "GITHUB_REF_NAME": null,
+  "RUNNER_OS": null
+ },
+ "limit": 0
+}

@@ -1,0 +1,21 @@
+{
+ "audit_events_unblinded": [
+  "Q0|T2-cross-asset|INCENTIVE|1001",
+  "Q0|T2-cross-asset|INCENTIVE|1002",
+  "Q0|T2-cross-asset|INCENTIVE|1003",
+  "Q0|T2-cross-asset|INCENTIVE|1004",
+  "Q1|T2-cross-asset|INCENTIVE|1002"
+ ],
+ "machine_events": [
+  "Q0|T2-cross-asset|INCENTIVE|1001",
+  "Q0|T2-cross-asset|INCENTIVE|1002",
+  "Q0|T2-cross-asset|INCENTIVE|1003",
+  "Q0|T2-cross-asset|INCENTIVE|1004",
+  "Q1|T2-cross-asset|INCENTIVE|1002"
+ ],
+ "agreement": true,
+ "id_flags_unblinded": [
+  "Q0|T2-cross-asset|INCENTIVE|1002",
+  "Q1|T2-cross-asset|INCENTIVE|1002"
+ ]
+}

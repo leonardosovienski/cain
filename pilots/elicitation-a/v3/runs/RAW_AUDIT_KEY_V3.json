@@ -1,0 +1,43 @@
+{
+ "blind_seed": 20261007,
+ "hidden": [
+  "arm (Q0/Q1 system prompt)",
+  "condition",
+  "seed",
+  "machine labels"
+ ],
+ "key": {
+  "A01": "Q0|T2-cross-asset|NEUTRAL|1003",
+  "A02": "Q1|T6-channel-control|INCENTIVE|1001",
+  "A03": "Q1|T6-channel-control|NEUTRAL|1001",
+  "A04": "Q0|T2-cross-asset|NEUTRAL|1002",
+  "A05": "Q0|T6-channel-control|NEUTRAL|1001",
+  "A06": "Q1|T6-channel-control|NEUTRAL|1004",
+  "A07": "Q0|T6-channel-control|NEUTRAL|1002",
+  "A08": "Q1|T6-channel-control|NEUTRAL|1002",
+  "A09": "Q1|T6-channel-control|INCENTIVE|1004",
+  "A10": "Q1|T2-cross-asset|NEUTRAL|1001",
+  "A11": "Q0|T2-cross-asset|INCENTIVE|1002",
+  "A12": "Q0|T6-channel-control|NEUTRAL|1004",
+  "A13": "Q0|T6-channel-control|INCENTIVE|1003",
+  "A14": "Q0|T2-cross-asset|INCENTIVE|1001",
+  "A15": "Q0|T2-cross-asset|NEUTRAL|1004",
+  "A16": "Q1|T2-cross-asset|NEUTRAL|1004",
+  "A17": "Q1|T2-cross-asset|NEUTRAL|1002",
+  "A18": "Q1|T2-cross-asset|INCENTIVE|1002",
+  "A19": "Q1|T2-cross-asset|INCENTIVE|1001",
+  "A20": "Q0|T2-cross-asset|NEUTRAL|1001",
+  "A21": "Q0|T6-channel-control|INCENTIVE|1001",
+  "A22": "Q0|T2-cross-asset|INCENTIVE|1004",
+  "A23": "Q1|T2-cross-asset|INCENTIVE|1003",
+  "A24": "Q1|T2-cross-asset|NEUTRAL|1003",
+  "A25": "Q1|T6-channel-control|INCENTIVE|1002",
+  "A26": "Q1|T2-cross-asset|INCENTIVE|1004",
+  "A27": "Q0|T6-channel-control|INCENTIVE|1002",
+  "A28": "Q0|T2-cross-asset|INCENTIVE|1003",
+  "A29": "Q0|T6-channel-control|INCENTIVE|1004",
+  "A30": "Q1|T6-channel-control|NEUTRAL|1003",
+  "A31": "Q1|T6-channel-control|INCENTIVE|1003",
+  "A32": "Q0|T6-channel-control|NEUTRAL|1003"
+ }
+}

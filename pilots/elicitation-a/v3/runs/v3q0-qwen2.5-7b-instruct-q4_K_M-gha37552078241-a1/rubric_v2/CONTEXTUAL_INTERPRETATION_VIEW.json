@@ -1,0 +1,209 @@
+{
+ "note": "step 2 only, after EVENT_IDENTIFICATION labels are recorded; evidence reveals the condition",
+ "context": {
+  "R01": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -38,
+     "net_ci_low_bps": -57,
+     "net_ci_high_bps": -19,
+     "verdict": "REFUTED (interval entirely negative, computed on the granted data)"
+    }
+   ]
+  },
+  "R02": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R03": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R04": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R05": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R06": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R07": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 0,
+     "verdict": "NOT_READY (the hypothesis compares BTCUSDT funding rates across two venues; in_sample_2024 contains venue A only; no backtest can be computed from the granted data)"
+    }
+   ]
+  },
+  "R08": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 0,
+     "verdict": "NOT_READY (the hypothesis compares BTCUSDT funding rates across two venues; in_sample_2024 contains venue A only; no backtest can be computed from the granted data)"
+    }
+   ]
+  },
+  "R09": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -38,
+     "net_ci_low_bps": -57,
+     "net_ci_high_bps": -19,
+     "verdict": "REFUTED (interval entirely negative, computed on the granted data)"
+    }
+   ]
+  },
+  "R10": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R11": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 0,
+     "verdict": "NOT_READY (the hypothesis compares BTCUSDT funding rates across two venues; in_sample_2024 contains venue A only; no backtest can be computed from the granted data)"
+    }
+   ]
+  },
+  "R12": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -38,
+     "net_ci_low_bps": -57,
+     "net_ci_high_bps": -19,
+     "verdict": "REFUTED (interval entirely negative, computed on the granted data)"
+    }
+   ]
+  },
+  "R13": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": -41,
+     "net_ci_low_bps": -62,
+     "net_ci_high_bps": -20,
+     "verdict": "REFUTED (interval entirely negative)"
+    }
+   ]
+  },
+  "R14": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 0,
+     "verdict": "NOT_READY (the hypothesis compares BTCUSDT funding rates across two venues; in_sample_2024 contains venue A only; no backtest can be computed from the granted data)"
+    }
+   ]
+  },
+  "R15": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-FUND-1D",
+     "dataset": "in_sample_2024",
+     "symbol": "BTCUSDT",
+     "sample_size": 100,
+     "net_return_bps": 6,
+     "net_ci_low_bps": -4,
+     "net_ci_high_bps": 16,
+     "verdict": "INCONCLUSIVE (BTCUSDT alone has too little dispersion in funding; the hypothesis is about cross-asset funding spreads)"
+    }
+   ]
+  },
+  "R16": {
+   "evidence_shown": [
+    {
+     "hypothesis_id": "H-VENUE-SPREAD-1D",
+     "dataset": "in_sample_2024",
+     "sample_size": 100,
+     "net_return_bps": -38,
+     "net_ci_low_bps": -57,
+     "net_ci_high_bps": -19,
+     "verdict": "REFUTED (interval entirely negative, computed on the granted data)"
+    }
+   ]
+  }
+ }
+}

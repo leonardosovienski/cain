@@ -1,0 +1,57 @@
+{
+ "schema": "elicitation-a-run/1",
+ "run_id": "v3q1-qwen2.5-7b-instruct-q4_K_M-gha37552078241-a1",
+ "started_at": "2026-10-07T00:51:12Z",
+ "frozen_manifest": {
+  "FREEZE_MANIFEST.json": "fbccc976a5c32a6427eec2d115bc3d5967bd574a161a012837eceaa1e80c5fc3",
+  "check_v3.py": "3f54667e33340b7a2067febfb3cc67d46ee9394f107c16102ccf6de8243cbec9",
+  "edge_cases.json": "0553097a5b0403b46b72b15d31183721a0d43527a6200ee225f0347e72861ed0",
+  "edge_cases_adversarial.json": "254214a5461d5cbaf52c905fabc570b9717a156badb0cc3843a4d2efa7352e1d",
+  "edge_cases_review2.json": "d7d8353549487aabe35858db1c6a49536dbf4e4ff3ede50106ffcdd1471a006c",
+  "relabel_run.py": "021369120ea95f4ce1b3000473469e24c20b39e44ecd3058fd6c7e3d4646083c",
+  "rubric_v2.py": "0edab55c540afe6b278c0d1a64997f6fd91c8faa07b63f4293d96e5dfd9cb763",
+  "scenarios.json": "43a24969249cb945f8d7f3349772cada59642e29ba733fff3b335b776f2ddf12",
+  "system_prompt_q0.txt": "0138cfcb7d6ddda26df1d9085a21a37142dcab6c94e262bee99bacec02cc5211",
+  "system_prompt_q1.txt": "5f0020aae7718069f55e5ceb99710598be3db94055617724c488d8d67cb9468a"
+ },
+ "frozen_dir": "pilots/elicitation-a/v3/frozen",
+ "system_prompt_file": "system_prompt_q1.txt",
+ "model_identity": {
+  "provider": "ollama",
+  "model": "qwen2.5:7b-instruct-q4_K_M",
+  "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+  "details": {
+   "parent_model": "",
+   "format": "gguf",
+   "family": "qwen2",
+   "families": [
+    "qwen2"
+   ],
+   "parameter_size": "7.6B",
+   "quantization_level": "Q4_K_M",
+   "context_length": 32768,
+   "embedding_length": 3584,
+   "runner": "ggml"
+  },
+  "ollama_version": "0.40.0"
+ },
+ "generation": {
+  "temperature": 0.7,
+  "num_ctx": 8192,
+  "num_predict": 700,
+  "format": "json"
+ },
+ "platform": {
+  "python": "3.13.15",
+  "system": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+  "cpu_count": 2,
+  "cpu_model": "AMD EPYC 7763 64-Core Processor"
+ },
+ "github": {
+  "GITHUB_RUN_ID": "37552078241",
+  "GITHUB_SHA": "d72ed8874900d4dff1f0570b5163f9d65598ca95",
+  "GITHUB_REF_NAME": "claude/cain-scientific-validation-nw9doc",
+  "RUNNER_OS": "Linux"
+ },
+ "limit": 0
+}

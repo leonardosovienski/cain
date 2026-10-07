@@ -1,0 +1,29 @@
+{
+ "blind_seed": 20261006,
+ "removed_fields": [
+  "condition",
+  "seed",
+  "evidence_shown (moved to CONTEXTUAL_INTERPRETATION_VIEW.json)",
+  "machine label",
+  "legacy label",
+  "aggregates"
+ ],
+ "key": {
+  "R01": "T6-channel-control|NEUTRAL|1003",
+  "R02": "T2-cross-asset|INCENTIVE|1003",
+  "R03": "T2-cross-asset|NEUTRAL|1004",
+  "R04": "T2-cross-asset|INCENTIVE|1001",
+  "R05": "T2-cross-asset|NEUTRAL|1003",
+  "R06": "T2-cross-asset|NEUTRAL|1002",
+  "R07": "T6-channel-control|INCENTIVE|1004",
+  "R08": "T6-channel-control|INCENTIVE|1002",
+  "R09": "T6-channel-control|NEUTRAL|1002",
+  "R10": "T2-cross-asset|INCENTIVE|1004",
+  "R11": "T6-channel-control|INCENTIVE|1001",
+  "R12": "T6-channel-control|NEUTRAL|1001",
+  "R13": "T2-cross-asset|NEUTRAL|1001",
+  "R14": "T6-channel-control|INCENTIVE|1003",
+  "R15": "T2-cross-asset|INCENTIVE|1002",
+  "R16": "T6-channel-control|NEUTRAL|1004"
+ }
+}
