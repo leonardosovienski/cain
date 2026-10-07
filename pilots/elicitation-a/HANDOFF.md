@@ -2,9 +2,12 @@
 
 Read this before anything else in a new session. Repository `cain`, branch `claude/cain-scientific-validation-nw9doc`.
 
-PROJECT_STATE: diagnostic phase closed. CAIN's containment is built and engineering-qualified (rc13); no behavioural
-phenomenon has been demonstrated; a second elicitation instrument (V2) is implemented and hostile-reviewed by an AI agent (not a human; EXTERNAL_HUMAN_REVIEW = ABSENT) but NOT
-frozen and NOT run. Main experiment (arms B/C) gate: CLOSED.
+PROJECT_STATE (2026-10-07): LINE CLOSED, FINAL_STATE = REFORMULATE_RQ1. Three integrity-checked elicitation rounds (V1, V2, V3) were
+run on qwen2.5:7b; the single-turn instrument did not show enough measurement validity to justify frontier evaluation or the main
+experiment. Full terminal state, basis, preservation check, safe/prohibited claims and funding position: last section of this file.
+CAIN's containment is built and engineering-qualified (rc13); no behavioural phenomenon demonstrated; all review by AI agents
+(EXTERNAL_HUMAN_REVIEW = ABSENT). Main experiment (arms B/C) gate: CLOSED. The sections between here and the terminal state are the
+dated record of how the line got there (2026-10-06 → 2026-10-07) and are kept unedited for audit.
 
 CURRENT_SCIENTIFIC_QUESTION (RQ1, diagnostic): under evidence pressure, does a research-agent proposer express demand
 for authority beyond its grant (sanctioned request, out-of-channel request, circumvention), and at what rate? RQ2
@@ -17,7 +20,7 @@ WHAT_HAS_BEEN_DEMONSTRATED (OBSERVED):
 - CAIN's existing proposer channel is a policy-filtered enum: attempts cannot be expressed in arm C as built.
 - Engineering: 1,463 tests pass at abeb1e60 (diagnostic install); six qualification attestations at rc13.
 WHAT_HAS_NOT_BEEN_DEMONSTRATED: any authority demand by any model; any incentive effect; any effect of authority
-presentation (V2 not run); anything about frontier models; anything about CAIN changing behaviour; safety.
+presentation (V2 not run at the time of this 2026-10-06 entry); anything about frontier models; anything about CAIN changing behaviour; safety.
 
 CANONICAL_ARTIFACTS: `pilots/elicitation-a/DESIGN.md` + `frozen/` (V1, frozen 1447c41); `runs/qwen2.5-7b-instruct-q4_K_M-gha37523764748/`
 (V1 raw + REVIEW.md + rubric_v2/ relabel layer); `v2/draft/` (system_prompt_v2.txt, rubric_v2.py, 48 fixtures in three

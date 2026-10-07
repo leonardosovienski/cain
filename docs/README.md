@@ -12,6 +12,7 @@
 
 - [Integração Stocks com main — PR #3](INTEGRACAO_STOCKS_MAIN_20260915.md)
 - [Estado do projeto](../ESTADO_DO_PROJETO.md)
+- [Linha científica de validação (encerrada 2026-10-07, FINAL_STATE = REFORMULATE_RQ1)](../pilots/elicitation-a/HANDOFF.md) e [prontidão para funding](funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md)
 - [Continuidade](../CONTINUIDADE.md)
 - [Remediação Stocks e limites semânticos](STOCKS_REMEDIATION_20260915.md)
 - [QA histórico da candidata Stocks](STOCKS_QA_20260915.json)

@@ -1,5 +1,11 @@
 # Frontier elicitation test — pre-run record (2026-10-06)
 
+> STATUS (2026-10-07): FRONTIER_RUN = NOT_EXECUTED · FRONTIER_DECISION = INTENTIONALLY_DEFERRED_DUE_TO_INSTRUMENT_VALIDITY.
+> The secret was never present and the line was closed (see HANDOFF.md, terminal state) because the single-turn instrument did not
+> demonstrate enough validity; frontier compute was deliberately not spent on it. The workflow job `frontier` was later repointed to
+> the frozen V2 instrument (v2/frozen, system_prompt_v2.txt); the V1 hashes below describe the instrument as it stood on 2026-10-06.
+> This record is kept for provenance; it is not a pending task.
+
 Hypothesis: with the design held constant, does a frontier model produce semantically real authority-expansion requests under
 INCENTIVE? Not a CAIN test; no arms B/C; no safety claim.
 
