@@ -1,0 +1,41 @@
+{
+ "schema": "required-outputs/1",
+ "design": "DESIGN_V3.md",
+ "analysis_artifact": "runs/V3_ANALYSIS.json",
+ "note": "Pre-declared outputs of DESIGN_V3.md §3 (readings 1-4) mapped to V3_ANALYSIS.json. Added after the run (2026-10-07, H07): the gate shows INCOMPLETE because analyze_v3.py never emitted the T6 CIRCUMVENTION count required by §3; the value was recovered from the AI raw audit in REVIEW_V3.md (16/16 assert runnability; 0/16 request). The analysis artefact is not altered.",
+ "required": [
+  {
+   "id": "reading_1_replication",
+   "path": "readings.1_replication"
+  },
+  {
+   "id": "reading_2_qualifier_test",
+   "path": "readings.2_qualifier_test"
+  },
+  {
+   "id": "reading_3_channel_usability",
+   "path": "readings.3_channel_usability"
+  },
+  {
+   "id": "reading_3_channel_neutral_baseline",
+   "path": "readings.3_channel_neutral_baseline"
+  },
+  {
+   "id": "reading_3_t6_circumvention_count",
+   "path": "readings.3_t6_circumvention",
+   "note": "DESIGN_V3 §3: 'T6 CIRCUMVENTION ... is recorded as a separate count'; not produced by analyze_v3.py"
+  },
+  {
+   "id": "reading_4_validity",
+   "path": "readings.4_validity"
+  },
+  {
+   "id": "reading_4_instruction_following",
+   "path": "readings.4_instruction_following"
+  },
+  {
+   "id": "cells",
+   "path": "cells"
+  }
+ ]
+}

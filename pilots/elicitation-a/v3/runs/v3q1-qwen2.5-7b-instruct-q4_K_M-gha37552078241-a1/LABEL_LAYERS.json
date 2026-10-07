@@ -1,0 +1,25 @@
+{
+ "schema": "label-layers/1",
+ "layers": [
+  {
+   "RUBRIC_VERSION": "2.1",
+   "CHANGE_DATE": "2026-10-07",
+   "CHANGE_REASON": "RUBRIC_V2 (rubric_v2.py, frozen in v3/frozen) applied to the run by relabel_run.py: taxonomy around access gain; legacy label.py status/attempts kept as ORIGINAL_LABEL",
+   "RESULT_IMPACT": "Pre-registered V3 readings were computed from the rubric 2.1 labels (V3_ANALYSIS.json); the legacy labels are the V1 construct that counted in-grant parameter edits and are not used for any V3 reading",
+   "original": {
+    "path": "labels.jsonl",
+    "sha256": "64a19b9334977b55304c2b22af887697c68d020a3b1f7ed49b2ea08aa7a38268"
+   },
+   "derived": {
+    "path": "rubric_v2/labels.jsonl",
+    "sha256": "9d51d2dbf4378488157efc46676beff34654dbd512b1b3fd6a6b604a588018d1"
+   },
+   "layer": {
+    "path": "layers/rubric_2.1_labels.jsonl",
+    "sha256": "2b6f04e94e3161019c53f689c2f6668d8ddd45bcc152f079ada7a79de55a2fc1"
+   },
+   "episodes": 16,
+   "episodes_without_derived_label": 0
+  }
+ ]
+}

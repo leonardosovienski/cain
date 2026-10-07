@@ -1,6 +1,6 @@
 # FUNDING_READINESS_SOURCE_OF_TRUTH — CAIN
 
-MODE: CURRENT_LIVING_STATE · LAST_MATERIAL_UPDATE: 2026-10-07 (R01 supply-chain remediation; see §0 and §4) · ISSUED: 2026-10-06
+MODE: CURRENT_LIVING_STATE · LAST_MATERIAL_UPDATE: 2026-10-07 (R01 merged in all consumers; R04 claim gate; R05 packet; R06 novelty scan; R07–R09 drafts; H05–H07 controls; see §0) · ISSUED: 2026-10-06
 (cloud Linux session, read access to the nine stack repositories, GitHub API, owner's mailbox).
 This file is the single canonical chain for "what is true today" about CAIN; dated documents it cites are
 SNAPSHOT_IMMUTABLE and are never edited to match it. It changes whenever HEAD, CI state, scientific state, release state,
@@ -20,6 +20,11 @@ Companion files (also CURRENT_LIVING_STATE): `CAIN_CLAIM_LEDGER.md`, `FUNDING_RE
 | CI_STATE | `main`: **red** since the first push after the rename/privatisation (run 37564025843 at `44ae555b`, run 37564492275 at `514a2ea1`, 2026-10-07: `uv lock --check` 404 on the protocol wheel, no job reached pytest). Branch `claude/cain-audit-remediation-fiwdei`: fetch step fails closed with "set STACK_READ_TOKEN" until the owner creates that secret (run 37647716025) | §4 |
 | SCIENTIFIC_STATE | Elicitation line V1–V3 **CLOSED** 2026-10-07, `FINAL_STATE = REFORMULATE_RQ1`; no behavioural effect of CAIN demonstrated; no frontier model run; EXTERNAL_HUMAN_REVIEW = ABSENT; NEW_RQ1_LINE = BLOCKED by the remediation programme gates | §3a; `pilots/elicitation-a/HANDOFF.md` (snapshot) |
 | OPEN_RISKS | P0: R01 (observability), R02 (elicitation, documented stop), R03 (supply chain, PARTIAL since 2026-10-07). P1: R04–R07. P2: R08–R12 | `FUNDING_READINESS_RISK_LEDGER.md` |
+| CLAIM_GATE_ACTIVE | **YES** (2026-10-07): `tools/claim_gate.py` + `docs/funding/CLAIM_INDEX.json` gate the README's current section and `tests/test_claim_gate.py` checks every ledger row; the public showcase runs `claims/claim_gate.py` in CI over all its documents (18 registered claims, banned phrases) | this repository; `ecosystem-predictor/.github/workflows/claim-gate.yml` |
+| NEW_RQ1_LINE | **BLOCKED**: gates and their state in `docs/research/FUTURE_LINE_ENTRY_GATES.md` (observability, positive control and independence plan are DRAFT; novelty scan done, human read absent) | `docs/research/FUTURE_LINE_ENTRY_GATES.md`, `docs/research/NOVELTY_MATRIX.md` |
+| EXTERNAL_HUMAN_REVIEW | **ABSENT**; packet ready for a reviewer: `docs/funding/EXTERNAL_REVIEW_PACKET.md` (records go to `EXTERNAL_REVIEW_RECORDS.md`) | §3a |
+| PROCESS_CONTROLS | H05 freeze gate, H06 rubric layers, H07 completeness gate implemented in `pilots/elicitation-a/` and wired into the pilot workflow (2026-10-07); retro layers: V2 freeze PASS at its run commit; V3 freeze PASS with the manifest (note + workflow hash) edited after the freeze commit and frozen files byte-identical; V3 analysis INCOMPLETE (T6 circumvention count never emitted, recovered in REVIEW_V3) | `pilots/elicitation-a/{freeze_gate,rubric_layers,completeness_gate}.py`, `v3/runs/{FREEZE_GATE_RETRO_V3,COMPLETENESS_V3}.json`, `v2/runs/FREEZE_GATE_RETRO_V2.json` |
+| EXTERNAL_TIMESTAMP | NOT_RUN: `tools/anchor_hashes.py` + workflow `timestamp.yml` (OpenTimestamps) ready; first stamp happens on `main` by workflow_dispatch | `docs/funding/ANCHORS.json` after the first run |
 | SUPPLY_CHAIN_HEALTHY | **NO** (PARTIAL): locks no longer carry release URLs (registry + API fetch in every consumer, see §4); CI cannot be green until `STACK_READ_TOKEN` exists in each consumer repository or the producers are public again | §4 |
 
 ## 1. Canonical code state
@@ -138,7 +143,7 @@ ten assets matched the old locks byte for byte (no asset was altered). AUTH_REQU
 *Contents: read* on the producer repositories, stored as `STACK_READ_TOKEN` in each consumer repository
 (`GITHUB_TOKEN` only reads its own repository, which is why only `research-transport` can go green without it).
 
-STATUS: PARTIAL. Done and pushed on `claude/cain-audit-remediation-fiwdei` in all five consumers; validated locally
+STATUS: PARTIAL. Merged to `main` in all five consumers on 2026-10-07 (owner's authorisation D-33; cain #93, ecosystem-predictor-cain #52, cripto #148, stocks #116, brasileirão #91); validated locally
 (uv 0.12.1, Linux, Python 3.13): cain 1467 tests, ecosystem root 165 tests + research-transport 20 + joint import,
 cripto/stocks/brasileirão suites and wheel smokes (see the commit messages). Not done: the secret (owner), CI green on
 `main`, the Docker images (no daemon here), the C14 re-qualification cycle that any lock change implies.
