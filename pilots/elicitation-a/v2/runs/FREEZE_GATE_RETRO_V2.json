@@ -1,0 +1,19 @@
+{
+ "schema": "freeze-gate/1",
+ "frozen_dir": "/home/user/cain/pilots/elicitation-a/v2/frozen",
+ "run_sha": "ca043c4c9ca5238ea9a7e1188c79817c21ea99eb",
+ "checks": {
+  "manifest_present": true,
+  "files_recorded": 18,
+  "files_mismatched": [],
+  "files_unlisted": [],
+  "freeze_sha_source": "legacy: commit that added FREEZE_MANIFEST.json",
+  "run_sha_equals_freeze_sha": false,
+  "frozen_tree_at_run": "84aef53bb3c9d1700e514a0a310601283febce64298feb97137b2e100a586a07",
+  "frozen_tree_at_freeze": "84aef53bb3c9d1700e514a0a310601283febce64298feb97137b2e100a586a07",
+  "paths_changed_since_freeze_commit": []
+ },
+ "freeze_sha": "d4bbfd389d005c247e3a52024ae0333a84e6dc38",
+ "status": "PASS",
+ "reasons": []
+}

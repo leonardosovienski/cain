@@ -43,6 +43,9 @@ jobs:
       - name: Pull model
         if: env.LOCAL_GO == 'yes' || github.event_name == 'workflow_dispatch'
         run: ollama pull "$MODEL"
+      - name: Freeze gate (H05, fail closed; V1 frozen/ has no manifest and therefore cannot run again)
+        if: env.LOCAL_GO == 'yes' || github.event_name == 'workflow_dispatch'
+        run: python pilots/elicitation-a/freeze_gate.py --frozen-dir pilots/elicitation-a/frozen --run-sha "$GITHUB_SHA" --out "$RUNNER_TEMP/FREEZE_GATE.json"
       - name: Run pilot
         if: env.LOCAL_GO == 'yes' || github.event_name == 'workflow_dispatch'
         id: run
@@ -91,6 +94,9 @@ jobs:
         if: steps.gate.outputs.go == 'yes'
         with:
           python-version: "3.13"
+      - name: Freeze gate (H05, fail closed)
+        if: steps.gate.outputs.go == 'yes'
+        run: python pilots/elicitation-a/freeze_gate.py --frozen-dir pilots/elicitation-a/v2/frozen --run-sha "$GITHUB_SHA" --allow-legacy-manifest
       - name: Run frontier pilot (same frozen files; only the model changes)
         if: steps.gate.outputs.go == 'yes'
         id: run
@@ -150,6 +156,9 @@ jobs:
           ollama pull "$MODEL"
           DIGEST=$(curl -s http://127.0.0.1:11434/api/tags | python3 -c "import json,sys,os; m=[x for x in json.load(sys.stdin)['models'] if x['name']==os.environ['MODEL']]; print(m[0]['digest'] if m else '')")
           test "$DIGEST" = "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e" || { echo "::error::model digest $DIGEST differs from V1"; exit 1; }
+      - name: Freeze gate (H05, fail closed)
+        if: steps.gate.outputs.go == 'yes'
+        run: python pilots/elicitation-a/freeze_gate.py --frozen-dir pilots/elicitation-a/v2/frozen --run-sha "$GITHUB_SHA" --allow-legacy-manifest
       - name: Run V2 (frozen v2/, same model, same harness)
         if: steps.gate.outputs.go == 'yes'
         id: run
@@ -207,6 +216,9 @@ jobs:
           ollama pull "$MODEL"
           DIGEST=$(curl -s http://127.0.0.1:11434/api/tags | python3 -c "import json,sys,os; m=[x for x in json.load(sys.stdin)['models'] if x['name']==os.environ['MODEL']]; print(m[0]['digest'] if m else '')")
           test "$DIGEST" = "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e" || { echo "::error::model digest $DIGEST differs from V1"; exit 1; }
+      - name: Freeze gate (H05, fail closed; the design document hash is part of the manifest)
+        if: steps.gate.outputs.go == 'yes'
+        run: python pilots/elicitation-a/freeze_gate.py --frozen-dir pilots/elicitation-a/v3/frozen --run-sha "$GITHUB_SHA" --allow-legacy-manifest --design pilots/elicitation-a/v3/DESIGN_V3.md
       - name: Run V3 (frozen v3/, arms Q0 then Q1, same model, same harness)
         if: steps.gate.outputs.go == 'yes'
         id: run
@@ -223,6 +235,13 @@ jobs:
           done
           python pilots/elicitation-a/v3/frozen/check_v3.py "pilots/elicitation-a/v3/runs/v3q0-$BASE" "pilots/elicitation-a/v3/runs/v3q1-$BASE"
           cp ollama-serve.log "pilots/elicitation-a/v3/runs/v3q1-$BASE/ollama-serve.log"
+          # H06: rubric layers over the untouched original labels; H07: the design's required outputs must all be produced
+          for ARM in q0 q1; do
+            python pilots/elicitation-a/rubric_layers.py register --run "pilots/elicitation-a/v3/runs/v3${ARM}-$BASE" --original labels.jsonl --derived rubric_v2/labels.jsonl \
+              --rubric-version 2.1 --reason "RUBRIC_V2 applied by relabel_run.py at run time" --date "$(date -u +%F)" --impact "readings computed from rubric 2.1 labels" --original-field status --derived-field label
+          done
+          python pilots/elicitation-a/v3/analyze_v3.py "pilots/elicitation-a/v3/runs/v3q0-$BASE" "pilots/elicitation-a/v3/runs/v3q1-$BASE" > "pilots/elicitation-a/v3/runs/V3_ANALYSIS-$BASE.json" || true
+          python pilots/elicitation-a/completeness_gate.py --required pilots/elicitation-a/v3/REQUIRED_OUTPUTS.json --analysis "pilots/elicitation-a/v3/runs/V3_ANALYSIS-$BASE.json" --out "pilots/elicitation-a/v3/runs/COMPLETENESS-$BASE.json"
       - uses: actions/upload-artifact@v4
         if: always() && steps.gate.outputs.go == 'yes' && steps.run.outputs.run_id != ''
         with:

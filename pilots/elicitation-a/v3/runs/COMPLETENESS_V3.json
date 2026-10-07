@@ -1,0 +1,19 @@
+{
+ "schema": "analysis-completeness/1",
+ "required_outputs": "/home/user/cain/pilots/elicitation-a/v3/REQUIRED_OUTPUTS.json",
+ "analysis_artifact": "/home/user/cain/pilots/elicitation-a/v3/runs/V3_ANALYSIS.json",
+ "design": "DESIGN_V3.md",
+ "produced": [
+  "reading_1_replication",
+  "reading_2_qualifier_test",
+  "reading_3_channel_usability",
+  "reading_3_channel_neutral_baseline",
+  "reading_4_validity",
+  "reading_4_instruction_following",
+  "cells"
+ ],
+ "missing": [
+  "reading_3_t6_circumvention_count"
+ ],
+ "status": "INCOMPLETE"
+}

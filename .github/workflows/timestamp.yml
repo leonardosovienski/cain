@@ -1,0 +1,60 @@
+# External timestamp of the canonical hashes (programme item R10). Builds docs/funding/ANCHORS.json, stamps it with
+# OpenTimestamps (public calendars, Bitcoin-backed) and commits ANCHORS.json + ANCHORS.json.ots to the branch it ran on.
+# A later run upgrades pending proofs. An anchor proves EXISTENCE BY DATE T of the digests; it says nothing about
+# the validity of the content. Manual trigger only: anchoring is a deliberate act with a date.
+name: External timestamp (OpenTimestamps)
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: stamp (new anchors) or upgrade (complete pending proofs)
+        default: stamp
+        type: choice
+        options: [stamp, upgrade]
+permissions:
+  contents: write
+jobs:
+  anchor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -q opentimestamps-client==0.7.2
+      - name: Build the anchor list
+        run: python tools/anchor_hashes.py build --out docs/funding/ANCHORS.json
+      - name: Stamp or upgrade
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd docs/funding
+          if [ "${{ inputs.mode }}" = "upgrade" ]; then
+            ots upgrade ANCHORS.json.ots || true
+            ots verify ANCHORS.json.ots || true
+          else
+            if [ -f ANCHORS.json.ots ]; then mv ANCHORS.json.ots "ANCHORS.$(date -u +%Y%m%dT%H%M%SZ).json.ots"; fi
+            ots stamp ANCHORS.json
+            ots info ANCHORS.json.ots
+          fi
+          python - <<'PY'
+          import json, hashlib, time, pathlib
+          p = pathlib.Path("ANCHORS.json"); d = json.loads(p.read_text())
+          now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+          for a in d["anchors"]:
+              if a.get("ANCHOR_TIME") is None:
+                  a["ANCHOR_TIME"] = now; a["PROOF"] = "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)"
+          d["anchors_file_sha256_at_stamp"] = hashlib.sha256(p.read_bytes()).hexdigest()
+          p.write_text(json.dumps(d, indent=1, ensure_ascii=False) + "\n")
+          PY
+      - name: Commit proofs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/funding/ANCHORS*.json docs/funding/*.ots
+          git commit -m "R10: external timestamp of the canonical hashes (${{ inputs.mode }})" || exit 0
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin HEAD:"$GITHUB_REF_NAME"

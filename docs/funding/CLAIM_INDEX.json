@@ -1,0 +1,25 @@
+{
+  "schema": "claim-index/1",
+  "documentation": "Claim gate of the cain repository (programme item R04, 2026-10-07). Gated text: the current section of README.md (above the first dated historical section). The row-level ledger is docs/funding/CAIN_CLAIM_LEDGER.md (checked by tests/test_claim_gate.py); the public showcase has its own index at ecosystem-predictor/claims/CLAIM_INDEX.json. Material numbers in the gated text must be licensed by a claim here; forbidden phrases must never appear.",
+  "documents": [
+    {"path": "README.md", "until": "# CAIN — acervo Stocks"}
+  ],
+  "ignore_table_columns": ["sha", "date", "size", "version", "issued"],
+  "forbidden_phrases": [
+    "about 1,?500",
+    "14 of 14",
+    "14/14 attack",
+    "prevents authority",
+    "reduces authority[- ]seeking",
+    "cerca de 1\\.?500",
+    "reduz (a )?busca por autoridade"
+  ],
+  "claims": [
+    {"id": "C01", "text": "CAIN only proposes; a deterministic, versioned policy decides; every receipt carries capital_permission=false (ledger C01).", "tokens": [], "scope": "qualified configuration, three domains, Linux, rc13; rc15 cycle BLOCKED", "source": "docs/funding/CAIN_CLAIM_LEDGER.md C01", "date": "2026-09-30", "status": "CONFIRMED", "current_or_historical": "HISTORICAL", "public_safe": true},
+    {"id": "C04", "text": "Three integrations QUALIFIED at rc13; 58/58 joint test (ledger C04).", "tokens": ["58/58"], "scope": "rc13/rc6, 2026-09-28; rc15 not qualified", "source": "docs/funding/CAIN_CLAIM_LEDGER.md C04", "date": "2026-09-28", "status": "HISTORICAL", "current_or_historical": "HISTORICAL", "public_safe": true},
+    {"id": "C05", "text": "Test count: 1467 passed / 4 skipped at the R01 branch (2026-10-07); 1463 at abeb1e60; 1446/1462 at rc13 (ledger C05). Never 'about 1,500'.", "tokens": [], "scope": "full pytest, Linux, Python 3.13", "source": "docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md §2", "date": "2026-10-07", "status": "CONFIRMED", "current_or_historical": "CURRENT", "public_safe": true},
+    {"id": "C18", "text": "Elicitation line V1–V3: 112 episodes, request channel 0/112, V3 4/4 → 1/4 (ledger C18).", "tokens": ["112", "0/112", "4/4", "1/4", "0/8"], "scope": "qwen2.5:7b, single turn, frozen instruments; not evidence of safety", "source": "docs/funding/CAIN_CLAIM_LEDGER.md C18; pilots/elicitation-a/HANDOFF.md", "date": "2026-10-07", "status": "NOT_REPRODUCED", "current_or_historical": "HISTORICAL", "public_safe": true},
+    {"id": "C08", "text": "CAIN prevents or reduces authority escalation: never claimed (ledger C08).", "tokens": [], "scope": "all text", "source": "docs/funding/CAIN_CLAIM_LEDGER.md C08", "date": "2026-10-06", "status": "PROPOSED", "current_or_historical": "CURRENT", "public_safe": false},
+    {"id": "C06", "text": "Sandbox 14 of 14 attack cases: lab loop, one Windows host, 2026-09-24, outside the qualified runtime (ledger C06); appears only with that qualifier.", "tokens": ["14/14"], "scope": "docs/evidence/2026-09-24-prompt10-sandbox.md", "source": "docs/funding/CAIN_CLAIM_LEDGER.md C06", "date": "2026-09-24", "status": "HISTORICAL", "current_or_historical": "HISTORICAL", "public_safe": false}
+  ]
+}
