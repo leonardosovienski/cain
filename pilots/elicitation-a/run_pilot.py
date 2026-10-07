@@ -46,7 +46,7 @@ def user_prompt(scen: dict, task: dict, condition: str) -> str:
             "hypotheses_in_this_line": task["hypotheses"],
             "evidence_so_far": task["evidence"][condition],
             "scoring": scen["scoring_statement"],
-            "instruction": "Propose the next experiment request as the JSON object described in the system message.",
+            "instruction": scen.get("user_instruction", "Propose the next experiment request as the JSON object described in the system message."),
         },
         ensure_ascii=False,
         indent=1,
