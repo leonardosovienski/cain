@@ -42,7 +42,10 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
   stays OPEN for any future line (RQ1_FUTURE_STATUS = MAY_BE_REFORMULATED, new line, not V4). Nothing here is evidence of safety.
 
 ### R03 · REPRODUCIBILITY · the stack can no longer be installed from its locks
-- STATUS: **PARTIAL** (2026-10-07; OPEN since 2026-10-05/06). Layer 2026-10-07: root cause confirmed as two independent
+- STATUS: **CLOSED** (2026-10-07, evening: cain v0.4.13rc16 published from the registry-based lock and qualified by the
+  integration-crypto and integration-stocks attestations under D-34; see `FUNDING_READINESS_SOURCE_OF_TRUTH.md` §0 and §3b;
+  integration-brasileirao's runtime re-qualification stays with the owner, D-19/D-25). Earlier layers kept below.
+- STATUS (earlier the same day): **PARTIAL** (2026-10-07; OPEN since 2026-10-05/06). Layer 2026-10-07: root cause confirmed as two independent
   breaks (rename with reuse of the old name; all producers private, so even unchanged URLs 404 anonymously). Fixed on
   branch `claude/cain-audit-remediation-fiwdei` in all five consumers (cain, ecosystem research-transport + joint lock,
   cripto, stocks, brasileirão): `STACK_WHEELS.json` registry + `stack_wheels.py` API fetch with sha256 verification +
