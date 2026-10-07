@@ -30,11 +30,14 @@ cain-mcp = "cain.mcp:main"
 cain-stream = "cain.playground:main"
 
 [tool.uv.sources]
-predictor-research-snapshot = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-snapshot-v1.0.2rc1/predictor_research_snapshot-1.0.2rc1-py3-none-any.whl" }
-predictor-research-bundle = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-bundle-v1.0.1rc1/predictor_research_bundle-1.0.1rc1-py3-none-any.whl" }
-predictor-research-protocol = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-protocol-v2.0.0rc2/predictor_research_protocol-2.0.0rc2-py3-none-any.whl" }
-predictor-research-transport = { url = "https://github.com/leonardosovienski/ecosystem-predictor/releases/download/predictor-research-transport-v0.1.0rc7/predictor_research_transport-0.1.0rc7-py3-none-any.whl" }
 torch = [{ index = "pytorch-cpu", marker = "sys_platform != 'darwin'" }]
+
+# Stack wheels (predictor-research-*): published GitHub Release assets fetched and sha256-verified by
+# `python tools/stack_wheels.py fetch` from STACK_WHEELS.json into this local flat index (never versioned).
+[[tool.uv.index]]
+name = "stack-wheels"
+url = ".stack-wheels"
+format = "flat"
 
 [[tool.uv.index]]
 name = "pytorch-cpu"

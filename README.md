@@ -88,16 +88,20 @@ Testes técnicos não validam lucro, apostas, conclusões científicas ou utilid
 
 ## Instalar um checkout separado
 
-Python 3.11+ e [uv](https://docs.astral.sh/uv/) são necessários. As dependências vêm do `uv.lock`
-(pacotes de contrato publicados como releases do `ecosystem-predictor`, travados por hash); pesos de modelos são separados.
+Python 3.11+ e [uv](https://docs.astral.sh/uv/) são necessários. As dependências vêm do `uv.lock`; os pacotes de contrato
+(`predictor-research-*`) são assets de releases do repositório **privado** `ecosystem-predictor-cain`, registrados em
+[`STACK_WHEELS.json`](STACK_WHEELS.json) (repositório, tag, asset, sha256) e baixados pela API do GitHub para o índice local
+`.stack-wheels/` por `tools/stack_wheels.py` antes do `uv sync` (token: `STACK_READ_TOKEN`, `GH_TOKEN` ou `gh auth token`,
+com *Contents: read* no repositório produtor). Pesos de modelos são separados.
 Não execute uma instalação de desenvolvimento sobre o ambiente principal apenas para ler a documentação.
 
 ```powershell
+uv run --no-project python tools/stack_wheels.py fetch
 uv sync --locked --extra api
 .\ABRIR_CAIN.cmd
 ```
 
-`uv sync` cria `.venv` no checkout; o inicializador usa esse ambiente e só instala quando ele não existe.
+`uv sync` cria `.venv` no checkout; o inicializador faz as duas etapas sozinho e só instala quando o `.venv` não existe.
 
 O inicializador do checkout usa a porta 8000 por padrão; o atalho da instalação principal usa 8877.
 Para terminal, use `INICIAR_CAIN.cmd`. A configuração vem de `cain.toml` e dos overrides locais.
@@ -113,8 +117,10 @@ Pesos não acompanham o pacote. Inferência requer Ollama disponível; ajuda e c
 Em um ambiente de desenvolvimento separado:
 
 ```powershell
+uv run --no-project python tools/stack_wheels.py fetch
 uv lock --check
 uv sync --locked --extra dev --extra vision --extra observability
+uv run --no-project python tools/stack_wheels.py check
 uv run ruff check .
 uv run pytest -q
 uv run python -m cain --help
