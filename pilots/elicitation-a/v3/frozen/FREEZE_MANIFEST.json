@@ -2,7 +2,7 @@
  "schema": "elicitation-a-v3-freeze/1",
  "frozen_at_utc": "2026-10-07T00:26:54Z",
  "git_sha_before_freeze_commit": "3bffebc245e9452b9131b4121cf701214d5e7afb",
- "note": "commit 3bffebc added v3/ and the trigger without this manifest (manifest script failed on __pycache__); that job fails closed at the 'not frozen' guard and produces no run. This commit freezes and re-triggers. No frozen file content changed between the two commits except check_v3.py variable rename (lint).",
+ "note": "commit 3bffebc added v3/ and the trigger without this manifest (manifest script failed on __pycache__); that job fails closed at the 'not frozen' guard and produces no run. This commit freezes and re-triggers. No frozen file content changed between the two commits except check_v3.py variable rename (lint). Second re-trigger: the workflow push-paths filter did not list v3/TRIGGER_V3, so the two previous pushes started no run; only that filter line changed in the workflow (sha updated here). No other frozen file changed.",
  "model": {
   "id": "qwen2.5:7b-instruct-q4_K_M",
   "digest": "845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
@@ -56,7 +56,7 @@
  "harness_sha256": "741a260c9923f6a86aeed529c0b787de2dce27a017ae3fc49cb99dcc8489be4b",
  "workflow": {
   "path": ".github/workflows/pilot-elicitation-a.yml",
-  "sha256": "f3c33233cb943d5f50dc3f09537f2e31db1c1d2924ba34b5bb376e89dc1e0a80",
+  "sha256": "bed776a55ff1c22eea64ae354195b6136243def9482c01457072533d324e808a",
   "job": "pilot-v3",
   "trigger": "pilots/elicitation-a/v3/TRIGGER_V3"
  },

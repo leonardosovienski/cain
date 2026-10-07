@@ -2,7 +2,7 @@ name: Pilot elicitation A (prompt-only)
 on:
   push:
     branches: [claude/cain-scientific-validation-nw9doc]
-    paths: [pilots/elicitation-a/TRIGGER, pilots/elicitation-a/TRIGGER_FRONTIER, pilots/elicitation-a/v2/TRIGGER_V2]
+    paths: [pilots/elicitation-a/TRIGGER, pilots/elicitation-a/TRIGGER_FRONTIER, pilots/elicitation-a/v2/TRIGGER_V2, pilots/elicitation-a/v3/TRIGGER_V3]
   workflow_dispatch:
     inputs:
       model:
