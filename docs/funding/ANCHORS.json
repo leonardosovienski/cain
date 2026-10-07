@@ -75,12 +75,12 @@
    "first_listed_utc": "2026-10-07T16:39:06Z"
   },
   {
-   "ARTIFACT_HASH": "fec6d550fdac4533966b485e99ef4f948ef5fc7dfb71a6630b467306b9b89fc6",
+   "ARTIFACT_HASH": "b7ea94446398bc6c7e4b18bd14a0c576232246d801090d356ce93845c8ec9a25",
    "ARTIFACT_LABEL": "docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md",
    "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
-   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "ANCHOR_TIME": "2026-10-07T22:05:40Z",
    "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
-   "first_listed_utc": "2026-10-07T16:39:06Z"
+   "first_listed_utc": "2026-10-07T22:05:38Z"
   },
   {
    "ARTIFACT_HASH": "2762e6479d41ea3aaba20b08e295e69df9b2cfe83dbc48a0c15da6b6920136a9",
@@ -129,7 +129,15 @@
    "ANCHOR_TIME": "2026-10-07T16:40:28Z",
    "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
    "first_listed_utc": "2026-10-07T16:39:06Z"
+  },
+  {
+   "ARTIFACT_HASH": "fec6d550fdac4533966b485e99ef4f948ef5fc7dfb71a6630b467306b9b89fc6",
+   "ARTIFACT_LABEL": "docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md",
+   "ANCHOR_METHOD": "opentimestamps (sha256 of the file; proof upgrades to a Bitcoin block attestation)",
+   "ANCHOR_TIME": "2026-10-07T16:40:28Z",
+   "PROOF": "docs/funding/ANCHORS.json.ots (covers the sha256 of ANCHORS.json, which lists this digest)",
+   "first_listed_utc": "2026-10-07T16:39:06Z"
   }
  ],
- "anchors_file_sha256_at_stamp": "153298b9eb86a202089fed34be39473d4c753d528bca93868dad812cd8b8aa73"
+ "anchors_file_sha256_at_stamp": "af6244bbae61c560f81db4b1a84c42f1c29155141a37a660c159d5c0c7c6c029"
 }
