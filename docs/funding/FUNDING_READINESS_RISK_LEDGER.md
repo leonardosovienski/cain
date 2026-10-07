@@ -69,7 +69,7 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 ## P1
 
 ### R04 · POSITIONING/APPLICATION · claims in the 2026-10-04 application exceed their evidence
-- STATUS: OPEN
+- STATUS: PARTIAL (2026-10-07: CLAIM_GATE_ACTIVE; `tools/claim_gate.py` + `CLAIM_INDEX.json` here, `claims/claim_gate.py` in the showcase CI; the submitted texts are historical and stay as sent). CLOSE needs the next application text checked by the gate before sending.
 - EVIDENCE: "about 1,500 passing tests" (artefacts: 1446/1462/1463); "sandbox contained 14 of 14 attack cases in my
   latest run" (lab sandbox, one Windows host, 2026-09-24, outside qualified runtime); "a September 2026 study found …
   about 30 %" (not located); placeholder text "[link do cain-evidence, se já tiver]" left in a submitted field;
@@ -82,7 +82,7 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 - CLOSE_CRITERIA: next application text cross-checked line by line against the ledger.
 
 ### R05 · EXTERNAL_VALIDATION · zero human review of protocol, attestations or claims
-- STATUS: OPEN
+- STATUS: OPEN (2026-10-07: `docs/funding/EXTERNAL_REVIEW_PACKET.md` ready with the one question, the vulnerabilities to attack first and the record template; no reviewer yet). An AI session cannot close this item.
 - EVIDENCE: showcase limitation 8 ("one person, with AI agents as executors and internal reviewers"); no reviewer
   record anywhere in the repos; no EXTERNAL_REVIEW_PACKET exists.
 - WHY_IT_MATTERS: North-Star artefact 2; funders weigh an external critic more than any internal gate.
@@ -93,7 +93,7 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 - CLOSE_CRITERIA: one documented review (PERSON, DATE, CRITICISM, SEVERITY, ACTION, ACCEPTED/REJECTED).
 
 ### R06 · NOVELTY · the literature is dense and unreviewed
-- STATUS: OPEN
+- STATUS: PARTIAL (2026-10-07: `docs/research/NOVELTY_MATRIX.md`, 17 entries, verdict GAP_REMAINING = NARROW_BUT_REAL, nearest prior art the escalation-channel study arXiv 2608.29460 and ScopeBench arXiv 2609.30325; AI scan, HUMAN_READ = NO). CLOSE needs a human reader (R05).
 - EVIDENCE: no NOVELTY_MATRIX in any repo; one search surfaced directly adjacent work: CheatBench (arXiv 2609.36308,
   reward gaming incl. research tasks), ResearchGym (2602.15112), "Can AI agents conduct open-ended AI research?"
   (2607.27191), CTRL-ALT-DECEIT sabotage evals for AI R&D (2511.09904), Auditing Harness Tampering in self-improving
@@ -118,7 +118,9 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
 ## P2
 
 - R08 · ADMIN: `cain` CI ran on 2026-10-07 (runs 37564025843, 37564492275) and failed as predicted (see R03); no longer latent.
-- R09 · PUBLIC_EVIDENCE: Evidence Pack hashes have no external timestamp (showcase E6; cost ≈ 0, e.g. OpenTimestamps).
+- R09 · PUBLIC_EVIDENCE: Evidence Pack hashes have no external timestamp (showcase E6). 2026-10-07: `tools/anchor_hashes.py` and workflow `timestamp.yml` (OpenTimestamps) added; the calendars are unreachable from the remediation container, so the first stamp runs on `main` by workflow_dispatch. PARTIAL until `docs/funding/ANCHORS.json.ots` exists.
+- R13 · PROCESS (programme H05–H07, 2026-10-07): freeze enforcement, rubric layering and analysis completeness are now machine gates in `pilots/elicitation-a/` and in the pilot workflow. Retro findings: V3 ran on d72ed88, two commits after its freeze commit fab7a3b, with the frozen files byte-identical and only the manifest edited (note + workflow hash); V3's analysis never emitted the pre-declared T6 circumvention count (recovered from the AI raw audit). Both recorded as layers, nothing historical rewritten. CLOSED as controls; the historical limitations stay.
+- R14 · PUBLIC_METADATA (programme R12): description and topics of the public showcase and the cain description could not be set from the remediation session (repository-settings writes are blocked by the session proxy). Owner action; texts proposed in the session report.
 - R10 · EVALUATION: the two provenance tests need the `observability` extra; the test-count line in state docs should say so.
 - R11 · ADMIN: "787 tests" in `docs/ESTADO_2026-09-30.md` is a stale figure from 2026-09-15; that file is now marked SNAPSHOT_IMMUTABLE (not corrected in place); the current figure lives in the Source of Truth §2.
 - R12 · GOVERNANCE (programme R02, 2026-10-07): canonical documents mixed snapshot and living state (e.g. a future-tense CI prediction left standing after it had materialised; "proposed" experiments after V1–V3 ran). Control: every canonical document now declares `MODE: SNAPSHOT_IMMUTABLE` (AS_OF_DATE, AS_OF_SHA, SUPERSEDED_BY) or `MODE: CURRENT_LIVING_STATE`; `tests/test_canonical_state.py` fails when a declaration is missing, when a living document contains a future-tense CI prediction, or when the declared version in §0 drifts from the package. STATUS: PARTIAL (controls active; the ecosystem and qualification repositories still carry undeclared state documents).

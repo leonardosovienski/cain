@@ -36,7 +36,7 @@ def test_every_ledger_row_is_complete():
         claim_id, text, evidence, sha_date, status, public, grant_safe, qualifier = row[:8]
         assert re.fullmatch(r"C\d\d", claim_id)
         assert text and evidence and sha_date and public and grant_safe, claim_id
-        assert any(status.startswith(s) for s in STATUSES), (claim_id, status)
+        assert any(status.strip("*").startswith(s) for s in STATUSES), (claim_id, status)
         if "qualifier" in grant_safe.lower() or grant_safe.upper().startswith("PARTIAL"):
             assert qualifier not in ("—", "-", ""), (claim_id, "grant-safe only with a qualifier, but no qualifier given")
 

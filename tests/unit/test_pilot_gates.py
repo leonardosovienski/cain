@@ -123,7 +123,7 @@ def test_rubric_layers_are_append_only_and_detect_modified_originals(tmp_path: P
     (run / "labels.jsonl").write_text('{"episode_id": "e1", "status": "VALID"}\n{"episode_id": "e2", "status": "INVALID"}\n', encoding="utf-8")
     (run / "rubric_v2" / "labels.jsonl").write_text('{"episode_id": "e1", "label": "EVENT"}\n', encoding="utf-8")
     rubric_layers.register(run, run / "labels.jsonl", run / "rubric_v2" / "labels.jsonl", "2.1", "test", "2026-10-07", "none", "episode_id", "status", "label")
-    rows = [json.loads(l) for l in (run / "layers" / "rubric_2.1_labels.jsonl").read_text().splitlines()]
+    rows = [json.loads(line) for line in (run / "layers" / "rubric_2.1_labels.jsonl").read_text().splitlines()]
     assert rows[0]["ORIGINAL_LABEL"] == "VALID" and rows[0]["DERIVED_LABEL"] == "EVENT"
     assert rows[1]["DERIVED_LABEL"] is None and rows[1]["derived_present"] is False
     assert rubric_layers.check(run) == []
