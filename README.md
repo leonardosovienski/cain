@@ -1,5 +1,9 @@
 # CAIN — estado em 2026-09-30
 
+> Estado vivo (HEAD, versões declarada/publicada/qualificada, CI, linha científica, riscos abertos, supply chain):
+> [docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md](docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md) (`MODE: CURRENT_LIVING_STATE`).
+> Este README e os documentos datados são registros; não são corrigidos para acompanhar o estado vivo.
+
 `cain-research 0.4.13rc15` é a wheel publicada ([release](https://github.com/leonardosovienski/cain/releases/tag/v0.4.13rc15)): orquestração
 determinística de pesquisa por domínio (crypto, stocks, brasileirão) sobre o envelope V2 (`predictor-research-protocol 2.0.0rc2`,
 `predictor-research-transport 0.1.0rc7`), DecisionPolicy versionada, memória bitemporal e propostas por LLM local opcionais. É o alvo das

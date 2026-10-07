@@ -154,14 +154,21 @@ def release_asset(entry: dict, token: str | None, token_source: str) -> dict:
         with urllib.request.urlopen(_github_request(url, token, "application/vnd.github+json")) as response:
             release = json.load(response)
     except urllib.error.HTTPError as exc:
-        raise StackError(_describe_http_error(exc, token_source, f"{entry['repository']}@{entry['release_tag']}")) from exc
+        raise StackError(
+            _describe_http_error(exc, token_source, f"{entry['repository']}@{entry['release_tag']}")
+        ) from exc
     except urllib.error.URLError as exc:
-        raise StackError(f"{entry['repository']}@{entry['release_tag']}: network error: {exc.reason}") from exc
+        raise StackError(
+            f"{entry['repository']}@{entry['release_tag']}: network error: {exc.reason}"
+        ) from exc
     for asset in release.get("assets", []):
         if asset.get("name") == entry["asset"]:
             return asset
     names = ", ".join(sorted(a.get("name", "?") for a in release.get("assets", []))) or "none"
-    raise StackError(f"{entry['repository']}@{entry['release_tag']}: asset {entry['asset']} not in release (assets: {names})")
+    raise StackError(
+        f"{entry['repository']}@{entry['release_tag']}: asset {entry['asset']} not in release "
+        f"(assets: {names})"
+    )
 
 
 def download_asset(asset: dict, destination: Path, token: str | None, token_source: str) -> None:
@@ -174,7 +181,9 @@ def download_asset(asset: dict, destination: Path, token: str | None, token_sour
         except urllib.error.HTTPError as exc:
             if exc.code in (301, 302, 303, 307, 308) and exc.headers.get("Location"):
                 # Pre-signed CDN URL: no Authorization header may travel with it.
-                plain = urllib.request.Request(exc.headers["Location"], headers={"User-Agent": "stack-wheels"})
+                plain = urllib.request.Request(
+                    exc.headers["Location"], headers={"User-Agent": "stack-wheels"}
+                )
                 with urllib.request.urlopen(plain, timeout=300) as response:
                     body = response.read()
             else:
@@ -208,21 +217,37 @@ def fetch(project: Path, destination: Path | None = None, force: bool = False) -
             if actual != entry["sha256"]:
                 wheel.unlink(missing_ok=True)
                 raise StackError(
-                    f"{entry['package']} {entry['version']}: sha256 mismatch (registry {entry['sha256'][:12]}…, "
+                    f"{entry['package']} {entry['version']}: sha256 mismatch "
+                    f"(registry {entry['sha256'][:12]}…, "
                     f"asset {actual[:12]}…); the published asset is not the registered one"
                 )
         except StackError as exc:
             failures.append(str(exc))
-            report.append({"package": entry["package"], "version": entry["version"], "status": "FAILED", "error": str(exc)})
+            report.append(
+                {
+                    "package": entry["package"],
+                    "version": entry["version"],
+                    "status": "FAILED",
+                    "error": str(exc),
+                }
+            )
             continue
-        report.append({"package": entry["package"], "version": entry["version"], "status": "fetched",
-                       "release_tag": entry["release_tag"], "asset_id": asset.get("id")})
+        report.append(
+            {
+                "package": entry["package"],
+                "version": entry["version"],
+                "status": "fetched",
+                "release_tag": entry["release_tag"],
+                "asset_id": asset.get("id"),
+            }
+        )
     for line in report:
         print(json.dumps(line))
     if failures:
         raise StackError(
             f"{len(failures)} of {len(registry['wheels'])} stack wheels unavailable (auth={token_source}). "
-            "If the producer repositories are private, set STACK_READ_TOKEN (fine-grained token, Contents: read "
+            "If the producer repositories are private, set STACK_READ_TOKEN "
+            "(fine-grained token, Contents: read "
             "on each producer repository). The lock cannot be installed until every wheel resolves."
         )
     print(f"stack wheels: {len(report)} verified in {target} (auth={token_source})")
@@ -252,17 +277,24 @@ def check(project: Path) -> None:
     indexes = pyproject.get("tool", {}).get("uv", {}).get("index", [])
     flat = [i for i in indexes if i.get("format") == "flat" and i.get("url") == registry["index_dir"]]
     if not flat:
-        problems.append(f"pyproject.toml: no [[tool.uv.index]] with format = \"flat\" and url = {registry['index_dir']!r}")
+        problems.append(
+            f'pyproject.toml: no [[tool.uv.index]] with format = "flat" and url = {registry["index_dir"]!r}'
+        )
     sources = pyproject.get("tool", {}).get("uv", {}).get("sources", {})
     names = {entry["package"] for entry in registry["wheels"]}
     for name, source in sources.items():
         if name in names and ("url" in source or "git" in source or "path" in source):
-            problems.append(f"pyproject.toml: [tool.uv.sources] {name} must not use url/git/path; the registry is the source")
+            problems.append(
+                f"pyproject.toml: [tool.uv.sources] {name} must not use url/git/path; "
+                "the registry is the source"
+            )
     for raw in (pyproject_path, project / "uv.lock"):
         if raw.is_file():
             for number, line in enumerate(raw.read_text(encoding="utf-8").splitlines(), 1):
                 if RELEASE_URL.search(line):
-                    problems.append(f"{raw.name}:{number}: release URL pin found; wheels come from the registry only")
+                    problems.append(
+                        f"{raw.name}:{number}: release URL pin found; wheels come from the registry only"
+                    )
 
     packages = _lock_packages(project)
     for entry in registry["wheels"]:
@@ -271,25 +303,39 @@ def check(project: Path) -> None:
             problems.append(f"uv.lock: {entry['package']} not locked")
             continue
         if package.get("version") != entry["version"]:
-            problems.append(f"uv.lock: {entry['package']} is {package.get('version')}, registry says {entry['version']}")
+            problems.append(
+                f"uv.lock: {entry['package']} is {package.get('version')}, registry says {entry['version']}"
+            )
         source = package.get("source", {})
         if source.get("registry") != registry["index_dir"]:
-            problems.append(f"uv.lock: {entry['package']} source is {source}, expected registry {registry['index_dir']!r}")
+            problems.append(
+                f"uv.lock: {entry['package']} source is {source}, expected registry {registry['index_dir']!r}"
+            )
         paths = {wheel.get("path") for wheel in package.get("wheels", [])}
         if entry["asset"] not in paths:
-            problems.append(f"uv.lock: {entry['package']} wheels {sorted(p for p in paths if p)} do not include {entry['asset']}")
+            problems.append(
+                f"uv.lock: {entry['package']} wheels {sorted(p for p in paths if p)} "
+                f"do not include {entry['asset']}"
+            )
         wheel = target / entry["asset"]
         if not wheel.is_file():
             problems.append(f"{registry['index_dir']}/{entry['asset']}: missing (run `fetch`)")
         elif sha256_of(wheel) != entry["sha256"]:
             problems.append(f"{registry['index_dir']}/{entry['asset']}: sha256 differs from the registry")
     if target.is_dir():
-        extra = sorted(p.name for p in target.iterdir() if p.suffix == ".whl" and p.name not in {e["asset"] for e in registry["wheels"]})
+        extra = sorted(
+            p.name
+            for p in target.iterdir()
+            if p.suffix == ".whl" and p.name not in {e["asset"] for e in registry["wheels"]}
+        )
         if extra:
             problems.append(f"{registry['index_dir']}: unregistered wheels present: {extra}")
     if problems:
         raise StackError("stack wheels check failed:\n  " + "\n  ".join(problems))
-    print(f"stack wheels check: {len(registry['wheels'])} packages consistent (registry, {registry['index_dir']}, uv.lock, pyproject.toml)")
+    print(
+        f"stack wheels check: {len(registry['wheels'])} packages consistent "
+        f"(registry, {registry['index_dir']}, uv.lock, pyproject.toml)"
+    )
 
 
 def requirements(project: Path, source: Path, output: Path) -> None:
@@ -308,7 +354,9 @@ def requirements(project: Path, source: Path, output: Path) -> None:
             entry = by_name.get(name)
             if entry is not None:
                 if candidate.group(2) != entry["version"]:
-                    raise StackError(f"{source}: {name}=={candidate.group(2)} but registry says {entry['version']}")
+                    raise StackError(
+                        f"{source}: {name}=={candidate.group(2)} but registry says {entry['version']}"
+                    )
                 if "--hash=" in stripped:
                     raise StackError(f"{source}: {name} already carries a hash; expected a flat-index line")
                 out.append(f"{entry['package']}=={entry['version']} --hash=sha256:{entry['sha256']}")
@@ -323,18 +371,23 @@ def requirements(project: Path, source: Path, output: Path) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--project", type=Path, default=Path.cwd(), help="directory holding pyproject.toml, uv.lock and STACK_WHEELS.json")
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    project_help = "directory holding pyproject.toml, uv.lock and STACK_WHEELS.json (default: cwd)"
+    parser.add_argument("--project", type=Path, default=None, help=project_help)
     commands = parser.add_subparsers(dest="command", required=True)
-    fetch_parser = commands.add_parser("fetch")
-    fetch_parser.add_argument("--force", action="store_true", help="re-download even when the verified wheel is present")
-    commands.add_parser("check")
-    commands.add_parser("probe")
-    requirements_parser = commands.add_parser("requirements")
-    requirements_parser.add_argument("--input", type=Path, required=True)
-    requirements_parser.add_argument("--output", type=Path, required=True)
+    subparsers = {name: commands.add_parser(name) for name in ("fetch", "check", "probe", "requirements")}
+    for subparser in subparsers.values():
+        # Accepted before or after the command: `--project DIR fetch` and `fetch --project DIR`.
+        subparser.add_argument("--project", type=Path, default=None, dest="project_after", help=project_help)
+    subparsers["fetch"].add_argument(
+        "--force", action="store_true", help="re-download even when the verified wheel is present"
+    )
+    subparsers["requirements"].add_argument("--input", type=Path, required=True)
+    subparsers["requirements"].add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
-    project = args.project.resolve()
+    project = (args.project_after or args.project or Path.cwd()).resolve()
     try:
         if args.command == "fetch":
             fetch(project, force=args.force)

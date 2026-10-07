@@ -1,5 +1,8 @@
 # HANDOFF — CAIN scientific-validation line (LINE CLOSED 2026-10-07; terminal state in the last section)
 
+> MODE: SNAPSHOT_IMMUTABLE · AS_OF_DATE: 2026-10-07 · AS_OF_SHA: 16d3a30 · SUPERSEDED_BY: none for the closed line (terminal state is final); current reading in docs/funding/FUNDING_READINESS_SOURCE_OF_TRUTH.md §3a
+> (dated record; facts below are not updated in place; the living state is in the superseding document)
+
 Read this before anything else in a new session. Repository `cain`, branch `claude/cain-scientific-validation-nw9doc`.
 
 PROJECT_STATE (2026-10-07): LINE CLOSED, FINAL_STATE = REFORMULATE_RQ1. Three integrity-checked elicitation rounds (V1, V2, V3) were

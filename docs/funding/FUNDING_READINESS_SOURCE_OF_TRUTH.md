@@ -1,21 +1,38 @@
 # FUNDING_READINESS_SOURCE_OF_TRUTH — CAIN
 
-Issued 2026-10-06 (cloud Linux session, read access to the nine stack repositories, GitHub API, owner's mailbox).
+MODE: CURRENT_LIVING_STATE · LAST_MATERIAL_UPDATE: 2026-10-07 (R01 supply-chain remediation; see §0 and §4) · ISSUED: 2026-10-06
+(cloud Linux session, read access to the nine stack repositories, GitHub API, owner's mailbox).
+This file is the single canonical chain for "what is true today" about CAIN; dated documents it cites are
+SNAPSHOT_IMMUTABLE and are never edited to match it. It changes whenever HEAD, CI state, scientific state, release state,
+qualification state, funding state or the open findings change.
 Scope: what is verifiable **today** about CAIN as the subject of a funding case. Predictors are covered only where a
 CAIN claim depends on them. Every number carries scope, SHA, date, source and whether this session reproduced it.
-Companion files: `CAIN_CLAIM_LEDGER.md`, `FUNDING_READINESS_RISK_LEDGER.md`.
+Companion files (also CURRENT_LIVING_STATE): `CAIN_CLAIM_LEDGER.md`, `FUNDING_READINESS_RISK_LEDGER.md`.
+
+## 0. Canonical answers (one chain, no archaeology)
+
+| Question | Answer (2026-10-07) | Where it is checked |
+|---|---|---|
+| CURRENT_HEAD | `main` = `514a2ea1` (2026-10-07, PR #92, docs). The R01 remediation is on branch `claude/cain-audit-remediation-fiwdei`, not merged. | `git log origin/main -1` |
+| DECLARED_VERSION | `0.4.13rc16` (`pyproject.toml`, `cain.__version__`); **not published** | `tests/test_canonical_state.py`, `tests/test_readme_version.py` |
+| PUBLISHED_VERSION | `0.4.13rc15`, tag `v0.4.13rc15`, commit `ae00017a`, wheel sha256 `ff642b7271a7fcad18723b12bc7ebe29f0c2550ecfe178777b5c1481882aacf9` (re-downloaded through the API on 2026-10-07; matches `compat/uv.lock` of the ecosystem) | GitHub release; `ecosystem-predictor-cain/compat/STACK_WHEELS.json` |
+| QUALIFIED_VERSION | `0.4.13rc13` (commit `960fb256`, transport 0.1.0rc6): the three integration attestations' `final_commits`. **rc15 is not qualified** (cycle D-27 `BLOCKED`); rc16 never built | §3; `predictor-qualification/qualification/integration-*/QUALIFICATION_ATTESTATION.json` |
+| CI_STATE | `main`: **red** since the first push after the rename/privatisation (run 37564025843 at `44ae555b`, run 37564492275 at `514a2ea1`, 2026-10-07: `uv lock --check` 404 on the protocol wheel, no job reached pytest). Branch `claude/cain-audit-remediation-fiwdei`: fetch step fails closed with "set STACK_READ_TOKEN" until the owner creates that secret (run 37647716025) | §4 |
+| SCIENTIFIC_STATE | Elicitation line V1–V3 **CLOSED** 2026-10-07, `FINAL_STATE = REFORMULATE_RQ1`; no behavioural effect of CAIN demonstrated; no frontier model run; EXTERNAL_HUMAN_REVIEW = ABSENT; NEW_RQ1_LINE = BLOCKED by the remediation programme gates | §3a; `pilots/elicitation-a/HANDOFF.md` (snapshot) |
+| OPEN_RISKS | P0: R01 (observability), R02 (elicitation, documented stop), R03 (supply chain, PARTIAL since 2026-10-07). P1: R04–R07. P2: R08–R12 | `FUNDING_READINESS_RISK_LEDGER.md` |
+| SUPPLY_CHAIN_HEALTHY | **NO** (PARTIAL): locks no longer carry release URLs (registry + API fetch in every consumer, see §4); CI cannot be green until `STACK_READ_TOKEN` exists in each consumer repository or the producers are public again | §4 |
 
 ## 1. Canonical code state
 
 | Item | Value | Source | Reproduced here |
 |---|---|---|---|
-| Canonical branch | `main` of `leonardosovienski/cain` (private since early October 2026) | GitHub API (`private: true`) | yes |
-| HEAD | `abeb1e6011537bea2d8a0d87334780f8370f1cbd` (2026-09-30, PR #90, docs only) | `git log` | yes |
+| Canonical branch | `main` of `leonardosovienski/cain` (private since early October 2026; verified again 2026-10-07) | GitHub API (`private: true`) | yes |
+| HEAD | `514a2ea1` (2026-10-07, PR #92, docs); on 2026-10-06 it was `abeb1e6011537bea2d8a0d87334780f8370f1cbd` (PR #90) | `git log` | yes |
 | Declared version | `0.4.13rc16`, **not published** | `pyproject.toml` | yes |
 | Published wheel | `cain-research 0.4.13rc15`, tag `v0.4.13rc15`, commit `ae00017a` (2026-09-29), sha256 `ff642b72…` | release list via API; `docs/ESTADO_2026-09-30.md` | release exists (API); asset hash **not** re-downloaded (URL returns 404 anonymously, §4) |
 | Code change since rc15 | one line (`src/cain/__init__.py` version bump); 7 commits, all docs/version | `git diff --stat ae00017a..HEAD -- src tests` | yes |
 | DecisionPolicy | `src/cain/orchestration/policy.py`, `POLICY_VERSION = 2`, rules R01–R17, sha256 `3cea49644e1b2c6a15a550f2c76af8cfe8e4e002f58945a8ffde44b64004b8e6` at HEAD | file | yes |
-| Protocol/transport pins | `predictor-research-protocol 2.0.0rc2`, `-transport 0.1.0rc7`, `-snapshot 1.0.2rc1`, `-bundle 1.0.1rc1`, all URL-pinned to `github.com/leonardosovienski/ecosystem-predictor/releases/...` | `pyproject.toml`, `uv.lock` (12 URL pins) | yes; **all four URLs 404** (§4) |
+| Protocol/transport pins | `predictor-research-protocol 2.0.0rc2`, `-transport 0.1.0rc7`, `-snapshot 1.0.2rc1`, `-bundle 1.0.1rc1`. On `main`: URL-pinned to `github.com/leonardosovienski/ecosystem-predictor/releases/...` (**all four 404**). On the remediation branch: registered in `STACK_WHEELS.json` (repository `ecosystem-predictor-cain`, tag, asset, sha256) and resolved by `uv.lock` from the local flat index `.stack-wheels` (§4) | `pyproject.toml`, `uv.lock`, `STACK_WHEELS.json` | yes |
 | Entry points | `cain`, `cain-mcp`, `cain-stream` | `pyproject.toml` | yes |
 
 ## 2. Tests, CI, coverage
@@ -29,7 +46,7 @@ Companion files: `CAIN_CLAIM_LEDGER.md`, `FUNDING_READINESS_RISK_LEDGER.md`.
 | **1463 passed / 2 failed / 6 skipped** | full `pytest -q`, Linux, Python 3.13.16; the 2 failures are `ModuleNotFoundError: opentelemetry.sdk` (the `observability` extra was not installed; CI installs it) | `abeb1e60` (HEAD) | **2026-10-06** | editable install with transport wheels **built locally** from `ecosystem-predictor-cain/packages` because the pinned release URLs 404 | this session, `pytest_cain.log` | CURRENT, **diagnostic** (not the published wheels) | **yes** |
 | "about 1,500 passing tests" | Anthropic External Researcher Access application | none | 2026-10-04 | none | application text | rounding of 1446–1462; no artefact says 1,500 | — |
 | Coverage floor | `--cov-fail-under=86` on the Linux/3.12 job | HEAD | — | `.github/workflows/ci.yml` | file | CURRENT | yes |
-| CI on `main` | run 36723776989 `success` at `abeb1e60` | `abeb1e60` | 2026-09-30 | GitHub Actions `ci.yml` | API | CURRENT (last run); **expected to fail on the next run** (§4) | observed |
+| CI on `main` | last green: run 36723776989 at `abeb1e60` (2026-09-30). Red: runs 37564025843 (`44ae555b`) and 37564492275 (`514a2ea1`), all 8 jobs stop at `uv lock --check`/`uv sync` with HTTP 404 on `predictor_research_bundle-1.0.1rc1` | `514a2ea1` | 2026-10-07 | GitHub Actions `ci.yml` | API, job logs | CURRENT (the failure predicted on 2026-10-06 materialised) | observed |
 | 58/58 | joint test of the three real domains driven by CAIN | stack rc13/rc6 | 2026-09-28 | integrated-stack script in `ecosystem-predictor-cain` | public showcase Evidence Pack §2 (hashes listed) | HISTORICAL | no |
 | 15/15; 81 | adversarial point-in-time cases; negative-control runs — **equities qualification, not CAIN** | stocks stage A | 2026-09-25 | qualification scripts | showcase Evidence Pack §5 | HISTORICAL | no |
 | 14 of 14 "attack cases contained" | Docker sandbox suite of the **lab loop** (`cain.sandbox`): 11 malicious candidates + 1 isolation probe + 1 benign + 1 out-of-band evaluator change, on the owner's Windows/WSL2 Docker | code of 2026-09-24 | 2026-09-24 | `tests/integration/test_sandbox.py::test_attacks_against_a_real_engine` (`CAIN_TEST_DOCKER`) | `docs/evidence/2026-09-24-prompt10-sandbox.md`, `.../prompt10/run1-attacks-report.json` (13 attack entries + probe) | HISTORICAL, single machine, **outside the qualified runtime** | no (needs Docker) |
@@ -52,6 +69,20 @@ Pack), `qualification/shared/CICLO_D27_20260930.md`, `cain/docs/ESTADO_2026-09-3
 * Three of six attestations no longer re-validate at the current `main` of the qualification repository (artefacts
   rewritten in place); the owner's own showcase states this; it is listed as an open P1 there.
 * "Qualified" is engineering: frozen gates on specific commits. It is not scientific validity, not safety.
+
+### 3b. Release state machine for `cain-research` (programme item R03; facts only, the choice of target is the owner's)
+
+| VERSION | SHA | DECLARED | BUILT | PUBLISHED | QUALIFIED | BLOCKED | SUPERSEDED | CURRENT |
+|---|---|---|---|---|---|---|---|---|
+| 0.4.13rc13 | `960fb256` | historical | yes | yes (tag `v0.4.13rc13`) | **yes** (3 integration attestations, 2026-09-28) | — | by rc15 as published target | the only qualified wheel |
+| 0.4.13rc15 | `ae00017a` | historical | yes (reproducible build) | yes (`v0.4.13rc15`, sha256 `ff642b72…`) | no (cycle D-27 `BLOCKED`: Windows secondary, protected-set pin, D-29/30/31 undecided) | yes | — | the published wheel the README and the joint lock point to |
+| 0.4.13rc16 | `main` since `fac255f8` | **yes** (`pyproject.toml`) | no | no | no | — | — | declared only (docs + version bump; one source line) |
+| next rc | — | — | — | — | — | — | — | **required** by C14 after the R01 lock change before any new qualification; which version to qualify is OPEN (owner) |
+
+Close criterion of R03 (one artefact answering CURRENT_RELEASE / CURRENT_SHA / CURRENT_QUALIFICATION_STATE /
+QUALIFICATION_SHA / DATE): this table plus §0. CURRENT_RELEASE = rc15 (published, not qualified);
+CURRENT_QUALIFICATION_STATE = QUALIFIED only at rc13 (`960fb256`, 2026-09-28); the two will coincide only after a new
+cycle on a new rc.
 
 ## 3a. Elicitation line (closed 2026-10-07)
 
@@ -84,6 +115,33 @@ Observed 2026-10-06:
   `CLEANROOM_FINAL`/`HOSTED_CI` gate are **not currently re-executable**, by third parties or by the owner's CI. The
   historical attestations remain internally consistent, but nothing in the stack can be re-installed from its locks.
   This session could run the test suite only by building the four transport packages from source.
+
+### 4a. Remediation layer (2026-10-07, programme item R01; the observations above are kept as written)
+
+ORIGINAL_STATE: every consumer lock pinned stack wheels by release URL; two independent causes broke them: (1) the
+rename `ecosystem-predictor` → `ecosystem-predictor-cain` with a new repository under the old name, (2) all product
+repositories private, so even unchanged URLs (`core-predictor` 3.2.1, `predictor-ops` 4.2.2rc1, the domain wheels)
+answer 404 to any client without a token; GitHub serves private release assets only through the API, which `uv`
+cannot use. Consumers found: `cain` (4 wheels), `ecosystem-predictor-cain/packages/research-transport` (1),
+`ecosystem-predictor-cain/compat` (10, the joint lock), `cripto-predictor`, `stocks-predictor`,
+`brasileirao-predictor` (core + ops each; the Brasileirão Dockerfiles and CI also downloaded the two wheels with
+unauthenticated `curl`/`urllib`). Historical locks in `predictor-qualification/qualification/*/tools/` are evidence
+and were left untouched.
+
+NEW_INTERPRETATION / MECHANISM: each consumer carries `STACK_WHEELS.json` (producer repository, release tag, asset,
+sha256; retired repository names refused) and an identical `stack_wheels.py` that downloads the assets through the
+GitHub API, verifies the sha256 and places them in the gitignored flat index `.stack-wheels/`; `uv.lock` pins the
+packages to that index by name + version (no URL, portable; `uv lock --check` passes). `check` is the machine gate
+(registry ⇔ index ⇔ lock ⇔ pyproject, and no `releases/download` pin anywhere); `requirements` makes
+`pip --require-hashes` cleanroom installs work; every workflow fetches before `uv sync`. Re-downloaded sha256 of all
+ten assets matched the old locks byte for byte (no asset was altered). AUTH_REQUIREMENT: a fine-grained token with
+*Contents: read* on the producer repositories, stored as `STACK_READ_TOKEN` in each consumer repository
+(`GITHUB_TOKEN` only reads its own repository, which is why only `research-transport` can go green without it).
+
+STATUS: PARTIAL. Done and pushed on `claude/cain-audit-remediation-fiwdei` in all five consumers; validated locally
+(uv 0.12.1, Linux, Python 3.13): cain 1467 tests, ecosystem root 165 tests + research-transport 20 + joint import,
+cripto/stocks/brasileirão suites and wheel smokes (see the commit messages). Not done: the secret (owner), CI green on
+`main`, the Docker images (no daemon here), the C14 re-qualification cycle that any lock change implies.
 
 ## 5. Runtime vs test-only vs proposed
 
