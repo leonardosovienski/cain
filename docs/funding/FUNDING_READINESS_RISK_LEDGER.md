@@ -51,6 +51,11 @@ probability; P2 friction; P3 cosmetic. Only verifiable behaviour and artefacts; 
   C14 cycle on a new rc. Preventive controls in place: `check` gate (no release URL may reappear in a lock; registry,
   index, lock and pyproject must agree), retired-repository-name refusal, fail-closed fetch with the reason, offline
   unit tests of the registry pins, `probe` as availability sentinel.
+  Layer 2026-10-07 (later the same day): merged in all five consumers under D-33; the owner made the nine repositories
+  public, so the fetch resolves anonymously and the secret became optional (CI falls back to the job token); `main` CI
+  green with the registry in cain (Linux), ecosystem-predictor-cain, cripto-predictor (Trivy clean after urllib3 2.8.0)
+  and brasileirão; stocks red only on its owner-data evidence step. Dev-extra `pip-audit` pass done (pytest, virtualenv
+  bumps; residual multidict 6.7.1 pinned by ccxt 4.5.85). Remaining for CLOSED: the C14 cycle on a new rc.
 - EVIDENCE: rename `ecosystem-predictor` → `ecosystem-predictor-cain` plus a new public repo under the old name;
   all `uv.lock` URL pins to the old name 404; private repos' assets 404 anonymously; `ecosystem-predictor-cain` CI red
   on every run since 2026-10-04 (37201676611, 37325661999, 37391152563, 37469493563); harness renewal failed
