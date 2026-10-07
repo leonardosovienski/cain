@@ -22,7 +22,7 @@ jobs:
           python-version: "3.12"
       - name: Stack wheels from the registry (the lock resolves predictor-research-* from .stack-wheels)
         env:
-          STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN }}
+          STACK_READ_TOKEN: ${{ secrets.STACK_READ_TOKEN || github.token }}
         run: uv run --no-project python tools/stack_wheels.py fetch
       - run: uv lock
       - run: git --no-pager diff -- uv.lock
