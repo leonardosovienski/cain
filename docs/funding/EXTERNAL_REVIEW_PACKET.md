@@ -2,8 +2,9 @@
 
 MODE: CURRENT_LIVING_STATE · ISSUED: 2026-10-07 (programme item R05) · STATUS: PACKET_READY, REVIEW_NOT_YET_OBTAINED.
 This packet is for a reviewer **outside** the programme (not the owner, not an AI agent of this ecosystem). Reading
-time: about 40 minutes. Everything cited is hashed in the public Evidence Pack or in the private artefacts listed at
-the end; the reviewer may receive read access to the private repositories.
+time: about 40 minutes. Everything cited is hashed in the public Evidence Pack or in the artefacts listed at
+the end (private when this packet was written; all nine repositories are public since 2026-10-07, so no access grant is
+needed; layer 2026-10-08).
 
 ## The one question
 
@@ -59,7 +60,7 @@ weaker evidence than one that finds something.
 
 | Item | Where | Hash (SHA-256) |
 |---|---|---|
-| Terminal handoff of the line | `pilots/elicitation-a/HANDOFF.md` (private) | `e41af865…` (Evidence Pack §6) |
+| Terminal handoff of the line | `pilots/elicitation-a/HANDOFF.md` (public since 2026-10-07) | `e41af865…` (Evidence Pack §6) |
 | V3 pre-registered design and freeze manifest | `pilots/elicitation-a/v3/DESIGN_V3.md`, `v3/frozen/FREEZE_MANIFEST.json` | `7c643454…`, `fbccc976…` |
 | V3 raw episodes (Q0, Q1) | `v3/runs/v3q0-…/episodes.jsonl`, `v3q1-…/episodes.jsonl` | `7a1d124e…`, `7dc9dc61…` |
 | V3 mechanical analysis, AI raw audit, review | `v3/runs/V3_ANALYSIS.json`, `AI_RAW_AUDIT_V3.json`, `REVIEW_V3.md` | `d39f79e1…`, `48fbae65…`, `65ccd1ca…` |

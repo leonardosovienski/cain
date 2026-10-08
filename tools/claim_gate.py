@@ -35,13 +35,17 @@ from pathlib import Path
 
 STATUSES = {"CONFIRMED", "PARTIAL", "HISTORICAL", "PROPOSED", "NOT_REPRODUCED", "CONFLICT", "RETRACTED", "FALSE"}
 TOKEN = re.compile(
-    r"(?P<ratio>\b\d+\s*/\s*\d+\b)"
+    r"(?P<date>\b\d{4}/\d{2}/\d{2}\b|\b\d{2}/\d{2}/\d{4}\b)"  # full slash dates are never ratios
+    r"|(?P<ratio>\b\d+\s*/\s*\d+\b)"
     r"|(?P<percent>[+\-−]?\d+(?:[.,]\d+)?\s?%)"
+    r"|(?P<amount>(?<![\w.\-/])\d{1,3}(?:[.,]\d{3})+(?![\w.\-/%]))"  # money and counts with thousands separators
     r"|(?P<integer>(?<![\w.\-/])\d{2,}(?![\w.\-/%]))"
 )
 DEFAULT_IGNORES = [
     r"^20\d\d$",  # years
     r"^\d{4}-\d{2}-\d{2}",  # ISO dates (also with time)
+    r"^\d{4}/\d{2}(/\d{2})?$",  # slash dates, year first (2026/10/07, 2026/10)
+    r"^\d{2}/\d{2}/\d{4}$",  # slash dates, day first (07/10/2026)
     r"^\d{2}:\d{2}",  # times
     r"^[0-9a-f]{7,64}$",  # hashes and SHAs
     r"^\d+\.\d+(\.\d+)?(rc\d+)?$",  # versions
@@ -113,10 +117,12 @@ def material_tokens(text: str, ignores: list[re.Pattern[str]], column_patterns: 
         scan = re.sub(r"`[^`]*`", " ", scan)  # inline code is identifiers, not claims
         scan = re.sub(r"\]\([^)]*\)", "]()", scan)  # link targets
         for match in TOKEN.finditer(scan):
+            if match.lastgroup == "date":
+                continue
             raw = match.group(0)
             token = normalise(raw)
-            if any(p.search(token) for p in ignores):
-                continue
+            if match.lastgroup != "amount" and any(p.search(token) for p in ignores):
+                continue  # an amount with thousands separators (5.000, 5,000) is never a version or a date
             # a bare integer that is part of a date range such as "2026-07-26 → 28" or "11 → 17"
             if match.lastgroup == "integer":
                 before = scan[max(0, match.start() - 4) : match.start()]
@@ -171,13 +177,50 @@ def check(index_path: Path, root: Path) -> list[str]:
     return problems
 
 
+# Regression vectors (closure audit 2026-10-08): the gate is a REVIEW_TRIGGER, not a semantic truth engine. Each entry is
+# (text, tokens that must be material, tokens that must not). A date written with slashes was once read as a ratio.
+SELFTEST_VECTORS: list[tuple[str, list[str], list[str]]] = [
+    ("on 2026-10-07 and 2026-10-07T16:40Z", [], ["2026-10-07", "2026", "07"]),
+    ("on 2026/10/07 and 2026/10 and 07/10/2026 and 7 and 8 October 2026", [], ["2026/10", "2026/10/07", "07/10/2026"]),
+    ("a day/month pair such as 07/10 stays a review trigger: write the date in words", ["07/10"], []),
+    ("versions 0.4.13rc16, 0.4.13rc13, 3.2.1, 4.2.2rc1 and 0.2.2", [], ["0.4.13", "0.4.13rc16", "3.2.1", "4.2.2", "0.2.2"]),
+    ("commit de5db06b and sha256 d8fca502420f66ebb39dc98f965895e17530c42ee413af61798e7a7dcfc9a302", [], ["de5db06b"]),
+    ("coverage 87.76 % and a +44% backtest and -3,5 %", ["87.76%", "+44%", "-3.5%"], []),
+    ("joint test 58/58, sandbox 14/14, gates 30/30, cell 4/4 → 1/4", ["58/58", "14/14", "30/30", "4/4", "1/4"], []),
+    ("1463 tests passed and 310 tests; run 37709839394", ["310"], ["1463", "37709839394"]),
+    ("a grant of 5000 and R$ 5.000 and US$ 5,000 and 25 hours", ["5.000", "5.000", "25"], ["5000"]),
+    ("at 16:40 on 2026-10-07; 40 episodes; 112 episodes", ["40", "112"], ["16:40"]),
+]
+
+
+def selftest() -> list[str]:
+    ignores = [re.compile(p) for p in DEFAULT_IGNORES]
+    failures: list[str] = []
+    for text, must, must_not in SELFTEST_VECTORS:
+        found = {token for _, token in material_tokens(text, ignores, [])}
+        for token in must:
+            if normalise(token) not in found:
+                failures.append(f"{text!r}: expected material token {token!r}, found {sorted(found)}")
+        for token in must_not:
+            if normalise(token) in found:
+                failures.append(f"{text!r}: token {token!r} must not be material, found {sorted(found)}")
+    return failures
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
     chk = sub.add_parser("check")
     chk.add_argument("--index", type=Path, required=True)
     chk.add_argument("--root", type=Path, default=None, help="document root (default: the index file's repository root = its parent's parent)")
+    sub.add_parser("selftest", help="run the regression vectors (dates, versions, SHAs, percentages, ratios, counts)")
     args = parser.parse_args(argv)
+    if args.command == "selftest":
+        failures = selftest()
+        for failure in failures:
+            print("  " + failure)
+        print("CLAIM_GATE_SELFTEST = " + ("FAIL" if failures else "PASS"))
+        return 1 if failures else 0
     root = (args.root or args.index.resolve().parent.parent).resolve()
     try:
         problems = check(args.index.resolve(), root)

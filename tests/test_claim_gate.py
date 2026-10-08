@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
-from pathlib import Path
 import re
+from pathlib import Path
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("claim_gate", ROOT / "tools" / "claim_gate.py")
@@ -73,3 +74,12 @@ def test_gate_flags_unregistered_numbers_forbidden_phrases_and_unsafe_tokens(tmp
     assert "1463" not in joined  # four-digit counts are not claims by themselves
     assert "58/58" not in joined
     assert "2026" not in joined and "abcdef" not in joined and "0.4.13" not in joined
+
+
+def test_gate_regression_vectors_dates_versions_shas_ratios_amounts():
+    """Closure audit 2026-10-08: the gate once read a slash date as a ratio. The vectors live next to the gate so the
+    showcase copy (identical file) runs the same regression in its CI (`claim_gate.py selftest`)."""
+    assert claim_gate.selftest() == []
+    ignores = [re.compile(p) for p in claim_gate.DEFAULT_IGNORES]
+    tokens = {t for _, t in claim_gate.material_tokens("2026/10/07; 07/10/2026; 14/14; 0.4.13rc16; 87.76 %; R$ 5.000", ignores, [])}
+    assert tokens == {"14/14", "87.76%", "5.000"}
