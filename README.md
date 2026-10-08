@@ -93,10 +93,10 @@ Testes técnicos não validam lucro, apostas, conclusões científicas ou utilid
 ## Instalar um checkout separado
 
 Python 3.11+ e [uv](https://docs.astral.sh/uv/) são necessários. As dependências vêm do `uv.lock`; os pacotes de contrato
-(`predictor-research-*`) são assets de releases do repositório **privado** `ecosystem-predictor-cain`, registrados em
+(`predictor-research-*`) são assets de releases do repositório `ecosystem-predictor-cain` (público desde 2026-10-07, licença proprietária), registrados em
 [`STACK_WHEELS.json`](STACK_WHEELS.json) (repositório, tag, asset, sha256) e baixados pela API do GitHub para o índice local
-`.stack-wheels/` por `tools/stack_wheels.py` antes do `uv sync` (token: `STACK_READ_TOKEN`, `GH_TOKEN` ou `gh auth token`,
-com *Contents: read* no repositório produtor). Pesos de modelos são separados.
+`.stack-wheels/` por `tools/stack_wheels.py` antes do `uv sync` (sem token enquanto os repositórios forem públicos; se voltarem a ser
+privados: `STACK_READ_TOKEN`, `GH_TOKEN` ou `gh auth token` com *Contents: read* no repositório produtor). Pesos de modelos são separados.
 Não execute uma instalação de desenvolvimento sobre o ambiente principal apenas para ler a documentação.
 
 ```powershell
