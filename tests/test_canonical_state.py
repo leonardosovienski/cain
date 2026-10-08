@@ -24,6 +24,7 @@ LIVING = [
 ]
 SNAPSHOTS = [
     "docs/ESTADO_2026-09-30.md",
+    "docs/funding/SOURCE_OF_TRUTH_LAYERS_2026-10-07.md",
     "ESTADO_DO_PROJETO.md",
     "CONTINUIDADE.md",
     "pilots/elicitation-a/HANDOFF.md",
