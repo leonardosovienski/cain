@@ -1,9 +1,12 @@
 # External timestamp of the canonical hashes (programme item R10). Builds docs/funding/ANCHORS.json, stamps it with
 # OpenTimestamps (public calendars, Bitcoin-backed) and commits ANCHORS.json + ANCHORS.json.ots to the branch it ran on.
 # A later run upgrades pending proofs. An anchor proves EXISTENCE BY DATE T of the digests; it says nothing about
-# the validity of the content. Manual trigger only: anchoring is a deliberate act with a date.
+# the validity of the content. Stamping is manual (a deliberate act with a date); the weekly schedule only UPGRADES
+# pending proofs to a Bitcoin attestation and commits them (closure audit 2026-10-08, owner action 5 automated).
 name: External timestamp (OpenTimestamps)
 on:
+  schedule:
+    - cron: "17 6 * * 1"  # Mondays 06:17 UTC: upgrade pending proofs
   workflow_dispatch:
     inputs:
       mode:
@@ -32,9 +35,10 @@ jobs:
         run: |
           set -euo pipefail
           cd docs/funding
-          if [ "${{ inputs.mode }}" = "upgrade" ]; then
-            ots upgrade ANCHORS.json.ots || true
-            ots verify ANCHORS.json.ots || true
+          MODE="${{ inputs.mode || 'upgrade' }}"
+          if [ "$MODE" = "upgrade" ]; then
+            for f in ANCHORS*.json.ots; do ots upgrade "$f" || true; done
+            for f in ANCHORS*.json.ots; do ots verify "$f" || true; done
           else
             if [ -f ANCHORS.json.ots ]; then mv ANCHORS.json.ots "ANCHORS.$(date -u +%Y%m%dT%H%M%SZ).json.ots"; fi
             ots stamp ANCHORS.json
@@ -55,6 +59,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/funding/ANCHORS*.json docs/funding/*.ots
-          git commit -m "R10: external timestamp of the canonical hashes (${{ inputs.mode }})" || exit 0
+          git commit -m "R10: external timestamp of the canonical hashes (${{ inputs.mode || 'upgrade' }})" || exit 0
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin HEAD:"$GITHUB_REF_NAME"

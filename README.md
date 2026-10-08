@@ -124,6 +124,12 @@ Em um ambiente de desenvolvimento separado:
 uv run --no-project python tools/stack_wheels.py fetch
 uv lock --check
 uv sync --locked --extra dev --extra vision --extra observability
+```
+
+O extra opcional `verify` (verificadores locais de afirmações) instala `torch` a partir de `download.pytorch.org`; numa rede que só
+alcança o PyPI e o GitHub, `uv sync --all-extras` falha nesse download sem que isso indique problema no lock. Omita `--extra verify`.
+
+```bash
 uv run --no-project python tools/stack_wheels.py check
 uv run ruff check .
 uv run pytest -q
