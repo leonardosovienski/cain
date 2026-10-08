@@ -34,7 +34,7 @@ STALE_PREDICTIONS = [
     r"vai falhar no próximo",
 ]
 QUESTIONS = [
-    "CURRENT_HEAD",
+    "LAST_VERIFIED_AT_SHA",
     "DECLARED_VERSION",
     "PUBLISHED_VERSION",
     "QUALIFIED_VERSION",

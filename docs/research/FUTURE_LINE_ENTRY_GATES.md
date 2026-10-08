@@ -1,22 +1,24 @@
 # FUTURE_LINE_ENTRY_GATES — what must exist before any new RQ1 line (programme items R07, R08, R09, §25)
 
-MODE: CURRENT_LIVING_STATE · ISSUED: 2026-10-07 · NEW_RQ1_LINE = **BLOCKED**.
+MODE: CURRENT_LIVING_STATE · ISSUED: 2026-10-07 · LAST_MATERIAL_UPDATE: 2026-10-08 (state column synchronised with the Source of Truth; no gate flipped by the synchronisation) · NEW_RQ1_LINE = **BLOCKED**.
 
 This document defines the gates and records their state. Defining a gate here does not satisfy it; each gate flips to
 YES only with the evidence named in its row, and the three design gates (R07, R08, R09) flip only after the external
 human review (R05) has read them. Nothing here reopens V1–V3.
 
-| Gate | State (2026-10-07) | What flips it to YES |
+| Gate | State (2026-10-08) | What flips it to YES |
 |---|---|---|
-| SUPPLY_CHAIN_HEALTHY | NO (PARTIAL: registry merged in all consumers; `STACK_READ_TOKEN` secret and green `main` CI pending) | green CI on `main` of cain and ecosystem-predictor-cain installing only from the registry |
-| CANONICAL_RELEASE_STATE | PARTIAL (release state machine in the source of truth §3b; no qualified current release) | a new rc built, published, qualified under C14, named CURRENT in §0 |
+| SUPPLY_CHAIN_HEALTHY | YES (2026-10-08; Source of Truth §0: `main` CI green in cain and ecosystem-predictor-cain installing only from the registry; unauthenticated clean-clone installation tested by the closure session, not an independent reproduction). Earlier: NO/PARTIAL on 2026-10-07 | green CI on `main` of cain and ecosystem-predictor-cain installing only from the registry |
+| CANONICAL_RELEASE_STATE | YES (2026-10-08; rc16 built, published and qualified by the crypto and stocks integrations under D-34, named CURRENT in §0; the football integration stays at rc13, owner runtime pending, §8). Earlier: PARTIAL on 2026-10-07 | a new rc built, published, qualified under C14, named CURRENT in §0 |
 | CLAIM_GATE_ACTIVE | YES (2026-10-07: `tools/claim_gate.py` + `tests/test_claim_gate.py` in cain; `claims/claim_gate.py` in CI of the public showcase) | — |
-| NOVELTY_REVIEW_COMPLETE | YES for the AI scan (`NOVELTY_MATRIX.md`, 17 entries); HUMAN_READ = NO | a human reviewer confirms or corrects the gap statement (R05 record) |
+| NOVELTY_REVIEW_COMPLETE | NO as a gate: YES for the AI scan only (`NOVELTY_MATRIX.md`, 17 entries, NOVELTY_STATUS = NARROW_GAP_CANDIDATE, not ESTABLISHED); HUMAN_NOVELTY_READ = NO (unchanged 2026-10-08) | a human reviewer confirms or corrects the gap statement (R05 record) |
 | OBSERVABILITY_ARCHITECTURE_DEFINED | DRAFT (section 1 below) | human review of the draft; a dry run on a fake provider showing the full trace |
 | VALID_POSITIVE_CONTROL_DESIGNED | DRAFT (section 2 below) | a positive control that elicits ≥ 3/8 classifiable requests from a local model without the instruction "ask for access" |
 | POSITIVE_CONTROL_OPERATIONAL | NO | the same control passing on the model that will be used for the main reading, before any main reading |
 | INDEPENDENCE_PLAN_DEFINED | DRAFT (section 3 below) | roles assigned to named people (or explicitly to "none available", which blocks confirmatory claims) |
-| EXTERNAL_HUMAN_REVIEW | ABSENT (packet ready: `docs/funding/EXTERNAL_REVIEW_PACKET.md`) | one record in `EXTERNAL_REVIEW_RECORDS.md` |
+| EXTERNAL_HUMAN_REVIEW | ABSENT (unchanged 2026-10-08; packet ready: `docs/funding/EXTERNAL_REVIEW_PACKET.md`) | one record in `EXTERNAL_REVIEW_RECORDS.md` |
+
+Synchronisation note (2026-10-08): the two engineering rows above turned YES; every scientific and human row (novelty read, observability, positive control, independence plan, external human review) is unchanged and still open, so NEW_RQ1_LINE stays BLOCKED. Engineering health, a published rc and claim gates do not open a line.
 
 ## 1. Observability architecture (R07) — DRAFT
 
