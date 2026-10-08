@@ -13,7 +13,7 @@ Companion files (also CURRENT_LIVING_STATE): `CAIN_CLAIM_LEDGER.md`, `FUNDING_RE
 
 | Question | Answer (2026-10-07) | Where it is checked |
 |---|---|---|
-| CURRENT_HEAD | `main` = the merge of the rc16 state layer (2026-10-07). Every PR of the remediation programme for this repository is merged (R01 #93 … #98 and this one); tag `v0.4.13rc16` = `de5db06b`. | `git log origin/main -1` |
+| CURRENT_HEAD | `main` after PR #100 (2026-10-08) plus this layer. Every PR of the remediation programme for this repository is merged (R01 #93 … #100); tag `v0.4.13rc16` = `de5db06b`; no branch other than `main` exists. | `git log origin/main -1` |
 | DECLARED_VERSION | `0.4.13rc16` (`pyproject.toml`, `cain.__version__`); published (see PUBLISHED_VERSION) | `tests/test_canonical_state.py`, `tests/test_readme_version.py` |
 | PUBLISHED_VERSION | `0.4.13rc16`, tag `v0.4.13rc16`, commit `de5db06b`, wheel sha256 `d8fca502420f66ebb39dc98f965895e17530c42ee413af61798e7a7dcfc9a302` (Release run 37696634940, reproducible double build; re-downloaded anonymously and equal to a local reproducible build). Package code identical to rc15 (`src/cain/__init__.py` version line only); the lock moved to the hash-pinned registry (R01/D-32). The ecosystem joint lock (`compat/STACK_WHEELS.json`, ecosystem 0.2.2, `6aeec475`) pins rc16 since 2026-10-07 (evening). Previous: rc15 `ae00017a`, sha256 `ff642b72…` | GitHub release; `RELEASE_NOTES/v0.4.13rc16.md` |
 | QUALIFIED_VERSION | **`0.4.13rc16`** (`de5db06b`, transport 0.1.0rc7) by the integration-crypto (rc16, re-issued rc16e after the ecosystem joint lock adopted rc16) and integration-stocks (cycle 6, re-issued cycle 7) attestations, QUALIFIED on 2026-10-07/08 under D-34 (owner-delegated D-29/D-30/D-31 written the same day; crypto stage A V1.2 QUALIFIED). integration-brasileirao stays at rc13 (`960fb256`): its rc16 cycle has only the static checks, the runtime needs the owner's PC 2 (D-19/D-25). rc15 was never qualified (cycle D-27 BLOCKED, superseded by rc16) | §3; `predictor-qualification/qualification/integration-*/QUALIFICATION_ATTESTATION.json` |
@@ -154,7 +154,9 @@ Dependabot-triggered runs carry no repository secrets and an anonymous fetch hit
 `main` CI green with the registry: cain Linux 37651563333, ecosystem-predictor-cain 37651560309, cripto-predictor
 37663192063 (container job incl. Trivy), brasileirão 37662106707; stocks 37651574443 red only at "Current R8
 operational evidence identities" (owner data). Docker images are built in CI (cripto `container`, brasileirão image
-jobs). Still open: the C14 cycle on a new rc.
+jobs). Still open at that point: the C14 cycle on a new rc — done later the same day (rc16 published; integration-crypto and
+integration-stocks re-qualified; the ecosystem joint lock adopted rc16 and the attestations were re-issued once more, rc16e / cycle 7).
+R03 CLOSED; the brasileirão integration's runtime re-qualification is the owner's (D-19/D-25).
 
 ## 5. Runtime vs test-only vs proposed
 
