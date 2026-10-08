@@ -8,7 +8,7 @@
 determinística de pesquisa por domínio (crypto, stocks, brasileirão) sobre o envelope V2 (`predictor-research-protocol 2.0.0rc2`,
 `predictor-research-transport 0.1.0rc7`), DecisionPolicy versionada, memória bitemporal e propostas por LLM local opcionais. É o alvo das
 integrações do `predictor-qualification`: qualificada em 2026-10-07 pelas integrações crypto e stocks (ciclo D-34); a do brasileirão continua na rc13 até o
-runtime do dono. Estado vivo, evidências e limites: [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md). Nada aqui autoriza capital.
+runtime do dono. Registro datado de 2026-09-30 (snapshot, não é o estado vivo): [docs/ESTADO_2026-09-30.md](docs/ESTADO_2026-09-30.md). Nada aqui autoriza capital.
 Linha científica de validação (pilotos diagnósticos de elicitação V1–V3, encerrada em 2026-10-07 com `FINAL_STATE = REFORMULATE_RQ1`,
 sem conclusão sobre efeito comportamental do CAIN nem sobre modelos frontier): [pilots/elicitation-a/HANDOFF.md](pilots/elicitation-a/HANDOFF.md).
 
